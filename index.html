@@ -3,168 +3,448 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>وظائف المصانع</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#123b66">
+<title>وظائف المصانع | فرص العمل المتاحة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
---bg:#f4f6f5;--card:#fff;--tx:#14201a;--mu:#6b7a72;--bd:#e3e8e5;--ac:#1d4ed8;--acs:#e6eefc;--sh:0 1px 3px rgba(20,32,26,.07)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1311;--card:#171e1b;--tx:#eef3f0;--mu:#93a39a;--bd:#26302b;--ac:#60a5fa;--acs:#14223d;--sh:none}}
-:root[data-theme="dark"]{--bg:#0e1311;--card:#171e1b;--tx:#eef3f0;--mu:#93a39a;--bd:#26302b;--ac:#60a5fa;--acs:#14223d;--sh:none}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
+:root{
+  color-scheme:light;
+  --page:#f3f6fa;--surface:#fff;--text:#182638;--muted:#5e6d7e;
+  --line:#dce5ee;--blue:#174f86;--blue-dark:#123b66;--blue-pale:#eaf3fc;
+  --green:#147a48;--green-pale:#e9f7ef;--danger:#a52d2d;--danger-pale:#fff0f0;
+  --shadow:0 3px 14px rgba(22,48,77,.06);
+}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:var(--bg);color:var(--tx);font-family:Cairo,Tahoma,"Segoe UI",Arial,sans-serif;line-height:1.5}
-.w{max-width:40rem;margin:auto;padding:0 1rem 3rem}
-header{padding:1.2rem 0 .6rem}h1{font-size:1.5rem;font-weight:800;margin:0}.sub{color:var(--mu);margin:.1rem 0 0;font-size:.95rem}
-.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:.5rem 0 .6rem}
-.search{position:relative}.search span{position:absolute;inset-inline-start:.9rem;top:50%;transform:translateY(-50%);opacity:.6}
-.search input{width:100%;font:inherit;font-size:16px;background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:1rem;padding:.8rem 2.6rem;box-shadow:var(--sh);outline:none}
-.search input:focus{border-color:var(--ac)}
-.seg{display:flex;background:var(--card);border:1px solid var(--bd);border-radius:1rem;padding:.25rem;margin-top:.6rem}
-.seg button{flex:1;font:inherit;font-weight:700;font-size:.95rem;border:0;background:none;color:var(--mu);padding:.55rem 0;border-radius:.75rem;cursor:pointer}
-.seg button.on{background:var(--ac);color:#fff}
-.chips{display:flex;gap:.5rem;overflow-x:auto;padding:.6rem 0 .1rem;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}
-.chip{font:inherit;font-size:.88rem;white-space:nowrap;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:99px;padding:.4rem .95rem;cursor:pointer}
-.chip.on{background:var(--acs);border-color:var(--ac);color:var(--ac);font-weight:700}
-.meta{display:flex;justify-content:space-between;align-items:center;color:var(--mu);font-size:.88rem;margin:.6rem 0 .5rem}
-.meta button{font:inherit;color:var(--ac);background:none;border:0;font-weight:700;cursor:pointer}
-.card{display:block;width:100%;text-align:start;font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:1.2rem;padding:1rem 1.1rem;margin-bottom:.75rem;box-shadow:var(--sh);cursor:pointer;transition:transform .12s}
-.card:active{transform:scale(.985)}
-.top{display:flex;justify-content:space-between;align-items:center;gap:.5rem;font-size:.82rem}
-.loc{color:var(--mu);font-weight:600}.badge{font-weight:700;border-radius:99px;padding:.1rem .65rem;background:var(--acs);color:var(--ac)}
-.badge.g{background:#fde7f1;color:#be185d}.badge.m{background:#dff3f8;color:#0e7490}
-@media (prefers-color-scheme:dark){.badge.g{background:#3a1626;color:#f9a8d4}.badge.m{background:#10303a;color:#67e8f9}}
-.ttl{font-size:1.12rem;font-weight:800;margin:.35rem 0 .1rem}.who{color:var(--mu);font-size:.9rem}
-.pay{font-size:1.15rem;font-weight:800;color:var(--ac);margin:.5rem 0 .2rem}
-.facts{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.5rem}.facts span{font-size:.8rem;background:var(--bg);border-radius:.6rem;padding:.2rem .6rem;color:var(--mu)}
-.more{display:block;text-align:end;color:var(--ac);font-weight:700;font-size:.85rem;margin-top:.5rem}
-.sk{height:8.5rem;border-radius:1.2rem;background:linear-gradient(90deg,var(--card),var(--bd),var(--card));background-size:200% 100%;animation:sk 1.2s infinite;margin-bottom:.75rem}
-@keyframes sk{to{background-position:-200% 0}}
-.empty{text-align:center;color:var(--mu);padding:3rem 1rem;display:none}
-.ov{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center}
-.ov.show{display:flex}@media(min-width:640px){.ov{align-items:center}}
-.sheet{background:var(--bg);width:100%;max-width:30rem;max-height:92%;display:flex;flex-direction:column;border-radius:1.6rem 1.6rem 0 0;animation:up .22s ease-out}
-@media(min-width:640px){.sheet{border-radius:1.6rem}}
-@keyframes up{from{transform:translateY(40px);opacity:0}}
-.grab{width:2.6rem;height:.26rem;border-radius:9px;background:var(--bd);margin:.45rem auto .1rem}
-.sb{overflow-y:auto;padding:.3rem 1.1rem .7rem}
-.sh{display:flex;justify-content:space-between;gap:.5rem;align-items:flex-start}
-.x{font:inherit;width:2.2rem;height:2.2rem;border-radius:50%;border:1px solid var(--bd);background:var(--card);color:var(--tx);cursor:pointer;flex:none}
-.hero{background:var(--acs);border-radius:1rem;padding:.55rem .9rem;margin:.55rem 0}.hero small{color:var(--mu);font-size:.78rem}.hero b{display:block;font-size:1.25rem;color:var(--ac);font-weight:800;line-height:1.3}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:.45rem}
-.it{background:var(--card);border:1px solid var(--bd);border-radius:.85rem;padding:.4rem .7rem}.it.full{grid-column:1/-1}
-.it small{display:block;color:var(--mu);font-size:.72rem;line-height:1.3}.it b{font-size:.88rem;font-weight:700;line-height:1.35}
-.cta{padding:.5rem 1rem calc(.5rem + env(safe-area-inset-bottom,0px));border-top:1px solid var(--bd);background:var(--bg);display:flex;gap:.5rem}
-.btn{display:block;flex:1;text-align:center;text-decoration:none;font:inherit;font-weight:800;font-size:.92rem;border-radius:.85rem;padding:.55rem .4rem;color:var(--tx);border:1px solid var(--bd);background:var(--card)}
-.btn.wa{flex:2;background:var(--ac);color:#fff;border:0;font-size:.95rem}
-.tb{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:.7rem 0 .5rem}
-.exit{font:inherit;font-weight:800;font-size:.95rem;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:.85rem;padding:.5rem 1rem;cursor:pointer}
-.dp{padding-bottom:5.5rem}.dp .ttl{font-size:1.3rem;margin:.4rem 0 0}
-.cta{position:fixed;inset-inline:0;bottom:0;max-width:40rem;margin:auto}
+html{scroll-behavior:smooth;scroll-padding-top:1rem}
+body{margin:0;background:var(--page);color:var(--text);font-family:Cairo,Tahoma,Arial,sans-serif;line-height:1.65}
+button,input,select{font:inherit}
+button,select{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #8fc5f5;outline-offset:2px}
+.page{max-width:760px;margin:0 auto;padding:0 15px 36px}
+.hero-head{margin:0 -15px 16px;padding:23px 20px 20px;background:linear-gradient(135deg,var(--blue-dark),#1b5a91);color:#fff;border-radius:0 0 24px 24px}
+.brand{display:inline-flex;align-items:center;gap:8px;font-size:.82rem;font-weight:700;color:#e1efff;background:#ffffff15;border:1px solid #ffffff30;border-radius:999px;padding:5px 11px;margin-bottom:8px}
+h1{font-size:1.55rem;line-height:1.35;margin:0;font-weight:800}
+.subtitle{margin:6px 0 0;color:#e5f0fb;font-size:.96rem}
+.intro{margin-top:15px;background:#ffffff13;border-radius:13px;padding:10px 12px;font-size:.9rem}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:15px;margin-bottom:14px;box-shadow:var(--shadow)}
+.field-label{display:block;font-size:.94rem;font-weight:800;margin-bottom:7px}
+.search-wrap{position:relative}
+.search-icon{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:1.1rem;pointer-events:none}
+.search-input{width:100%;min-height:54px;border:1px solid #c8d6e4;border-radius:13px;background:#fff;color:var(--text);padding:11px 42px 11px 43px;font-size:1rem}
+.search-input::placeholder{color:#7b8998}
+.clear-search{position:absolute;left:8px;top:50%;transform:translateY(-50%);width:34px;height:34px;border:0;border-radius:9px;background:#edf2f7;color:#3e5267;font-size:1.1rem;display:none}
+.filters{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:14px}
+select{width:100%;min-height:49px;padding:9px 11px;background:#fff;border:1px solid #c8d6e4;border-radius:12px;color:var(--text)}
+.actions-row{display:flex;gap:9px;margin-top:12px}
+.btn{min-height:47px;border:1px solid var(--line);border-radius:12px;padding:9px 15px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none}
+.btn-primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn-light{background:#fff;color:var(--blue-dark)}
+.btn:active{transform:scale(.99)}
+.actions-row .btn{flex:1}
+.results-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:18px 2px 10px}
+.results-title{font-size:1.08rem;font-weight:800;margin:0}
+.count{font-size:.86rem;color:var(--muted);font-weight:700;white-space:nowrap}
+.job-card{width:100%;display:block;text-align:right;background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:17px;padding:15px;margin-bottom:11px;box-shadow:var(--shadow)}
+.job-card:active{background:#f8fbff}
+.card-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.location{color:var(--muted);font-size:.9rem;font-weight:700}
+.pill{display:inline-flex;align-items:center;border-radius:999px;background:var(--blue-pale);color:var(--blue-dark);font-size:.82rem;font-weight:800;padding:4px 10px}
+.pill.girls{background:#fff0f6;color:#9b2458}
+.pill.mixed{background:#eaf7f8;color:#11616a}
+.job-name{font-size:1.13rem;line-height:1.5;font-weight:800;margin:10px 0 2px}
+.qualification{color:var(--muted);font-size:.9rem}
+.salary-label{font-size:.82rem;color:var(--muted);margin-top:11px}
+.salary{color:var(--blue);font-size:1.2rem;font-weight:800;line-height:1.5}
+.card-facts{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.fact{display:inline-flex;align-items:center;gap:5px;background:#f2f6fa;color:#344a60;border-radius:9px;padding:5px 9px;font-size:.83rem}
+.card-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid #edf1f5;margin-top:13px;padding-top:10px;color:var(--blue);font-weight:800;font-size:.92rem}
+.arrow{font-size:1.15rem}
+.state-box{background:var(--surface);border:1px solid var(--line);border-radius:17px;padding:24px 17px;text-align:center;margin-top:12px}
+.state-icon{font-size:2rem;margin-bottom:6px}
+.state-title{font-size:1.08rem;font-weight:800;margin:0 0 4px}
+.state-message{color:var(--muted);margin:0 0 14px;font-size:.94rem}
+.state-box.error{background:var(--danger-pale);border-color:#f0cccc}
+.state-box.error .state-title{color:var(--danger)}
+.hidden{display:none!important}
+.detail-page{padding-bottom:35px}
+.detail-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:18px 0 13px}
+.back-btn{min-height:45px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 13px;font-weight:800;color:var(--blue-dark)}
+.detail-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:17px;box-shadow:var(--shadow)}
+.detail-name{font-size:1.35rem;line-height:1.5;font-weight:800;margin:12px 0 2px}
+.detail-salary{background:var(--blue-pale);border:1px solid #d7e8fa;border-radius:14px;padding:13px 14px;margin:15px 0}
+.detail-salary span{display:block;color:var(--muted);font-size:.88rem}
+.detail-salary strong{display:block;color:var(--blue-dark);font-size:1.35rem;line-height:1.55}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.detail-item{border:1px solid var(--line);border-radius:12px;padding:10px 11px;min-width:0;overflow-wrap:anywhere}
+.detail-item.full{grid-column:1/-1}
+.detail-item span{display:block;color:var(--muted);font-size:.81rem;margin-bottom:3px}
+.detail-item strong{font-size:.94rem;line-height:1.55}
+.detail-actions{display:grid;grid-template-columns:1.5fr 1fr;gap:9px;margin-top:15px}
+.detail-actions .btn{min-height:53px}
+.footer-note{text-align:center;color:var(--muted);font-size:.82rem;padding:22px 0 0}
+.loading{padding:20px;text-align:center;color:var(--muted)}
+@media(min-width:600px){.hero-head{margin-top:18px;border-radius:22px}.page{padding-left:20px;padding-right:20px}.hero-head{margin-left:0;margin-right:0}.filters{grid-template-columns:1fr 1fr}}
+@media(max-width:380px){.page{padding-left:11px;padding-right:11px}.hero-head{margin-left:-11px;margin-right:-11px}.filters{grid-template-columns:1fr}.detail-grid{grid-template-columns:1fr}.detail-item.full{grid-column:auto}.detail-actions{grid-template-columns:1fr}.job-name{font-size:1.06rem}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-<div class="w" id="main">
-  <header><h1>وظائف المصانع</h1><p class="sub">اختار الوظيفة المناسبة وقدّم مباشرة</p></header>
-  <div class="bar">
-    <div class="search"><span>🔍</span><input id="q" type="search" placeholder="ابحث باسم المصنع أو الوظيفة"></div>
-    <div id="seg" class="seg"></div>
-    <div id="area" class="chips"></div>
+<main class="page" id="listingPage">
+  <header class="hero-head">
+    <div class="brand">● فرص عمل المصانع</div>
+    <h1>وظائف المصانع</h1>
+    <p class="subtitle">دَوّر على الوظيفة المناسبة ليك بسهولة</p>
+    <div class="intro">اختار الوظيفة اللي تناسبك، وافتح تفاصيلها لمعرفة المرتب وشروط التقديم.</div>
+  </header>
+
+  <section class="panel" aria-label="البحث عن الوظائف">
+    <label class="field-label" for="searchInput">ابحث عن وظيفة</label>
+    <div class="search-wrap">
+      <span class="search-icon" aria-hidden="true">🔎</span>
+      <input class="search-input" id="searchInput" type="search" autocomplete="off" placeholder="اكتب اسم المصنع أو المدينة أو المرتب">
+      <button class="clear-search" id="clearSearch" type="button" aria-label="مسح البحث">×</button>
+    </div>
+    <div class="filters">
+      <div>
+        <label class="field-label" for="categoryFilter">مناسب لمين؟</label>
+        <select id="categoryFilter">
+          <option value="الكل">كل الوظائف</option>
+          <option value="شباب">وظائف الشباب</option>
+          <option value="بنات">وظائف البنات</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label" for="areaFilter">المدينة</label>
+        <select id="areaFilter"><option value="الكل">كل المدن</option></select>
+      </div>
+    </div>
+    <div class="actions-row">
+      <button class="btn btn-light" id="resetFilters" type="button">↺ عرض كل الوظائف</button>
+      <button class="btn btn-primary" id="showResults" type="button">عرض الوظائف ↓</button>
+    </div>
+  </section>
+
+  <section aria-live="polite" aria-busy="true" id="resultsSection">
+    <div class="results-head">
+      <h2 class="results-title">الوظائف المتاحة</h2>
+      <span class="count" id="resultCount">جاري تحميل الوظائف…</span>
+    </div>
+    <div id="jobList"></div>
+    <div id="stateBox" class="state-box hidden"></div>
+  </section>
+  <footer class="footer-note">راجع تفاصيل الوظيفة قبل التقديم، وتأكد من ملاءمتها لك.</footer>
+</main>
+
+<main class="page detail-page hidden" id="detailPage">
+  <div class="detail-top">
+    <button class="back-btn" id="backButton" type="button">→ الرجوع للوظائف</button>
+    <span class="pill">تفاصيل الوظيفة</span>
   </div>
-  <div class="meta"><span id="cnt"></span><button id="clr" style="display:none">مسح الفلاتر</button></div>
-  <div id="list"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
-  <div id="empty" class="empty">😕 مفيش وظايف مطابقة<br>جرّب تغيّر الفلتر أو البحث</div>
-</div>
-<div id="detail" style="display:none"></div>
+  <section class="detail-card" id="detailContent"></section>
+</main>
+
 <script>
-/* ===== إعدادات ===== */
-const PHONE = "201095237207";   // رقم الواتساب بصيغة دولية بدون +
+"use strict";
+
+/* إعدادات الموقع الحالية: رقم التواصل ورابط Google Sheets كما هما */
+const PHONE = "201095237207";
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1Ri61Py0q36t2EdMCWXa0lgJGDWJfrXjY0gHmqnwS4AM/gviz/tq?tqx=out:csv&headers=1&sheet=%D8%A7%D9%84%D9%88%D8%B8%D8%A7%D8%A6%D9%81";
 
-/* بيانات تجريبية تظهر لو الشيت ما اتقراش */
-const SAMPLE = [
-{"المنطقة":"6 أكتوبر","الفئة":"بنات","المصنع":"مصنع أدوية (استيكر)","المؤهل":"نقاب عادي - مؤهلات","الشفت":"9 ساعات (8 ص : 5 م)","المرتب":"200 ج/يوماً","نظام القبض":"يومي / أسبوعي / شهري","السكن":"لا يوجد","السلف":"متاح بعد أسبوع","المواصلات":"خارجية (خطوط)","التأمينات":"بعد 3 شهور","الأجازة":"الجمعة","ظاهر؟":"نعم"},
-{"المنطقة":"6 أكتوبر","الفئة":"شباب وبنات","المصنع":"مصنع أغذية (شيبسي)","المؤهل":"مؤهلات متوسطة وعليا","الشفت":"12 ساعة (شفتات متغيرة)","المرتب":"7000 ج شهرياً","نظام القبض":"شهري","السكن":"لا يوجد","السلف":"متاح","المواصلات":"داخلية","وجبة":"وجبة يومية","التأمينات":"من أول يوم","الأجازة":"يوم أسبوعياً","ظاهر؟":"نعم"},
-{"المنطقة":"مدينة السادات","الفئة":"شباب","المصنع":"مصنع غزل ونسيج","المؤهل":"عمال إنتاج","الشفت":"12 ساعة","المرتب":"6500 ج شهرياً","نظام القبض":"شهري","السكن":"متوفر (مجاناً)","السلف":"متاح","المواصلات":"داخلية","التأمينات":"بعد شهر","الأجازة":"الجمعة","ظاهر؟":"نعم"},
-{"المنطقة":"العاشر من رمضان","الفئة":"شباب","المصنع":"مصنع بلاستيك","المؤهل":"أي مؤهل - لياقة بدنية","الشفت":"12 ساعة (ليلي / نهاري)","المرتب":"6800 ج شهرياً","نظام القبض":"أسبوعي","السكن":"متوفر بخصم 300 ج","السلف":"متاح بعد شهر","المواصلات":"خارجية","وجبة":"وجبة","التأمينات":"بعد 3 شهور","ظاهر؟":"نعم"},
-{"المنطقة":"العاشر من رمضان","الفئة":"بنات","المصنع":"مصنع ملابس جاهزة","المؤهل":"خبرة مش شرط","الشفت":"9 ساعات (8 ص : 5 م)","المرتب":"190 ج/يوماً","نظام القبض":"أسبوعي","السكن":"سكن بنات متوفر","السلف":"متاح","المواصلات":"داخلية","الأجازة":"الجمعة","ظاهر؟":"نعم"},
-{"المنطقة":"بدر","الفئة":"بنات","المصنع":"مصنع منظفات","المؤهل":"نقاب عادي - مؤهلات","الشفت":"8 ساعات","المرتب":"185 ج/يوماً","نظام القبض":"يومي","السكن":"لا يوجد","السلف":"غير متاح","المواصلات":"خارجية (خطوط)","الأجازة":"الجمعة","ظاهر؟":"نعم"},
-{"المنطقة":"بدر","الفئة":"شباب","المصنع":"مصنع ألومنيوم","المؤهل":"عمال إنتاج","الشفت":"12 ساعة","المرتب":"7500 ج شهرياً","نظام القبض":"شهري","السكن":"متوفر","السلف":"متاح","المواصلات":"داخلية","وجبة":"وجبتين","التأمينات":"من أول يوم","ظاهر؟":"نعم"},
-{"المنطقة":"6 أكتوبر","الفئة":"بنات","المصنع":"مصنع لانشون","المؤهل":"مؤهلات - بدون نقاب","الشفت":"9 ساعات","المرتب":"195 ج/يوماً","نظام القبض":"أسبوعي","السكن":"لا يوجد","السلف":"متاح","المواصلات":"خارجية","الأجازة":"الجمعة","ظاهر؟":"نعم"},
-{"المنطقة":"مدينة السادات","الفئة":"بنات","المصنع":"مصنع سايلو","المؤهل":"مؤهلات","الشفت":"8 ساعات","المرتب":"180 ج/يوماً","نظام القبض":"أسبوعي","السكن":"لا يوجد","السلف":"متاح","المواصلات":"خارجية","ظاهر؟":"نعم"},
-{"المنطقة":"العبور","الفئة":"شباب وبنات","المصنع":"مصنع تعبئة وتغليف","المؤهل":"أي مؤهل","الشفت":"10 ساعات","المرتب":"6200 ج شهرياً","نظام القبض":"شهري","السكن":"لا يوجد","السلف":"متاح","المواصلات":"خارجية","وجبة":"وجبة","التأمينات":"بعد 3 شهور","ظاهر؟":"نعم"},
-{"المنطقة":"العبور","الفئة":"شباب","المصنع":"مصنع ثلاجات وتبريد","المؤهل":"دبلوم صنايع","الشفت":"12 ساعة","المرتب":"8000 ج شهرياً","نظام القبض":"شهري","السكن":"متوفر","السلف":"متاح","المواصلات":"داخلية","التأمينات":"من أول يوم","ظاهر؟":"نعم"},
-{"المنطقة":"6 أكتوبر","الفئة":"شباب","المصنع":"مصنع قديم (مخفي للتجربة)","المؤهل":"-","الشفت":"-","المرتب":"-","ظاهر؟":"لا"}
-];
+const CORE_FIELDS = ["المنطقة","الفئة","المصنع","المؤهل","الشفت","المرتب","ظاهر؟"];
+const FIELD_ICONS = {
+  "نظام القبض":"💰","السكن":"🏠","السلف":"💵","المواصلات":"🚌",
+  "وجبة":"🍽️","التأمينات":"🛡️","الأجازة":"📅","الإجازة":"📅",
+  "طبيعة العمل":"🧰","السن":"🎂","العنوان":"📍"
+};
+const $ = id => document.getElementById(id);
+let jobs = [];
+let filteredJobs = [];
+let loadFailed = false;
+let savedScrollY = 0;
 
-const CORE=["المنطقة","الفئة","المصنع","المؤهل","الشفت","المرتب","ظاهر؟"];
-const ICON={"نظام القبض":"💰","السكن":"🏠","السلف":"💵","المواصلات":"🚌","وجبة":"🍽️","التأمينات":"🛡️","الأجازة":"📅"};
-let JOBS=[],cat="الكل",area="الكل";
-const $=id=>document.getElementById(id);
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-
-function parseCSV(t){const r=[];let row=[],f="",q=false;for(let i=0;i<t.length;i++){const c=t[i];
- if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=c}
- else if(c=='"')q=true;else if(c==","){row.push(f);f=""}
- else if(c=="\n"){row.push(f);r.push(row);row=[];f=""}else if(c!="\r")f+=c}
- if(f||row.length){row.push(f);r.push(row)}
- const h=r[0].map(x=>x.trim());return r.slice(1).filter(x=>x.some(v=>v.trim())).map(x=>Object.fromEntries(h.map((k,i)=>[k,(x[i]||"").trim()])))}
-
-async function load(){
-  let d=SAMPLE;
-  if(SHEET_CSV_URL){try{const r=await fetch(SHEET_CSV_URL);if(r.ok)d=parseCSV(await r.text())}catch(e){}}
-  JOBS=d.filter(j=>(j["ظاهر؟"]||"نعم").trim()!=="لا"&&j["المصنع"]);
-  draw();route();
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[ch]);
 }
-const kind=c=>c.includes("بنات")&&c.includes("شباب")?"":c.includes("بنات")?"g":"m";
-const has=(c,k)=>c==="الكل"||c===k;
-function matchCat(j){return cat==="الكل"||(j["الفئة"]||"").includes(cat)}
 
-function draw(){
-  const cats=["الكل","بنات","شباب"];
-  $("seg").innerHTML=cats.map(c=>`<button class="${c===cat?"on":""}" data-v="${c}">${c}</button>`).join("");
-  $("seg").querySelectorAll("button").forEach(b=>b.onclick=()=>{cat=b.dataset.v;draw()});
-  const areas=["الكل",...new Set(JOBS.filter(matchCat).map(j=>j["المنطقة"]).filter(Boolean))];
-  if(!areas.includes(area))area="الكل";
-  $("area").innerHTML=areas.map(a=>`<button class="chip ${a===area?"on":""}" data-v="${esc(a)}">${esc(a)}</button>`).join("");
-  $("area").querySelectorAll("button").forEach(b=>b.onclick=()=>{area=b.dataset.v;draw()});
-  const q=$("q").value.trim();
-  const r=JOBS.filter(j=>matchCat(j)&&(area==="الكل"||j["المنطقة"]===area)&&(!q||(j["المصنع"]+(j["المؤهل"]||"")).includes(q)));
-  $("cnt").textContent=r.length?`${r.length} وظيفة متاحة`:"";
-  $("clr").style.display=(cat!=="الكل"||area!=="الكل"||q)?"block":"none";
-  $("empty").style.display=r.length?"none":"block";
-  $("list").innerHTML=r.map(j=>`<button class="card" data-i="${JOBS.indexOf(j)}">
-   <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="badge ${kind(j["الفئة"]||"")}">${esc(j["الفئة"])}</span></div>
-   <div class="ttl">${esc(j["المصنع"])}</div><div class="who">${esc(j["المؤهل"])}</div>
-   <div class="pay">${esc(j["المرتب"])}</div>
-   <div class="facts"><span>⏰ ${esc(j["الشفت"])}</span>${["السكن","المواصلات"].filter(k=>j[k]).map(k=>`<span>${ICON[k]} ${esc(j[k])}</span>`).join("")}</div>
-   <span class="more">التفاصيل ‹</span></button>`).join("");
-  $("list").querySelectorAll(".card").forEach(b=>b.onclick=()=>go(+b.dataset.i));
+/* توحيد الكتابة العربية لتسهيل البحث، دون تغيير البيانات الأصلية المعروضة */
+function normalizeText(value) {
+  return String(value ?? "")
+    .toLocaleLowerCase("ar")
+    .normalize("NFD")
+    .replace(/[\u064B-\u065F\u0670\u0640]/g, "")
+    .replace(/[أإآٱ]/g, "ا")
+    .replace(/ى/g, "ي")
+    .replace(/ؤ/g, "و")
+    .replace(/ئ/g, "ي")
+    .replace(/ة/g, "ه")
+    .replace(/\s+/g, " ")
+    .trim();
 }
-$("clr").onclick=()=>{cat="الكل";area="الكل";$("q").value="";draw()};
-$("q").oninput=draw;
 
-let came=false,sy=0;
-function go(i){came=true;sy=window.scrollY;location.hash="job"+i}
-function exitDetail(){if(came){came=false;history.back()}else{location.hash=""}}
-function route(){
-  const m=location.hash.match(/^#job(\d+)$/),j=m&&JOBS[+m[1]];
-  if(j){showDetail(j)}else{came=false;$("detail").style.display="none";$("main").style.display="";window.scrollTo(0,sy)}
+function parseCSV(text) {
+  const rows = [];
+  let row = [], field = "", quoted = false;
+  text = text.replace(/^\uFEFF/, "");
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (quoted) {
+      if (ch === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++; }
+        else quoted = false;
+      } else field += ch;
+    } else if (ch === '"') {
+      quoted = true;
+    } else if (ch === ",") {
+      row.push(field); field = "";
+    } else if (ch === "\n") {
+      row.push(field); rows.push(row); row = []; field = "";
+    } else if (ch !== "\r") {
+      field += ch;
+    }
+  }
+  if (field.length || row.length) { row.push(field); rows.push(row); }
+  if (!rows.length) return [];
+  const headers = rows[0].map((h, i) => (i === 0 ? h.replace(/^\uFEFF/, "") : h).trim());
+  return rows.slice(1)
+    .filter(r => r.some(v => String(v ?? "").trim() !== ""))
+    .map(r => {
+      const obj = {};
+      headers.forEach((h, i) => { if (h) obj[h] = String(r[i] ?? "").trim(); });
+      return obj;
+    });
 }
-function showDetail(j){
-  const ph=PHONE.replace(/\D/g,""),msg=encodeURIComponent(`السلام عليكم، عايز أقدم على وظيفة: ${j["المصنع"]} - ${j["المنطقة"]}`);
-  const extra=Object.keys(j).filter(k=>!CORE.includes(k)&&j[k]);
-  const it=(ic,k,v,full)=>`<div class="it ${full?"full":""}"><small>${ic} ${esc(k)}</small><b>${esc(v)}</b></div>`;
-  $("detail").innerHTML=`<div class="w dp"><div class="tb"><button class="exit" id="ex">✕ خروج</button></div>
-   <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="badge ${kind(j["الفئة"]||"")}">${esc(j["الفئة"])}</span></div>
-   <h2 class="ttl">${esc(j["المصنع"])}</h2>
-   <div class="hero"><small>المرتب</small><b>${esc(j["المرتب"])}</b></div>
-   <div class="g2">${it("⏰","الشفت",j["الشفت"])}${it("🎓","المؤهل",j["المؤهل"])}${extra.map(k=>it(ICON[k]||"•",k,j[k],j[k].length>22)).join("")}</div></div>
-   <div class="cta"><a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/${ph}?text=${msg}">قدم الآن عبر الواتساب</a><a class="btn" href="tel:+${ph}">📞 اتصل بنا</a></div>`;
-  $("main").style.display="none";$("detail").style.display="block";window.scrollTo(0,0);
-  $("ex").onclick=exitDetail;
+
+function isVisible(job) {
+  const value = normalizeText(job["ظاهر؟"] || "نعم");
+  return !["لا","لأ","no","false","0","مخفي"].includes(value) && Boolean(String(job["المصنع"] || "").trim());
 }
-window.addEventListener("hashchange",route);
-load();
+
+async function loadJobs() {
+  setLoading(true);
+  try {
+    const response = await fetch(SHEET_CSV_URL, {cache:"no-store"});
+    if (!response.ok) throw new Error("تعذر الاتصال بجدول الوظائف.");
+    const csv = await response.text();
+    if (!csv.trim() || !csv.includes("المصنع")) throw new Error("بيانات جدول الوظائف غير واضحة.");
+    const data = parseCSV(csv);
+    if (!data.length) {
+      jobs = [];
+    } else {
+      jobs = data.filter(isVisible);
+    }
+    loadFailed = false;
+    populateAreas();
+    renderJobs();
+  } catch (error) {
+    /* لا توجد بيانات تجريبية احتياطية: عند فشل الاتصال نوضح المشكلة للمستخدم */
+    jobs = [];
+    filteredJobs = [];
+    loadFailed = true;
+    $("resultCount").textContent = "تعذر تحميل الوظائف";
+    $("jobList").innerHTML = "";
+    showState("error", "مش قادرين نحمّل الوظائف دلوقتي", "اتأكد من اتصال الإنترنت وحاول مرة تانية. الوظائف بتظهر من جدول Google Sheets فقط.", true);
+  } finally {
+    setLoading(false);
+    route();
+  }
+}
+
+function setLoading(isLoading) {
+  $("resultsSection").setAttribute("aria-busy", String(isLoading));
+  if (isLoading) {
+    $("resultCount").textContent = "جاري تحميل الوظائف…";
+    $("jobList").innerHTML = '<div class="loading">⏳ لحظة واحدة، بنحمّل الوظائف المتاحة…</div>';
+    $("stateBox").classList.add("hidden");
+  }
+}
+
+function populateAreas() {
+  const select = $("areaFilter");
+  const previous = select.value;
+  const areas = [...new Set(jobs.map(j => String(j["المنطقة"] || "").trim()).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b, "ar"));
+  select.innerHTML = '<option value="الكل">كل المدن</option>' +
+    areas.map(area => `<option value="${escapeHTML(area)}">${escapeHTML(area)}</option>`).join("");
+  if (areas.includes(previous)) select.value = previous;
+}
+
+function matchesCategory(job, category) {
+  if (category === "الكل") return true;
+  return normalizeText(job["الفئة"]).includes(normalizeText(category));
+}
+
+function searchableText(job) {
+  return Object.entries(job)
+    .filter(([key]) => normalizeText(key) !== normalizeText("ظاهر؟"))
+    .map(([, value]) => String(value ?? ""))
+    .join(" ");
+}
+
+function getFilteredJobs() {
+  const query = normalizeText($("searchInput").value);
+  const category = $("categoryFilter").value;
+  const area = $("areaFilter").value;
+  return jobs.filter(job =>
+    matchesCategory(job, category) &&
+    (area === "الكل" || job["المنطقة"] === area) &&
+    (!query || normalizeText(searchableText(job)).includes(query))
+  );
+}
+
+function categoryClass(category) {
+  const c = normalizeText(category);
+  if (c.includes("بنات") && !c.includes("شباب")) return "girls";
+  if (c.includes("شباب") && c.includes("بنات")) return "mixed";
+  return "";
+}
+
+function showState(type, title, message, retry = false) {
+  const box = $("stateBox");
+  box.className = "state-box" + (type === "error" ? " error" : "");
+  const icon = type === "error" ? "⚠️" : "🔎";
+  box.innerHTML = `<div class="state-icon">${icon}</div>
+    <h3 class="state-title">${escapeHTML(title)}</h3>
+    <p class="state-message">${escapeHTML(message)}</p>
+    ${retry ? '<button class="btn btn-primary" id="retryLoad" type="button">إعادة المحاولة</button>' : ""}`;
+  box.classList.remove("hidden");
+  if (retry) $("retryLoad").addEventListener("click", loadJobs);
+}
+
+function renderJobs() {
+  if (loadFailed) return;
+  filteredJobs = getFilteredJobs();
+  $("clearSearch").style.display = $("searchInput").value ? "block" : "none";
+  $("resultCount").textContent = `عدد الوظائف: ${filteredJobs.length}`;
+  $("jobList").innerHTML = "";
+  $("stateBox").classList.add("hidden");
+
+  if (!filteredJobs.length) {
+    const hasFilters = $("searchInput").value.trim() ||
+      $("categoryFilter").value !== "الكل" || $("areaFilter").value !== "الكل";
+    showState("empty",
+      jobs.length ? (hasFilters ? "مفيش وظائف مطابقة لاختياراتك" : "مفيش وظائف معروضة حاليًا") : "مفيش وظائف متاحة حاليًا",
+      jobs.length ? "جرّب تغيّر كلمة البحث أو اختار كل المدن والفئات." : "لما تتضاف وظائف معتمدة في جدول الوظائف هتظهر هنا.");
+    return;
+  }
+
+  $("jobList").innerHTML = filteredJobs.map(job => {
+    const index = jobs.indexOf(job);
+    const category = String(job["الفئة"] || "").trim();
+    const location = String(job["المنطقة"] || "").trim();
+    const name = String(job["المصنع"] || "").trim();
+    const pay = String(job["المرتب"] || "").trim();
+    const shift = String(job["الشفت"] || "").trim();
+    const qualification = String(job["المؤهل"] || "").trim();
+    const extras = ["السكن","المواصلات"].filter(key => String(job[key] || "").trim());
+    return `<button class="job-card" type="button" data-index="${index}" aria-label="عرض تفاصيل ${escapeHTML(name)}">
+      <div class="card-top">
+        <span class="location">📍 ${escapeHTML(location || "المكان حسب التفاصيل")}</span>
+        ${category ? `<span class="pill ${categoryClass(category)}">${escapeHTML(category)}</span>` : ""}
+      </div>
+      <h3 class="job-name">${escapeHTML(name)}</h3>
+      ${qualification ? `<div class="qualification">${escapeHTML(qualification)}</div>` : ""}
+      ${pay ? `<div class="salary-label">المرتب</div><div class="salary">${escapeHTML(pay)}</div>` : ""}
+      <div class="card-facts">
+        ${shift ? `<span class="fact">⏰ ${escapeHTML(shift)}</span>` : ""}
+        ${extras.map(key => `<span class="fact">${FIELD_ICONS[key]} ${escapeHTML(job[key])}</span>`).join("")}
+      </div>
+      <div class="card-footer"><span>اضغط هنا لمعرفة التفاصيل والتقديم</span><span class="arrow" aria-hidden="true">←</span></div>
+    </button>`;
+  }).join("");
+
+  $("jobList").querySelectorAll(".job-card").forEach(button => {
+    button.addEventListener("click", () => openJob(Number(button.dataset.index)));
+  });
+}
+
+function openJob(index) {
+  if (!jobs[index]) return;
+  savedScrollY = window.scrollY;
+  location.hash = `job-${index}`;
+}
+
+function renderDetail(job) {
+  const category = String(job["الفئة"] || "").trim();
+  const extras = Object.entries(job).filter(([key, value]) =>
+    !CORE_FIELDS.includes(key) && String(value ?? "").trim() !== ""
+  );
+  const detailItem = (key, value) => {
+    const icon = FIELD_ICONS[key] ? FIELD_ICONS[key] + " " : "";
+    const full = String(value).length > 50 ? " full" : "";
+    return `<div class="detail-item${full}"><span>${icon}${escapeHTML(key)}</span><strong>${escapeHTML(value)}</strong></div>`;
+  };
+  const phone = PHONE.replace(/\D/g, "");
+  const message = encodeURIComponent(`السلام عليكم، عايز أقدم على وظيفة: ${job["المصنع"] || ""} - ${job["المنطقة"] || ""}`);
+  $("detailContent").innerHTML = `
+    <div class="card-top">
+      <span class="location">📍 ${escapeHTML(job["المنطقة"] || "المكان حسب التفاصيل")}</span>
+      ${category ? `<span class="pill ${categoryClass(category)}">${escapeHTML(category)}</span>` : ""}
+    </div>
+    <h1 class="detail-name">${escapeHTML(job["المصنع"] || "تفاصيل الوظيفة")}</h1>
+    ${job["المؤهل"] ? `<div class="qualification">${escapeHTML(job["المؤهل"])}</div>` : ""}
+    ${job["المرتب"] ? `<div class="detail-salary"><span>المرتب المعلن</span><strong>${escapeHTML(job["المرتب"])}</strong></div>` : ""}
+    <div class="detail-grid">
+      ${job["الشفت"] ? detailItem("مواعيد العمل", job["الشفت"]) : ""}
+      ${extras.map(([key, value]) => detailItem(key, value)).join("")}
+    </div>
+    <div class="detail-actions">
+      <a class="btn btn-primary" href="https://wa.me/${phone}?text=${message}" target="_blank" rel="noopener noreferrer">💬 التقديم عبر واتساب</a>
+      <a class="btn btn-light" href="tel:+${phone}">📞 اتصال</a>
+    </div>`;
+}
+
+function route() {
+  const match = location.hash.match(/^#job-(\d+)$/);
+  const index = match ? Number(match[1]) : -1;
+  if (index >= 0 && jobs[index]) {
+    $("listingPage").classList.add("hidden");
+    $("detailPage").classList.remove("hidden");
+    renderDetail(jobs[index]);
+    window.scrollTo(0, 0);
+  } else {
+    $("detailPage").classList.add("hidden");
+    $("listingPage").classList.remove("hidden");
+    if (!loadFailed) renderJobs();
+    window.scrollTo(0, savedScrollY);
+  }
+}
+
+$("searchInput").addEventListener("input", renderJobs);
+$("categoryFilter").addEventListener("change", () => {
+  populateAreas();
+  renderJobs();
+});
+$("areaFilter").addEventListener("change", renderJobs);
+$("clearSearch").addEventListener("click", () => {
+  $("searchInput").value = "";
+  renderJobs();
+  $("searchInput").focus();
+});
+$("resetFilters").addEventListener("click", () => {
+  $("searchInput").value = "";
+  $("categoryFilter").value = "الكل";
+  $("areaFilter").value = "الكل";
+  populateAreas();
+  renderJobs();
+  window.scrollTo({top: 0, behavior: "smooth"});
+});
+$("showResults").addEventListener("click", () => {
+  $("resultsSection").scrollIntoView({behavior:"smooth", block:"start"});
+});
+$("backButton").addEventListener("click", () => {
+  if (location.hash.startsWith("#job-")) history.back();
+  else location.hash = "";
+});
+window.addEventListener("hashchange", route);
+window.addEventListener("pageshow", () => {
+  if (!location.hash && !loadFailed) renderJobs();
+});
+
+loadJobs();
 </script>
 </body>
 </html>
