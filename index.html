@@ -208,9 +208,7 @@ function showDetail(j){
    <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="bd2">${tags(j)}<span class="badge ${kind(j["الفئة"]||"")}">${esc(j["الفئة"])}</span></span></div>
    <h2 class="ttl">${esc(j["المصنع"])}</h2>
    <div class="hero"><small>المرتب</small><b>${esc(j["المرتب"])}</b></div>
-   ${groups.map(g=>sec(g[0],g[1])).join("")}${sec("تفاصيل أخرى",other)}
-   <!-- <<< غيّر هنا: الملاحظة تحت التفاصيل -->
-   <p class="note">هتتحول لواتساب مباشرة، ومفيش بيانات بتتحفظ على الموقع</p></div>
+   ${groups.map(g=>sec(g[0],g[1])).join("")}${sec("تفاصيل أخرى",other)}</div>
    <div class="cta"><a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/${ph}?text=${msg}">قدم الآن عبر الواتساب</a><a class="btn" href="tel:+${ph}">📞 اتصل</a><a class="btn sh2" target="_blank" rel="noopener" href="https://wa.me/?text=${shareMsg}">↗ شارك</a></div>`;
   $("main").style.display="none";$("detail").style.display="block";window.scrollTo(0,0);
   $("ex").onclick=exitDetail;
