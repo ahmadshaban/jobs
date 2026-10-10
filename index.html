@@ -126,6 +126,8 @@ const done=j=>(j["الحالة"]||"").includes("مكتمل");   // <<< عمود 
 const urgent=j=>(j["الحالة"]||"").includes("عاجل");   // <<< عمود الحالة = عاجل
 const NEW_DAYS=3;                                    // <<< غيّر هنا: عدد أيام شارة "جديد"
 const MSG_FIELDS=["الاسم:","السن:","المحافظة:"];      // <<< غيّر هنا: البيانات المطلوبة في رسالة الواتساب
+// رقم قصير ثابت لكل مصنع (من اسمه) يتحط في لينك الشير: ?j=xxxxxx
+const hid=n=>{let h=5381;for(const c of String(n))h=((h<<5)+h+c.charCodeAt(0))>>>0;return h.toString(36)};
 const rank=j=>done(j)?2:urgent(j)?0:1;
 // تاريخ الإضافة: الأفضل يتكتب 2026-10-10
 function isNew(j){const t=(j["تاريخ الإضافة"]||"").match(/(\d{1,4})[\/\-.](\d{1,2})[\/\-.](\d{1,4})/);if(!t)return false;
@@ -153,6 +155,8 @@ async function load(){
   let d=SAMPLE;
   if(SHEET_CSV_URL){try{const r=await fetch(SHEET_CSV_URL);if(r.ok)d=parseCSV(await r.text())}catch(e){}}
   JOBS=d.filter(j=>(j["ظاهر؟"]||"نعم").trim()!=="لا"&&j["المصنع"]);
+  const jq=new URLSearchParams(location.search).get("j");
+  if(jq){const k=JOBS.findIndex(x=>hid(x["المصنع"])===jq);history.replaceState(null,"",location.pathname+(k>-1?"#job"+k:""))}
   draw();route();
 }
 const kind=c=>c.includes("بنات")&&c.includes("شباب")?"":c.includes("بنات")?"g":"m";
@@ -194,7 +198,7 @@ function route(){
 function showDetail(j){
   const ph=PHONE.replace(/\D/g,""),
    msg=encodeURIComponent(`السلام عليكم، عايز أقدم على وظيفة: ${j["المصنع"]} - ${j["المنطقة"]}\n\n${MSG_FIELDS.join("\n")}`),
-   link=location.origin+location.pathname+"#f="+encodeURIComponent(j["المصنع"]),
+   link=location.origin+location.pathname+"?j="+hid(j["المصنع"]),
    shareMsg=encodeURIComponent(`وظيفة: ${j["المصنع"]} - ${j["المنطقة"]}\n${j["المرتب"]||""}\n${link}`);
   // مربع: اسم الخانة فوق وقيمتها تحت. القيمة الطويلة ياخد صف كامل
   const it=k=>`<div class="it ${String(j[k]).length>26?"full":""}"><small>${ICON[k]||"•"} ${esc(k)}</small><b>${esc(j[k])}</b></div>`;
