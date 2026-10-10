@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<!--
+  فهرس الأجزاء:
+  [1] الألوان والتصميم (CSS)
+  [2] هيكل الصفحة (HTML)
+  [3] الإعدادات والنصوص وأسماء الأعمدة (JS)
+  [4] الاتصال بالشيت
+  [5] شاشة الدخول
+  [6] عرض الكروت والبحث
+  [7] أزرار الكارت (تعديل / إخفاء / اكتمل / مسح)
+  [8] نموذج الإضافة والتعديل
+  [9] خانة جديدة والتحديث والخروج
+-->
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>لوحة الوظايف</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== [1] الألوان والتصميم (غيّر من هنا) ===== */
+:root{
+  --c-main:#1d4ed8;        /* <<< غيّر هنا: اللون الأزرق الأساسي */
+  --c-main-dark:#1e40af;   /* <<< غيّر هنا: الأزرق الغامق */
+  --c-main-soft:#dbeafe;   /* <<< غيّر هنا: الأزرق الفاتح */
+  --c-bg:#f1f5f9;          /* <<< غيّر هنا: خلفية الصفحة */
+  --c-card:#ffffff;        /* <<< غيّر هنا: خلفية الكارت */
+  --c-text:#0f172a;        /* <<< غيّر هنا: لون الكلام */
+  --c-sub:#64748b;         /* <<< غيّر هنا: لون الكلام الخفيف */
+  --c-border:#e2e8f0;      /* <<< غيّر هنا: لون الحدود */
+  --c-ok:#16a34a;          /* <<< غيّر هنا: لون النجاح */
+  --c-bad:#dc2626;         /* <<< غيّر هنا: لون الخطأ والمسح */
+  --c-warn:#b45309;        /* <<< غيّر هنا: لون شارة مخفي */
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --c-main:#3b82f6; --c-main-dark:#2563eb; --c-main-soft:#1e3a8a;
+    --c-bg:#0b1220; --c-card:#131c2e; --c-text:#e5edf9; --c-sub:#94a3b8;
+    --c-border:#25324a; --c-ok:#22c55e; --c-bad:#f87171; --c-warn:#fbbf24;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Cairo',sans-serif;background:var(--c-bg);color:var(--c-text);font-size:15px}
+button,input,select{font-family:inherit;font-size:inherit}
+.hidden{display:none!important}
+.btn{border:0;border-radius:10px;padding:9px 14px;font-weight:600;cursor:pointer;background:var(--c-main);color:#fff}
+.btn:active{background:var(--c-main-dark)}
+.btn.ghost{background:var(--c-main-soft);color:var(--c-main)}
+.btn.danger{background:transparent;color:var(--c-bad);border:1px solid var(--c-bad)}
+.btn:disabled{opacity:.6}
+input,select{width:100%;padding:10px 12px;border:1px solid var(--c-border);border-radius:10px;background:var(--c-card);color:var(--c-text)}
+input:focus,select:focus,.btn:focus-visible{outline:2px solid var(--c-main);outline-offset:1px}
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-box{width:100%;max-width:340px;background:var(--c-card);border:1px solid var(--c-border);border-radius:16px;padding:22px;display:grid;gap:12px}
+.login-box h1{margin:0;font-size:20px;color:var(--c-main)}
+.err{color:var(--c-bad);min-height:20px;font-size:14px}
+header{position:sticky;top:0;z-index:5;background:var(--c-card);border-bottom:1px solid var(--c-border);padding:12px;display:grid;gap:10px}
+header h1{margin:0;font-size:18px;color:var(--c-main)}
+.bar{display:flex;gap:8px;flex-wrap:wrap}
+.bar .btn{flex:1 1 auto;padding:8px 10px;font-size:14px}
+#list{padding:12px;display:grid;gap:10px;max-width:760px;margin:0 auto}
+.card{background:var(--c-card);border:1px solid var(--c-border);border-radius:14px;padding:12px;display:grid;gap:8px}
+.card.dim{opacity:.55}
+.card h2{margin:0;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:6px}
+.meta span{background:var(--c-main-soft);color:var(--c-main);border-radius:8px;padding:2px 9px;font-size:13px}
+.badge{border-radius:8px;padding:2px 9px;font-size:12px;font-weight:700;margin-inline-start:6px}
+.badge.done{background:var(--c-ok);color:#fff}
+.badge.hid{background:transparent;color:var(--c-warn);border:1px solid var(--c-warn)}
+.acts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.acts .btn{padding:8px 4px;font-size:13px}
+.empty{text-align:center;color:var(--c-sub);padding:30px}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;z-index:10}
+.sheet{background:var(--c-card);width:100%;max-width:520px;max-height:90vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px;display:grid;gap:10px}
+.sheet h3{margin:0;color:var(--c-main)}
+.sheet label{font-size:13px;color:var(--c-sub);display:grid;gap:4px}
+.sheet .row{display:flex;gap:8px}
+.sheet .row .btn{flex:1}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);padding:10px 18px;border-radius:12px;color:#fff;font-weight:600;z-index:20;max-width:90%}
+#toast.ok{background:var(--c-ok)}
+#toast.bad{background:var(--c-bad)}
+</style>
+</head>
+<body>
+
+<!-- ===== [2] هيكل الصفحة ===== -->
+<div id="login">
+  <div class="login-box">
+    <h1 id="loginTitle"></h1>
+    <input id="pw" type="password" autocomplete="current-password">
+    <div class="err" id="loginErr"></div>
+    <button class="btn" id="loginBtn"></button>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+  <header>
+    <h1 id="title"></h1>
+    <input id="q" type="search">
+    <div class="bar">
+      <button class="btn" id="bNew"></button>
+      <button class="btn ghost" id="bCol"></button>
+      <button class="btn ghost" id="bRef"></button>
+      <button class="btn danger" id="bOut"></button>
+    </div>
+  </header>
+  <div id="list"></div>
+</div>
+
+<div id="modal" class="hidden"><div class="sheet" id="sheet"></div></div>
+<div id="toast" class="hidden"></div>
+
+<script>
+// ===== [3] الإعدادات والنصوص وأسماء الأعمدة (غيّر من هنا) =====
+const API = 'https://script.google.com/macros/s/AKfycbzwMRST469OBo-ym0Ccn-Ot84jGrL0KEM9SZcnfe-tip2U6-1gyryjnYxdNNsiwbLEyng/exec'; // <<< غيّر هنا: رابط الـ Web app بعد النشر
+
+const COL = {
+  factory: 'المصنع',   // <<< غيّر هنا: اسم عمود المصنع
+  area:    'المنطقة',  // <<< غيّر هنا: اسم عمود المنطقة
+  gender:  'الفئة',    // <<< غيّر هنا: اسم عمود الفئة
+  shift:   'الشفت',    // <<< غيّر هنا: اسم عمود الشفت
+  salary:  'المرتب',   // <<< غيّر هنا: اسم عمود المرتب
+  visible: 'ظاهر؟',    // <<< غيّر هنا: اسم عمود الظهور
+  status:  'الحالة'    // <<< غيّر هنا: اسم عمود الحالة
+};
+
+const T = {
+  loginTitle: 'دخول الأدمن',            // <<< غيّر هنا: عنوان شاشة الدخول
+  pwHint: 'كلمة السر',                  // <<< غيّر هنا: نص خانة كلمة السر
+  login: 'دخول',                        // <<< غيّر هنا: زرار الدخول
+  wrongPw: 'كلمة السر غلط',             // <<< غيّر هنا: رسالة كلمة السر الغلط
+  noApi: 'حط رابط الـ Web app في ثابت API الأول', // <<< غيّر هنا: رسالة نسيان الرابط
+  title: 'الوظايف',                     // <<< غيّر هنا: عنوان الصفحة
+  search: 'ابحث...',                    // <<< غيّر هنا: نص البحث
+  newJob: 'وظيفة جديدة',                // <<< غيّر هنا: زرار وظيفة جديدة
+  newCol: 'خانة جديدة',                 // <<< غيّر هنا: زرار خانة جديدة
+  refresh: 'تحديث',                     // <<< غيّر هنا: زرار التحديث
+  logout: 'خروج',                       // <<< غيّر هنا: زرار الخروج
+  edit: 'تعديل',                        // <<< غيّر هنا: زرار التعديل
+  hide: 'إخفاء',                        // <<< غيّر هنا: زرار الإخفاء
+  show: 'إظهار',                        // <<< غيّر هنا: زرار الإظهار
+  complete: 'اكتمل',                    // <<< غيّر هنا: زرار اكتمل
+  reopen: 'إعادة فتح',                  // <<< غيّر هنا: زرار إعادة الفتح
+  del: 'مسح',                           // <<< غيّر هنا: زرار المسح
+  doneBadge: 'مكتمل',                   // <<< غيّر هنا: شارة الكارت المكتمل
+  hiddenBadge: 'مخفي',                  // <<< غيّر هنا: كلمة مخفي
+  doneValue: 'مكتمل',                   // <<< غيّر هنا: القيمة اللي بتتكتب في عمود الحالة
+  yes: 'نعم',                           // <<< غيّر هنا: قيمة نعم
+  no: 'لا',                             // <<< غيّر هنا: قيمة لا
+  save: 'حفظ',                          // <<< غيّر هنا: زرار الحفظ
+  cancel: 'إلغاء',                      // <<< غيّر هنا: زرار الإلغاء
+  formNew: 'وظيفة جديدة',               // <<< غيّر هنا: عنوان نموذج الإضافة
+  formEdit: 'تعديل الوظيفة',            // <<< غيّر هنا: عنوان نموذج التعديل
+  askDel: 'متأكد إنك عايز تمسح الوظيفة دي؟', // <<< غيّر هنا: سؤال تأكيد المسح
+  askCol: 'اسم الخانة الجديدة؟',        // <<< غيّر هنا: سؤال اسم الخانة
+  empty: 'مفيش وظايف',                  // <<< غيّر هنا: رسالة لما القايمة فاضية
+  okMsg: 'تمت العملية بنجاح',           // <<< غيّر هنا: رسالة النجاح
+  errMsg: 'حصل خطأ: ',                  // <<< غيّر هنا: بداية رسالة الخطأ
+  netErr: 'مفيش اتصال بالسيرفر'         // <<< غيّر هنا: رسالة قطع الاتصال
+};
+
+let headers = [], rows = [];
+const $ = id => document.getElementById(id);
+
+// بتهرب أي نص قبل ما يتحط في HTML
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"'`]/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c]));
+}
+
+// بتظهر رسالة صغيرة تقول نجحت ولا فيه خطأ
+let toastTimer;
+function toast(msg, ok){
+  const t = $('toast');
+  t.textContent = msg; t.className = ok ? 'ok' : 'bad';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className = 'hidden', 2800);
+}
+
+// ===== [4] الاتصال بالشيت =====
+
+// بتبعت الطلب للـ Web app وبترجع الرد
+async function api(action, extra){
+  if (API.indexOf('PASTE_') === 0) return {ok:false, error:T.noApi};
+  try{
+    const r = await fetch(API, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify(Object.assign({password:sessionStorage.getItem('pw')||'', action}, extra||{}))
+    });
+    return await r.json();
+  }catch(e){ return {ok:false, error:T.netErr}; }
+}
+
+// بتحمل العناوين والصفوف من الشيت وتعرضهم
+async function load(){
+  const r = await api('list');
+  if (!r.ok){ toast(T.errMsg + r.error, false); return false; }
+  headers = r.headers; rows = r.rows; render();
+  return true;
+}
+
+// بتنفذ أمر وتظهر النتيجة وتحدّث القايمة
+async function run(action, extra){
+  const r = await api(action, extra);
+  if (!r.ok){ toast(T.errMsg + r.error, false); return false; }
+  toast(T.okMsg, true);
+  await load();
+  return true;
+}
+
+// ===== [5] شاشة الدخول =====
+
+// بتجرب كلمة السر بنداء list وتفتح اللوحة لو صح
+async function login(pw){
+  sessionStorage.setItem('pw', pw);
+  const r = await api('list');
+  if (!r.ok){
+    sessionStorage.removeItem('pw');
+    $('loginErr').textContent = (r.error === 'كلمة السر غلط') ? T.wrongPw : r.error;
+    return;
+  }
+  headers = r.headers; rows = r.rows;
+  $('login').classList.add('hidden'); $('app').classList.remove('hidden');
+  render();
+}
+
+// ===== [6] عرض الكروت والبحث =====
+
+// بترجع قيمة عمود معين من صف
+function val(r, col){ const i = headers.indexOf(col); return i < 0 ? '' : (r.values[i] || ''); }
+
+// بترسم كارت وظيفة واحدة
+function cardHTML(r){
+  const hid = val(r, COL.visible).trim() === T.no;
+  const done = val(r, COL.status).trim() === T.doneValue;
+  const meta = [COL.area, COL.gender, COL.shift, COL.salary]
+    .map(c => val(r, c)).filter(Boolean).map(v => '<span>' + esc(v) + '</span>').join('');
+  return '<div class="card' + (hid ? ' dim' : '') + '">' +
+    '<h2>' + esc(val(r, COL.factory)) +
+      (done ? '<span class="badge done">' + esc(T.doneBadge) + '</span>' : '') +
+      (hid ? '<span class="badge hid">' + esc(T.hiddenBadge) + '</span>' : '') + '</h2>' +
+    '<div class="meta">' + meta + '</div>' +
+    '<div class="acts">' +
+      '<button class="btn ghost" data-act="edit" data-row="' + r.row + '">' + esc(T.edit) + '</button>' +
+      '<button class="btn ghost" data-act="vis" data-row="' + r.row + '">' + esc(hid ? T.show : T.hide) + '</button>' +
+      '<button class="btn ghost" data-act="done" data-row="' + r.row + '">' + esc(done ? T.reopen : T.complete) + '</button>' +
+      '<button class="btn danger" data-act="del" data-row="' + r.row + '">' + esc(T.del) + '</button>' +
+    '</div></div>';
+}
+
+// بترسم القايمة كلها حسب البحث وبحدّث العدد
+function render(){
+  const q = $('q').value.trim().toLowerCase();
+  const list = rows.filter(r => !q || r.values.join(' ').toLowerCase().indexOf(q) >= 0);
+  $('title').textContent = T.title + ' (' + rows.length + ')';
+  $('list').innerHTML = list.length ? list.map(cardHTML).join('') : '<div class="empty">' + esc(T.empty) + '</div>';
+}
+
+// ===== [7] أزرار الكارت =====
+
+// بتتعامل مع ضغطة أي زرار جوه الكارت
+$('list').addEventListener('click', async e => {
+  const b = e.target.closest('button[data-act]');
+  if (!b) return;
+  const row = Number(b.dataset.row);
+  const r = rows.find(x => x.row === row);
+  if (!r) return;
+  const act = b.dataset.act;
+  if (act === 'edit') return openForm(r);
+  if (act === 'vis'){
+    const hid = val(r, COL.visible).trim() === T.no;
+    return run('update', {row, data:{[COL.visible]: hid ? T.yes : T.no}});
+  }
+  if (act === 'done'){
+    const done = val(r, COL.status).trim() === T.doneValue;
+    return run('update', {row, data:{[COL.status]: done ? '' : T.doneValue}});
+  }
+  if (act === 'del'){
+    if (confirm(T.askDel)) run('delete', {row});
+  }
+});
+
+// ===== [8] نموذج الإضافة والتعديل =====
+
+// بتبني النموذج من عناوين الأعمدة وتفتحه (r فاضي = وظيفة جديدة)
+function openForm(r){
+  const fields = headers.map((h, i) => {
+    if (!h) return '';
+    const v = r ? (r.values[i] || '') : (h === COL.visible ? T.yes : '');
+    let input;
+    if (h === COL.visible){
+      input = '<select data-i="' + i + '">' +
+        [T.yes, T.no].map(o => '<option' + (o === v ? ' selected' : '') + '>' + esc(o) + '</option>').join('') + '</select>';
+    } else if (h === COL.status){
+      input = '<select data-i="' + i + '"><option value=""' + (v === '' ? ' selected' : '') + '></option>' +
+        '<option' + (v === T.doneValue ? ' selected' : '') + '>' + esc(T.doneValue) + '</option></select>';
+    } else {
+      input = '<input data-i="' + i + '" value="' + esc(v) + '">';
+    }
+    return '<label>' + esc(h) + input + '</label>';
+  }).join('');
+  $('sheet').innerHTML = '<h3>' + esc(r ? T.formEdit : T.formNew) + '</h3>' + fields +
+    '<div class="row"><button class="btn" id="fSave">' + esc(T.save) + '</button>' +
+    '<button class="btn ghost" id="fCancel">' + esc(T.cancel) + '</button></div>';
+  $('modal').classList.remove('hidden');
+  $('fCancel').onclick = closeForm;
+  $('fSave').onclick = async () => {
+    const data = {};
+    $('sheet').querySelectorAll('[data-i]').forEach(el => { data[headers[Number(el.dataset.i)]] = el.value; });
+    $('fSave').disabled = true;
+    const ok = r ? await run('update', {row:r.row, data}) : await run('add', {data});
+    if (ok) closeForm(); else $('fSave').disabled = false;
+  };
+}
+
+// بتقفل النموذج
+function closeForm(){ $('modal').classList.add('hidden'); $('sheet').innerHTML = ''; }
+
+// ===== [9] خانة جديدة والتحديث والخروج =====
+
+// بتربط الزراير والبحث ودخول الإنتر
+function init(){
+  $('loginTitle').textContent = T.loginTitle;
+  $('pw').placeholder = T.pwHint;
+  $('loginBtn').textContent = T.login;
+  $('q').placeholder = T.search;
+  $('bNew').textContent = T.newJob;
+  $('bCol').textContent = T.newCol;
+  $('bRef').textContent = T.refresh;
+  $('bOut').textContent = T.logout;
+
+  $('loginBtn').onclick = () => { $('loginErr').textContent = ''; login($('pw').value); };
+  $('pw').addEventListener('keydown', e => { if (e.key === 'Enter') $('loginBtn').click(); });
+  $('q').addEventListener('input', render);
+  $('bNew').onclick = () => openForm(null);
+  $('bRef').onclick = load;
+  $('bOut').onclick = () => { sessionStorage.removeItem('pw'); location.reload(); };
+  $('bCol').onclick = () => {
+    const name = prompt(T.askCol);
+    if (name !== null) run('addColumn', {name});
+  };
+  $('modal').addEventListener('click', e => { if (e.target.id === 'modal') closeForm(); });
+
+  const saved = sessionStorage.getItem('pw');
+  if (saved) login(saved);
+}
+init();
+</script>
+</body>
+</html>
