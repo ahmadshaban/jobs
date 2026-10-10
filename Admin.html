@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#164a78">
+  <style>
+    :root{--bg:#edf5fc;--navy:#164a78;--blue:#2478b8;--light:#e1f0ff;--ink:#173c5c;--muted:#607b92;--line:#d7e6f3;--white:#fff;--green:#18794e;--red:#b42318;--shadow:0 8px 24px #164a7810}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,"Segoe UI",Arial,sans-serif;line-height:1.55}button,input,select{font:inherit}button{cursor:pointer;touch-action:manipulation}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #75baff;outline-offset:2px}
+    .wrap{max-width:1100px;margin:auto;padding:18px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:var(--navy);color:white;padding:20px;border-radius:18px;box-shadow:var(--shadow)}h1{font-size:1.35rem;margin:0}.sub{font-size:.9rem;color:#d8eaff;margin:.25rem 0 0}.account{font-size:.8rem;background:#ffffff17;border:1px solid #ffffff35;border-radius:99px;padding:7px 12px;overflow-wrap:anywhere}
+    .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0}.stat{background:var(--white);border:1px solid var(--line);border-radius:15px;padding:16px;box-shadow:var(--shadow)}.stat small{color:var(--muted);display:block}.stat strong{display:block;font-size:1.65rem;margin-top:3px;color:var(--navy)}
+    .tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:15px 0}.search{flex:1;min-width:180px}.field,.search{width:100%;min-height:44px;border:1px solid var(--line);border-radius:11px;padding:10px 12px;background:white;color:var(--ink)}.btn{border:1px solid var(--line);background:white;color:var(--ink);padding:10px 14px;border-radius:11px;font-weight:700;min-height:43px}.btn.primary{background:var(--blue);color:white;border-color:var(--blue)}.btn.danger{color:var(--red);border-color:#f0c9c6;background:#fffafa}.btn.small{font-size:.82rem;padding:7px 10px;min-height:35px}.btn:disabled{opacity:.55;cursor:wait}
+    .panel{background:white;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}.panel-head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.panel-head h2{font-size:1rem;margin:0}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:760px}th,td{text-align:right;padding:12px 14px;border-bottom:1px solid #eaf1f7;vertical-align:middle}th{font-size:.82rem;color:var(--muted);background:#f7fbff;white-space:nowrap}td{font-size:.9rem}.job-name{font-weight:800;color:var(--navy)}.pill{display:inline-block;border-radius:99px;padding:4px 9px;font-size:.78rem;font-weight:700;white-space:nowrap}.pill.on{color:#12613f;background:#e1f7ec}.pill.off{color:#9b2c25;background:#ffebe9}.actions{display:flex;gap:6px;flex-wrap:wrap}.notice{margin:12px 0;padding:11px 13px;border-radius:11px;background:#e3f2ff;color:#174a73;font-size:.9rem}.error{background:#fff0ee;color:#9b2c25}.empty{padding:30px;text-align:center;color:var(--muted)}.footer{color:var(--muted);font-size:.8rem;text-align:center;padding:18px 4px}
+    .veil{display:none;position:fixed;inset:0;background:#102b43a8;z-index:5;align-items:flex-end;justify-content:center;padding:12px}.veil.show{display:flex}@media(min-width:650px){.veil{align-items:center}.formbox{border-radius:18px!important}}.formbox{background:white;width:100%;max-width:620px;max-height:92vh;overflow:auto;border-radius:18px 18px 10px 10px;padding:18px;box-shadow:0 20px 60px #001a3380}.formtop{display:flex;align-items:center;justify-content:space-between;gap:10px}.formtop h2{font-size:1.15rem;margin:0}.close{border:1px solid var(--line);background:#f5faff;border-radius:50%;width:38px;height:38px}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}.formitem{min-width:0}.formitem.full{grid-column:1/-1}.formitem label{display:block;font-size:.85rem;font-weight:700;margin-bottom:5px}.formitem input,.formitem select{width:100%;min-height:43px;border:1px solid var(--line);border-radius:10px;padding:9px;background:white;color:var(--ink)}.form-actions{display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:13px}.loading{text-align:center;padding:35px;color:var(--muted)}
+    @media(max-width:520px){.wrap{padding:11px}.top{padding:16px}.stats{gap:7px}.stat{padding:11px}.stat strong{font-size:1.35rem}.stat small{font-size:.76rem}.formgrid{grid-template-columns:1fr}.formitem.full{grid-column:auto}.tools .btn{flex:1}.account{max-width:100%}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div><h1>لوحة إدارة وظائف المصانع</h1><p class="sub">إدارة الوظائف والتحكم في ظهورها على الموقع العام</p></div>
+    <div class="account" id="account">جارٍ التحقق من الحساب…</div>
+  </header>
+  <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+  <section class="stats" aria-label="ملخص الوظائف">
+    <div class="stat"><small>إجمالي الوظائف</small><strong id="total">—</strong></div>
+    <div class="stat"><small>وظائف ظاهرة للزوار</small><strong id="shown">—</strong></div>
+    <div class="stat"><small>وظائف مخفية</small><strong id="hidden">—</strong></div>
+  </section>
+  <div class="tools">
+    <input class="search" id="search" type="search" placeholder="ابحث باسم المصنع أو المدينة أو الفئة…" aria-label="بحث في الوظائف">
+    <button class="btn primary" id="add">＋ إضافة وظيفة</button>
+    <button class="btn" id="refresh">تحديث البيانات</button>
+  </div>
+  <section class="panel">
+    <div class="panel-head"><h2>الوظائف المسجلة في Google Sheets</h2><span class="sub" style="color:var(--muted)" id="sheetLabel">المصدر: الوظائف</span></div>
+    <div class="table-wrap" id="tableWrap"><div class="loading">جاري تحميل الوظائف…</div></div>
+  </section>
+  <p class="footer">التغييرات تُحفظ في جدول Google Sheets المتصل بالموقع. إخفاء الوظيفة لا يحذفها من الجدول.</p>
+</div>
+<div class="veil" id="veil" role="dialog" aria-modal="true" aria-labelledby="formTitle">
+  <section class="formbox">
+    <div class="formtop"><h2 id="formTitle">إضافة وظيفة</h2><button class="close" id="closeForm" type="button" aria-label="إغلاق">✕</button></div>
+    <form id="jobForm"><div class="formgrid" id="formGrid"></div><div class="form-actions"><button class="btn primary" id="save" type="submit">حفظ الوظيفة</button><button class="btn" id="cancel" type="button">إلغاء</button></div></form>
+  </section>
+</div>
+<script>
+'use strict';
+const state = {headers:[],jobs:[],filtered:[],editing:null,shown:0,hidden:0};
+const $ = id => document.getElementById(id);
+function esc(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function showNotice(message,error=false){const n=$('notice');n.textContent=message;n.hidden=false;n.classList.toggle('error',error);window.setTimeout(()=>{if(n.textContent===message)n.hidden=true;},6000);}
+function shown(job){const v=String(job['ظاهر؟']||'نعم').trim().toLowerCase();return !['لا','no','false','0','مخفي'].includes(v);}
+function callServer(method,args,success){setBusy(true);const runner=google.script.run.withSuccessHandler(result=>{setBusy(false);if(success)success(result);}).withFailureHandler(error=>{setBusy(false);showNotice(error&&error.message?error.message:'حصل خطأ غير متوقع.',true);});runner[method](...(args||[]));}
+function setBusy(busy){document.querySelectorAll('button').forEach(b=>b.disabled=busy);$('search').disabled=busy;}
+function refresh(){ $('tableWrap').innerHTML='<div class="loading">جاري تحميل الوظائف…</div>';callServer('getDashboardData',[],data=>{state.headers=data.headers||[];state.jobs=data.jobs||[];state.shown=data.shown||0;state.hidden=data.hidden||0;$('account').textContent=data.email||'الحساب المصرّح به';$('sheetLabel').textContent='المصدر: '+(data.sheetName||'الوظائف');render();});}
+function render(){const query=String($('search').value||'').trim().toLocaleLowerCase('ar');state.filtered=state.jobs.filter(job=>state.headers.map(h=>job[h]||'').join(' ').toLocaleLowerCase('ar').includes(query));$('total').textContent=state.jobs.length;$('shown').textContent=state.jobs.filter(shown).length;$('hidden').textContent=state.jobs.filter(j=>!shown(j)).length;
+ if(!state.filtered.length){$('tableWrap').innerHTML='<div class="empty">'+(state.jobs.length?'مفيش وظائف مطابقة للبحث.':'لا توجد وظائف مسجلة في الجدول حاليًا.')+'</div>';return;}
+ $('tableWrap').innerHTML='<table><thead><tr><th>المصنع</th><th>المدينة / المنطقة</th><th>الفئة</th><th>المرتب</th><th>الظهور</th><th>الإجراءات</th></tr></thead><tbody>'+state.filtered.map(job=>'<tr><td><span class="job-name">'+esc(job['المصنع']||'—')+'</span></td><td>'+esc(job['المنطقة']||'—')+'</td><td>'+esc(job['الفئة']||'—')+'</td><td>'+esc(job['المرتب']||'—')+'</td><td><span class="pill '+(shown(job)?'on':'off')+'">'+(shown(job)?'ظاهر':'مخفي')+'</span></td><td><div class="actions"><button class="btn small" data-action="edit" data-row="'+job._row+'">تعديل</button><button class="btn small" data-action="visibility" data-row="'+job._row+'" data-visible="'+(!shown(job))+'">'+(shown(job)?'إخفاء':'إظهار')+'</button><button class="btn small danger" data-action="delete" data-row="'+job._row+'">حذف</button></div></td></tr>').join('')+'</tbody></table>';
+ $('tableWrap').querySelectorAll('button[data-action]').forEach(button=>button.addEventListener('click',()=>handleAction(button)));
+}
+function handleAction(button){const row=Number(button.dataset.row);const job=state.jobs.find(j=>Number(j._row)===row);if(!job)return;const action=button.dataset.action;
+ if(action==='edit'){openForm(job);return;}
+ if(action==='visibility'){const visible=button.dataset.visible==='true';const promptText=visible?'تأكيد إظهار الوظيفة على الموقع العام؟':'تأكيد إخفاء الوظيفة من الموقع العام؟';if(!window.confirm(promptText))return;callServer('setJobVisibility',[row,visible],result=>{showNotice(result.message||'تم التحديث.');refresh();});return;}
+ if(action==='delete'){if(!window.confirm('هل أنت متأكد من حذف وظيفة «'+job['المصنع']+'» نهائيًا من Google Sheets؟ لا يمكن التراجع عن الحذف.'))return;callServer('deleteJob',[row],result=>{showNotice(result.message||'تم الحذف.');refresh();});}
+}
+function openForm(job=null){state.editing=job;$('formTitle').textContent=job?'تعديل وظيفة':'إضافة وظيفة جديدة';const headers=state.headers.length?state.headers:['المنطقة','الفئة','المصنع','المؤهل','الشفت','المرتب','ظاهر؟'];$('formGrid').innerHTML=headers.filter(Boolean).map((h,i)=>{const isVisibility=h==='ظاهر؟';const value=job?(job[h]||''):(isVisibility?'نعم':'');const full=['المصنع','المرتب','الشفت'].includes(h)?' full':'';let control;if(isVisibility){control='<select class="field" name="'+esc(h)+'"><option value="نعم" '+(['لا','no','false','0','مخفي'].includes(String(value).trim().toLowerCase())?'':'selected')+'>ظاهر للزوار</option><option value="لا" '+(['لا','no','false','0','مخفي'].includes(String(value).trim().toLowerCase())?'selected':'')+'>مخفي عن الزوار</option></select>';}else{control='<input class="field" name="'+esc(h)+'" value="'+esc(value)+'" '+(h==='المصنع'?'required':'')+' autocomplete="off">';}return '<div class="formitem'+full+'"><label for="f'+i+'">'+esc(h)+(h==='المصنع'?' *':'')+'</label>'+control.replace('name="'+esc(h)+'"','id="f'+i+'" name="'+esc(h)+'"')+'</div>';}).join('');$('veil').classList.add('show');document.body.style.overflow='hidden';const first=$('formGrid').querySelector('input');if(first)first.focus();}
+function closeForm(){ $('veil').classList.remove('show');document.body.style.overflow='';state.editing=null;}
+$('jobForm').addEventListener('submit',event=>{event.preventDefault();const formData=new FormData(event.currentTarget);const fields={};for(const [key,value] of formData.entries())fields[key]=String(value).trim();if(!String(fields['المصنع']||'').trim()){showNotice('اكتب اسم المصنع على الأقل.',true);return;}const payload={row:state.editing?state.editing._row:null,fields};callServer('saveJob',[payload],result=>{closeForm();showNotice(result.message||'تم الحفظ.');refresh();});});
+$('add').addEventListener('click',()=>openForm());$('refresh').addEventListener('click',refresh);$('search').addEventListener('input',render);$('closeForm').addEventListener('click',closeForm);$('cancel').addEventListener('click',closeForm);$('veil').addEventListener('click',e=>{if(e.target===$('veil'))closeForm();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('veil').classList.contains('show'))closeForm();});
+refresh();
+</script>
+</body>
+</html>
