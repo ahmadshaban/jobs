@@ -3,8 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="color-scheme" content="light">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Crect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%233a72d8%27/%3E%3Ctext x=%2750%27 y=%2770%27 font-size=%2760%27 text-anchor=%27middle%27%3E%F0%9F%8F%AD%3C/text%3E%3C/svg%3E">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>وظائف المصانع</title>
+<!-- ===== [معاينة اللينك] <<< غيّر هنا: العنوان والوصف والصورة (og.png لازم يتحط في المخزن) ===== -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="وظائف مصانع">
+<meta property="og:description" content="قدّم على وظيفتك مباشرة من الموبايل - بنات وشباب - سكن ومواصلات ومرتبات">
+<meta property="og:image" content="https://ahmadshaban.github.io/jobs/og.png">
+<meta property="og:url" content="https://ahmadshaban.github.io/jobs/">
+<meta name="twitter:card" content="summary_large_image">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
@@ -57,7 +65,15 @@ header{padding:1.2rem 0 .6rem}h1{font-size:1.5rem;font-weight:800;margin:0}.sub{
 .it small{color:var(--mu);font-size:.72rem;line-height:1.2}
 .it b{font-size:.92rem;font-weight:700;line-height:1.35}
 .card.done{opacity:.55;cursor:default;pointer-events:none;filter:grayscale(.4)}
+/* ===== [CSS] سطر الثقة + ملاحظة التقديم + زرار الاستفسار ===== */
+.trust{display:flex;flex-wrap:wrap;gap:.35rem .5rem;margin-top:.55rem}
+.trust span{font-size:.78rem;font-weight:700;background:var(--card);border:1px solid var(--bd);color:var(--tx);border-radius:99px;padding:.2rem .7rem}
+.note{text-align:center;color:var(--mu);font-size:.76rem;margin:.8rem .5rem 0}
+.fab{position:fixed;left:1rem;bottom:calc(1rem + env(safe-area-inset-bottom,0px));z-index:6;text-decoration:none;font-weight:800;font-size:.9rem;color:#fff;background:#16a34a;border-radius:99px;padding:.65rem 1.05rem;box-shadow:0 4px 14px rgba(22,163,74,.35)}
 .badge.dn{background:#fee2e2;color:#b91c1c}
+.badge.ur{background:#ffedd5;color:#c2410c}.badge.nw{background:#dcfce7;color:#15803d}
+.bd2{display:flex;gap:.3rem;align-items:center}
+.btn.sh2{flex:0 0 auto;padding:.55rem .8rem}
 .cta{padding:.5rem 1rem calc(.5rem + env(safe-area-inset-bottom,0px));border-top:1px solid var(--bd);background:var(--bg);display:flex;gap:.5rem}
 .btn{display:block;flex:1;text-align:center;text-decoration:none;font:inherit;font-weight:800;font-size:.92rem;border-radius:.85rem;padding:.55rem .4rem;color:var(--tx);border:1px solid var(--bd);background:var(--card)}
 .btn.wa{flex:2;background:var(--ac);color:#fff;border:0;font-size:.95rem}
@@ -69,7 +85,9 @@ header{padding:1.2rem 0 .6rem}h1{font-size:1.5rem;font-weight:800;margin:0}.sub{
 </head>
 <body>
 <div class="w" id="main">
-  <header><h1>وظائف المصانع</h1><p class="sub">اختار الوظيفة المناسبة وقدّم مباشرة</p></header>
+  <header><h1>وظائف المصانع</h1><p class="sub">اختار الوظيفة المناسبة وقدّم مباشرة</p>
+    <!-- <<< غيّر هنا: سطر الثقة (الجمل اللي تحت العنوان) -->
+    <div class="trust"><span>✅ التقديم من غير أي رسوم مقدما</span><span id="tph"></span></div></header>
   <div class="bar">
     <div class="search"><span>🔍</span><input id="q" type="search" placeholder="ابحث باسم المصنع أو الوظيفة"></div>
     <div id="seg" class="seg"></div>
@@ -77,6 +95,7 @@ header{padding:1.2rem 0 .6rem}h1{font-size:1.5rem;font-weight:800;margin:0}.sub{
   </div>
   <div class="meta"><span id="cnt"></span><button id="clr" style="display:none">مسح الفلاتر</button></div>
   <div id="list"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
+  <a id="fab" class="fab" target="_blank" rel="noopener">💬 استفسار على واتساب</a>
   <div id="empty" class="empty">😕 مفيش وظايف مطابقة<br>جرّب تغيّر الفلتر أو البحث</div>
 </div>
 <div id="detail" style="display:none"></div>
@@ -101,9 +120,23 @@ const SAMPLE = [
 {"المنطقة":"6 أكتوبر","الفئة":"شباب","المصنع":"مصنع قديم (مخفي للتجربة)","المؤهل":"-","الشفت":"-","المرتب":"-","ظاهر؟":"لا"}
 ];
 
-const CORE=["المنطقة","الفئة","المصنع","المؤهل","الشفت","المرتب","ظاهر؟","الحالة"];
+const CORE=["المنطقة","الفئة","المصنع","المؤهل","الشفت","المرتب","ظاهر؟","الحالة","تاريخ الإضافة"];
 const done=j=>(j["الحالة"]||"").includes("مكتمل");   // <<< عمود الحالة = مكتمل
+const urgent=j=>(j["الحالة"]||"").includes("عاجل");   // <<< عمود الحالة = عاجل
+const NEW_DAYS=3;                                    // <<< غيّر هنا: عدد أيام شارة "جديد"
+const MSG_FIELDS=["الاسم:","السن:","المحافظة:"];      // <<< غيّر هنا: البيانات المطلوبة في رسالة الواتساب
+const rank=j=>done(j)?2:urgent(j)?0:1;
+// تاريخ الإضافة: الأفضل يتكتب 2026-10-10
+function isNew(j){const t=(j["تاريخ الإضافة"]||"").match(/(\d{1,4})[\/\-.](\d{1,2})[\/\-.](\d{1,4})/);if(!t)return false;
+ let y,m,d;if(t[1].length===4){y=+t[1];m=+t[2];d=+t[3]}else{d=+t[1];m=+t[2];y=+t[3];if(y<100)y+=2000}
+ const days=(Date.now()-new Date(y,m-1,d))/864e5;return days>=-1&&days<=NEW_DAYS}
+// شارات الحالة (عاجل / جديد)
+const tags=j=>(urgent(j)?'<span class="badge ur">🔥 عاجل</span>':'')+(isNew(j)?'<span class="badge nw">جديد</span>':'');
 const ICON={"الشفت":"⏰","المؤهل":"🎓","نظام القبض":"💰","السكن":"🏠","السلف":"💵","المواصلات":"🚌","وجبة":"🍽️","التأمينات":"🛡️","الأجازة":"📅"};
+// رقم الواتساب في سطر الثقة وزرار الاستفسار (من PHONE فوق)
+{const ph=PHONE.replace(/\D/g,"");const tp=document.getElementById("tph"),fb=document.getElementById("fab");
+ if(tp)tp.textContent="📞 واتساب: 0"+ph.replace(/^20/,"");
+ if(fb)fb.href="https://wa.me/"+ph+"?text="+encodeURIComponent("السلام عليكم، عندي استفسار بخصوص الوظايف");}
 let JOBS=[],cat="شباب",area="الكل";   // <<< غيّر هنا: الفئة الافتتاحية (شباب أو بنات)
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -134,12 +167,12 @@ function draw(){
   $("area").innerHTML=areas.map(a=>`<button class="chip ${a===area?"on":""}" data-v="${esc(a)}">${esc(a)}</button>`).join("");
   $("area").querySelectorAll("button").forEach(b=>b.onclick=()=>{area=b.dataset.v;draw()});
   const q=$("q").value.trim();
-  const r=JOBS.filter(j=>matchCat(j)&&(area==="الكل"||j["المنطقة"]===area)&&(!q||(j["المصنع"]+(j["المؤهل"]||"")).includes(q))).sort((x,y)=>done(x)-done(y));   // المكتمل في الآخر
+  const r=JOBS.filter(j=>matchCat(j)&&(area==="الكل"||j["المنطقة"]===area)&&(!q||(j["المصنع"]+(j["المؤهل"]||"")).includes(q))).sort((x,y)=>rank(x)-rank(y));   // العاجل فوق والمكتمل تحت
   $("cnt").textContent=r.length?`${r.length} وظيفة متاحة`:"";
   $("clr").style.display=(area!=="الكل"||q)?"block":"none";
   $("empty").style.display=r.length?"none":"block";
   $("list").innerHTML=r.map(j=>`<button class="card ${done(j)?"done":""}" data-i="${JOBS.indexOf(j)}" ${done(j)?"disabled":""}>
-   <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span>${done(j)?'<span class="badge dn">العدد اكتمل</span>':`<span class="badge ${kind(j["الفئة"]||"")}">${esc(j["الفئة"])}</span>`}</div>
+   <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="bd2">${done(j)?'<span class="badge dn">العدد اكتمل</span>':tags(j)+`<span class="badge ${kind(j["الفئة"]||"")}">${esc(j["الفئة"])}</span>`}</span></div>
    <div class="ttl">${esc(j["المصنع"])}</div><div class="who">${esc(j["المؤهل"])}</div>
    <div class="pay">${esc(j["المرتب"])}</div>
    <div class="facts"><span>⏰ ${esc(j["الشفت"])}</span>${["السكن","المواصلات"].filter(k=>j[k]).map(k=>`<span>${ICON[k]} ${esc(j[k])}</span>`).join("")}</div>
@@ -153,11 +186,15 @@ let came=false,sy=0;
 function go(i){came=true;sy=window.scrollY;location.hash="job"+i}
 function exitDetail(){if(came){came=false;history.back()}else{location.hash=""}}
 function route(){
-  const m=location.hash.match(/^#job(\d+)$/),j=m&&JOBS[+m[1]];   /* المكتمل مش بيفتح */
+  let j=null;const m=location.hash.match(/^#job(\d+)$/),f=location.hash.match(/^#f=(.+)$/);
+  if(m)j=JOBS[+m[1]];else if(f){try{const n=decodeURIComponent(f[1]);j=JOBS.find(x=>x["المصنع"]===n)}catch(e){}}   /* المكتمل مش بيفتح */
   if(j&&!done(j)){showDetail(j)}else{came=false;$("detail").style.display="none";$("main").style.display="";window.scrollTo(0,sy)}
 }
 function showDetail(j){
-  const ph=PHONE.replace(/\D/g,""),msg=encodeURIComponent(`السلام عليكم، عايز أقدم على وظيفة: ${j["المصنع"]} - ${j["المنطقة"]}`);
+  const ph=PHONE.replace(/\D/g,""),
+   msg=encodeURIComponent(`السلام عليكم، عايز أقدم على وظيفة: ${j["المصنع"]} - ${j["المنطقة"]}\n\n${MSG_FIELDS.join("\n")}`),
+   link=location.origin+location.pathname+"#f="+encodeURIComponent(j["المصنع"]),
+   shareMsg=encodeURIComponent(`وظيفة: ${j["المصنع"]} - ${j["المنطقة"]}\n${j["المرتب"]||""}\n${link}`);
   // مربع: اسم الخانة فوق وقيمتها تحت. القيمة الطويلة ياخد صف كامل
   const it=k=>`<div class="it ${String(j[k]).length>26?"full":""}"><small>${ICON[k]||"•"} ${esc(k)}</small><b>${esc(j[k])}</b></div>`;
   // قسم: عنوان + مربعاته (بيتخطى الخانات الفاضية)
@@ -167,11 +204,13 @@ function showDetail(j){
   const used=groups.flatMap(g=>g[1]);
   const other=Object.keys(j).filter(k=>!CORE.includes(k)&&!used.includes(k)&&j[k]);
   $("detail").innerHTML=`<div class="w dp"><div class="tb"><button class="exit" id="ex">✕ خروج</button></div>
-   <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="badge ${kind(j["الفئة"]||"")}">${esc(j["الفئة"])}</span></div>
+   <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="bd2">${tags(j)}<span class="badge ${kind(j["الفئة"]||"")}">${esc(j["الفئة"])}</span></span></div>
    <h2 class="ttl">${esc(j["المصنع"])}</h2>
    <div class="hero"><small>المرتب</small><b>${esc(j["المرتب"])}</b></div>
-   ${groups.map(g=>sec(g[0],g[1])).join("")}${sec("تفاصيل أخرى",other)}</div>
-   <div class="cta"><a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/${ph}?text=${msg}">قدم الآن عبر الواتساب</a><a class="btn" href="tel:+${ph}">📞 اتصل بنا</a></div>`;
+   ${groups.map(g=>sec(g[0],g[1])).join("")}${sec("تفاصيل أخرى",other)}
+   <!-- <<< غيّر هنا: الملاحظة تحت التفاصيل -->
+   <p class="note">هتتحول لواتساب مباشرة، ومفيش بيانات بتتحفظ على الموقع</p></div>
+   <div class="cta"><a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/${ph}?text=${msg}">قدم الآن عبر الواتساب</a><a class="btn" href="tel:+${ph}">📞 اتصل</a><a class="btn sh2" target="_blank" rel="noopener" href="https://wa.me/?text=${shareMsg}">↗ شارك</a></div>`;
   $("main").style.display="none";$("detail").style.display="block";window.scrollTo(0,0);
   $("ex").onclick=exitDetail;
 }
