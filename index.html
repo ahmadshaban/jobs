@@ -2,14 +2,13 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
+<meta name="color-scheme" content="light">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>وظائف المصانع</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
---bg:#f4f6f5;--card:#fff;--tx:#14201a;--mu:#6b7a72;--bd:#e3e8e5;--ac:#1d4ed8;--acs:#e6eefc;--sh:0 1px 3px rgba(20,32,26,.07)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1311;--card:#171e1b;--tx:#eef3f0;--mu:#93a39a;--bd:#26302b;--ac:#60a5fa;--acs:#14223d;--sh:none}}
-:root[data-theme="dark"]{--bg:#0e1311;--card:#171e1b;--tx:#eef3f0;--mu:#93a39a;--bd:#26302b;--ac:#60a5fa;--acs:#14223d;--sh:none}
+/* <<< غيّر هنا: الألوان */--bg:#eef3fb;--card:#fff;--tx:#25324a;--mu:#6b7a94;--bd:#dbe4f0;--ac:#3a72d8;--acs:#e6effc;--sh:0 1px 4px rgba(60,90,140,.08)}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:var(--bg);color:var(--tx);font-family:Cairo,Tahoma,"Segoe UI",Arial,sans-serif;line-height:1.5}
@@ -32,7 +31,6 @@ header{padding:1.2rem 0 .6rem}h1{font-size:1.5rem;font-weight:800;margin:0}.sub{
 .top{display:flex;justify-content:space-between;align-items:center;gap:.5rem;font-size:.82rem}
 .loc{color:var(--mu);font-weight:600}.badge{font-weight:700;border-radius:99px;padding:.1rem .65rem;background:var(--acs);color:var(--ac)}
 .badge.g{background:#fde7f1;color:#be185d}.badge.m{background:#dff3f8;color:#0e7490}
-@media (prefers-color-scheme:dark){.badge.g{background:#3a1626;color:#f9a8d4}.badge.m{background:#10303a;color:#67e8f9}}
 .ttl{font-size:1.12rem;font-weight:800;margin:.35rem 0 .1rem}.who{color:var(--mu);font-size:.9rem}
 .pay{font-size:1.15rem;font-weight:800;color:var(--ac);margin:.5rem 0 .2rem}
 .facts{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.5rem}.facts span{font-size:.8rem;background:var(--bg);border-radius:.6rem;padding:.2rem .6rem;color:var(--mu)}
@@ -60,7 +58,6 @@ header{padding:1.2rem 0 .6rem}h1{font-size:1.5rem;font-weight:800;margin:0}.sub{
 .it b{font-size:.92rem;font-weight:700;line-height:1.35}
 .card.done{opacity:.55;cursor:default;pointer-events:none;filter:grayscale(.4)}
 .badge.dn{background:#fee2e2;color:#b91c1c}
-@media (prefers-color-scheme:dark){.badge.dn{background:#3b1414;color:#fca5a5}}
 .cta{padding:.5rem 1rem calc(.5rem + env(safe-area-inset-bottom,0px));border-top:1px solid var(--bd);background:var(--bg);display:flex;gap:.5rem}
 .btn{display:block;flex:1;text-align:center;text-decoration:none;font:inherit;font-weight:800;font-size:.92rem;border-radius:.85rem;padding:.55rem .4rem;color:var(--tx);border:1px solid var(--bd);background:var(--card)}
 .btn.wa{flex:2;background:var(--ac);color:#fff;border:0;font-size:.95rem}
@@ -107,7 +104,7 @@ const SAMPLE = [
 const CORE=["المنطقة","الفئة","المصنع","المؤهل","الشفت","المرتب","ظاهر؟","الحالة"];
 const done=j=>(j["الحالة"]||"").includes("مكتمل");   // <<< عمود الحالة = مكتمل
 const ICON={"الشفت":"⏰","المؤهل":"🎓","نظام القبض":"💰","السكن":"🏠","السلف":"💵","المواصلات":"🚌","وجبة":"🍽️","التأمينات":"🛡️","الأجازة":"📅"};
-let JOBS=[],cat="بنات",area="الكل";   // <<< غيّر هنا: الفئة الافتتاحية (بنات أو شباب)
+let JOBS=[],cat="شباب",area="الكل";   // <<< غيّر هنا: الفئة الافتتاحية (شباب أو بنات)
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
@@ -129,7 +126,7 @@ const has=(c,k)=>c==="الكل"||c===k;
 function matchCat(j){return cat==="الكل"||(j["الفئة"]||"").includes(cat)}
 
 function draw(){
-  const cats=["بنات","شباب"];   // <<< الفئات الظاهرة
+  const cats=["شباب","بنات"];   // <<< الفئات الظاهرة
   $("seg").innerHTML=cats.map(c=>`<button class="${c===cat?"on":""}" data-v="${c}">${c}</button>`).join("");
   $("seg").querySelectorAll("button").forEach(b=>b.onclick=()=>{cat=b.dataset.v;draw()});
   const areas=["الكل",...new Set(JOBS.filter(matchCat).map(j=>j["المنطقة"]).filter(Boolean))];
