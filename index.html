@@ -50,13 +50,17 @@ header{padding:1.2rem 0 .6rem}h1{font-size:1.5rem;font-weight:800;margin:0}.sub{
 .sh{display:flex;justify-content:space-between;gap:.5rem;align-items:flex-start}
 .x{font:inherit;width:2.2rem;height:2.2rem;border-radius:50%;border:1px solid var(--bd);background:var(--card);color:var(--tx);cursor:pointer;flex:none}
 .hero{background:var(--acs);border-radius:1rem;padding:.55rem .9rem;margin:.55rem 0}.hero small{color:var(--mu);font-size:.78rem}.hero b{display:block;font-size:1.25rem;color:var(--ac);font-weight:800;line-height:1.3}
-/* ===== مربعات التفاصيل (غيّر عدد الأعمدة من repeat(3,1fr)) ===== */
-.g2{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem}
-.it{background:var(--card);border:1px solid var(--bd);border-radius:.8rem;padding:.4rem .35rem;text-align:center;display:flex;flex-direction:column;justify-content:center;gap:.05rem;min-height:3.6rem}
-.it.w2{grid-column:span 2}.it.full{grid-column:1/-1}
-.it i{font-style:normal;font-size:1rem;line-height:1.1}
-.it small{display:block;color:var(--mu);font-size:.68rem;line-height:1.2}
-.it b{font-size:.84rem;font-weight:700;line-height:1.3}
+/* ===== [CSS] أقسام التفاصيل (غيّر عدد الأعمدة من repeat(2,1fr)) ===== */
+.sec{background:var(--card);border:1px solid var(--bd);border-radius:1.1rem;padding:.75rem .8rem .8rem;margin-top:.7rem;box-shadow:var(--sh)}
+.sec h3{margin:0 0 .55rem;font-size:.85rem;font-weight:800;color:var(--ac)}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:.55rem}
+.it{background:var(--bg);border-radius:.8rem;padding:.55rem .7rem;display:flex;flex-direction:column;gap:.15rem}
+.it.full{grid-column:1/-1}
+.it small{color:var(--mu);font-size:.72rem;line-height:1.2}
+.it b{font-size:.92rem;font-weight:700;line-height:1.35}
+.card.done{opacity:.55;cursor:default;pointer-events:none;filter:grayscale(.4)}
+.badge.dn{background:#fee2e2;color:#b91c1c}
+@media (prefers-color-scheme:dark){.badge.dn{background:#3b1414;color:#fca5a5}}
 .cta{padding:.5rem 1rem calc(.5rem + env(safe-area-inset-bottom,0px));border-top:1px solid var(--bd);background:var(--bg);display:flex;gap:.5rem}
 .btn{display:block;flex:1;text-align:center;text-decoration:none;font:inherit;font-weight:800;font-size:.92rem;border-radius:.85rem;padding:.55rem .4rem;color:var(--tx);border:1px solid var(--bd);background:var(--card)}
 .btn.wa{flex:2;background:var(--ac);color:#fff;border:0;font-size:.95rem}
@@ -100,9 +104,10 @@ const SAMPLE = [
 {"المنطقة":"6 أكتوبر","الفئة":"شباب","المصنع":"مصنع قديم (مخفي للتجربة)","المؤهل":"-","الشفت":"-","المرتب":"-","ظاهر؟":"لا"}
 ];
 
-const CORE=["المنطقة","الفئة","المصنع","المؤهل","الشفت","المرتب","ظاهر؟"];
-const ICON={"نظام القبض":"💰","السكن":"🏠","السلف":"💵","المواصلات":"🚌","وجبة":"🍽️","التأمينات":"🛡️","الأجازة":"📅"};
-let JOBS=[],cat="الكل",area="الكل";
+const CORE=["المنطقة","الفئة","المصنع","المؤهل","الشفت","المرتب","ظاهر؟","الحالة"];
+const done=j=>(j["الحالة"]||"").includes("مكتمل");   // <<< عمود الحالة = مكتمل
+const ICON={"الشفت":"⏰","المؤهل":"🎓","نظام القبض":"💰","السكن":"🏠","السلف":"💵","المواصلات":"🚌","وجبة":"🍽️","التأمينات":"🛡️","الأجازة":"📅"};
+let JOBS=[],cat="بنات",area="الكل";   // <<< غيّر هنا: الفئة الافتتاحية (بنات أو شباب)
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
@@ -124,7 +129,7 @@ const has=(c,k)=>c==="الكل"||c===k;
 function matchCat(j){return cat==="الكل"||(j["الفئة"]||"").includes(cat)}
 
 function draw(){
-  const cats=["الكل","بنات","شباب"];
+  const cats=["بنات","شباب"];   // <<< الفئات الظاهرة
   $("seg").innerHTML=cats.map(c=>`<button class="${c===cat?"on":""}" data-v="${c}">${c}</button>`).join("");
   $("seg").querySelectorAll("button").forEach(b=>b.onclick=()=>{cat=b.dataset.v;draw()});
   const areas=["الكل",...new Set(JOBS.filter(matchCat).map(j=>j["المنطقة"]).filter(Boolean))];
@@ -132,38 +137,43 @@ function draw(){
   $("area").innerHTML=areas.map(a=>`<button class="chip ${a===area?"on":""}" data-v="${esc(a)}">${esc(a)}</button>`).join("");
   $("area").querySelectorAll("button").forEach(b=>b.onclick=()=>{area=b.dataset.v;draw()});
   const q=$("q").value.trim();
-  const r=JOBS.filter(j=>matchCat(j)&&(area==="الكل"||j["المنطقة"]===area)&&(!q||(j["المصنع"]+(j["المؤهل"]||"")).includes(q)));
+  const r=JOBS.filter(j=>matchCat(j)&&(area==="الكل"||j["المنطقة"]===area)&&(!q||(j["المصنع"]+(j["المؤهل"]||"")).includes(q))).sort((x,y)=>done(x)-done(y));   // المكتمل في الآخر
   $("cnt").textContent=r.length?`${r.length} وظيفة متاحة`:"";
-  $("clr").style.display=(cat!=="الكل"||area!=="الكل"||q)?"block":"none";
+  $("clr").style.display=(area!=="الكل"||q)?"block":"none";
   $("empty").style.display=r.length?"none":"block";
-  $("list").innerHTML=r.map(j=>`<button class="card" data-i="${JOBS.indexOf(j)}">
-   <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="badge ${kind(j["الفئة"]||"")}">${esc(j["الفئة"])}</span></div>
+  $("list").innerHTML=r.map(j=>`<button class="card ${done(j)?"done":""}" data-i="${JOBS.indexOf(j)}" ${done(j)?"disabled":""}>
+   <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span>${done(j)?'<span class="badge dn">العدد اكتمل</span>':`<span class="badge ${kind(j["الفئة"]||"")}">${esc(j["الفئة"])}</span>`}</div>
    <div class="ttl">${esc(j["المصنع"])}</div><div class="who">${esc(j["المؤهل"])}</div>
    <div class="pay">${esc(j["المرتب"])}</div>
    <div class="facts"><span>⏰ ${esc(j["الشفت"])}</span>${["السكن","المواصلات"].filter(k=>j[k]).map(k=>`<span>${ICON[k]} ${esc(j[k])}</span>`).join("")}</div>
-   <span class="more">التفاصيل ‹</span></button>`).join("");
+   ${done(j)?"":'<span class="more">التفاصيل ‹</span>'}</button>`).join("");
   $("list").querySelectorAll(".card").forEach(b=>b.onclick=()=>go(+b.dataset.i));
 }
-$("clr").onclick=()=>{cat="الكل";area="الكل";$("q").value="";draw()};
+$("clr").onclick=()=>{area="الكل";$("q").value="";draw()};
 $("q").oninput=draw;
 
 let came=false,sy=0;
 function go(i){came=true;sy=window.scrollY;location.hash="job"+i}
 function exitDetail(){if(came){came=false;history.back()}else{location.hash=""}}
 function route(){
-  const m=location.hash.match(/^#job(\d+)$/),j=m&&JOBS[+m[1]];
-  if(j){showDetail(j)}else{came=false;$("detail").style.display="none";$("main").style.display="";window.scrollTo(0,sy)}
+  const m=location.hash.match(/^#job(\d+)$/),j=m&&JOBS[+m[1]];   /* المكتمل مش بيفتح */
+  if(j&&!done(j)){showDetail(j)}else{came=false;$("detail").style.display="none";$("main").style.display="";window.scrollTo(0,sy)}
 }
 function showDetail(j){
   const ph=PHONE.replace(/\D/g,""),msg=encodeURIComponent(`السلام عليكم، عايز أقدم على وظيفة: ${j["المصنع"]} - ${j["المنطقة"]}`);
-  const extra=Object.keys(j).filter(k=>!CORE.includes(k)&&j[k]);
-  // مربع صغير: أيقونة + اسم الخانة + القيمة. الطويل ياخد مربعين أو صف كامل
-  const it=(ic,k,v)=>{const n=String(v).length,c=n>38?"full":n>14?"w2":"";return `<div class="it ${c}"><i>${ic}</i><small>${esc(k)}</small><b>${esc(v)}</b></div>`};
+  // مربع: اسم الخانة فوق وقيمتها تحت. القيمة الطويلة ياخد صف كامل
+  const it=k=>`<div class="it ${String(j[k]).length>26?"full":""}"><small>${ICON[k]||"•"} ${esc(k)}</small><b>${esc(j[k])}</b></div>`;
+  // قسم: عنوان + مربعاته (بيتخطى الخانات الفاضية)
+  const sec=(t,ks)=>{const r=ks.filter(k=>j[k]);return r.length?`<div class="sec"><h3>${t}</h3><div class="g2">${r.map(it).join("")}</div></div>`:""};
+  // <<< غيّر هنا: ترتيب الأقسام وأي خانة تتحط في أنهي قسم
+  const groups=[["الشغل",["الشفت","المؤهل","الأجازة"]],["الدفع والمميزات",["نظام القبض","السلف","التأمينات","وجبة"]],["السكن والمواصلات",["السكن","المواصلات"]]];
+  const used=groups.flatMap(g=>g[1]);
+  const other=Object.keys(j).filter(k=>!CORE.includes(k)&&!used.includes(k)&&j[k]);
   $("detail").innerHTML=`<div class="w dp"><div class="tb"><button class="exit" id="ex">✕ خروج</button></div>
    <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="badge ${kind(j["الفئة"]||"")}">${esc(j["الفئة"])}</span></div>
    <h2 class="ttl">${esc(j["المصنع"])}</h2>
    <div class="hero"><small>المرتب</small><b>${esc(j["المرتب"])}</b></div>
-   <div class="g2">${it("⏰","الشفت",j["الشفت"])}${it("🎓","المؤهل",j["المؤهل"])}${extra.map(k=>it(ICON[k]||"•",k,j[k])).join("")}</div></div>
+   ${groups.map(g=>sec(g[0],g[1])).join("")}${sec("تفاصيل أخرى",other)}</div>
    <div class="cta"><a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/${ph}?text=${msg}">قدم الآن عبر الواتساب</a><a class="btn" href="tel:+${ph}">📞 اتصل بنا</a></div>`;
   $("main").style.display="none";$("detail").style.display="block";window.scrollTo(0,0);
   $("ex").onclick=exitDetail;
