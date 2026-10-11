@@ -113,29 +113,36 @@ header{padding:.65rem 0 .55rem;position:sticky;top:env(safe-area-inset-top,0px);
   .card{padding:.7rem .85rem;margin-bottom:.45rem}
 }
 
-/* الهوية الجديدة: أزرق ملكي + كروت بيضاء + أزرق ثلجي */
-body{background:var(--bg);color:#fff}
-header h1,header .sub,header .lead{color:#fff}
-.bar,.tb{background:var(--bg)}.cta{background:#DCE9FA;border-color:#C6D8F2}
-.meta{color:#fff}
-.meta button,.more{color:#fff}
-.search input,.seg,.chip,.card,.sec,.trust span,.x,.exit,.fl input,.yn button{background:var(--card);color:var(--tx);border-color:var(--bd)}
-.seg button{color:#244A86}
-.seg button.on{background:var(--ac);color:#fff;box-shadow:0 2px 5px rgba(40,89,168,.18)}
-.chip.on{background:#D5E3FA;border-color:var(--ac);color:#244A86}
-.card{box-shadow:0 3px 10px rgba(10,25,55,.12)}
-.loc,.who,.pm,.it small{color:#65748A}
-.badge{background:#EAF0F8;color:#244A86}
-.pay{background:#F6E7B2;color:#202938;border-color:#D8B75B}
-.facts span,.it{background:#EAF0F8;color:#202938}
-.sec h3{color:#244A86}
-.hero{background:linear-gradient(135deg,#F8E9B7,#EBD17C);border-color:#D8B75B;box-shadow:0 4px 12px rgba(10,25,55,.16)}
-.hero small{color:#66511D}.hero b{color:#202938}.hero .pm2{color:#4D421F}
-.trust span{color:#202938}
-.btn{background:#F2F7FF;color:#244A86;border-color:#AFC8EC}
+/* الهوية الجديدة: خلفية سماوية هادئة + كروت بيضاء بارزة وواضحة */
+:root{--bg:#EAF4FF;--card:#FFFFFF;--tx:#17365D;--mu:#5D718A;--bd:#C9DDF4;--ac:#1456A0;--acs:#DCEEFF;--sh:0 8px 22px rgba(24,75,135,.10)}
+body{background:linear-gradient(180deg,#F4F9FF 0%,#E8F3FF 100%);color:var(--tx)}
+header{background:rgba(244,249,255,.96);box-shadow:0 3px 12px rgba(30,77,130,.06)}
+header h1,header .sub,header .lead{color:#164B8C}
+.bar,.tb{background:rgba(234,244,255,.97)}
+.cta{background:#F4F9FF;border-color:#C9DDF4}
+.meta{color:#315578}
+.meta button,.more{color:#1456A0}
+.search input,.seg,.chip,.sec,.trust span,.x,.exit,.fl input,.yn button{background:#FFFFFF;color:var(--tx);border-color:#C9DDF4}
+.seg{box-shadow:0 3px 10px rgba(24,75,135,.05)}
+.seg button{color:#315578}
+.seg button.on{background:linear-gradient(135deg,#1D67B5,#124B91);color:#fff;box-shadow:0 3px 8px rgba(20,86,160,.22)}
+.chip{box-shadow:0 2px 7px rgba(24,75,135,.04)}
+.chip.on{background:#DCEEFF;border-color:#8BB9EC;color:#1456A0}
+.card{background:#FFFFFF;border:1.5px solid #C6DCF5;border-radius:1.25rem;padding:clamp(.8rem,3vw,1rem);margin-bottom:.85rem;box-shadow:0 8px 22px rgba(24,75,135,.11);transition:transform .15s,box-shadow .15s}
+.card:active{transform:scale(.992);box-shadow:0 3px 10px rgba(24,75,135,.12)}
+.loc,.who,.pm,.it small{color:#61758D}
+.badge{background:#E7F1FC;color:#24558A}
+.pay{background:linear-gradient(135deg,#FFF1BC,#FFE59A);color:#17365D;border:1px solid #F0D477;border-radius:.85rem;box-shadow:inset 0 1px 0 rgba(255,255,255,.75)}
+.facts span,.it{background:#EAF4FF;color:#17365D;border:1px solid #D7E8FA}
+.sec{background:#FFFFFF;border:1px solid #D0E2F5;box-shadow:0 5px 15px rgba(24,75,135,.07)}
+.sec h3{color:#1456A0}
+.hero{background:linear-gradient(135deg,#FFF1BC,#FFE59A);border-color:#F0D477;box-shadow:0 5px 14px rgba(24,75,135,.12)}
+.hero small{color:#6B561D}.hero b{color:#17365D}.hero .pm2{color:#6B561D}
+.trust span{color:#17365D;background:#FFFFFF}
+.btn{background:#F7FBFF;color:#1456A0;border-color:#BBD4F1}
 .btn.wa,.fab{background:#159B50;color:#fff}
-.demo{background:#EAF0F8;color:#202938;border-color:#D7E0ED}
-.empty{color:#fff}
+.demo{background:#FFFFFF;color:#17365D;border-color:#D0E2F5}
+.empty{color:#315578}
 
 </style>
 </head>
@@ -269,7 +276,7 @@ function draw(){
    <div class="ttl">${esc(j["المصنع"])}</div><div class="who">${esc(j["المؤهل"])}</div>
    <div class="pay">${esc(j["المرتب"])}</div>${j["تفاصيل المرتب"]?`<div class="pm">${esc(j["تفاصيل المرتب"])}</div>`:""}
    <div class="facts"><span>⏰ ${esc(j["الشفت"])}</span>${["السكن","المواصلات"].filter(k=>j[k]).map(k=>`<span>${ICON[k]} ${esc(j[k])}</span>`).join("")}</div>
-   ${done(j)?"":'<span class="more">التفاصيل ‹</span>'}</button>`).join("");
+   ${done(j)?"":'<span class="more">عرض تفاصيل الوظيفة ←</span>'}</button>`).join("");
   $("list").querySelectorAll(".card").forEach(b=>b.onclick=()=>go(+b.dataset.i));
 }
 $("clr").onclick=()=>{area="الكل";draw()};
