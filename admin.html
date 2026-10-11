@@ -146,13 +146,14 @@ const COL = {
   status:  'الحالة'    // <<< غيّر هنا: اسم عمود الحالة
 };
 
-const SAL_SUFFIX = ' ج في الشهر'; // <<< غيّر هنا: الكلمة اللي بتتضاف تلقائي لو كتبت رقم بس في خانة المرتب
+const SAL_SUFFIX30 = ' ج في الشهر'; // <<< غيّر هنا: الكلمة اللي بتتضاف تلقائي لو كتبت رقم بس في خانة 30 يوم
+const SAL_SUFFIX26 = ' ج';          // <<< غيّر هنا: الكلمة اللي بتتضاف تلقائي لو كتبت رقم بس في خانة 26 يوم
 const DATE_COL = 'تاريخ الإضافة'; // <<< غيّر هنا: اسم عمود تاريخ الإضافة
 const todayStr = () => new Date().toISOString().slice(0, 10);
 // رقم بس؟ بنكمّله (8000 ← 8000 ج في الشهر). بيفهم الأرقام العربي والفاصلة
-function normSalary(x){
+function normSalary(x, col){
   let t = String(x).trim().replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
-  if (/^[\d.,]+$/.test(t)) t = t.replace(/,/g, '') + SAL_SUFFIX;
+  if (/^[\d.,]+$/.test(t)) t = t.replace(/,/g, '') + (col === COL.salary26 ? SAL_SUFFIX26 : SAL_SUFFIX30);
   return t;
 }
 
@@ -559,7 +560,7 @@ function openForm(r, asCopy){
     // رقم بس في خانة المرتب؟ بنكمّلها أوتوماتيك (8000 ← 8000 ج في الشهر)
     [COL.salary30, COL.salary26].forEach(c => {
       if (!(c in data)) return;
-      data[c] = normSalary(data[c]);
+      data[c] = normSalary(data[c], c);
     });
     // تاريخ الإضافة أوتوماتيك للمصنع الجديد لو فاضي
     if (!r && DATE_COL in data && !String(data[DATE_COL]).trim()) data[DATE_COL] = todayStr();
