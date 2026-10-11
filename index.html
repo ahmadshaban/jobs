@@ -34,15 +34,15 @@ header{padding:1.2rem 0 .6rem}h1{font-size:1.75rem;font-weight:800;margin:0;line
 .chip.on{background:var(--acs);border-color:var(--ac);color:var(--ac);font-weight:700}
 .meta{display:flex;justify-content:space-between;align-items:center;color:var(--mu);font-size:.88rem;margin:.6rem 0 .5rem}
 .meta button{font:inherit;color:var(--ac);background:none;border:0;font-weight:700;cursor:pointer}
-.card{display:block;width:100%;text-align:start;font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:1.05rem;padding:.8rem .95rem;margin-bottom:.6rem;box-shadow:var(--sh);cursor:pointer;transition:transform .12s}
+.card{display:block;width:100%;text-align:start;font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:.95rem;padding:clamp(.55rem,2.2vw,.7rem) clamp(.65rem,2.8vw,.85rem);margin-bottom:clamp(.35rem,1.5vw,.5rem);box-shadow:var(--sh);cursor:pointer;transition:transform .12s}
 .card:active{transform:scale(.985)}
-.top{display:flex;justify-content:space-between;align-items:center;gap:.5rem;font-size:.82rem}
+.top{display:flex;justify-content:space-between;align-items:center;gap:.4rem;font-size:clamp(.74rem,2.7vw,.8rem)}
 .loc{color:var(--mu);font-weight:600}.badge{font-weight:700;border-radius:99px;padding:.1rem .65rem;background:var(--acs);color:var(--ac)}
 .badge.g{background:#fde7f1;color:#be185d}.badge.m{background:#dff3f8;color:#0e7490}
-.ttl{font-size:1.02rem;font-weight:800;margin:.25rem 0 .05rem}.who{color:var(--mu);font-size:.85rem}
+.ttl{font-size:clamp(.92rem,3.6vw,1rem);font-weight:800;margin:.18rem 0 .03rem;line-height:1.35}.who{color:var(--mu);font-size:clamp(.76rem,2.8vw,.82rem)}
 /* <<< غيّر هنا: شكل المرتب في الكروت */
-.pay{display:inline-block;font-size:1.2rem;font-weight:800;color:var(--ac);background:var(--acs);border-radius:.75rem;padding:.3rem .7rem;margin:.4rem 0 .15rem}
-.facts{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.4rem}.facts span{font-size:.76rem;background:var(--bg);border-radius:.55rem;padding:.15rem .5rem;color:var(--mu)}
+.pay{display:inline-block;font-size:clamp(1.02rem,4vw,1.12rem);font-weight:800;color:var(--ac);background:var(--acs);border-radius:.65rem;padding:.22rem .58rem;margin:.28rem 0 .08rem;line-height:1.35}
+.facts{display:flex;flex-wrap:wrap;gap:.25rem;margin-top:.28rem}.facts span{font-size:clamp(.68rem,2.5vw,.73rem);background:var(--bg);border-radius:.5rem;padding:.12rem .4rem;color:var(--mu)}
 .pm{color:var(--mu);font-size:.78rem;font-weight:700;margin:.1rem 0 0}.pm2{display:block;color:rgba(255,255,255,.88);font-size:.78rem;font-weight:700;margin-top:.1rem}
 .more{display:block;text-align:end;color:var(--ac);font-weight:700;font-size:.8rem;margin-top:.35rem}
 .sk{height:7.2rem;border-radius:1.2rem;background:linear-gradient(90deg,var(--card),var(--bd),var(--card));background-size:200% 100%;animation:sk 1.2s infinite;margin-bottom:.75rem}
@@ -100,6 +100,18 @@ header{padding:1.2rem 0 .6rem}h1{font-size:1.75rem;font-weight:800;margin:0;line
 .er{color:#b91c1c;font-size:.82rem;font-weight:700;margin-top:.25rem}.er:empty{display:none}
 .fgo{padding:.6rem 1.1rem calc(.7rem + env(safe-area-inset-bottom,0px));border-top:1px solid var(--bd);background:var(--bg)}
 .fgo .btn{width:100%;min-height:2.9rem;font-size:1rem;border:0}
+
+/* تحسين كثافة كروت الوظائف في الشاشات الصغيرة فقط */
+@media(max-width:380px){
+  .w{padding-inline:.7rem}
+  .card{padding:.5rem .6rem;border-radius:.85rem}
+  .bd2{gap:.2rem}
+  .badge{padding:.08rem .48rem}
+  .pm{font-size:.72rem}
+}
+@media(min-width:640px){
+  .card{padding:.7rem .85rem;margin-bottom:.45rem}
+}
 </style>
 </head>
 <body>
