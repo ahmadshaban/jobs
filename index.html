@@ -45,6 +45,9 @@ header{padding:.65rem 0 .55rem;position:sticky;top:env(safe-area-inset-top,0px);
 .ttl{font-size:clamp(.92rem,3.6vw,1rem);font-weight:800;margin:.18rem 0 .03rem;line-height:1.35}.who{color:var(--mu);font-size:clamp(.76rem,2.8vw,.82rem)}
 /* <<< غيّر هنا: شكل المرتب في الكروت */
 .pay{display:block;width:fit-content;max-width:100%;font-size:clamp(1.16rem,4.4vw,1.28rem);font-weight:800;color:#202938;background:linear-gradient(135deg,#FFF4C9,#F3D982);border:1px solid #D8B75B;border-radius:.72rem;padding:.28rem .85rem;margin:.34rem 0 .12rem;line-height:1.35;box-shadow:0 2px 5px rgba(120,88,20,.10)}
+/* <<< غيّر هنا: شكل خانتين المرتب (30 يوم / 26 يوم) في الكارت */
+.pays{display:flex;flex-wrap:wrap;gap:.35rem;margin:.34rem 0 .12rem}.pays .pay{margin:0}.pay small{display:block;font-size:.66rem;font-weight:800;color:#66511D;line-height:1.2}
+.pt{display:block;width:100%;text-align:center}.pt+.pt{margin-top:.4rem;padding-top:.4rem;border-top:1px dashed #C9A53A}.pt small{display:block}.pt b{display:block}
 .facts{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.32rem}.facts span{font-size:clamp(.68rem,2.5vw,.73rem);background:#E5EEFC;border:1px solid #D1E0F7;border-radius:.55rem;padding:.14rem .46rem;color:#244A86}
 .pm{color:var(--mu);font-size:.78rem;font-weight:700;margin:.1rem 0 0}.pm2{display:block;color:rgba(255,255,255,.88);font-size:.78rem;font-weight:700;margin-top:.1rem}
 .more{display:block;text-align:end;color:var(--ac);font-weight:700;font-size:.8rem;margin-top:.35rem}
@@ -184,7 +187,7 @@ const PHONE = "201095237207";   // رقم الواتساب بصيغة دولية
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1Ri61Py0q36t2EdMCWXa0lgJGDWJfrXjY0gHmqnwS4AM/gviz/tq?tqx=out:csv&headers=1&sheet=%D8%A7%D9%84%D9%88%D8%B8%D8%A7%D8%A6%D9%81";
 
 
-const CORE=["المنطقة","الفئة","المصنع","المؤهل","الشفت","السن","طبيعة العمل","المرتب","تفاصيل المرتب","ظاهر؟","الحالة","تاريخ الإضافة"];   // "تفاصيل المرتب" عمود اختياري تكتبه بإيدك للمصانع اللي باليومية
+const CORE=["المنطقة","الفئة","المصنع","المؤهل","الشفت","السن","طبيعة العمل","المرتب","مرتب 30 يوم","مرتب 26 يوم","تفاصيل المرتب","ظاهر؟","الحالة","تاريخ الإضافة"];   // "تفاصيل المرتب" عمود اختياري تكتبه بإيدك للمصانع اللي باليومية
 const done=j=>(j["الحالة"]||"").includes("مكتمل");   // <<< عمود الحالة = مكتمل
 const urgent=j=>(j["الحالة"]||"").includes("عاجل");   // <<< عمود الحالة = عاجل
 const NEW_DAYS=3;                                    // <<< غيّر هنا: عدد أيام شارة "جديد"
@@ -194,10 +197,16 @@ const NEW_DAYS=3;                                    // <<< غيّر هنا: ع�
 const REAL_HOSTS=["ahmadshaban.github.io"];
 const IS_DEMO_HOST=!REAL_HOSTS.includes(location.hostname);
 const TODAY=new Date().toISOString().slice(0,10);
+// <<< غيّر هنا: أسماء عواميد المرتب في الشيت + كلمة الإجازة اللي بتظهر مع 26 يوم
+const P30="مرتب 30 يوم", P26="مرتب 26 يوم", OFF26="26 يوم عمل + 4 أيام إجازة";
+// بترجّع الخانات اللي فيها قيمة بس (30 / 26 / أو الاتنين). لو الاتنين فاضيين بترجع المرتب القديم
+function pays(j){const a=[];if(j[P30])a.push(["30 يوم عمل",j[P30]]);if(j[P26])a.push([OFF26,j[P26]]);return a}
+function payText(j){const a=pays(j);return a.length?a.map(x=>x[0]+": "+x[1]).join(" | "):(j["المرتب"]||"")}
 const DEMO=[
 {"المنطقة":"العاشر من رمضان","الفئة":"شباب","المصنع":"مصنع تعبئة (تجريبي)","السن":"18 - 35","طبيعة العمل":"تعبئة وتغليف","المؤهل":"أي مؤهل","الشفت":"12 ساعة","المرتب":"12000 ج في الشهر","تفاصيل المرتب":"9000 أساسي (300 ج في اليوم) + 3000 حافز انتظام","السكن":"متوفر","نظام القبض":"شهري","المواصلات":"داخلية","الحالة":"عاجل","تاريخ الإضافة":TODAY,"ظاهر؟":"نعم"},
 {"المنطقة":"مدينة السادات","الفئة":"شباب","المصنع":"مصنع تغليف (تجريبي)","السن":"18 - 40","طبيعة العمل":"تغليف","المؤهل":"أي مؤهل","الشفت":"10 ساعات","المرتب":"7000 ج في الشهر","السكن":"مفيش","المواصلات":"خارجية","ظاهر؟":"نعم"},
 {"المنطقة":"6 أكتوبر","الفئة":"بنات","المصنع":"مصنع فرز (تجريبي)","السن":"18 - 30","طبيعة العمل":"فرز","المؤهل":"مؤهلات","الشفت":"9 ساعات","المرتب":"200 ج في اليوم","تفاصيل المرتب":"حوالي 5200 ج في الشهر","السكن":"مفيش","المواصلات":"خارجية","ظاهر؟":"نعم"},
+{"المنطقة":"العبور","الفئة":"شباب","المصنع":"مصنع ملابس (تجريبي)","السن":"18 - 35","المؤهل":"أي مؤهل","الشفت":"10 ساعات","مرتب 30 يوم":"8000 ج في الشهر","مرتب 26 يوم":"7000 ج في الشهر","ظاهر؟":"نعم"},
 {"المنطقة":"بدر","الفئة":"شباب وبنات","المصنع":"مصنع مكتمل (تجريبي)","المؤهل":"أي مؤهل","الشفت":"8 ساعات","المرتب":"6500 ج في الشهر","الحالة":"مكتمل","ظاهر؟":"نعم"}
 ];
 
@@ -296,7 +305,7 @@ function draw(){
    return `<button class="card ${done(j)?"done":""}" data-i="${JOBS.indexOf(j)}" ${done(j)?"disabled":""}>
    <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="bd2">${tags(j)}</span></div>
    <div class="ttl">${esc(j["المصنع"])}</div>
-   <div class="pay">${esc(j["المرتب"])}</div>
+   ${pays(j).length?`<div class="pays">${pays(j).map(x=>`<div class="pay"><small>${esc(x[0])}</small>${esc(x[1])}</div>`).join("")}</div>`:(j["المرتب"]?`<div class="pay">${esc(j["المرتب"])}</div>`:"")}
    ${fx.length?`<div class="fx">${fx.map(x=>`<div><small>${esc(x[0])}</small><b>${esc(x[1])}</b></div>`).join("")}</div>`:""}
    ${tg?`<div class="tg">${tg}</div>`:""}
    ${done(j)?'<span class="more">اكتمل العدد</span>':'<span class="more">لو عايز تعرف تفاصيل أكتر دوس هنا ←</span>'}</button>`}).join("");
@@ -353,13 +362,14 @@ function setupApply(j,ph){
 function showDetail(j){
   const ph=PHONE.replace(/\D/g,""),
    link=location.origin+location.pathname+"?j="+hid(j["المصنع"]),
-   shareMsg=encodeURIComponent(`وظيفة: ${j["المصنع"]} - ${j["المنطقة"]}\n${j["المرتب"]||""}\n${link}`);
+   shareMsg=encodeURIComponent(`وظيفة: ${j["المصنع"]} - ${j["المنطقة"]}\n${payText(j)}\n${link}`);
   // مربع: اسم الخانة فوق وقيمتها تحت. القيمة الطويلة ياخد صف كامل
   const it=k=>`<div class="it ${(k==="طبيعة العمل"||String(j[k]).length>26)?"full":""}"><small>${ICON[k]||"•"} ${esc(k)}</small><b>${esc(j[k])}</b></div>`;
   // قسم: عنوان + مربعاته (بيتخطى الخانات الفاضية)
   const sec=(t,ks,pre)=>{const r=ks.filter(k=>j[k]);return (r.length||pre)?`<div class="sec"><h3>${t}</h3><div class="g2">${pre||""}${r.map(it).join("")}</div></div>`:""};
   // المرتب أول مربع جوه "الأساسيات"
-  const payTile=`<div class="it pay2 full"><small>💰 المرتب</small><b>${esc(j["المرتب"])}</b>${j["تفاصيل المرتب"]?`<span class="pm2">${esc(j["تفاصيل المرتب"])}</span>`:""}</div>`;
+  const pp=pays(j);
+  const payTile=`<div class="it pay2 full">${pp.length?pp.map(x=>`<div class="pt"><small>💰 ${esc(x[0])}</small><b>${esc(x[1])}</b></div>`).join(""):`<small>💰 المرتب</small><b>${esc(j["المرتب"]||"")}</b>`}${j["تفاصيل المرتب"]?`<span class="pm2">${esc(j["تفاصيل المرتب"])}</span>`:""}</div>`;
   // <<< غيّر هنا: ترتيب الأقسام وأي خانة تتحط في أنهي قسم
   const groups=[["الأساسيات",["السن","الشفت","طبيعة العمل","المؤهل","الأجازة"],payTile],["المرتب والمميزات",["نظام القبض","السلف","التأمينات","وجبة"]],["السكن والمواصلات",["السكن","المواصلات"]]];
   const used=groups.flatMap(g=>g[1]);
