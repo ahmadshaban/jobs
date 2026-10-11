@@ -100,9 +100,8 @@ header h1{margin:0;font-size:18px;color:var(--c-main)}
 <div id="app" class="hidden">
   <header>
     <h1 id="title"></h1>
-    <input id="q" type="search">
-    <select id="areaFilter" aria-label="اختيار المكان">
-      <option value="">كل الأماكن</option>
+    <select id="areaFilter" aria-label="اختيار المكان" required>
+      <option value="">اختار المكان أولًا</option>
     </select>
     <div class="bar">
       <button class="btn" id="bNew"></button>
@@ -172,6 +171,7 @@ const T = {
 
 let headers = [], rows = [];
 let modalHistoryOpen = false;
+let requestBusy = false;
 const $ = id => document.getElementById(id);
 
 // جلسة دخول على نفس الجهاز لمدة 30 دقيقة من آخر نشاط
@@ -239,14 +239,29 @@ function toast(msg, ok){
 // بتبعت الطلب للـ Web app وبترجع الرد
 async function api(action, extra){
   if (API.indexOf('PASTE_') === 0) return {ok:false, error:T.noApi};
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 20000);
   try{
     const r = await fetch(API, {
       method:'POST',
       headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body:JSON.stringify(Object.assign({password:savedPassword(), action}, extra||{}))
+      body:JSON.stringify(Object.assign({password:savedPassword(), action}, extra||{})),
+      signal:controller.signal
     });
-    return await r.json();
-  }catch(e){ return {ok:false, error:T.netErr}; }
+    if (!r.ok) return {ok:false, error:'السيرفر رجّع خطأ (' + r.status + ')'};
+    try {
+      return await r.json();
+    } catch(parseError) {
+      return {ok:false, error:'وصل رد غير مفهوم من السيرفر. جرّب التحديث بعد التأكد من الاتصال.'};
+    }
+  }catch(e){
+    if (e && e.name === 'AbortError') {
+      return {ok:false, error:'الاتصال اتأخر أكثر من 20 ثانية. لم نعدّل الصفحة تلقائيًا؛ افحص الاتصال ثم جرّب مرة أخرى.'};
+    }
+    return {ok:false, error:T.netErr + ' — جرّب مرة أخرى بعد لحظات'};
+  }finally{
+    clearTimeout(timeoutId);
+  }
 }
 
 // بتحمل العناوين والصفوف من الشيت وتعرضهم
@@ -259,11 +274,24 @@ async function load(){
 
 // بتنفذ أمر وتظهر النتيجة وتحدّث القايمة
 async function run(action, extra){
-  const r = await api(action, extra);
-  if (!r.ok){ toast(T.errMsg + r.error, false); return false; }
-  toast(T.okMsg, true);
-  await load();
-  return true;
+  if (requestBusy) {
+    toast('فيه طلب شغال بالفعل، استنى لحد ما يخلص.', false);
+    return false;
+  }
+  requestBusy = true;
+  try{
+    const r = await api(action, extra);
+    if (!r.ok){ toast(T.errMsg + r.error, false); return false; }
+    toast(T.okMsg, true);
+    const refreshed = await load();
+    if (!refreshed) toast('تم إرسال العملية، لكن تعذر تحديث القائمة. اضغط تحديث بعد التأكد من الاتصال.', false);
+    return true;
+  }catch(e){
+    toast('حصل خطأ غير متوقع. جرّب مرة أخرى.', false);
+    return false;
+  }finally{
+    requestBusy = false;
+  }
 }
 
 // ===== [5] شاشة الدخول =====
@@ -320,28 +348,26 @@ function cardHTML(r){
     '</div></div>';
 }
 
-// بترسم القايمة كلها حسب البحث وبحدّث العدد
+// قائمة الأماكن تُبنى من البيانات الفعلية في الشيت
 function updateAreaFilter(){
   const filter = $('areaFilter');
   const selected = filter.value;
   const areas = [...new Set(rows.map(r => val(r, COL.area).trim()).filter(Boolean))]
     .sort((a, b) => a.localeCompare(b, 'ar'));
-  filter.innerHTML = '<option value="">كل الأماكن</option>' +
+  filter.innerHTML = '<option value="">اختار المكان أولًا</option>' +
     areas.map(area => '<option value="' + esc(area) + '">' + esc(area) + '</option>').join('');
   if (areas.includes(selected)) filter.value = selected;
 }
 
-// بترسم القايمة حسب البحث والمكان المختار
+// لا تظهر المصانع قبل اختيار مكان
 function render(){
   updateAreaFilter();
-  const q = $('q').value.trim().toLowerCase();
   const area = $('areaFilter').value;
-  const list = rows.filter(r =>
-    (!q || r.values.join(' ').toLowerCase().indexOf(q) >= 0) &&
-    (!area || val(r, COL.area).trim() === area)
-  );
-  $('title').textContent = T.title + ' (' + list.length + ' من ' + rows.length + ')';
-  $('list').innerHTML = list.length ? list.map(cardHTML).join('') : '<div class="empty">' + esc(T.empty) + '</div>';
+  const list = area ? rows.filter(r => val(r, COL.area).trim() === area) : [];
+  $('title').textContent = T.title + (area ? ' (' + list.length + ')' : '');
+  $('list').innerHTML = area
+    ? (list.length ? list.map(cardHTML).join('') : '<div class="empty">' + esc(T.empty) + '</div>')
+    : '<div class="empty">اختار المكان من القائمة لعرض المصانع التابعة له.</div>';
 }
 
 // ===== [7] أزرار الكارت =====
@@ -375,6 +401,39 @@ $('list').addEventListener('click', async e => {
 // ===== [8] نموذج الإضافة والتعديل =====
 
 // بتبني النموذج من عناوين الأعمدة وتفتحه (r فاضي = وظيفة جديدة)
+// اختيارات متكررة مجمعة من البيانات الحالية والمرجع السابق؛ المرتب واسم المصنع يظلان كتابة يدوية
+function presetOptions(header){
+  const h = String(header || '').toLowerCase();
+  if (h.includes('شفت') || h.includes('shift') || h.includes('ساعات')) {
+    return ['8 ساعات','8 ساعات (بساعة راحة)','9 ساعات (من 8 صباحًا إلى 5 مساءً، بساعة راحة)','10 ساعات','12 ساعة','12 ساعة (من 8 صباحًا إلى 8 مساءً)','15 ساعة','16 ساعة (بساعتين راحة)'];
+  }
+  if (h.includes('مواصل') || h.includes('نقل')) {
+    return ['مواصلات داخلية مجانية','مواصلات داخلية فقط من الحي 12','مواصلات من السكن للمصنع ومن المصنع للسكن بعد انتهاء الوردية','لا توجد مواصلات خارجية','غير متوفر مواصلات'];
+  }
+  if (h.includes('سكن') || h.includes('إقامة') || h.includes('اقامة')) {
+    return ['سكن مجاني للبنات مجهز بالكامل','متوفر سكن للبنات','غير متوفر سكن','غير مذكور سكن','يوجد سكن عام بالشركة','سكن للمغتربين'];
+  }
+  if (h.includes('طبيعة') || h.includes('عمل') || h.includes('وظيفة') || h.includes('مهام')) {
+    return ['تعبئة وتغليف','فرز على خطوط الإنتاج','تعبئة وتغليف وفرز على خطوط الإنتاج داخل المصنع','وضع استيكر','وردية صباحية'];
+  }
+  if (h.includes('وجبة') || h.includes('أكل') || h.includes('اكل') || h.includes('طعام') || h.includes('غذاء')) {
+    return ['وجبات مدعمة','وجبة ساخنة','وجبة أرز وفراخ وخضار','غير متوفر وجبات'];
+  }
+  if (h.includes('قبض') || h.includes('دفع') || h.includes('صرف')) {
+    return ['قبض شهري','قبض أسبوعي','قبض يومي','سلف يومية وأسبوعية'];
+  }
+  if (h.includes('سن') || h.includes('عمر')) {
+    return ['من 16 إلى 55 سنة','من 16 إلى 60 سنة','من 17 إلى 45 سنة','من 18 إلى 40 سنة','من 18 إلى 55 سنة'];
+  }
+  if (h.includes('فئة') || h.includes('نوع') || h.includes('جنس')) {
+    return ['شباب','بنات','ذكور','إناث','شباب وبنات'];
+  }
+  if (h.includes('منطقة') || h.includes('مكان') || h.includes('مدينة')) {
+    return ['مدينة العاشر من رمضان','مدينة السادات – محافظة المنوفية','مدينة 6 أكتوبر – محافظة الجيزة','مدينة بدر – محافظة القاهرة','مدينة العبور'];
+  }
+  return [];
+}
+
 function openForm(r){
   const fields = headers.map((h, i) => {
     if (!h) return '';
@@ -382,11 +441,24 @@ function openForm(r){
     let input;
     if (h === COL.visible){
       input = '<select data-i="' + i + '">' +
-        [T.yes, T.no].map(o => '<option' + (o === v ? ' selected' : '') + '>' + esc(o) + '</option>').join('') + '</select>';
+        [T.yes, T.no].map(o => '<option value="' + esc(o) + '"' + (o === v ? ' selected' : '') + '>' + esc(o) + '</option>').join('') + '</select>';
     } else if (h === COL.status){
       input = '<select data-i="' + i + '"><option value=""' + (v === '' ? ' selected' : '') + '></option>' +
-        '<option' + (v === T.doneValue ? ' selected' : '') + '>' + esc(T.doneValue) + '</option>' +
-        '<option' + (v === T.urgentValue ? ' selected' : '') + '>' + esc(T.urgentValue) + '</option></select>';
+        '<option value="' + esc(T.doneValue) + '"' + (v === T.doneValue ? ' selected' : '') + '>' + esc(T.doneValue) + '</option>' +
+        '<option value="' + esc(T.urgentValue) + '"' + (v === T.urgentValue ? ' selected' : '') + '>' + esc(T.urgentValue) + '</option></select>';
+    } else if (!/(المصنع|اسم المصنع|factory)/i.test(h) && !/(المرتب|الراتب|مرتب|راتب|salary)/i.test(h)) {
+      const known = presetOptions(h);
+      const existing = rows.map(row => val(row, h).trim()).filter(Boolean);
+      const opts = [...new Set([...known, ...existing, ...(v ? [v] : [])])];
+      if (opts.length) {
+        input = '<select data-i="' + i + '">' +
+          '<option value="">— اختر —</option>' +
+          opts.map(o => '<option value="' + esc(o) + '"' + (o === v ? ' selected' : '') + '>' + esc(o) + '</option>').join('') +
+          '<option value="__custom__">إدخال قيمة جديدة...</option></select>' +
+          '<input class="custom-field hidden" data-custom-i="' + i + '" placeholder="اكتب قيمة جديدة" value="">';
+      } else {
+        input = '<input data-i="' + i + '" value="' + esc(v) + '">';
+      }
     } else {
       input = '<input data-i="' + i + '" value="' + esc(v) + '">';
     }
@@ -401,12 +473,34 @@ function openForm(r){
   }
   $('modal').classList.remove('hidden');
   $('fCancel').onclick = closeForm;
+  $('sheet').querySelectorAll('select[data-i]').forEach(el => {
+    el.addEventListener('change', () => {
+      const custom = $('sheet').querySelector('[data-custom-i="' + el.dataset.i + '"]');
+      if (custom) {
+        custom.classList.toggle('hidden', el.value !== '__custom__');
+        if (el.value === '__custom__') custom.focus();
+      }
+    });
+  });
   $('fSave').onclick = async () => {
     const data = {};
-    $('sheet').querySelectorAll('[data-i]').forEach(el => { data[headers[Number(el.dataset.i)]] = el.value; });
+    $('sheet').querySelectorAll('[data-i]').forEach(el => {
+      const index = Number(el.dataset.i);
+      const custom = $('sheet').querySelector('[data-custom-i="' + index + '"]');
+      data[headers[index]] = (el.value === '__custom__' && custom) ? custom.value.trim() : el.value;
+    });
+    if ([...$('sheet').querySelectorAll('select[data-i]')].some(el => el.value === '__custom__' && !$('sheet').querySelector('[data-custom-i="' + el.dataset.i + '"]').value.trim())) {
+      toast('اكتب القيمة الجديدة أو اختار قيمة من القائمة.', false);
+      return;
+    }
     $('fSave').disabled = true;
+    $('fSave').textContent = 'جارٍ الحفظ...';
     const ok = r ? await run('update', {row:r.row, data}) : await run('add', {data});
-    if (ok) closeForm(); else $('fSave').disabled = false;
+    if (ok) closeForm();
+    else {
+      $('fSave').disabled = false;
+      $('fSave').textContent = T.save;
+    }
   };
 }
 
@@ -434,7 +528,6 @@ function init(){
   $('loginTitle').textContent = T.loginTitle;
   $('pw').placeholder = T.pwHint;
   $('loginBtn').textContent = T.login;
-  $('q').placeholder = T.search;
   $('bNew').textContent = T.newJob;
   $('bCol').textContent = T.newCol;
   $('bRef').textContent = T.refresh;
@@ -442,7 +535,6 @@ function init(){
 
   $('loginBtn').onclick = () => { $('loginErr').textContent = ''; login($('pw').value); };
   $('pw').addEventListener('keydown', e => { if (e.key === 'Enter') $('loginBtn').click(); });
-  $('q').addEventListener('input', render);
   $('areaFilter').addEventListener('change', render);
   $('bNew').onclick = () => openForm(null);
   $('bRef').onclick = load;
