@@ -80,8 +80,6 @@ header h1{margin:0;font-size:18px;color:#fff}
 .fab{position:fixed;bottom:20px;inset-inline-end:16px;z-index:6;width:56px;height:56px;border-radius:50%;border:0;background:#FFE45C;color:#0E3560;font-size:32px;font-weight:700;line-height:1;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.4)}
 .fab:disabled{opacity:.5}
 .sheet .row{position:sticky;bottom:-1px;background:#0B2A4A;padding:10px 0 4px;box-shadow:0 -8px 10px -6px rgba(0,0,0,.45)}
-.meta span.sal{background:#FFE45C;color:#0E3560;font-weight:700;cursor:pointer}
-.meta span.sal.empty{background:transparent;color:#FFE45C;border:1px dashed #FFE45C;font-weight:400}
 #toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);padding:10px 18px;border-radius:12px;color:#fff;font-weight:700;z-index:20;max-width:90%;box-shadow:0 4px 18px rgba(0,0,0,.18)}
 #toast.ok{background:#16803d}
 #toast.bad{background:#B42318}
@@ -385,13 +383,10 @@ function cardHTML(r){
   const done = val(r, COL.status).trim() === T.doneValue;
   const urg = val(r, COL.status).trim() === T.urgentValue;
   const hasNew = val(r, COL.salary30) || val(r, COL.salary26);
-  // خانات عادية (المنطقة، الفئة، الشفت، والمرتب القديم لو المصنع لسه ما اتعدّلش)
-  const plain = [COL.area, COL.gender, COL.shift, ...(hasNew ? [] : [COL.salary])]
-    .map(c => val(r, c)).filter(Boolean).map(v => '<span>' + esc(v) + '</span>').join('');
-  // خانتين المرتب: دوس على أي واحدة تعدّلها من مكانها (الفاضية بتظهر بـ +)
-  const salChip = (c, lbl) => '<span class="sal' + (val(r, c) ? '' : ' empty') + '" data-sal="' + esc(c) + '" data-row="' + r.row + '">' +
-    (val(r, c) ? esc(lbl + ': ' + val(r, c)) : '+ ' + esc(lbl)) + '</span>';
-  const meta = plain + salChip(COL.salary30, '30 يوم') + salChip(COL.salary26, '26 يوم');
+  // الكارت بيعرض المرتب للمعلومة بس (التعديل من جوه فورم التعديل)
+  const meta = [COL.area, COL.gender, COL.shift, ...(hasNew ? [COL.salary30, COL.salary26] : [COL.salary])]
+    .map(c => !val(r, c) ? '' : (c === COL.salary30 ? '30 يوم: ' : c === COL.salary26 ? '26 يوم: ' : '') + val(r, c))
+    .filter(Boolean).map(v => '<span>' + esc(v) + '</span>').join('');
   return '<div class="card' + (hid ? ' dim' : '') + '">' +
     '<h2>' + esc(val(r, COL.factory)) +
       (done ? '<span class="badge done">' + esc(T.doneBadge) + '</span>' : '') +
@@ -439,18 +434,6 @@ function render(){
 
 // بتتعامل مع ضغطة أي زرار جوه الكارت
 $('list').addEventListener('click', async e => {
-  const sal = e.target.closest('[data-sal]');
-  if (sal) {
-    const col = sal.dataset.sal, row = Number(sal.dataset.row);
-    const rr = rows.find(x => x.row === row);
-    if (!rr) return;
-    // المرتب القديم (من العمود القديم) بيظهر في الرسالة، وبيتحط جاهز في خانة 30 يوم لو فاضية
-    const old = String(val(rr, COL.salary) || '').trim();
-    const cur = val(rr, col) || (col === COL.salary30 ? old : '');
-    const nv = prompt(col + (old ? '\nالمرتب القديم: ' + old : '') + '\nاكتب الرقم بس (سيبه فاضي للمسح)', cur);
-    if (nv === null) return;
-    return run('update', {row, data:{[col]: normSalary(nv)}});
-  }
   const b = e.target.closest('button[data-act]');
   if (!b) return;
   const row = Number(b.dataset.row);

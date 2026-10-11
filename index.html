@@ -253,7 +253,7 @@ const areaRank=a=>{const i=AREA_ORDER.findIndex(x=>sameArea(x,a));return i<0?999
 
 /* ===== تحميل الوظايف ===== */
 async function getText(u,ms){const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);
-  try{const r=await fetch(u,{signal:c.signal});if(!r.ok)throw 0;return await r.text()}finally{clearTimeout(t)}}
+  try{const r=await fetch(u+"&_="+Date.now(),{signal:c.signal,cache:"no-store"});if(!r.ok)throw 0;return await r.text()}finally{clearTimeout(t)}}
 function showErr(){
   $("cnt").textContent="";$("clr").style.display="none";$("empty").style.display="none";$("seg").innerHTML="";$("area").innerHTML="";
   $("list").innerHTML='<div class="empty" style="display:block">😕 فيه مشكلة في تحميل الوظايف دلوقتي 🙏<br><button type="button" class="retry" id="retry">دوس هنا وجرّب تاني</button></div>';
