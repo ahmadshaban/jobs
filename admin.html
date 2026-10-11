@@ -170,6 +170,51 @@ const T = {
 let headers = [], rows = [];
 const $ = id => document.getElementById(id);
 
+// جلسة دخول على نفس الجهاز لمدة 30 دقيقة من آخر نشاط
+const AUTH_KEY = 'first_service_admin_pw';
+const ACTIVITY_KEY = 'first_service_admin_last_activity';
+const SESSION_IDLE_MS = 30 * 60 * 1000;
+let sessionCheckTimer = null;
+function savedPassword(){ return localStorage.getItem(AUTH_KEY) || ''; }
+function touchSession(){
+  if (savedPassword()) localStorage.setItem(ACTIVITY_KEY, String(Date.now()));
+}
+function clearLogin(){
+  localStorage.removeItem(AUTH_KEY);
+  localStorage.removeItem(ACTIVITY_KEY);
+  if (sessionCheckTimer) { clearInterval(sessionCheckTimer); sessionCheckTimer = null; }
+}
+function sessionIsValid(){
+  const pw = savedPassword();
+  const last = Number(localStorage.getItem(ACTIVITY_KEY) || 0);
+  return !!pw && !!last && (Date.now() - last < SESSION_IDLE_MS);
+}
+function expireLogin(){
+  clearLogin();
+  $('app').classList.add('hidden');
+  $('login').classList.remove('hidden');
+  $('pw').value = '';
+  $('loginErr').textContent = 'انتهت جلسة الدخول، اكتب كلمة السر مرة أخرى';
+}
+function startSessionChecks(){
+  if (sessionCheckTimer) clearInterval(sessionCheckTimer);
+  sessionCheckTimer = setInterval(() => {
+    if (savedPassword() && !sessionIsValid()) expireLogin();
+  }, 15000);
+}
+// تحديث وقت النشاط عند التفاعل مع اللوحة، مع فحص انتهاء الجلسة عند الرجوع للصفحة
+['click','keydown','input','touchstart','scroll'].forEach(type => {
+  document.addEventListener(type, () => { if (sessionIsValid()) touchSession(); }, {passive:true});
+});
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && savedPassword()) {
+    if (sessionIsValid()) touchSession(); else expireLogin();
+  }
+});
+window.addEventListener('focus', () => {
+  if (savedPassword()) { if (sessionIsValid()) touchSession(); else expireLogin(); }
+});
+
 // بتهرب أي نص قبل ما يتحط في HTML
 function esc(s){
   return String(s == null ? '' : s).replace(/[&<>"'`]/g, c =>
@@ -194,7 +239,7 @@ async function api(action, extra){
     const r = await fetch(API, {
       method:'POST',
       headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body:JSON.stringify(Object.assign({password:sessionStorage.getItem('pw')||'', action}, extra||{}))
+      body:JSON.stringify(Object.assign({password:savedPassword(), action}, extra||{}))
     });
     return await r.json();
   }catch(e){ return {ok:false, error:T.netErr}; }
@@ -221,14 +266,25 @@ async function run(action, extra){
 
 // بتجرب كلمة السر بنداء list وتفتح اللوحة لو صح
 async function login(pw){
-  sessionStorage.setItem('pw', pw);
+  const previousPw = savedPassword();
+  if (!pw) { $('loginErr').textContent = T.pwHint; return; }
+  localStorage.setItem(AUTH_KEY, pw);
+  localStorage.setItem(ACTIVITY_KEY, String(Date.now()));
+  $('loginBtn').disabled = true;
   const r = await api('list');
+  $('loginBtn').disabled = false;
   if (!r.ok){
-    sessionStorage.removeItem('pw');
+    // لا نمسح بيانات الجلسة بسبب انقطاع الإنترنت؛ نمسحها فقط عند رفض كلمة السر صراحةً
+    if (String(r.error || '').trim() === 'كلمة السر غلط') clearLogin();
+    else if (!previousPw) clearLogin();
     $('loginErr').textContent = (r.error === 'كلمة السر غلط') ? T.wrongPw : r.error;
     return;
   }
+  localStorage.setItem(AUTH_KEY, pw);
+  touchSession();
+  startSessionChecks();
   headers = r.headers; rows = r.rows;
+  $('loginErr').textContent = '';
   $('login').classList.add('hidden'); $('app').classList.remove('hidden');
   render();
 }
@@ -351,15 +407,21 @@ function init(){
   $('q').addEventListener('input', render);
   $('bNew').onclick = () => openForm(null);
   $('bRef').onclick = load;
-  $('bOut').onclick = () => { sessionStorage.removeItem('pw'); location.reload(); };
+  $('bOut').onclick = () => { clearLogin(); location.reload(); };
   $('bCol').onclick = () => {
     const name = prompt(T.askCol);
     if (name !== null) run('addColumn', {name});
   };
   $('modal').addEventListener('click', e => { if (e.target.id === 'modal') closeForm(); });
 
-  const saved = sessionStorage.getItem('pw');
-  if (saved) login(saved);
+  const saved = savedPassword();
+  if (saved && sessionIsValid()) {
+    touchSession();
+    startSessionChecks();
+    login(saved);
+  } else {
+    clearLogin();
+  }
 }
 init();
 </script>
