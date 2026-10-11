@@ -168,6 +168,8 @@ const T = {
 let headers = [], rows = [];
 let modalHistoryOpen = false;
 let requestBusy = false;
+let formInitialSnapshot = '';
+let bypassDirtyWarning = false;
 const $ = id => document.getElementById(id);
 
 // جلسة دخول على نفس الجهاز لمدة 30 دقيقة من آخر نشاط
@@ -410,14 +412,25 @@ $('list').addEventListener('click', async e => {
 // بتبني النموذج من عناوين الأعمدة وتفتحه (r فاضي = وظيفة جديدة)
 // اختيارات متكررة مجمعة من البيانات الحالية والمرجع السابق؛ المرتب واسم المصنع يظلان كتابة يدوية
 function presetOptions(header){
-  // الاختيارات من القيم المسجلة فعلًا في الشيت فقط، بدون قوائم افتراضية مخترعة.
-  return rows.map(row => val(row, header).trim()).filter(Boolean);
+  // الاختيارات من القيم المسجلة فعلًا في الشيت، بعد إزالة الفراغات والتكرار.
+  return [...new Set(rows.map(row => String(val(row, header) ?? '').trim()).filter(Boolean))];
 }
 
+function currentFormSnapshot(){
+  return JSON.stringify([...$('sheet').querySelectorAll('[data-i]')].map(el => {
+    const index = el.dataset.i;
+    const custom = $('sheet').querySelector('[data-custom-i="' + index + '"]');
+    return [index, el.value, custom ? custom.value : ''];
+  }));
+}
+function formHasUnsavedChanges(){
+  return !!formInitialSnapshot && currentFormSnapshot() !== formInitialSnapshot;
+}
 function openForm(r){
   const fields = headers.map((h, i) => {
     if (!h) return '';
-    const v = r ? (r.values[i] || '') : (h === COL.visible ? T.yes : '');
+    // تنظيف المسافات الزائدة حتى تتطابق القيمة المحفوظة مع خيار القائمة.
+    const v = r ? String(r.values[i] ?? '').trim() : (h === COL.visible ? T.yes : '');
     let input;
     if (h === COL.visible){
       input = '<select data-i="' + i + '">' +
@@ -428,11 +441,11 @@ function openForm(r){
         '<option value="' + esc(T.urgentValue) + '"' + (v === T.urgentValue ? ' selected' : '') + '>' + esc(T.urgentValue) + '</option></select>';
     } else if (!/(المصنع|اسم المصنع|factory)/i.test(h) && !/(المرتب|الراتب|مرتب|راتب|salary)/i.test(h)) {
       const known = presetOptions(h);
-      const existing = rows.map(row => val(row, h).trim()).filter(Boolean);
-      const opts = [...new Set([...known, ...existing, ...(v ? [String(v).trim()] : [])].filter(Boolean))];
+      // نضمن إدراج القيمة الحالية كما هي بعد تنظيفها، حتى لو لم تعد موجودة في بقية الصفوف.
+      const opts = [...new Set([...known, ...(v ? [v] : [])].filter(Boolean))];
       if (opts.length) {
         input = '<select data-i="' + i + '">' +
-          '<option value="">— اختر —</option>' +
+          '<option value=""' + (v === '' ? ' selected' : '') + '>— اختر —</option>' +
           opts.map(o => '<option value="' + esc(o) + '"' + (o === v ? ' selected' : '') + '>' + esc(o) + '</option>').join('') +
           '<option value="__custom__">إدخال قيمة جديدة...</option></select>' +
           '<input class="custom-field hidden" data-custom-i="' + i + '" placeholder="اكتب قيمة جديدة" value="">';
@@ -462,6 +475,7 @@ function openForm(r){
       }
     });
   });
+  formInitialSnapshot = currentFormSnapshot();
   $('fSave').onclick = async () => {
     const data = {};
     $('sheet').querySelectorAll('[data-i]').forEach(el => {
@@ -473,10 +487,24 @@ function openForm(r){
       toast('اكتب القيمة الجديدة أو اختار قيمة من القائمة.', false);
       return;
     }
+    if (!r) {
+      const factoryHeader = headers.find(h => /(المصنع|اسم المصنع|factory)/i.test(h));
+      const areaHeader = headers.find(h => /(المنطقة|المكان|area|location)/i.test(h));
+      const factoryName = factoryHeader ? String(data[factoryHeader] || '').trim().toLocaleLowerCase('ar') : '';
+      const areaName = areaHeader ? String(data[areaHeader] || '').trim().toLocaleLowerCase('ar') : '';
+      if (factoryName) {
+        const duplicate = rows.find(row => {
+          const existingName = String(val(row, factoryHeader) || '').trim().toLocaleLowerCase('ar');
+          const existingArea = areaHeader ? String(val(row, areaHeader) || '').trim().toLocaleLowerCase('ar') : '';
+          return existingName === factoryName && (!areaHeader || existingArea === areaName);
+        });
+        if (duplicate && !confirm('تنبيه: يوجد مصنع بنفس الاسم' + (areaName ? ' في نفس المنطقة' : '') + '. هل تريد الإضافة رغم ذلك؟')) return;
+      }
+    }
     $('fSave').disabled = true;
     $('fSave').textContent = 'جارٍ الحفظ...';
     const ok = r ? await run('update', {row:r.row, data}) : await run('add', {data});
-    if (ok) closeForm();
+    if (ok) closeForm(true);
     else {
       $('fSave').disabled = false;
       $('fSave').textContent = T.save;
@@ -485,20 +513,35 @@ function openForm(r){
 }
 
 // بتقفل النموذج، وزر رجوع الموبايل يقفل النموذج بدل الخروج من الأدمين
-function closeForm(fromPopState){
+function closeForm(forceOrFromPopState, fromPopState){
+  // forceOrFromPopState=true يسمح بالإغلاق بعد نجاح الحفظ؛ القيمة الثانية خاصة بزر الرجوع.
+  const force = forceOrFromPopState === true && fromPopState !== true;
+  const isPop = forceOrFromPopState === true && fromPopState === true;
   const wasOpen = !$('modal').classList.contains('hidden');
+  if (!wasOpen) return;
+  if (!force && !bypassDirtyWarning && formHasUnsavedChanges()) {
+    const leave = confirm('فيه تعديلات لسه ما اتحفظتش. هل تريد الخروج من غير حفظ؟');
+    if (!leave) {
+      if (isPop) {
+        history.pushState({adminModal: true}, '', location.href);
+        modalHistoryOpen = true;
+      }
+      return;
+    }
+  }
   $('modal').classList.add('hidden');
   $('sheet').innerHTML = '';
-  if (wasOpen && modalHistoryOpen && !fromPopState) {
+  formInitialSnapshot = '';
+  if (wasOpen && modalHistoryOpen && !isPop && !force) {
     modalHistoryOpen = false;
     history.back();
-  } else if (fromPopState) {
+  } else if (isPop || force) {
     modalHistoryOpen = false;
   }
 }
 
 window.addEventListener('popstate', () => {
-  if (!$('modal').classList.contains('hidden')) closeForm(true);
+  if (!$('modal').classList.contains('hidden')) closeForm(true, true);
 });
 
 // ===== [9] خانة جديدة والتحديث والخروج =====
