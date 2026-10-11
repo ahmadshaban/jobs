@@ -144,6 +144,28 @@ header h1,header .sub,header .lead{color:#164B8C}
 .demo{background:#FFFFFF;color:#17365D;border-color:#D0E2F5}
 .empty{color:#315578}
 
+
+/* الهوية النهائية حسب طلب المستخدم: أزرق هادئ، كروت بيضاء، نص أسود، والمرتب بلون مميز */
+:root{--bg:#EAF3FC;--card:#FFFFFF;--tx:#171D27;--mu:#5B6675;--bd:#C8DDF2;--ac:#2468B4;--acs:#E1EFFD;--sh:0 7px 20px rgba(36,104,180,.10)}
+body{background:linear-gradient(180deg,#EDF6FF 0%,#E3EFFB 100%);color:#171D27}
+header{background:rgba(237,246,255,.97);box-shadow:0 3px 12px rgba(36,104,180,.07)}
+header h1,header .sub,header .lead{color:#171D27}
+.bar,.tb{background:rgba(234,243,252,.97)}
+.meta{color:#303B49}.meta button,.more{color:#245FA7}
+.search input,.seg,.chip,.sec,.trust span,.x,.exit,.fl input,.yn button{background:#FFFFFF;color:#171D27;border-color:#C8DDF2}
+.seg button{color:#303B49}.seg button.on{background:#286DB8;color:#FFFFFF;box-shadow:0 3px 8px rgba(36,104,180,.20)}
+.chip{box-shadow:0 2px 7px rgba(36,104,180,.05)}.chip.on{background:#D9EBFC;border-color:#8DBBE7;color:#164F8E}
+.card{background:#FFFFFF;color:#171D27;border:1.5px solid #C5DDF4;border-radius:1.15rem;padding:1rem; margin-bottom:.8rem;box-shadow:0 7px 19px rgba(36,104,180,.10)}
+.card .ttl{color:#171D27;font-size:clamp(1.08rem,4.2vw,1.22rem);margin:0 0 .5rem;line-height:1.4}
+.card .pay{display:block;width:100%;text-align:center;color:#155AA0;background:#EAF4FF;border:1px solid #B7D5F3;border-radius:.85rem;font-size:clamp(1.55rem,6vw,1.85rem);font-weight:800;padding:.5rem .75rem;margin:.45rem 0;box-shadow:none}
+.card .facts{margin:.35rem 0 .25rem;justify-content:center}.card .facts span{font-size:.95rem;color:#171D27;background:#F4F8FC;border:1px solid #E0E8F1;border-radius:.65rem;padding:.25rem .65rem}
+.card .more{display:block;text-align:center;color:#245FA7;font-weight:800;font-size:.92rem;margin-top:.65rem;padding-top:.65rem;border-top:1px solid #E1EAF4}
+.card .top,.card .who,.card .pm{display:none}
+.cta{background:#EDF6FF;border-color:#C8DDF2}.btn{background:#FFFFFF;color:#245FA7;border-color:#C8DDF2}.btn.wa,.fab{background:#2468B4;color:#FFFFFF;box-shadow:0 3px 10px rgba(36,104,180,.18)}
+.sec{background:#FFFFFF;border-color:#D4E4F3;box-shadow:0 4px 13px rgba(36,104,180,.06)}.sec h3{color:#245FA7}.facts span,.it{background:#F1F7FD;color:#171D27;border-color:#DCE9F5}
+.hero{background:#E4F1FF;border-color:#B7D5F3;box-shadow:0 4px 12px rgba(36,104,180,.10)}.hero small,.hero b,.hero .pm2{color:#155AA0}
+.trust span{color:#171D27;background:#FFFFFF}.demo{background:#FFFFFF;color:#171D27;border-color:#D4E4F3}.empty{color:#303B49}
+
 </style>
 </head>
 <body>
@@ -255,6 +277,7 @@ async function load(){
 }
 const kind=c=>c.includes("بنات")&&c.includes("شباب")?"":c.includes("بنات")?"g":"m";
 const has=(c,k)=>c==="الكل"||c===k;
+function hoursOnly(value){const s=String(value||"").trim();const m=s.match(/(\d{1,2})\s*ساعة/);if(m)return m[1]+" ساعة";const n=s.match(/(\d{1,2})\s*ساعات/);if(n)return n[1]+" ساعة";return s||"غير محدد"}
 function matchCat(j){return cat==="الكل"||(j["الفئة"]||"").includes(cat)}
 
 function draw(){
@@ -272,11 +295,10 @@ function draw(){
   $("empty").style.display=r.length?"none":"block";
   $("emt").textContent=JOBS.length?"مفيش وظايف زي كده، جرّب تغيّر الفلتر أو دوّر على حاجة تانية":"مفيش وظايف متاحة دلوقتي، ارجع كمان شوية";
   $("list").innerHTML=r.map(j=>`<button class="card ${done(j)?"done":""}" data-i="${JOBS.indexOf(j)}" ${done(j)?"disabled":""}>
-   <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="bd2">${done(j)?'<span class="badge dn">العدد اكتمل</span>':tags(j)+`<span class="badge ${kind(j["الفئة"]||"")}">${esc(j["الفئة"])}</span>`}</span></div>
-   <div class="ttl">${esc(j["المصنع"])}</div><div class="who">${esc(j["المؤهل"])}</div>
-   <div class="pay">${esc(j["المرتب"])}</div>${j["تفاصيل المرتب"]?`<div class="pm">${esc(j["تفاصيل المرتب"])}</div>`:""}
-   <div class="facts"><span>⏰ ${esc(j["الشفت"])}</span>${["السكن","المواصلات"].filter(k=>j[k]).map(k=>`<span>${ICON[k]} ${esc(j[k])}</span>`).join("")}</div>
-   ${done(j)?"":'<span class="more">عرض تفاصيل الوظيفة ←</span>'}</button>`).join("");
+   <div class="ttl">${esc(j["المصنع"])}</div>
+   <div class="pay">${esc(j["المرتب"])}</div>
+   <div class="facts"><span>⏰ ${esc(hoursOnly(j["الشفت"]))}</span></div>
+   ${done(j)?'<span class="more">اكتمل العدد</span>':'<span class="more">اضغط هنا لمعرفة باقي تفاصيل الوظيفة وطرق التقديم ←</span>'}</button>`).join("");
   $("list").querySelectorAll(".card").forEach(b=>b.onclick=()=>go(+b.dataset.i));
 }
 $("clr").onclick=()=>{area="الكل";draw()};
