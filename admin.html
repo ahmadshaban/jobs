@@ -314,6 +314,17 @@ async function run(action, extra){
   }
 }
 
+// بتضيف عمودين المرتب (30 يوم / 26 يوم) في الشيت أوتوماتيك لو مش موجودين
+async function ensureSalaryCols(){
+  try{
+    let changed = false;
+    for (const name of [COL.salary30, COL.salary26]){
+      if (!headers.includes(name)){ const a = await api('addColumn', {name}); if (a.ok) changed = true; }
+    }
+    if (changed){ const r2 = await api('list'); if (r2.ok){ headers = r2.headers; rows = r2.rows; } }
+  }catch(e){}
+}
+
 // ===== [5] شاشة الدخول =====
 
 // بتجرب كلمة السر بنداء list وتفتح اللوحة لو صح
@@ -336,6 +347,7 @@ async function login(pw){
   touchSession();
   startSessionChecks();
   headers = r.headers; rows = r.rows;
+  await ensureSalaryCols();
   $('loginErr').textContent = '';
   $('login').classList.add('hidden'); $('app').classList.remove('hidden');
   render();
