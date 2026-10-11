@@ -77,6 +77,11 @@ header h1{margin:0;font-size:18px;color:#fff}
 .sheet label{font-size:13px;color:#FFE45C;display:grid;gap:4px}
 .sheet .row{display:flex;gap:8px}
 .sheet .row .btn{flex:1}
+.fab{position:fixed;bottom:20px;inset-inline-end:16px;z-index:6;width:56px;height:56px;border-radius:50%;border:0;background:#FFE45C;color:#0E3560;font-size:32px;font-weight:700;line-height:1;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+.fab:disabled{opacity:.5}
+.sheet .row{position:sticky;bottom:-1px;background:#0B2A4A;padding:10px 0 4px;box-shadow:0 -8px 10px -6px rgba(0,0,0,.45)}
+.meta span.sal{background:#FFE45C;color:#0E3560;font-weight:700;cursor:pointer}
+.meta span.sal.empty{background:transparent;color:#FFE45C;border:1px dashed #FFE45C;font-weight:400}
 #toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);padding:10px 18px;border-radius:12px;color:#fff;font-weight:700;z-index:20;max-width:90%;box-shadow:0 4px 18px rgba(0,0,0,.18)}
 #toast.ok{background:#16803d}
 #toast.bad{background:#B42318}
@@ -110,8 +115,9 @@ header h1{margin:0;font-size:18px;color:#fff}
       </select>
     </div>
     <!-- <<< غيّر هنا: خانة البحث باسم المصنع -->
-    <input id="q" type="search" placeholder="🔍 دوّر باسم المصنع..." aria-label="بحث باسم المصنع">
+    <input id="q" class="hidden" type="search" placeholder="دوّر باسم المصنع..." aria-label="بحث باسم المصنع">
     <div class="bar">
+      <button class="btn ghost" id="bSearch" aria-label="بحث" style="flex:0 0 auto">🔍</button>
       <button class="btn" id="bNew"></button>
       <button class="btn ghost" id="bCol"></button>
       <button class="btn ghost" id="bRef"></button>
@@ -119,6 +125,8 @@ header h1{margin:0;font-size:18px;color:#fff}
     </div>
   </header>
   <div id="list"></div>
+  <!-- <<< غيّر هنا: زرار + العايم لإضافة مصنع جديد -->
+  <button class="fab" id="fab" aria-label="وظيفة جديدة">+</button>
 </div>
 
 <div id="modal" class="hidden"><div class="sheet" id="sheet"></div></div>
@@ -143,6 +151,12 @@ const COL = {
 const SAL_SUFFIX = ' ج في الشهر'; // <<< غيّر هنا: الكلمة اللي بتتضاف تلقائي لو كتبت رقم بس في خانة المرتب
 const DATE_COL = 'تاريخ الإضافة'; // <<< غيّر هنا: اسم عمود تاريخ الإضافة
 const todayStr = () => new Date().toISOString().slice(0, 10);
+// رقم بس؟ بنكمّله (8000 ← 8000 ج في الشهر). بيفهم الأرقام العربي والفاصلة
+function normSalary(x){
+  let t = String(x).trim().replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+  if (/^[\d.,]+$/.test(t)) t = t.replace(/,/g, '') + SAL_SUFFIX;
+  return t;
+}
 
 const T = {
   loginTitle: 'دخول الأدمن',            // <<< غيّر هنا: عنوان شاشة الدخول
@@ -371,9 +385,13 @@ function cardHTML(r){
   const done = val(r, COL.status).trim() === T.doneValue;
   const urg = val(r, COL.status).trim() === T.urgentValue;
   const hasNew = val(r, COL.salary30) || val(r, COL.salary26);
-  const meta = [COL.area, COL.gender, COL.shift, ...(hasNew ? [COL.salary30, COL.salary26] : [COL.salary])]
-    .map(c => !val(r, c) ? '' : (c === COL.salary30 ? '30 يوم: ' : c === COL.salary26 ? '26 يوم: ' : '') + val(r, c))
-    .filter(Boolean).map(v => '<span>' + esc(v) + '</span>').join('');
+  // خانات عادية (المنطقة، الفئة، الشفت، والمرتب القديم لو المصنع لسه ما اتعدّلش)
+  const plain = [COL.area, COL.gender, COL.shift, ...(hasNew ? [] : [COL.salary])]
+    .map(c => val(r, c)).filter(Boolean).map(v => '<span>' + esc(v) + '</span>').join('');
+  // خانتين المرتب: دوس على أي واحدة تعدّلها من مكانها (الفاضية بتظهر بـ +)
+  const salChip = (c, lbl) => '<span class="sal' + (val(r, c) ? '' : ' empty') + '" data-sal="' + esc(c) + '" data-row="' + r.row + '">' +
+    (val(r, c) ? esc(lbl + ': ' + val(r, c)) : '+ ' + esc(lbl)) + '</span>';
+  const meta = plain + salChip(COL.salary30, '30 يوم') + salChip(COL.salary26, '26 يوم');
   return '<div class="card' + (hid ? ' dim' : '') + '">' +
     '<h2>' + esc(val(r, COL.factory)) +
       (done ? '<span class="badge done">' + esc(T.doneBadge) + '</span>' : '') +
@@ -421,6 +439,15 @@ function render(){
 
 // بتتعامل مع ضغطة أي زرار جوه الكارت
 $('list').addEventListener('click', async e => {
+  const sal = e.target.closest('[data-sal]');
+  if (sal) {
+    const col = sal.dataset.sal, row = Number(sal.dataset.row);
+    const rr = rows.find(x => x.row === row);
+    if (!rr) return;
+    const nv = prompt(col + ' — اكتب الرقم بس (سيبه فاضي للمسح)', val(rr, col));
+    if (nv === null) return;
+    return run('update', {row, data:{[col]: normSalary(nv)}});
+  }
   const b = e.target.closest('button[data-act]');
   if (!b) return;
   const row = Number(b.dataset.row);
@@ -546,9 +573,7 @@ function openForm(r, asCopy){
     // رقم بس في خانة المرتب؟ بنكمّلها أوتوماتيك (8000 ← 8000 ج في الشهر)
     [COL.salary30, COL.salary26].forEach(c => {
       if (!(c in data)) return;
-      let t = String(data[c]).trim().replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
-      if (/^[\d.,]+$/.test(t)) t = t.replace(/,/g, '') + SAL_SUFFIX;
-      data[c] = t;
+      data[c] = normSalary(data[c]);
     });
     // تاريخ الإضافة أوتوماتيك للمصنع الجديد لو فاضي
     if (!r && DATE_COL in data && !String(data[DATE_COL]).trim()) data[DATE_COL] = todayStr();
@@ -634,6 +659,13 @@ function init(){
   $('areaFilter').addEventListener('change', render);
   $('genderFilter').addEventListener('change', render);
   $('q').addEventListener('input', render);
+  // أيقونة البحث: بتفتح الخانة، ولما تقفلها بتمسح البحث
+  $('bSearch').onclick = () => {
+    const q = $('q');
+    if (q.classList.contains('hidden')) { q.classList.remove('hidden'); q.focus(); }
+    else { q.value = ''; q.classList.add('hidden'); render(); }
+  };
+  $('fab').onclick = () => $('bNew').click();
   $('bNew').onclick = () => openForm(null);
   $('bRef').onclick = load;
   $('bOut').onclick = () => { clearLogin(); location.reload(); };
