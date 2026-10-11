@@ -444,7 +444,10 @@ $('list').addEventListener('click', async e => {
     const col = sal.dataset.sal, row = Number(sal.dataset.row);
     const rr = rows.find(x => x.row === row);
     if (!rr) return;
-    const nv = prompt(col + ' — اكتب الرقم بس (سيبه فاضي للمسح)', val(rr, col));
+    // المرتب القديم (من العمود القديم) بيظهر في الرسالة، وبيتحط جاهز في خانة 30 يوم لو فاضية
+    const old = String(val(rr, COL.salary) || '').trim();
+    const cur = val(rr, col) || (col === COL.salary30 ? old : '');
+    const nv = prompt(col + (old ? '\nالمرتب القديم: ' + old : '') + '\nاكتب الرقم بس (سيبه فاضي للمسح)', cur);
     if (nv === null) return;
     return run('update', {row, data:{[col]: normSalary(nv)}});
   }
