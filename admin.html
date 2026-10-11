@@ -108,6 +108,8 @@ header h1{margin:0;font-size:18px;color:#fff}
 <div id="app" class="hidden">
   <header>
     <h1 id="title"></h1>
+    <!-- <<< غيّر هنا: كل الفلاتر (المكان، الفئة، البحث) جوه الصندوق ده، وأيقونة 🔍 بتظهره وتخفيه -->
+    <div id="filters" style="display:grid;gap:10px">
     <div style="display:flex;gap:8px">
       <select id="areaFilter" aria-label="اختيار المكان" required>
         <option value="">اختار المكان أولًا</option>
@@ -121,9 +123,10 @@ header h1{margin:0;font-size:18px;color:#fff}
       </select>
     </div>
     <!-- <<< غيّر هنا: خانة البحث باسم المصنع -->
-    <input id="q" class="hidden" type="search" placeholder="دوّر باسم المصنع..." aria-label="بحث باسم المصنع">
+    <input id="q" type="search" placeholder="دوّر باسم المصنع..." aria-label="بحث باسم المصنع">
+    </div>
     <div class="bar">
-      <button class="btn ghost" id="bSearch" aria-label="بحث" style="flex:0 0 auto">🔍</button>
+      <button class="btn ghost" id="bSearch" aria-label="الفلتر" style="flex:0 0 auto">🔍</button>
       <button class="btn" id="bNew"></button>
       <button class="btn ghost" id="bCol"></button>
       <button class="btn ghost" id="bRef"></button>
@@ -441,6 +444,8 @@ function render(){
   // بيحدد الفئة: m = شباب بس، f = بنات بس، b = شباب وبنات مع بعض
   const kindOf = r => { const t = val(r, COL.gender); const m = /شباب/.test(t), f = /بنات/.test(t); return (m && f) ? 'b' : m ? 'm' : f ? 'f' : ''; };
   const q = $('q').value.trim().toLocaleLowerCase('ar');
+  // نقطة جنب الأيقونة لو فيه فلتر شغال والفلاتر مخفية
+  $('bSearch').textContent = '🔍' + ((area || g || q) && $('filters').classList.contains('hidden') ? ' ●' : '');
   const list = (area || q) ? rows.filter(r => (!area || val(r, COL.area).trim() === area) &&
     (!q || val(r, COL.factory).toLocaleLowerCase('ar').includes(q)) && (!g || kindOf(r) === g)) : [];
   $('title').textContent = T.title + ((area || q) ? ' (' + list.length + ')' : '');
@@ -701,12 +706,8 @@ function init(){
   $('areaFilter').addEventListener('change', render);
   $('genderFilter').addEventListener('change', render);
   $('q').addEventListener('input', render);
-  // أيقونة البحث: بتفتح الخانة، ولما تقفلها بتمسح البحث
-  $('bSearch').onclick = () => {
-    const q = $('q');
-    if (q.classList.contains('hidden')) { q.classList.remove('hidden'); q.focus(); }
-    else { q.value = ''; q.classList.add('hidden'); render(); }
-  };
+  // أيقونة 🔍: بتظهر وتخفي كل الفلاتر (المكان + الفئة + البحث). الفلتر المختار بيفضل شغال وهو مخفي
+  $('bSearch').onclick = () => { $('filters').classList.toggle('hidden'); render(); };
   $('fab').onclick = () => $('bNew').click();
   $('bNew').onclick = () => openForm(null);
   $('bRef').onclick = load;
