@@ -34,18 +34,21 @@ header{padding:1.2rem 0 .6rem}h1{font-size:1.75rem;font-weight:800;margin:0;line
 .chip.on{background:var(--acs);border-color:var(--ac);color:var(--ac);font-weight:700}
 .meta{display:flex;justify-content:space-between;align-items:center;color:var(--mu);font-size:.88rem;margin:.6rem 0 .5rem}
 .meta button{font:inherit;color:var(--ac);background:none;border:0;font-weight:700;cursor:pointer}
-.card{display:block;width:100%;text-align:start;font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:1.2rem;padding:1rem 1.1rem;margin-bottom:.75rem;box-shadow:var(--sh);cursor:pointer;transition:transform .12s}
+.card{display:block;width:100%;text-align:start;font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:1.05rem;padding:.8rem .95rem;margin-bottom:.6rem;box-shadow:var(--sh);cursor:pointer;transition:transform .12s}
 .card:active{transform:scale(.985)}
 .top{display:flex;justify-content:space-between;align-items:center;gap:.5rem;font-size:.82rem}
 .loc{color:var(--mu);font-weight:600}.badge{font-weight:700;border-radius:99px;padding:.1rem .65rem;background:var(--acs);color:var(--ac)}
 .badge.g{background:#fde7f1;color:#be185d}.badge.m{background:#dff3f8;color:#0e7490}
-.ttl{font-size:1.12rem;font-weight:800;margin:.35rem 0 .1rem}.who{color:var(--mu);font-size:.9rem}
+.ttl{font-size:1.02rem;font-weight:800;margin:.25rem 0 .05rem}.who{color:var(--mu);font-size:.85rem}
 /* <<< غيّر هنا: شكل المرتب في الكروت */
-.pay{display:inline-block;font-size:1.3rem;font-weight:800;color:var(--ac);background:var(--acs);border-radius:.8rem;padding:.35rem .8rem;margin:.55rem 0 .2rem}
-.facts{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.5rem}.facts span{font-size:.8rem;background:var(--bg);border-radius:.6rem;padding:.2rem .6rem;color:var(--mu)}
-.more{display:block;text-align:end;color:var(--ac);font-weight:700;font-size:.85rem;margin-top:.5rem}
-.sk{height:8.5rem;border-radius:1.2rem;background:linear-gradient(90deg,var(--card),var(--bd),var(--card));background-size:200% 100%;animation:sk 1.2s infinite;margin-bottom:.75rem}
+.pay{display:inline-block;font-size:1.2rem;font-weight:800;color:var(--ac);background:var(--acs);border-radius:.75rem;padding:.3rem .7rem;margin:.4rem 0 .15rem}
+.facts{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.4rem}.facts span{font-size:.76rem;background:var(--bg);border-radius:.55rem;padding:.15rem .5rem;color:var(--mu)}
+.pm{color:var(--mu);font-size:.78rem;font-weight:700;margin:.1rem 0 0}.pm2{display:block;color:rgba(255,255,255,.88);font-size:.85rem;font-weight:700;margin-top:.1rem}
+.more{display:block;text-align:end;color:var(--ac);font-weight:700;font-size:.8rem;margin-top:.35rem}
+.sk{height:7.2rem;border-radius:1.2rem;background:linear-gradient(90deg,var(--card),var(--bd),var(--card));background-size:200% 100%;animation:sk 1.2s infinite;margin-bottom:.75rem}
 @keyframes sk{to{background-position:-200% 0}}
+.demo{background:#fef3c7;color:#92400e;border:1px solid #fcd34d;border-radius:.8rem;padding:.4rem .7rem;margin:.7rem 0 0;font-size:.82rem;font-weight:700;text-align:center}
+.seg:empty,.chips:empty{display:none}
 .empty{text-align:center;color:var(--mu);padding:3rem 1rem;display:none}
 .retry{font:inherit;font-weight:800;color:#fff;background:var(--ac);border:0;border-radius:.8rem;padding:.65rem 1.2rem;margin-top:.9rem;cursor:pointer}
 .ov{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center}
@@ -76,14 +79,15 @@ header{padding:1.2rem 0 .6rem}h1{font-size:1.75rem;font-weight:800;margin:0;line
 .badge.dn{background:#fee2e2;color:#b91c1c}
 .badge.ur{background:#ffedd5;color:#c2410c}.badge.nw{background:#dcfce7;color:#15803d}
 .bd2{display:flex;gap:.3rem;align-items:center}
-.btn.sh2{flex:0 0 auto;padding:.38rem .65rem}
+.btn.sh2{flex:0 0 auto;padding:.3rem .85rem}
 /* <<< غيّر هنا: حجم أزرار التقديم والاتصال والشير */
-.cta{padding:.4rem .9rem calc(.4rem + env(safe-area-inset-bottom,0px));border-top:1px solid var(--bd);background:var(--bg);display:flex;gap:.5rem}
-.btn{display:block;flex:1;text-align:center;text-decoration:none;font:inherit;font-weight:800;font-size:.8rem;border-radius:.7rem;padding:.38rem .3rem;color:var(--tx);border:1px solid var(--bd);background:var(--card)}
-.btn.wa{flex:2;background:var(--ac);color:#fff;border:0;font-size:.84rem}
+.cta{padding:.45rem .8rem calc(.45rem + env(safe-area-inset-bottom,0px));border-top:1px solid var(--bd);background:var(--bg);display:flex;gap:.5rem}
+/* <<< غيّر هنا: حجم وألوان أزرار التقديم والاتصال والشير */
+.btn{display:flex;align-items:center;justify-content:center;flex:1;min-height:2.4rem;text-align:center;text-decoration:none;font:inherit;font-weight:800;font-size:.82rem;border-radius:.75rem;padding:.3rem .4rem;color:var(--tx);border:1.5px solid #b8c4d8;background:var(--card)}
+.btn.wa{flex:2;background:#16a34a;color:#fff;border:0;font-size:.88rem;box-shadow:0 3px 10px rgba(22,163,74,.3)}
 .tb{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:.7rem 0 .5rem}
 .exit{font:inherit;font-weight:800;font-size:.95rem;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:.85rem;padding:.5rem 1rem;cursor:pointer}
-.dp{padding-bottom:4.2rem}.dp .ttl{font-size:1.3rem;margin:.4rem 0 0}
+.dp{padding-bottom:4.1rem}.dp .ttl{font-size:1.3rem;margin:.4rem 0 0}
 .cta{position:fixed;inset-inline:0;bottom:0;max-width:40rem;margin:auto}
 .btn.wa{cursor:pointer}
 /* ===== [CSS] فورم التقديم ===== */
@@ -95,11 +99,12 @@ header{padding:1.2rem 0 .6rem}h1{font-size:1.75rem;font-weight:800;margin:0;line
 .yn button.on{background:var(--ac);border-color:var(--ac);color:#fff}
 .er{color:#b91c1c;font-size:.82rem;font-weight:700;margin-top:.25rem}.er:empty{display:none}
 .fgo{padding:.6rem 1.1rem calc(.7rem + env(safe-area-inset-bottom,0px));border-top:1px solid var(--bd);background:var(--bg)}
-.fgo .btn{width:100%;padding:.85rem;font-size:1rem;border:0}
+.fgo .btn{width:100%;min-height:2.9rem;font-size:1rem;border:0}
 </style>
 </head>
 <body>
 <div class="w" id="main">
+  <div id="demo" class="demo" style="display:none">⚠️ تجربة: دي بيانات وهمية، الشيت مش متاح من هنا</div>
   <header><!-- <<< غيّر هنا: الجملة (فوق) والعنوان (تحتها) --><p class="sub lead">قدّم من الموبايل في دقايق واختار الفرصة المناسبة ليك</p><h1>عمال تعبئة وتغليف وفرز</h1>
     <!-- <<< غيّر هنا: سطر الثقة (الجمل اللي تحت العنوان) -->
     <div class="trust"><span>✅ التقديم من غير أي رسوم مقدما</span></div></header>
@@ -122,14 +127,30 @@ const PHONE = "201095237207";   // رقم الواتساب بصيغة دولية
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1Ri61Py0q36t2EdMCWXa0lgJGDWJfrXjY0gHmqnwS4AM/gviz/tq?tqx=out:csv&headers=1&sheet=%D8%A7%D9%84%D9%88%D8%B8%D8%A7%D8%A6%D9%81";
 
 
-const CORE=["المنطقة","الفئة","المصنع","المؤهل","الشفت","المرتب","ظاهر؟","الحالة","تاريخ الإضافة"];
+const CORE=["المنطقة","الفئة","المصنع","المؤهل","الشفت","المرتب","تفاصيل المرتب","ظاهر؟","الحالة","تاريخ الإضافة"];   // "تفاصيل المرتب" عمود اختياري تكتبه بإيدك للمصانع اللي باليومية
 const done=j=>(j["الحالة"]||"").includes("مكتمل");   // <<< عمود الحالة = مكتمل
 const urgent=j=>(j["الحالة"]||"").includes("عاجل");   // <<< عمود الحالة = عاجل
 const NEW_DAYS=3;                                    // <<< غيّر هنا: عدد أيام شارة "جديد"
+/* ===== وضع التجربة (بيظهر عندك بس) ===== */
+// المصانع التجريبية بتظهر بس لو الموقع مفتوح من دومين مش في القايمة دي (زي هنا في Claude أو من ملف على جهازك) وتحميل الشيت فشل.
+// <<< لو نقلت الموقع على دومين تاني (Netlify مثلاً) ضيفه هنا، وإلا ممكن الناس تشوف المصانع التجريبية لو الشيت وقع
+const REAL_HOSTS=["ahmadshaban.github.io"];
+const IS_DEMO_HOST=!REAL_HOSTS.includes(location.hostname);
+const TODAY=new Date().toISOString().slice(0,10);
+const DEMO=[
+{"المنطقة":"العاشر من رمضان","الفئة":"شباب","المصنع":"مصنع تعبئة (تجريبي)","المؤهل":"أي مؤهل","الشفت":"12 ساعة","المرتب":"12000 ج شهرياً","تفاصيل المرتب":"9000 أساسي (300 ج في اليوم) + 3000 حافز انتظام","السكن":"متوفر","نظام القبض":"شهري","المواصلات":"داخلية","الحالة":"عاجل","تاريخ الإضافة":TODAY,"ظاهر؟":"نعم"},
+{"المنطقة":"مدينة السادات","الفئة":"شباب","المصنع":"مصنع تغليف (تجريبي)","المؤهل":"أي مؤهل","الشفت":"10 ساعات","المرتب":"7000 ج شهرياً","السكن":"لا يوجد","المواصلات":"خارجية","ظاهر؟":"نعم"},
+{"المنطقة":"6 أكتوبر","الفئة":"بنات","المصنع":"مصنع فرز (تجريبي)","المؤهل":"مؤهلات","الشفت":"9 ساعات","المرتب":"200 ج/يوماً","تفاصيل المرتب":"حوالي 5200 ج في الشهر","السكن":"لا يوجد","المواصلات":"خارجية","ظاهر؟":"نعم"},
+{"المنطقة":"بدر","الفئة":"شباب وبنات","المصنع":"مصنع مكتمل (تجريبي)","المؤهل":"أي مؤهل","الشفت":"8 ساعات","المرتب":"6500 ج شهرياً","الحالة":"مكتمل","ظاهر؟":"نعم"}
+];
+
 /* ===== إعدادات فورم التقديم ===== */
 const REQ={name:true,age:true,from:false,housing:false};   // <<< غيّر هنا: true = إجباري / false = اختياري
 const AGE_MIN=16,AGE_MAX=60;                                // <<< غيّر هنا: أقل وأكبر سن مقبول
-const SAVE_KEY="jobform";                                   // اسم التخزين على موبايل المتقدم (عشان ميكتبش بياناته كل مرة)
+const SAVE_KEY="jobform";
+// مصدر الإعلان: لينك الموقع + ?src=الاسم (مثال: ?src=mona). بيتحفظ طول الزيارة وبيظهر كسطر "المصدر" في رسالة الواتساب
+const SRC=(()=>{let v="";try{v=(new URLSearchParams(location.search).get("src")||"").replace(/[\r\n]/g," ").trim().slice(0,30)}catch(e){}
+  try{if(v)sessionStorage.setItem("jobsrc",v);else v=sessionStorage.getItem("jobsrc")||""}catch(e){}return v})();                                   // اسم التخزين على موبايل المتقدم (عشان ميكتبش بياناته كل مرة)
 // رقم قصير ثابت لكل مصنع (من اسمه) يتحط في لينك الشير: ?j=xxxxxx
 const hid=n=>{let h=5381;for(const c of String(n))h=((h<<5)+h+c.charCodeAt(0))>>>0;return h.toString(36)};
 const rank=j=>done(j)?2:urgent(j)?0:1;
@@ -176,9 +197,10 @@ async function load(){
   $("list").innerHTML='<div class="sk"></div><div class="sk"></div><div class="sk"></div>';
   // الطلبين بيتبعتوا مع بعض؛ طلب المناطق ليه مهلة قصيرة وميعطّلش الوظايف
   const [jr,ar]=await Promise.allSettled([getText(SHEET_CSV_URL,15000),getText(AREAS_CSV_URL,3000)]);
-  if(jr.status!=="fulfilled")return showErr();
-  let d;try{d=parseCSV(jr.value)}catch(e){return showErr()}
-  if(d.length&&!("المصنع" in d[0]))return showErr();
+  let d=null,demo=false;
+  if(jr.status==="fulfilled"){try{d=parseCSV(jr.value);if(d.length&&!("المصنع" in d[0]))d=null}catch(e){d=null}}
+  if(!d){if(!IS_DEMO_HOST)return showErr();d=DEMO;demo=true}
+  $("demo").style.display=demo?"block":"none";
   AREA_ORDER=[];
   if(ar.status==="fulfilled"){try{const rows=parseRows(ar.value);
     if(rows.length&&rows[0].length===1){const st=norm(rows[0][0])===norm("المنطقة")?1:0;   // لو التبويب مش موجود جوجل بترجّع شيت تاني بأعمدة كتير فبنتجاهله
@@ -210,7 +232,7 @@ function draw(){
   $("list").innerHTML=r.map(j=>`<button class="card ${done(j)?"done":""}" data-i="${JOBS.indexOf(j)}" ${done(j)?"disabled":""}>
    <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="bd2">${done(j)?'<span class="badge dn">العدد اكتمل</span>':tags(j)+`<span class="badge ${kind(j["الفئة"]||"")}">${esc(j["الفئة"])}</span>`}</span></div>
    <div class="ttl">${esc(j["المصنع"])}</div><div class="who">${esc(j["المؤهل"])}</div>
-   <div class="pay">${esc(j["المرتب"])}</div>
+   <div class="pay">${esc(j["المرتب"])}</div>${j["تفاصيل المرتب"]?`<div class="pm">${esc(j["تفاصيل المرتب"])}</div>`:""}
    <div class="facts"><span>⏰ ${esc(j["الشفت"])}</span>${["السكن","المواصلات"].filter(k=>j[k]).map(k=>`<span>${ICON[k]} ${esc(j[k])}</span>`).join("")}</div>
    ${done(j)?"":'<span class="more">التفاصيل ‹</span>'}</button>`).join("");
   $("list").querySelectorAll(".card").forEach(b=>b.onclick=()=>go(+b.dataset.i));
@@ -259,7 +281,7 @@ function setupApply(j,ph){
     if(REQ.housing&&!hs){eh.textContent="اختار آه أو لا";return}
     try{localStorage.setItem(SAVE_KEY,JSON.stringify({n:n,a:a,p:p}))}catch(e){}
     const L=["السلام عليكم، عايز أقدم على وظيفة: "+j["المصنع"]+" - "+j["المنطقة"],""];
-    if(n)L.push("الاسم: "+n);if(a)L.push("السن: "+a);if(p)L.push("منين: "+p);if(hs)L.push("محتاج سكن: "+hs);
+    if(n)L.push("الاسم: "+n);if(a)L.push("السن: "+a);if(p)L.push("منين: "+p);if(hs)L.push("محتاج سكن: "+hs);if(SRC)L.push("المصدر: "+SRC);
     const u="https://wa.me/"+ph+"?text="+encodeURIComponent(L.join("\n"));
     close();window.open(u,"_blank")||(location.href=u);
   };
@@ -279,7 +301,7 @@ function showDetail(j){
   $("detail").innerHTML=`<div class="w dp"><div class="tb"><button class="exit" id="ex">رجوع</button></div>
    <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="bd2">${tags(j)}<span class="badge ${kind(j["الفئة"]||"")}">${esc(j["الفئة"])}</span></span></div>
    <h2 class="ttl">${esc(j["المصنع"])}</h2>
-   <div class="hero"><small>💰 المرتب</small><b>${esc(j["المرتب"])}</b></div>
+   <div class="hero"><small>💰 المرتب</small><b>${esc(j["المرتب"])}</b>${j["تفاصيل المرتب"]?`<span class="pm2">${esc(j["تفاصيل المرتب"])}</span>`:""}</div>
    ${groups.map(g=>sec(g[0],g[1])).join("")}${sec("تفاصيل أخرى",other)}</div>
    <div class="cta"><button type="button" class="btn wa" id="apply">قدّم دلوقتي على الواتساب</button><a class="btn" href="tel:+${ph}">📞 اتصل</a><a class="btn sh2" target="_blank" rel="noopener" href="https://wa.me/?text=${shareMsg}">↗ شارك</a></div>${formHTML(j)}`;
   $("main").style.display="none";$("detail").style.display="block";window.scrollTo(0,0);
