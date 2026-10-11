@@ -363,7 +363,8 @@ function cardHTML(r){
   const hid = val(r, COL.visible).trim() === T.no;
   const done = val(r, COL.status).trim() === T.doneValue;
   const urg = val(r, COL.status).trim() === T.urgentValue;
-  const meta = [COL.area, COL.gender, COL.shift, COL.salary, COL.salary30, COL.salary26]
+  const hasNew = val(r, COL.salary30) || val(r, COL.salary26);
+  const meta = [COL.area, COL.gender, COL.shift, ...(hasNew ? [COL.salary30, COL.salary26] : [COL.salary])]
     .map(c => !val(r, c) ? '' : (c === COL.salary30 ? '30 يوم: ' : c === COL.salary26 ? '26 يوم: ' : '') + val(r, c))
     .filter(Boolean).map(v => '<span>' + esc(v) + '</span>').join('');
   return '<div class="card' + (hid ? ' dim' : '') + '">' +
@@ -456,8 +457,11 @@ function formHasUnsavedChanges(){
 function openForm(r){
   const fields = headers.map((h, i) => {
     if (!h) return '';
+    if (h === COL.salary) return '';   // <<< غيّر هنا: خانة المرتب القديمة مخفية (استبدلناها بـ 30 يوم و 26 يوم)
     // تنظيف المسافات الزائدة حتى تتطابق القيمة المحفوظة مع خيار القائمة.
-    const v = r ? String(r.values[i] ?? '').trim() : (h === COL.visible ? T.yes : '');
+    let v = r ? String(r.values[i] ?? '').trim() : (h === COL.visible ? T.yes : '');
+    // لو المصنع قديم وخانة 30 يوم فاضية، ننقل المرتب القديم فيها عشان ما يضيعش
+    if (r && h === COL.salary30 && !v) v = String(r.values[headers.indexOf(COL.salary)] ?? '').trim();
     let input;
     if (h === COL.visible){
       input = '<select data-i="' + i + '">' +
