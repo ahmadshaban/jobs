@@ -22,25 +22,19 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 /* ===== [1] الألوان والتصميم (غيّر من هنا) ===== */
-:root{
-  --c-main:#1d4ed8;        /* <<< غيّر هنا: اللون الأزرق الأساسي */
-  --c-main-dark:#1e40af;   /* <<< غيّر هنا: الأزرق الغامق */
-  --c-main-soft:#dbeafe;   /* <<< غيّر هنا: الأزرق الفاتح */
-  --c-bg:#f1f5f9;          /* <<< غيّر هنا: خلفية الصفحة */
-  --c-card:#ffffff;        /* <<< غيّر هنا: خلفية الكارت */
-  --c-text:#0f172a;        /* <<< غيّر هنا: لون الكلام */
-  --c-sub:#64748b;         /* <<< غيّر هنا: لون الكلام الخفيف */
-  --c-border:#e2e8f0;      /* <<< غيّر هنا: لون الحدود */
-  --c-ok:#16a34a;          /* <<< غيّر هنا: لون النجاح */
-  --c-bad:#dc2626;         /* <<< غيّر هنا: لون الخطأ والمسح */
-  --c-warn:#b45309;        /* <<< غيّر هنا: لون شارة مخفي */
-}
-@media (prefers-color-scheme:dark){
-  :root{
-    --c-main:#3b82f6; --c-main-dark:#2563eb; --c-main-soft:#1e3a8a;
-    --c-bg:#0b1220; --c-card:#131c2e; --c-text:#e5edf9; --c-sub:#94a3b8;
-    --c-border:#25324a; --c-ok:#22c55e; --c-bad:#f87171; --c-warn:#fbbf24;
-  }
+ :root{
+  --c-main:#1769aa;
+  --c-main-dark:#0f4f86;
+  --c-main-soft:#e5f3ff;
+  --c-bg:#1769aa;
+  --c-card:#ffffff;
+  --c-text:#ffffff;
+  --c-sub:#eaf4ff;
+  --c-border:#b9d9f2;
+  --c-ok:#16803d;
+  --c-bad:#c62828;
+  --c-warn:#9a6b00;
+  --c-highlight:#fff3a6;
 }
 *{box-sizing:border-box}
 body{margin:0;font-family:'Cairo',sans-serif;background:var(--c-bg);color:var(--c-text);font-size:15px}
@@ -57,8 +51,8 @@ input:focus,select:focus,.btn:focus-visible{outline:2px solid var(--c-main);outl
 .login-box{width:100%;max-width:340px;background:var(--c-card);border:1px solid var(--c-border);border-radius:16px;padding:22px;display:grid;gap:12px}
 .login-box h1{margin:0;font-size:20px;color:var(--c-main)}
 .err{color:var(--c-bad);min-height:20px;font-size:14px}
-header{position:sticky;top:0;z-index:5;background:var(--c-card);border-bottom:1px solid var(--c-border);padding:12px;display:grid;gap:10px}
-header h1{margin:0;font-size:18px;color:var(--c-main)}
+header{position:sticky;top:0;z-index:5;background:#1769aa;border-bottom:1px solid #b9d9f2;padding:12px;display:grid;gap:10px}
+header h1{margin:0;font-size:18px;color:#ffffff}
 .bar{display:flex;gap:8px;flex-wrap:wrap}
 .bar .btn{flex:1 1 auto;padding:8px 10px;font-size:14px}
 #list{padding:12px;display:grid;gap:10px;max-width:760px;margin:0 auto}
@@ -73,7 +67,12 @@ header h1{margin:0;font-size:18px;color:var(--c-main)}
 .badge.hid{background:transparent;color:var(--c-warn);border:1px solid var(--c-warn)}
 .acts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .acts .btn{padding:8px 4px;font-size:13px}
-.empty{text-align:center;color:var(--c-sub);padding:30px}
+.empty{text-align:center;color:#ffffff;padding:30px}
+#title{color:#ffffff}
+.btn.ghost{background:#fff3a6;color:#17365d}
+.sheet{color:#17365d}
+.sheet label{color:#315675}
+#toast{box-shadow:0 4px 18px rgba(0,0,0,.18)}
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;z-index:10}
 .sheet{background:var(--c-card);width:100%;max-width:520px;max-height:90vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px;display:grid;gap:10px}
 .sheet h3{margin:0;color:var(--c-main)}
@@ -137,7 +136,6 @@ const T = {
   wrongPw: 'كلمة السر غلط',             // <<< غيّر هنا: رسالة كلمة السر الغلط
   noApi: 'حط رابط الـ Web app في ثابت API الأول', // <<< غيّر هنا: رسالة نسيان الرابط
   title: 'الوظايف',                     // <<< غيّر هنا: عنوان الصفحة
-  search: 'ابحث...',                    // <<< غيّر هنا: نص البحث
   newJob: 'وظيفة جديدة',                // <<< غيّر هنا: زرار وظيفة جديدة
   newCol: 'خانة جديدة',                 // <<< غيّر هنا: زرار خانة جديدة
   refresh: 'تحديث',                     // <<< غيّر هنا: زرار التحديث
@@ -272,6 +270,15 @@ async function load(){
   return true;
 }
 
+// تعطيل الأزرار أثناء الطلب وإرجاعها بعد النجاح أو الخطأ
+function setBusyUI(busy){
+  document.querySelectorAll('#app button, #sheet button').forEach(btn => {
+    if (btn.id === 'fCancel') return;
+    if (busy) { btn.dataset.wasDisabled = btn.disabled ? '1' : '0'; btn.disabled = true; }
+    else { btn.disabled = btn.dataset.wasDisabled === '1'; delete btn.dataset.wasDisabled; }
+  });
+}
+
 // بتنفذ أمر وتظهر النتيجة وتحدّث القايمة
 async function run(action, extra){
   if (requestBusy) {
@@ -279,6 +286,7 @@ async function run(action, extra){
     return false;
   }
   requestBusy = true;
+  setBusyUI(true);
   try{
     const r = await api(action, extra);
     if (!r.ok){ toast(T.errMsg + r.error, false); return false; }
@@ -291,6 +299,7 @@ async function run(action, extra){
     return false;
   }finally{
     requestBusy = false;
+    setBusyUI(false);
   }
 }
 
@@ -403,35 +412,8 @@ $('list').addEventListener('click', async e => {
 // بتبني النموذج من عناوين الأعمدة وتفتحه (r فاضي = وظيفة جديدة)
 // اختيارات متكررة مجمعة من البيانات الحالية والمرجع السابق؛ المرتب واسم المصنع يظلان كتابة يدوية
 function presetOptions(header){
-  const h = String(header || '').toLowerCase();
-  if (h.includes('شفت') || h.includes('shift') || h.includes('ساعات')) {
-    return ['8 ساعات','8 ساعات (بساعة راحة)','9 ساعات (من 8 صباحًا إلى 5 مساءً، بساعة راحة)','10 ساعات','12 ساعة','12 ساعة (من 8 صباحًا إلى 8 مساءً)','15 ساعة','16 ساعة (بساعتين راحة)'];
-  }
-  if (h.includes('مواصل') || h.includes('نقل')) {
-    return ['مواصلات داخلية مجانية','مواصلات داخلية فقط من الحي 12','مواصلات من السكن للمصنع ومن المصنع للسكن بعد انتهاء الوردية','لا توجد مواصلات خارجية','غير متوفر مواصلات'];
-  }
-  if (h.includes('سكن') || h.includes('إقامة') || h.includes('اقامة')) {
-    return ['سكن مجاني للبنات مجهز بالكامل','متوفر سكن للبنات','غير متوفر سكن','غير مذكور سكن','يوجد سكن عام بالشركة','سكن للمغتربين'];
-  }
-  if (h.includes('طبيعة') || h.includes('عمل') || h.includes('وظيفة') || h.includes('مهام')) {
-    return ['تعبئة وتغليف','فرز على خطوط الإنتاج','تعبئة وتغليف وفرز على خطوط الإنتاج داخل المصنع','وضع استيكر','وردية صباحية'];
-  }
-  if (h.includes('وجبة') || h.includes('أكل') || h.includes('اكل') || h.includes('طعام') || h.includes('غذاء')) {
-    return ['وجبات مدعمة','وجبة ساخنة','وجبة أرز وفراخ وخضار','غير متوفر وجبات'];
-  }
-  if (h.includes('قبض') || h.includes('دفع') || h.includes('صرف')) {
-    return ['قبض شهري','قبض أسبوعي','قبض يومي','سلف يومية وأسبوعية'];
-  }
-  if (h.includes('سن') || h.includes('عمر')) {
-    return ['من 16 إلى 55 سنة','من 16 إلى 60 سنة','من 17 إلى 45 سنة','من 18 إلى 40 سنة','من 18 إلى 55 سنة'];
-  }
-  if (h.includes('فئة') || h.includes('نوع') || h.includes('جنس')) {
-    return ['شباب','بنات','ذكور','إناث','شباب وبنات'];
-  }
-  if (h.includes('منطقة') || h.includes('مكان') || h.includes('مدينة')) {
-    return ['مدينة العاشر من رمضان','مدينة السادات – محافظة المنوفية','مدينة 6 أكتوبر – محافظة الجيزة','مدينة بدر – محافظة القاهرة','مدينة العبور'];
-  }
-  return [];
+  // الاختيارات من القيم المسجلة فعلًا في الشيت فقط، بدون قوائم افتراضية مخترعة.
+  return rows.map(row => val(row, header).trim()).filter(Boolean);
 }
 
 function openForm(r){
@@ -449,7 +431,7 @@ function openForm(r){
     } else if (!/(المصنع|اسم المصنع|factory)/i.test(h) && !/(المرتب|الراتب|مرتب|راتب|salary)/i.test(h)) {
       const known = presetOptions(h);
       const existing = rows.map(row => val(row, h).trim()).filter(Boolean);
-      const opts = [...new Set([...known, ...existing, ...(v ? [v] : [])])];
+      const opts = [...new Set([...known, ...existing, ...(v ? [String(v).trim()] : [])].filter(Boolean))];
       if (opts.length) {
         input = '<select data-i="' + i + '">' +
           '<option value="">— اختر —</option>' +
