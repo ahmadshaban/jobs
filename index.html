@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
-/* <<< غيّر هنا: الألوان */--bg:#244A86;--card:#FFFFFF;--tx:#202938;--mu:#65748A;--bd:#D7E0ED;--ac:#244A86;--acs:#EAF0F8;--sh:0 3px 10px rgba(10,25,55,.12)}
+/* <<< غيّر هنا: الألوان */--bg:#2859A8;--card:#F0F3F7;--tx:#202938;--mu:#566579;--bd:#D6DFEB;--ac:#2859A8;--acs:#D5E3FA;--sh:0 3px 10px rgba(10,25,55,.12)}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:var(--bg);color:var(--tx);font-family:Cairo,Tahoma,"Segoe UI",Arial,sans-serif;line-height:1.5}
@@ -42,7 +42,7 @@ header{padding:1.2rem 0 .6rem}h1{font-size:1.75rem;font-weight:800;margin:0;line
 .ttl{font-size:clamp(.92rem,3.6vw,1rem);font-weight:800;margin:.18rem 0 .03rem;line-height:1.35}.who{color:var(--mu);font-size:clamp(.76rem,2.8vw,.82rem)}
 /* <<< غيّر هنا: شكل المرتب في الكروت */
 .pay{display:inline-block;font-size:clamp(1.02rem,4vw,1.12rem);font-weight:800;color:var(--ac);background:var(--acs);border-radius:.65rem;padding:.22rem .58rem;margin:.28rem 0 .08rem;line-height:1.35}
-.facts{display:flex;flex-wrap:wrap;gap:.25rem;margin-top:.28rem}.facts span{font-size:clamp(.68rem,2.5vw,.73rem);background:var(--bg);border-radius:.5rem;padding:.12rem .4rem;color:var(--mu)}
+.facts{display:flex;flex-wrap:wrap;gap:.25rem;margin-top:.28rem}.facts span{font-size:clamp(.68rem,2.5vw,.73rem);background:#D5E3FA;border-radius:.5rem;padding:.12rem .4rem;color:#244A86}
 .pm{color:var(--mu);font-size:.78rem;font-weight:700;margin:.1rem 0 0}.pm2{display:block;color:rgba(255,255,255,.88);font-size:.78rem;font-weight:700;margin-top:.1rem}
 .more{display:block;text-align:end;color:var(--ac);font-weight:700;font-size:.8rem;margin-top:.35rem}
 .sk{height:7.2rem;border-radius:1.2rem;background:linear-gradient(90deg,var(--card),var(--bd),var(--card));background-size:200% 100%;animation:sk 1.2s infinite;margin-bottom:.75rem}
@@ -146,7 +146,6 @@ header h1,header .sub,header .lead{color:#fff}
     <!-- <<< غيّر هنا: سطر الثقة (الجمل اللي تحت العنوان) -->
     <div class="trust"><span>✅ التقديم من غير أي رسوم مقدما</span></div></header>
   <div class="bar">
-    <div class="search"><span>🔍</span><input id="q" type="search" placeholder="دوّر على مصنع أو وظيفة"></div>
     <div id="seg" class="seg"></div>
     <div id="area" class="chips"></div>
   </div>
@@ -260,10 +259,9 @@ function draw(){
   if(!areas.includes(area))area="الكل";
   $("area").innerHTML=areas.map(a=>`<button class="chip ${a===area?"on":""}" data-v="${esc(a)}">${esc(a)}</button>`).join("");
   $("area").querySelectorAll("button").forEach(b=>b.onclick=()=>{area=b.dataset.v;draw()});
-  const q=$("q").value.trim();
-  const r=JOBS.filter(j=>matchCat(j)&&(area==="الكل"||j["المنطقة"]===area)&&(!q||(j["المصنع"]+(j["المؤهل"]||"")).includes(q))).sort((x,y)=>rank(x)-rank(y));   // العاجل فوق والمكتمل تحت
+  const r=JOBS.filter(j=>matchCat(j)&&(area==="الكل"||j["المنطقة"]===area)).sort((x,y)=>rank(x)-rank(y));   // العاجل فوق والمكتمل تحت
   $("cnt").textContent=r.length?`${r.length} وظيفة متاحة`:"";
-  $("clr").style.display=(area!=="الكل"||q)?"block":"none";
+  $("clr").style.display=(area!=="الكل")?"block":"none";
   $("empty").style.display=r.length?"none":"block";
   $("emt").textContent=JOBS.length?"مفيش وظايف زي كده، جرّب تغيّر الفلتر أو دوّر على حاجة تانية":"مفيش وظايف متاحة دلوقتي، ارجع كمان شوية";
   $("list").innerHTML=r.map(j=>`<button class="card ${done(j)?"done":""}" data-i="${JOBS.indexOf(j)}" ${done(j)?"disabled":""}>
@@ -274,8 +272,7 @@ function draw(){
    ${done(j)?"":'<span class="more">التفاصيل ‹</span>'}</button>`).join("");
   $("list").querySelectorAll(".card").forEach(b=>b.onclick=()=>go(+b.dataset.i));
 }
-$("clr").onclick=()=>{area="الكل";$("q").value="";draw()};
-$("q").oninput=draw;
+$("clr").onclick=()=>{area="الكل";draw()};
 
 let came=false,sy=0;
 function go(i){came=true;sy=window.scrollY;location.hash="job"+i}
