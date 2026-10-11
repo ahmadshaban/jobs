@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
-/* <<< غيّر هنا: الألوان */--bg:#eef3fb;--card:#fff;--tx:#25324a;--mu:#6b7a94;--bd:#dbe4f0;--ac:#3a72d8;--acs:#e6effc;--sh:0 1px 4px rgba(60,90,140,.08)}
+/* ألوان الهوية: أزرق ملكي + ذهبي هادئ + كتابة فحمية */--bg:#244A86;--card:#C5A45D;--tx:#242424;--mu:#51462F;--bd:#A98A48;--ac:#244A86;--acs:#E3D0A0;--sh:0 3px 10px rgba(10,25,55,.18)}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:var(--bg);color:var(--tx);font-family:Cairo,Tahoma,"Segoe UI",Arial,sans-serif;line-height:1.5}
@@ -112,6 +112,38 @@ header{padding:1.2rem 0 .6rem}h1{font-size:1.75rem;font-weight:800;margin:0;line
 @media(min-width:640px){
   .card{padding:.7rem .85rem;margin-bottom:.45rem}
 }
+
+/* ===== الهوية اللونية الجديدة فقط؛ دون تغيير البيانات أو الوظائف ===== */
+body{background:var(--bg);color:#fff}
+header h1,header .sub,header .lead{color:#fff}
+.bar,.tb,.cta{background:var(--bg)}
+.meta{color:#fff}
+.meta button,.more{color:#fff}
+.search input,.seg,.chip,.card,.sec,.trust span,.x,.exit,.fl input,.yn button{background:var(--card);color:var(--tx);border-color:var(--bd)}
+.seg button{color:#51462F}
+.seg button.on{background:var(--ac);color:#fff}
+.chip.on{background:var(--acs);border-color:var(--ac);color:var(--ac)}
+.card{box-shadow:0 3px 10px rgba(10,25,55,.18)}
+.loc,.who,.pm,.it small{color:#51462F}
+.badge{background:var(--acs);color:var(--ac)}
+.pay{background:var(--acs);color:#242424}
+.facts span,.it{background:var(--acs);color:#242424}
+.sec h3{color:var(--ac)}
+.hero{background:linear-gradient(135deg,#C5A45D,#D8BE80);box-shadow:0 5px 14px rgba(10,25,55,.2)}
+.hero small,.hero b{color:#242424}
+.trust span{color:#242424}
+.btn{background:var(--card);color:#242424;border-color:#A98A48}
+.btn.wa,.fab{background:#159B50;color:#fff}
+.demo{background:#E3D0A0;color:#242424;border-color:#A98A48}
+.empty{color:#fff}
+.retry{background:var(--card);color:#242424;border:1px solid var(--bd)}
+.sheet{background:var(--bg)}
+.grab{background:#C5A45D}
+.sk{background:linear-gradient(90deg,#C5A45D,#E3D0A0,#C5A45D);background-size:200% 100%}
+.fl input:focus,.search input:focus{border-color:#fff}
+.badge.g{background:#F4D8E3;color:#8B234B}.badge.m{background:#D8E8EF;color:#20556A}
+.badge.dn{background:#F5DADA;color:#8C2020}.badge.ur{background:#F4DFC8;color:#7C3D12}.badge.nw{background:#DCEBDD;color:#245D32}
+
 </style>
 </head>
 <body>
