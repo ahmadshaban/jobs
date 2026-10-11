@@ -80,6 +80,14 @@ header h1{margin:0;font-size:18px;color:#fff}
 .fab{position:fixed;bottom:20px;inset-inline-end:16px;z-index:6;width:56px;height:56px;border-radius:50%;border:0;background:#FFE45C;color:#0E3560;font-size:32px;font-weight:700;line-height:1;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.4)}
 .fab:disabled{opacity:.5}
 .sheet .row{position:sticky;bottom:-1px;background:#0B2A4A;padding:10px 0 4px;box-shadow:0 -8px 10px -6px rgba(0,0,0,.45)}
+.meta span.sal{background:#FFE45C;color:#0E3560;font-weight:700;cursor:pointer}
+.meta span.sal.empty{background:transparent;color:#FFE45C;border:1px dashed #FFE45C;font-weight:400}
+.oldhint{color:#fff;opacity:.85;font-size:12px;font-weight:400}
+#salDlg{position:fixed;inset:0;background:rgba(0,20,50,.65);display:flex;align-items:center;justify-content:center;z-index:15;padding:16px}
+#salDlg .box{background:#0B2A4A;border:1px solid #3F7AB5;border-radius:16px;padding:16px;width:100%;max-width:340px;display:grid;gap:10px}
+#salDlg h3{margin:0;color:#FFE45C;font-size:16px}
+#salOld{font-size:13px;color:#fff;background:#1A4A7A;border-radius:8px;padding:6px 10px;cursor:pointer}
+#salDlg .row{display:flex;gap:8px}#salDlg .row .btn{flex:1}
 #toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);padding:10px 18px;border-radius:12px;color:#fff;font-weight:700;z-index:20;max-width:90%;box-shadow:0 4px 18px rgba(0,0,0,.18)}
 #toast.ok{background:#16803d}
 #toast.bad{background:#B42318}
@@ -128,6 +136,13 @@ header h1{margin:0;font-size:18px;color:#fff}
 </div>
 
 <div id="modal" class="hidden"><div class="sheet" id="sheet"></div></div>
+<!-- <<< غيّر هنا: نافذة تعديل المرتب السريع (بتفتح جوه الصفحة، مش رسالة المتصفح) -->
+<div id="salDlg" class="hidden"><div class="box">
+  <h3 id="salT"></h3>
+  <div id="salOld" class="hidden"></div>
+  <input id="salIn" type="text" autocomplete="off" placeholder="اكتب الرقم بس">
+  <div class="row"><button class="btn" id="salSave">حفظ</button><button class="btn ghost" id="salCancel">إلغاء</button></div>
+</div></div>
 <div id="toast" class="hidden"></div>
 
 <script>
@@ -384,10 +399,13 @@ function cardHTML(r){
   const done = val(r, COL.status).trim() === T.doneValue;
   const urg = val(r, COL.status).trim() === T.urgentValue;
   const hasNew = val(r, COL.salary30) || val(r, COL.salary26);
-  // الكارت بيعرض المرتب للمعلومة بس (التعديل من جوه فورم التعديل)
-  const meta = [COL.area, COL.gender, COL.shift, ...(hasNew ? [COL.salary30, COL.salary26] : [COL.salary])]
-    .map(c => !val(r, c) ? '' : (c === COL.salary30 ? '30 يوم: ' : c === COL.salary26 ? '26 يوم: ' : '') + val(r, c))
-    .filter(Boolean).map(v => '<span>' + esc(v) + '</span>').join('');
+  // خانات عادية (المنطقة، الفئة، الشفت، والمرتب القديم لو المصنع لسه ما اتعدّلش)
+  const plain = [COL.area, COL.gender, COL.shift, ...(hasNew ? [] : [COL.salary])]
+    .map(c => val(r, c)).filter(Boolean).map(v => '<span>' + esc(v) + '</span>').join('');
+  // خانتين المرتب: دوس على أي واحدة تعدّلها من مكانها (الفاضية بتظهر بـ +)
+  const salChip = (c, lbl) => '<span class="sal' + (val(r, c) ? '' : ' empty') + '" data-sal="' + esc(c) + '" data-row="' + r.row + '">' +
+    (val(r, c) ? esc(lbl + ': ' + val(r, c)) : '+ ' + esc(lbl)) + '</span>';
+  const meta = plain + salChip(COL.salary30, '30 يوم') + salChip(COL.salary26, '26 يوم');
   return '<div class="card' + (hid ? ' dim' : '') + '">' +
     '<h2>' + esc(val(r, COL.factory)) +
       (done ? '<span class="badge done">' + esc(T.doneBadge) + '</span>' : '') +
@@ -431,10 +449,41 @@ function render(){
     : '<div class="empty">اختار المكان من القائمة، أو اكتب اسم المصنع في البحث.</div>';
 }
 
+// نافذة تعديل المرتب السريع: بتعرض المرتب القديم، ودوس عليه ينزل في الخانة
+let salRow = 0, salCol = '';
+function openSal(row, col){
+  const rr = rows.find(x => x.row === row);
+  if (!rr) return;
+  salRow = row; salCol = col;
+  const legacy = String(val(rr, COL.salary) || '').trim();
+  const cur = String(val(rr, col) || '').trim();
+  const old = cur || legacy;
+  $('salT').textContent = col + ' — ' + val(rr, COL.factory);
+  $('salOld').classList.toggle('hidden', !old);
+  $('salOld').textContent = 'المرتب القديم: ' + old + '  (دوس هنا تستخدمه)';
+  $('salOld').dataset.v = old;
+  $('salIn').value = cur || (col === COL.salary30 ? legacy : '');
+  $('salDlg').classList.remove('hidden');
+  $('salIn').focus(); $('salIn').select();
+}
+function closeSal(){ $('salDlg').classList.add('hidden'); }
+async function saveSal(){
+  const v = normSalary($('salIn').value, salCol);
+  closeSal();
+  await run('update', {row: salRow, data: {[salCol]: v}});
+}
+$('salSave').onclick = saveSal;
+$('salCancel').onclick = closeSal;
+$('salOld').onclick = () => { $('salIn').value = $('salOld').dataset.v || ''; $('salIn').focus(); };
+$('salIn').addEventListener('keydown', e => { if (e.key === 'Enter') saveSal(); if (e.key === 'Escape') closeSal(); });
+$('salDlg').addEventListener('click', e => { if (e.target.id === 'salDlg') closeSal(); });
+
 // ===== [7] أزرار الكارت =====
 
 // بتتعامل مع ضغطة أي زرار جوه الكارت
 $('list').addEventListener('click', async e => {
+  const sal = e.target.closest('[data-sal]');
+  if (sal) return openSal(Number(sal.dataset.row), sal.dataset.sal);
   const b = e.target.closest('button[data-act]');
   if (!b) return;
   const row = Number(b.dataset.row);
@@ -525,7 +574,13 @@ function openForm(r, asCopy){
     } else {
       input = '<input data-i="' + i + '" value="' + esc(v) + '">';
     }
-    return '<label>' + esc(h) + input + '</label>';
+    // تحت خانتين المرتب: القديم كان كام (بيفضل ظاهر وانت بتعدّل)
+    let hint = '';
+    if (h === COL.salary30 || h === COL.salary26) {
+      const was = src ? (String(src.values[i] ?? '').trim() || String(src.values[headers.indexOf(COL.salary)] ?? '').trim()) : '';
+      if (was) hint = '<small class="oldhint">المرتب القديم: ' + esc(was) + '</small>';
+    }
+    return '<label>' + esc(h) + input + hint + '</label>';
   }).join('');
   $('sheet').innerHTML = '<h3>' + esc(r ? T.formEdit : T.formNew) + '</h3>' + fields +
     '<div class="row"><button class="btn" id="fSave">' + esc(T.save) + '</button>' +
