@@ -21,58 +21,58 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-/* ===== [1] الألوان والتصميم: أزرق مع كتابة بيضاء وصفراء ===== */
+/* ===== [1] الألوان والتصميم: كحلي غامق مع كتابة بيضاء وصفراء (غيّر الألوان من هنا) ===== */
 :root{
-  --c-main:#0759A6;
-  --c-main-dark:#06457F;
-  --c-main-soft:#0B67B8;
-  --c-bg:#0867B4;
-  --c-card:#0759A6;
+  --c-main:#0B2A4A;
+  --c-main-dark:#08203A;
+  --c-main-soft:#123A63;
+  --c-bg:#0D2F52;
+  --c-card:#0B2A4A;
   --c-text:#FFFFFF;
   --c-sub:#FFE45C;
-  --c-border:#63B8F2;
+  --c-border:#3F7AB5;
   --c-ok:#16803d;
   --c-bad:#ff7777;
   --c-warn:#FFE45C;
   --c-highlight:#FFE45C;
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:'Cairo',sans-serif;background:linear-gradient(145deg,#07539A 0%,#0875C9 55%,#075BA7 100%);color:#fff;font-size:15px}
+body{margin:0;font-family:'Cairo',sans-serif;background:linear-gradient(145deg,#071C33 0%,#0F3A66 55%,#0A2A4D 100%);color:#fff;font-size:15px}
 button,input,select{font-family:inherit;font-size:inherit}
 .hidden{display:none!important}
-.btn{border:1px solid #63B8F2;border-radius:10px;padding:9px 14px;font-weight:700;cursor:pointer;background:#064F93;color:#fff}
-.btn:active{background:#043F76}
-.btn.ghost{background:#FFE45C;color:#064F93;border-color:#FFE45C}
+.btn{border:1px solid #3F7AB5;border-radius:10px;padding:9px 14px;font-weight:700;cursor:pointer;background:#0E3560;color:#fff}
+.btn:active{background:#082A4C}
+.btn.ghost{background:#FFE45C;color:#0E3560;border-color:#FFE45C}
 .btn.danger{background:transparent;color:#fff;border:1px solid #FF9B9B}
 .btn:disabled{opacity:.65}
-input,select{width:100%;padding:10px 12px;border:1px solid #63B8F2;border-radius:10px;background:#0759A6;color:#fff}
+input,select{width:100%;padding:10px 12px;border:1px solid #3F7AB5;border-radius:10px;background:#0B2A4A;color:#fff}
 input::placeholder{color:#E5F4FF;opacity:1}
-select option{background:#0759A6;color:#fff}
+select option{background:#0B2A4A;color:#fff}
 input:focus,select:focus,.btn:focus-visible{outline:2px solid #FFE45C;outline-offset:2px}
 #login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-.login-box{width:100%;max-width:340px;background:#0759A6;border:1px solid #63B8F2;border-radius:16px;padding:22px;display:grid;gap:12px}
+.login-box{width:100%;max-width:340px;background:#0B2A4A;border:1px solid #3F7AB5;border-radius:16px;padding:22px;display:grid;gap:12px}
 .login-box h1{margin:0;font-size:20px;color:#FFE45C}
 .err{color:#FFE45C;min-height:20px;font-size:14px}
-header{position:sticky;top:0;z-index:5;background:#0759A6;border-bottom:1px solid #63B8F2;padding:12px;display:grid;gap:10px}
+header{position:sticky;top:0;z-index:5;background:#0B2A4A;border-bottom:1px solid #3F7AB5;padding:12px;display:grid;gap:10px}
 header h1{margin:0;font-size:18px;color:#fff}
 .bar{display:flex;gap:8px;flex-wrap:wrap}
 .bar .btn{flex:1 1 auto;padding:8px 10px;font-size:14px}
 #list{padding:12px;display:grid;gap:10px;max-width:760px;margin:0 auto}
-.card{background:#0759A6;border:1px solid #63B8F2;border-radius:14px;padding:12px;display:grid;gap:8px;color:#fff}
+.card{background:#0B2A4A;border:1px solid #3F7AB5;border-radius:14px;padding:12px;display:grid;gap:8px;color:#fff}
 .card.dim{opacity:.65}
 .card h2{margin:0;font-size:17px;color:#FFE45C}
 .meta{display:flex;flex-wrap:wrap;gap:6px}
-.meta span{background:#0B72C6;color:#fff;border:1px solid #63B8F2;border-radius:8px;padding:2px 9px;font-size:13px}
+.meta span{background:#1A4A7A;color:#fff;border:1px solid #3F7AB5;border-radius:8px;padding:2px 9px;font-size:13px}
 .badge{border-radius:8px;padding:2px 9px;font-size:12px;font-weight:700;margin-inline-start:6px}
 .badge.done{background:#16803d;color:#fff}
-.badge.urg{background:#FFE45C;color:#064F93}
+.badge.urg{background:#FFE45C;color:#0E3560}
 .badge.hid{background:transparent;color:#FFE45C;border:1px solid #FFE45C}
 .acts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .acts .btn{padding:8px 4px;font-size:13px}
 .empty{text-align:center;color:#fff;padding:30px}
 #title{color:#fff}
 #modal{position:fixed;inset:0;background:rgba(0,20,50,.65);display:flex;align-items:flex-end;justify-content:center;z-index:10}
-.sheet{background:#0759A6;color:#fff;width:100%;max-width:520px;max-height:90vh;overflow:auto;border:1px solid #63B8F2;border-radius:18px 18px 0 0;padding:16px;display:grid;gap:10px}
+.sheet{background:#0B2A4A;color:#fff;width:100%;max-width:520px;max-height:90vh;overflow:auto;border:1px solid #3F7AB5;border-radius:18px 18px 0 0;padding:16px;display:grid;gap:10px}
 .sheet h3{margin:0;color:#FFE45C}
 .sheet label{font-size:13px;color:#FFE45C;display:grid;gap:4px}
 .sheet .row{display:flex;gap:8px}
@@ -109,6 +109,8 @@ header h1{margin:0;font-size:18px;color:#fff}
         <option value="b">شباب وبنات</option>
       </select>
     </div>
+    <!-- <<< غيّر هنا: خانة البحث باسم المصنع -->
+    <input id="q" type="search" placeholder="🔍 دوّر باسم المصنع..." aria-label="بحث باسم المصنع">
     <div class="bar">
       <button class="btn" id="bNew"></button>
       <button class="btn ghost" id="bCol"></button>
@@ -138,6 +140,10 @@ const COL = {
   status:  'الحالة'    // <<< غيّر هنا: اسم عمود الحالة
 };
 
+const SAL_SUFFIX = ' ج في الشهر'; // <<< غيّر هنا: الكلمة اللي بتتضاف تلقائي لو كتبت رقم بس في خانة المرتب
+const DATE_COL = 'تاريخ الإضافة'; // <<< غيّر هنا: اسم عمود تاريخ الإضافة
+const todayStr = () => new Date().toISOString().slice(0, 10);
+
 const T = {
   loginTitle: 'دخول الأدمن',            // <<< غيّر هنا: عنوان شاشة الدخول
   pwHint: 'كلمة السر',                  // <<< غيّر هنا: نص خانة كلمة السر
@@ -149,6 +155,7 @@ const T = {
   newCol: 'خانة جديدة',                 // <<< غيّر هنا: زرار خانة جديدة
   refresh: 'تحديث',                     // <<< غيّر هنا: زرار التحديث
   logout: 'خروج',                       // <<< غيّر هنا: زرار الخروج
+  copy: 'نسخ',                           // <<< غيّر هنا: زرار نسخ المصنع
   edit: 'تعديل',                        // <<< غيّر هنا: زرار التعديل
   hide: 'إخفاء',                        // <<< غيّر هنا: زرار الإخفاء
   show: 'إظهار',                        // <<< غيّر هنا: زرار الإظهار
@@ -375,6 +382,7 @@ function cardHTML(r){
     '<div class="meta">' + meta + '</div>' +
     '<div class="acts">' +
       '<button class="btn ghost" data-act="edit" data-row="' + r.row + '">' + esc(T.edit) + '</button>' +
+      '<button class="btn ghost" data-act="copy" data-row="' + r.row + '">' + esc(T.copy) + '</button>' +
       '<button class="btn ghost" data-act="vis" data-row="' + r.row + '">' + esc(hid ? T.show : T.hide) + '</button>' +
       '<button class="btn ghost" data-act="done" data-row="' + r.row + '">' + esc(done ? T.reopen : T.complete) + '</button>' +
       '<button class="btn ghost" data-act="urg" data-row="' + r.row + '">' + esc(urg ? T.unurgent : T.urgent) + '</button>' +
@@ -400,11 +408,13 @@ function render(){
   const g = $('genderFilter').value;
   // بيحدد الفئة: m = شباب بس، f = بنات بس، b = شباب وبنات مع بعض
   const kindOf = r => { const t = val(r, COL.gender); const m = /شباب/.test(t), f = /بنات/.test(t); return (m && f) ? 'b' : m ? 'm' : f ? 'f' : ''; };
-  const list = area ? rows.filter(r => val(r, COL.area).trim() === area && (!g || kindOf(r) === g)) : [];
-  $('title').textContent = T.title + (area ? ' (' + list.length + ')' : '');
-  $('list').innerHTML = area
+  const q = $('q').value.trim().toLocaleLowerCase('ar');
+  const list = (area || q) ? rows.filter(r => (!area || val(r, COL.area).trim() === area) &&
+    (!q || val(r, COL.factory).toLocaleLowerCase('ar').includes(q)) && (!g || kindOf(r) === g)) : [];
+  $('title').textContent = T.title + ((area || q) ? ' (' + list.length + ')' : '');
+  $('list').innerHTML = (area || q)
     ? (list.length ? list.map(cardHTML).join('') : '<div class="empty">' + esc(T.empty) + '</div>')
-    : '<div class="empty">اختار المكان من القائمة لعرض المصانع التابعة له.</div>';
+    : '<div class="empty">اختار المكان من القائمة، أو اكتب اسم المصنع في البحث.</div>';
 }
 
 // ===== [7] أزرار الكارت =====
@@ -418,6 +428,7 @@ $('list').addEventListener('click', async e => {
   if (!r) return;
   const act = b.dataset.act;
   if (act === 'edit') return openForm(r);
+  if (act === 'copy') return openForm(r, true);
   if (act === 'vis'){
     const hid = val(r, COL.visible).trim() === T.no;
     return run('update', {row, data:{[COL.visible]: hid ? T.yes : T.no}});
@@ -454,14 +465,28 @@ function currentFormSnapshot(){
 function formHasUnsavedChanges(){
   return !!formInitialSnapshot && currentFormSnapshot() !== formInitialSnapshot;
 }
-function openForm(r){
-  const fields = headers.map((h, i) => {
+// بترتّب الخانات: خانتين المرتب بعد الشفت على طول (أو بعد اسم المصنع)
+function formOrder(){
+  const a = headers.indexOf(COL.salary30), b = headers.indexOf(COL.salary26);
+  const rest = headers.map((_, i) => i).filter(i => i !== a && i !== b);
+  let at = headers.indexOf(COL.shift); if (at < 0) at = headers.indexOf(COL.factory);
+  const pos = at < 0 ? rest.length : rest.indexOf(at) + 1;
+  rest.splice(pos, 0, ...[a, b].filter(i => i >= 0));
+  return rest;
+}
+// asCopy=true: بيفتح فورم مصنع جديد ببيانات مصنع موجود (اسم المصنع بيتفضّى)
+function openForm(r, asCopy){
+  const src = r; if (asCopy) r = null;
+  const fields = formOrder().map(i => { const h = headers[i];
     if (!h) return '';
     if (h === COL.salary) return '';   // <<< غيّر هنا: خانة المرتب القديمة مخفية (استبدلناها بـ 30 يوم و 26 يوم)
     // تنظيف المسافات الزائدة حتى تتطابق القيمة المحفوظة مع خيار القائمة.
-    let v = r ? String(r.values[i] ?? '').trim() : (h === COL.visible ? T.yes : '');
+    let v = src ? String(src.values[i] ?? '').trim() : (h === COL.visible ? T.yes : '');
+    if (asCopy && h === COL.factory) v = '';      // المصنع الجديد لازم له اسم جديد
+    if (asCopy && h === COL.status) v = '';       // النسخة الجديدة مش مكتملة ولا عاجلة
+    if (!r && h === DATE_COL) v = todayStr();     // تاريخ الإضافة أوتوماتيك للمصنع الجديد
     // لو المصنع قديم وخانة 30 يوم فاضية، ننقل المرتب القديم فيها عشان ما يضيعش
-    if (r && h === COL.salary30 && !v) v = String(r.values[headers.indexOf(COL.salary)] ?? '').trim();
+    if (src && h === COL.salary30 && !v) v = String(src.values[headers.indexOf(COL.salary)] ?? '').trim();
     let input;
     if (h === COL.visible){
       input = '<select data-i="' + i + '">' +
@@ -517,6 +542,23 @@ function openForm(r){
     if ([...$('sheet').querySelectorAll('select[data-i]')].some(el => el.value === '__custom__' && !$('sheet').querySelector('[data-custom-i="' + el.dataset.i + '"]').value.trim())) {
       toast('اكتب القيمة الجديدة أو اختار قيمة من القائمة.', false);
       return;
+    }
+    // رقم بس في خانة المرتب؟ بنكمّلها أوتوماتيك (8000 ← 8000 ج في الشهر)
+    [COL.salary30, COL.salary26].forEach(c => {
+      if (!(c in data)) return;
+      let t = String(data[c]).trim().replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+      if (/^[\d.,]+$/.test(t)) t = t.replace(/,/g, '') + SAL_SUFFIX;
+      data[c] = t;
+    });
+    // تاريخ الإضافة أوتوماتيك للمصنع الجديد لو فاضي
+    if (!r && DATE_COL in data && !String(data[DATE_COL]).trim()) data[DATE_COL] = todayStr();
+    // فحص قبل الحفظ
+    if (headers.includes(COL.factory) && !String(data[COL.factory] || '').trim()) {
+      toast('اكتب اسم المصنع الأول.', false);
+      return;
+    }
+    if ((COL.salary30 in data || COL.salary26 in data) && !String(data[COL.salary30] || '').trim() && !String(data[COL.salary26] || '').trim()) {
+      if (!confirm('خانتين المرتب فاضيين (30 يوم و 26 يوم). تحفظ كده؟')) return;
     }
     if (!r) {
       const factoryHeader = headers.find(h => /(المصنع|اسم المصنع|factory)/i.test(h));
@@ -591,6 +633,7 @@ function init(){
   $('pw').addEventListener('keydown', e => { if (e.key === 'Enter') $('loginBtn').click(); });
   $('areaFilter').addEventListener('change', render);
   $('genderFilter').addEventListener('change', render);
+  $('q').addEventListener('input', render);
   $('bNew').onclick = () => openForm(null);
   $('bRef').onclick = load;
   $('bOut').onclick = () => { clearLogin(); location.reload(); };
