@@ -3,15 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="color-scheme" content="light">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Crect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%233a72d8%27/%3E%3Ctext x=%2750%27 y=%2770%27 font-size=%2760%27 text-anchor=%27middle%27%3E%F0%9F%8F%AD%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Crect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%233B1F6B%27/%3E%3Ctext x=%2750%27 y=%2770%27 font-size=%2760%27 text-anchor=%27middle%27%3E%F0%9F%8F%AD%3C/text%3E%3C/svg%3E">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>عمال تعبئة وتغليف وفرز</title>
 <!-- ===== [معاينة اللينك] <<< غيّر هنا: العنوان والوصف والصورة (og.png لازم يتحط في المخزن) ===== -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="عمال تعبئة وتغليف وفرز">
 <meta property="og:description" content="قدّم من الموبايل في دقايق واختار الفرصة المناسبة ليك">
-<meta property="og:image" content="https://ahmadshaban.github.io/jobs/og.png?v=2">
+<meta property="og:image" content="https://ahmadshaban.github.io/jobs/og.png?v=3">
 <meta property="og:url" content="https://ahmadshaban.github.io/jobs/">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -113,58 +115,42 @@ header{padding:.65rem 0 .55rem;position:sticky;top:env(safe-area-inset-top,0px);
   .card{padding:.7rem .85rem;margin-bottom:.45rem}
 }
 
-/* الهوية الجديدة: خلفية سماوية هادئة + كروت بيضاء بارزة وواضحة */
-:root{--bg:#EAF4FF;--card:#FFFFFF;--tx:#17365D;--mu:#5D718A;--bd:#C9DDF4;--ac:#1456A0;--acs:#DCEEFF;--sh:0 8px 22px rgba(24,75,135,.10)}
-body{background:linear-gradient(180deg,#F4F9FF 0%,#E8F3FF 100%);color:var(--tx)}
-header{background:rgba(244,249,255,.96);box-shadow:0 3px 12px rgba(30,77,130,.06)}
-header h1,header .sub,header .lead{color:#164B8C}
-.bar,.tb{background:rgba(234,244,255,.97)}
-.cta{background:#F4F9FF;border-color:#C9DDF4}
-.meta{color:#315578}
-.meta button,.more{color:#1456A0}
-.search input,.seg,.chip,.sec,.trust span,.x,.exit,.fl input,.yn button{background:#FFFFFF;color:var(--tx);border-color:#C9DDF4}
-.seg{box-shadow:0 3px 10px rgba(24,75,135,.05)}
-.seg button{color:#315578}
-.seg button.on{background:linear-gradient(135deg,#1D67B5,#124B91);color:#fff;box-shadow:0 3px 8px rgba(20,86,160,.22)}
-.chip{box-shadow:0 2px 7px rgba(24,75,135,.04)}
-.chip.on{background:#DCEEFF;border-color:#8BB9EC;color:#1456A0}
-.card{background:#FFFFFF;border:1.5px solid #C6DCF5;border-radius:1.25rem;padding:clamp(.8rem,3vw,1rem);margin-bottom:.85rem;box-shadow:0 8px 22px rgba(24,75,135,.11);transition:transform .15s,box-shadow .15s}
-.card:active{transform:scale(.992);box-shadow:0 3px 10px rgba(24,75,135,.12)}
-.loc,.who,.pm,.it small{color:#61758D}
-.badge{background:#E7F1FC;color:#24558A}
-.pay{background:linear-gradient(135deg,#FFF1BC,#FFE59A);color:#17365D;border:1px solid #F0D477;border-radius:.85rem;box-shadow:inset 0 1px 0 rgba(255,255,255,.75)}
-.facts span,.it{background:#EAF4FF;color:#17365D;border:1px solid #D7E8FA}
-.sec{background:#FFFFFF;border:1px solid #D0E2F5;box-shadow:0 5px 15px rgba(24,75,135,.07)}
-.sec h3{color:#1456A0}
-.hero{background:linear-gradient(135deg,#FFF1BC,#FFE59A);border-color:#F0D477;box-shadow:0 5px 14px rgba(24,75,135,.12)}
-.hero small{color:#6B561D}.hero b{color:#17365D}.hero .pm2{color:#6B561D}
-.trust span{color:#17365D;background:#FFFFFF}
-.btn{background:#F7FBFF;color:#1456A0;border-color:#BBD4F1}
-.btn.wa,.fab{background:#159B50;color:#fff}
-.demo{background:#FFFFFF;color:#17365D;border-color:#D0E2F5}
-.empty{color:#315578}
-
-
-/* الهوية النهائية حسب طلب المستخدم: أزرق هادئ، كروت بيضاء، نص أسود، والمرتب بلون مميز */
-:root{--bg:#EAF3FC;--card:#FFFFFF;--tx:#171D27;--mu:#5B6675;--bd:#C8DDF2;--ac:#2468B4;--acs:#E1EFFD;--sh:0 7px 20px rgba(36,104,180,.10)}
-body{background:linear-gradient(180deg,#EDF6FF 0%,#E3EFFB 100%);color:#171D27}
-header{background:rgba(237,246,255,.97);box-shadow:0 3px 12px rgba(36,104,180,.07)}
-header h1,header .sub,header .lead{color:#171D27}
-.bar,.tb{background:rgba(234,243,252,.97)}
-.meta{color:#303B49}.meta button,.more{color:#245FA7}
-.search input,.seg,.chip,.sec,.trust span,.x,.exit,.fl input,.yn button{background:#FFFFFF;color:#171D27;border-color:#C8DDF2}
-.seg button{color:#303B49}.seg button.on{background:#286DB8;color:#FFFFFF;box-shadow:0 3px 8px rgba(36,104,180,.20)}
-.chip{box-shadow:0 2px 7px rgba(36,104,180,.05)}.chip.on{background:#D9EBFC;border-color:#8DBBE7;color:#164F8E}
-.card{background:#FFFFFF;color:#171D27;border:1.5px solid #C5DDF4;border-radius:1.15rem;padding:1rem; margin-bottom:.8rem;box-shadow:0 7px 19px rgba(36,104,180,.10)}
-.card .ttl{color:#171D27;font-size:clamp(1.08rem,4.2vw,1.22rem);margin:0 0 .5rem;line-height:1.4}
-.card .pay{display:block;width:100%;text-align:center;color:#155AA0;background:#EAF4FF;border:1px solid #B7D5F3;border-radius:.85rem;font-size:clamp(1.55rem,6vw,1.85rem);font-weight:800;padding:.5rem .75rem;margin:.45rem 0;box-shadow:none}
-.card .facts{margin:.35rem 0 .25rem;justify-content:center}.card .facts span{font-size:.95rem;color:#171D27;background:#F4F8FC;border:1px solid #E0E8F1;border-radius:.65rem;padding:.25rem .65rem}
-.card .more{display:block;text-align:center;color:#245FA7;font-weight:800;font-size:.92rem;margin-top:.65rem;padding-top:.65rem;border-top:1px solid #E1EAF4}
-.card .top,.card .who,.card .pm{display:none}
-.cta{background:#EDF6FF;border-color:#C8DDF2}.btn{background:#FFFFFF;color:#245FA7;border-color:#C8DDF2}.btn.wa,.fab{background:#2468B4;color:#FFFFFF;box-shadow:0 3px 10px rgba(36,104,180,.18)}
-.sec{background:#FFFFFF;border-color:#D4E4F3;box-shadow:0 4px 13px rgba(36,104,180,.06)}.sec h3{color:#245FA7}.facts span,.it{background:#F1F7FD;color:#171D27;border-color:#DCE9F5}
-.hero{background:#E4F1FF;border-color:#B7D5F3;box-shadow:0 4px 12px rgba(36,104,180,.10)}.hero small,.hero b,.hero .pm2{color:#155AA0}
-.trust span{color:#171D27;background:#FFFFFF}.demo{background:#FFFFFF;color:#171D27;border-color:#D4E4F3}.empty{color:#303B49}
+/* ===== الهوية الجديدة: بنفسجي وليموني (التصميم 4) — <<< غيّر هنا: الألوان من :root ===== */
+:root{--bg:#F5F2FA;--card:#FFFFFF;--tx:#171D27;--mu:#5A5470;--bd:#DCD3EC;--ac:#3B1F6B;--acs:#EDE7F7;--sh:0 6px 16px rgba(59,31,107,.14);--lime:#D9F26B;--limeD:#1F3300;--wa:#1FAF5A;--px:1rem}
+@media(max-width:380px){:root{--px:.7rem}}
+body{background:var(--bg);color:var(--tx)}
+.w{padding-inline:var(--px)}
+header{background:#3B1F6B;margin-inline:calc(var(--px)*-1);padding:.8rem var(--px);box-shadow:0 4px 12px rgba(59,31,107,.25)}
+header h1{color:#FFFFFF;font-size:1.4rem}header .lead,header .sub{color:#D4C8EE}
+.trust span{background:rgba(255,255,255,.14);color:#FFFFFF;border-color:rgba(255,255,255,.28)}
+.bar,.tb{background:var(--bg)}
+.meta{color:#3A3550}.meta button,.more{color:var(--ac)}
+.search input,.seg,.chip,.sec,.x,.exit,.fl input,.yn button{background:#FFFFFF;color:var(--tx);border-color:var(--bd)}
+.seg{box-shadow:0 2px 8px rgba(59,31,107,.08)}.seg button{color:#3A3550}.seg button.on{background:var(--ac);color:#FFFFFF;box-shadow:none}
+.chip.on{background:var(--acs);border-color:var(--ac);color:var(--ac)}
+.badge{background:var(--acs);color:var(--ac)}.badge.g{background:#FDE7F1;color:#9D174D}.badge.m{background:#E6EEFF;color:#1B3A8A}
+.badge.ur{background:#FFE1D6;color:#8A2A00}.badge.nw{background:var(--lime);color:var(--limeD)}.badge.dn{background:#FEE2E2;color:#B91C1C}
+.loc{color:var(--mu)}
+/* الكارت من بره: ضلة وبوردر ومسافة بين الكروت */
+.card{background:#FFFFFF;color:var(--tx);border:1px solid var(--bd);border-radius:1rem;padding:.8rem .9rem;margin-bottom:1rem;box-shadow:0 6px 16px rgba(59,31,107,.14)}
+.card .top{display:flex}
+.card .ttl{font-size:clamp(1.05rem,4.2vw,1.2rem);margin:.15rem 0 .5rem}
+.card .pay{width:100%;text-align:center;background:var(--lime);color:var(--limeD);border:0;border-radius:.75rem;font-size:clamp(1.35rem,5.6vw,1.7rem);padding:.45rem .7rem;margin:0 0 .5rem;box-shadow:none}
+.fx{display:flex;gap:.4rem;margin-bottom:.45rem}
+.fx div{flex:1;min-width:0;background:#F1ECF9;border-radius:.6rem;padding:.3rem .25rem;text-align:center}
+.fx small{display:block;font-size:.7rem;color:var(--mu);line-height:1.3}.fx b{display:block;font-size:.88rem;font-weight:700;line-height:1.35}
+.tg{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.1rem}
+.tg span{font-size:.78rem;background:#FFFFFF;border:1px solid var(--bd);border-radius:99px;padding:.1rem .6rem;color:#3A3550}
+.card .more{display:block;text-align:center;color:var(--ac);font-weight:800;font-size:.88rem;margin-top:.55rem;padding-top:.5rem;border-top:1px solid #EEE9F7}
+/* صفحة التفاصيل */
+.sec{box-shadow:0 4px 12px rgba(59,31,107,.10)}.sec h3{color:var(--ac);font-size:.9rem}
+.it{background:#F5F2FA;border:1px solid #E7DFF3;color:var(--tx)}.it small{color:var(--mu)}
+.it.pay2{background:var(--lime);border:0;color:var(--limeD);align-items:center;text-align:center;padding:.55rem}
+.it.pay2 small{color:#4A6600}.it.pay2 b{font-size:1.35rem;font-weight:800}.it.pay2 .pm2{color:#3F5A00;font-size:.78rem;font-weight:700;margin-top:.05rem}
+.cta{background:#FFFFFF;border-top:1px solid var(--bd);box-shadow:0 -4px 12px rgba(59,31,107,.08)}
+.btn{background:#FFFFFF;color:var(--ac);border:1px solid var(--bd)}
+.btn.wa,.fab{background:var(--wa);color:#FFFFFF;border:0;box-shadow:0 3px 10px rgba(31,175,90,.30)}
+.demo{background:#FFFFFF;color:var(--tx);border-color:var(--bd)}.empty{color:#3A3550}.retry{background:var(--ac)}
 
 </style>
 </head>
@@ -180,7 +166,7 @@ header h1,header .sub,header .lead{color:#171D27}
   </div>
   <div class="meta"><span id="cnt"></span><button id="clr" style="display:none">امسح الفلاتر</button></div>
   <div id="list"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
-  <a id="fab" class="fab" target="_blank" rel="noopener">💬 استفسار على واتساب</a>
+  <a id="fab" class="fab" target="_blank" rel="noopener">💬 اسأل على واتساب</a>
   <div id="empty" class="empty">😕 <span id="emt"></span></div>
 </div>
 <div id="detail" style="display:none"></div>
@@ -192,7 +178,7 @@ const PHONE = "201095237207";   // رقم الواتساب بصيغة دولية
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1Ri61Py0q36t2EdMCWXa0lgJGDWJfrXjY0gHmqnwS4AM/gviz/tq?tqx=out:csv&headers=1&sheet=%D8%A7%D9%84%D9%88%D8%B8%D8%A7%D8%A6%D9%81";
 
 
-const CORE=["المنطقة","الفئة","المصنع","المؤهل","الشفت","المرتب","تفاصيل المرتب","ظاهر؟","الحالة","تاريخ الإضافة"];   // "تفاصيل المرتب" عمود اختياري تكتبه بإيدك للمصانع اللي باليومية
+const CORE=["المنطقة","الفئة","المصنع","المؤهل","الشفت","السن","طبيعة العمل","المرتب","تفاصيل المرتب","ظاهر؟","الحالة","تاريخ الإضافة"];   // "تفاصيل المرتب" عمود اختياري تكتبه بإيدك للمصانع اللي باليومية
 const done=j=>(j["الحالة"]||"").includes("مكتمل");   // <<< عمود الحالة = مكتمل
 const urgent=j=>(j["الحالة"]||"").includes("عاجل");   // <<< عمود الحالة = عاجل
 const NEW_DAYS=3;                                    // <<< غيّر هنا: عدد أيام شارة "جديد"
@@ -203,10 +189,10 @@ const REAL_HOSTS=["ahmadshaban.github.io"];
 const IS_DEMO_HOST=!REAL_HOSTS.includes(location.hostname);
 const TODAY=new Date().toISOString().slice(0,10);
 const DEMO=[
-{"المنطقة":"العاشر من رمضان","الفئة":"شباب","المصنع":"مصنع تعبئة (تجريبي)","المؤهل":"أي مؤهل","الشفت":"12 ساعة","المرتب":"12000 ج شهرياً","تفاصيل المرتب":"9000 أساسي (300 ج في اليوم) + 3000 حافز انتظام","السكن":"متوفر","نظام القبض":"شهري","المواصلات":"داخلية","الحالة":"عاجل","تاريخ الإضافة":TODAY,"ظاهر؟":"نعم"},
-{"المنطقة":"مدينة السادات","الفئة":"شباب","المصنع":"مصنع تغليف (تجريبي)","المؤهل":"أي مؤهل","الشفت":"10 ساعات","المرتب":"7000 ج شهرياً","السكن":"لا يوجد","المواصلات":"خارجية","ظاهر؟":"نعم"},
-{"المنطقة":"6 أكتوبر","الفئة":"بنات","المصنع":"مصنع فرز (تجريبي)","المؤهل":"مؤهلات","الشفت":"9 ساعات","المرتب":"200 ج/يوماً","تفاصيل المرتب":"حوالي 5200 ج في الشهر","السكن":"لا يوجد","المواصلات":"خارجية","ظاهر؟":"نعم"},
-{"المنطقة":"بدر","الفئة":"شباب وبنات","المصنع":"مصنع مكتمل (تجريبي)","المؤهل":"أي مؤهل","الشفت":"8 ساعات","المرتب":"6500 ج شهرياً","الحالة":"مكتمل","ظاهر؟":"نعم"}
+{"المنطقة":"العاشر من رمضان","الفئة":"شباب","المصنع":"مصنع تعبئة (تجريبي)","السن":"18 - 35","طبيعة العمل":"تعبئة وتغليف","المؤهل":"أي مؤهل","الشفت":"12 ساعة","المرتب":"12000 ج في الشهر","تفاصيل المرتب":"9000 أساسي (300 ج في اليوم) + 3000 حافز انتظام","السكن":"متوفر","نظام القبض":"شهري","المواصلات":"داخلية","الحالة":"عاجل","تاريخ الإضافة":TODAY,"ظاهر؟":"نعم"},
+{"المنطقة":"مدينة السادات","الفئة":"شباب","المصنع":"مصنع تغليف (تجريبي)","السن":"18 - 40","طبيعة العمل":"تغليف","المؤهل":"أي مؤهل","الشفت":"10 ساعات","المرتب":"7000 ج في الشهر","السكن":"مفيش","المواصلات":"خارجية","ظاهر؟":"نعم"},
+{"المنطقة":"6 أكتوبر","الفئة":"بنات","المصنع":"مصنع فرز (تجريبي)","السن":"18 - 30","طبيعة العمل":"فرز","المؤهل":"مؤهلات","الشفت":"9 ساعات","المرتب":"200 ج في اليوم","تفاصيل المرتب":"حوالي 5200 ج في الشهر","السكن":"مفيش","المواصلات":"خارجية","ظاهر؟":"نعم"},
+{"المنطقة":"بدر","الفئة":"شباب وبنات","المصنع":"مصنع مكتمل (تجريبي)","المؤهل":"أي مؤهل","الشفت":"8 ساعات","المرتب":"6500 ج في الشهر","الحالة":"مكتمل","ظاهر؟":"نعم"}
 ];
 
 /* ===== إعدادات فورم التقديم ===== */
@@ -224,8 +210,8 @@ function isNew(j){const t=(j["تاريخ الإضافة"]||"").match(/(\d{1,4})[
  let y,m,d;if(t[1].length===4){y=+t[1];m=+t[2];d=+t[3]}else{d=+t[1];m=+t[2];y=+t[3];if(y<100)y+=2000}
  const days=(Date.now()-new Date(y,m-1,d))/864e5;return days>=-1&&days<=NEW_DAYS}
 // شارات الحالة (عاجل / جديد)
-const tags=j=>(urgent(j)?'<span class="badge ur">🔥 عاجل</span>':'')+(isNew(j)?'<span class="badge nw">جديد</span>':'');
-const ICON={"الشفت":"⏰","المؤهل":"🎓","نظام القبض":"💰","السكن":"🏠","السلف":"💵","المواصلات":"🚌","وجبة":"🍽️","التأمينات":"🛡️","الأجازة":"📅"};
+const tags=j=>(done(j)?'<span class="badge dn">مكتمل</span>':'')+(urgent(j)?'<span class="badge ur">🔥 عاجل</span>':'')+(isNew(j)?'<span class="badge nw">جديد</span>':'');
+const ICON={"السن":"🎂","طبيعة العمل":"👷","الشفت":"⏰","المؤهل":"🎓","نظام القبض":"💰","السكن":"🏠","السلف":"💵","المواصلات":"🚌","وجبة":"🍽️","التأمينات":"🛡️","الأجازة":"📅"};
 // رقم الواتساب في سطر الثقة وزرار الاستفسار (من PHONE فوق)
 {const ph=PHONE.replace(/\D/g,"");const tp=document.getElementById("tph"),fb=document.getElementById("fab");
  if(tp)tp.textContent="📞 واتساب: 0"+ph.replace(/^20/,"");
@@ -277,7 +263,7 @@ async function load(){
 }
 const kind=c=>c.includes("بنات")&&c.includes("شباب")?"":c.includes("بنات")?"g":"m";
 const has=(c,k)=>c==="الكل"||c===k;
-function hoursOnly(value){const s=String(value||"").trim();const m=s.match(/(\d{1,2})\s*ساعة/);if(m)return m[1]+" ساعة";const n=s.match(/(\d{1,2})\s*ساعات/);if(n)return n[1]+" ساعة";return s||"غير محدد"}
+function hoursOnly(value){const s=String(value||"").trim();const m=s.match(/(\d{1,2})\s*ساعة/);if(m)return m[1]+" ساعة";const n=s.match(/(\d{1,2})\s*ساعات/);if(n)return n[1]+" ساعة";return s||"مش محدد"}
 function matchCat(j){return cat==="الكل"||(j["الفئة"]||"").includes(cat)}
 
 function draw(){
@@ -294,11 +280,20 @@ function draw(){
   $("clr").style.display=(area!=="الكل")?"block":"none";
   $("empty").style.display=r.length?"none":"block";
   $("emt").textContent=JOBS.length?"مفيش وظايف زي كده، جرّب تغيّر الفلتر أو دوّر على حاجة تانية":"مفيش وظايف متاحة دلوقتي، ارجع كمان شوية";
-  $("list").innerHTML=r.map(j=>`<button class="card ${done(j)?"done":""}" data-i="${JOBS.indexOf(j)}" ${done(j)?"disabled":""}>
+  // علامة سكن/مواصلات: بتظهر بس لو القيمة موجودة ومش "مفيش"
+  const NEG=/لا يوجد|مفيش|^لا$|غير متوفر/;
+  const okv=v=>v&&!NEG.test(v.trim());
+  $("list").innerHTML=r.map(j=>{
+   // <<< غيّر هنا: خانات الكارت من بره (السن، طبيعة العمل، الشفت) — الفاضي مش بيظهر
+   const fx=[["السن",j["السن"]],["طبيعة العمل",j["طبيعة العمل"]],["الشفت",j["الشفت"]?hoursOnly(j["الشفت"]):""]].filter(x=>x[1]);
+   const tg=(okv(j["السكن"])?'<span>🏠 سكن</span>':'')+(okv(j["المواصلات"])?'<span>🚌 مواصلات '+esc(j["المواصلات"])+'</span>':'');
+   return `<button class="card ${done(j)?"done":""}" data-i="${JOBS.indexOf(j)}" ${done(j)?"disabled":""}>
+   <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="bd2">${tags(j)}</span></div>
    <div class="ttl">${esc(j["المصنع"])}</div>
    <div class="pay">${esc(j["المرتب"])}</div>
-   <div class="facts"><span>⏰ ${esc(hoursOnly(j["الشفت"]))}</span></div>
-   ${done(j)?'<span class="more">اكتمل العدد</span>':'<span class="more">اضغط هنا لمعرفة باقي تفاصيل الوظيفة وطرق التقديم ←</span>'}</button>`).join("");
+   ${fx.length?`<div class="fx">${fx.map(x=>`<div><small>${esc(x[0])}</small><b>${esc(x[1])}</b></div>`).join("")}</div>`:""}
+   ${tg?`<div class="tg">${tg}</div>`:""}
+   ${done(j)?'<span class="more">اكتمل العدد</span>':'<span class="more">اضغط للتفاصيل ←</span>'}</button>`}).join("");
   $("list").querySelectorAll(".card").forEach(b=>b.onclick=()=>go(+b.dataset.i));
 }
 $("clr").onclick=()=>{area="الكل";draw()};
@@ -356,16 +351,17 @@ function showDetail(j){
   // مربع: اسم الخانة فوق وقيمتها تحت. القيمة الطويلة ياخد صف كامل
   const it=k=>`<div class="it ${String(j[k]).length>26?"full":""}"><small>${ICON[k]||"•"} ${esc(k)}</small><b>${esc(j[k])}</b></div>`;
   // قسم: عنوان + مربعاته (بيتخطى الخانات الفاضية)
-  const sec=(t,ks)=>{const r=ks.filter(k=>j[k]);return r.length?`<div class="sec"><h3>${t}</h3><div class="g2">${r.map(it).join("")}</div></div>`:""};
+  const sec=(t,ks,pre)=>{const r=ks.filter(k=>j[k]);return (r.length||pre)?`<div class="sec"><h3>${t}</h3><div class="g2">${pre||""}${r.map(it).join("")}</div></div>`:""};
+  // المرتب أول مربع جوه "الأساسيات"
+  const payTile=`<div class="it pay2 full"><small>💰 المرتب</small><b>${esc(j["المرتب"])}</b>${j["تفاصيل المرتب"]?`<span class="pm2">${esc(j["تفاصيل المرتب"])}</span>`:""}</div>`;
   // <<< غيّر هنا: ترتيب الأقسام وأي خانة تتحط في أنهي قسم
-  const groups=[["الشغل",["الشفت","المؤهل","الأجازة"]],["الدفع والمميزات",["نظام القبض","السلف","التأمينات","وجبة"]],["السكن والمواصلات",["السكن","المواصلات"]]];
+  const groups=[["الأساسيات",["السن","طبيعة العمل","الشفت","المؤهل","الأجازة"],payTile],["المرتب والمميزات",["نظام القبض","السلف","التأمينات","وجبة"]],["السكن والمواصلات",["السكن","المواصلات"]]];
   const used=groups.flatMap(g=>g[1]);
   const other=Object.keys(j).filter(k=>!CORE.includes(k)&&!used.includes(k)&&j[k]);
   $("detail").innerHTML=`<div class="w dp"><div class="tb"><button class="exit" id="ex">رجوع</button></div>
    <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="bd2">${tags(j)}<span class="badge ${kind(j["الفئة"]||"")}">${esc(j["الفئة"])}</span></span></div>
    <h2 class="ttl">${esc(j["المصنع"])}</h2>
-   <div class="hero"><small>💰 المرتب</small><b>${esc(j["المرتب"])}</b>${j["تفاصيل المرتب"]?`<span class="pm2">${esc(j["تفاصيل المرتب"])}</span>`:""}</div>
-   ${groups.map(g=>sec(g[0],g[1])).join("")}${sec("تفاصيل أخرى",other)}</div>
+   ${groups.map(g=>sec(g[0],g[1],g[2])).join("")}${sec("حاجات تانية",other)}</div>
    <div class="cta"><button type="button" class="btn wa" id="apply">قدّم دلوقتي على الواتساب</button><a class="btn" href="tel:+${ph}">📞 اتصل</a><a class="btn sh2" target="_blank" rel="noopener" href="https://wa.me/?text=${shareMsg}">↗ شارك</a></div>${formHTML(j)}`;
   $("main").style.display="none";$("detail").style.display="block";window.scrollTo(0,0);
   $("ex").onclick=exitDetail;setupApply(j,ph);
