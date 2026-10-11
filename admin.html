@@ -97,9 +97,18 @@ header h1{margin:0;font-size:18px;color:#fff}
 <div id="app" class="hidden">
   <header>
     <h1 id="title"></h1>
-    <select id="areaFilter" aria-label="اختيار المكان" required>
-      <option value="">اختار المكان أولًا</option>
-    </select>
+    <div style="display:flex;gap:8px">
+      <select id="areaFilter" aria-label="اختيار المكان" required>
+        <option value="">اختار المكان أولًا</option>
+      </select>
+      <!-- <<< غيّر هنا: فلتر الفئة (شباب / بنات / شباب وبنات) -->
+      <select id="genderFilter" aria-label="اختيار الفئة">
+        <option value="">الكل</option>
+        <option value="m">شباب</option>
+        <option value="f">بنات</option>
+        <option value="b">شباب وبنات</option>
+      </select>
+    </div>
     <div class="bar">
       <button class="btn" id="bNew"></button>
       <button class="btn ghost" id="bCol"></button>
@@ -123,6 +132,8 @@ const COL = {
   gender:  'الفئة',    // <<< غيّر هنا: اسم عمود الفئة
   shift:   'الشفت',    // <<< غيّر هنا: اسم عمود الشفت
   salary:  'المرتب',   // <<< غيّر هنا: اسم عمود المرتب
+  salary30: 'مرتب 30 يوم', // <<< غيّر هنا: اسم عمود مرتب 30 يوم عمل
+  salary26: 'مرتب 26 يوم', // <<< غيّر هنا: اسم عمود مرتب 26 يوم عمل
   visible: 'ظاهر؟',    // <<< غيّر هنا: اسم عمود الظهور
   status:  'الحالة'    // <<< غيّر هنا: اسم عمود الحالة
 };
@@ -340,8 +351,9 @@ function cardHTML(r){
   const hid = val(r, COL.visible).trim() === T.no;
   const done = val(r, COL.status).trim() === T.doneValue;
   const urg = val(r, COL.status).trim() === T.urgentValue;
-  const meta = [COL.area, COL.gender, COL.shift, COL.salary]
-    .map(c => val(r, c)).filter(Boolean).map(v => '<span>' + esc(v) + '</span>').join('');
+  const meta = [COL.area, COL.gender, COL.shift, COL.salary, COL.salary30, COL.salary26]
+    .map(c => !val(r, c) ? '' : (c === COL.salary30 ? '30 يوم: ' : c === COL.salary26 ? '26 يوم: ' : '') + val(r, c))
+    .filter(Boolean).map(v => '<span>' + esc(v) + '</span>').join('');
   return '<div class="card' + (hid ? ' dim' : '') + '">' +
     '<h2>' + esc(val(r, COL.factory)) +
       (done ? '<span class="badge done">' + esc(T.doneBadge) + '</span>' : '') +
@@ -372,7 +384,10 @@ function updateAreaFilter(){
 function render(){
   updateAreaFilter();
   const area = $('areaFilter').value;
-  const list = area ? rows.filter(r => val(r, COL.area).trim() === area) : [];
+  const g = $('genderFilter').value;
+  // بيحدد الفئة: m = شباب بس، f = بنات بس، b = شباب وبنات مع بعض
+  const kindOf = r => { const t = val(r, COL.gender); const m = /شباب/.test(t), f = /بنات/.test(t); return (m && f) ? 'b' : m ? 'm' : f ? 'f' : ''; };
+  const list = area ? rows.filter(r => val(r, COL.area).trim() === area && (!g || kindOf(r) === g)) : [];
   $('title').textContent = T.title + (area ? ' (' + list.length + ')' : '');
   $('list').innerHTML = area
     ? (list.length ? list.map(cardHTML).join('') : '<div class="empty">' + esc(T.empty) + '</div>')
@@ -559,6 +574,7 @@ function init(){
   $('loginBtn').onclick = () => { $('loginErr').textContent = ''; login($('pw').value); };
   $('pw').addEventListener('keydown', e => { if (e.key === 'Enter') $('loginBtn').click(); });
   $('areaFilter').addEventListener('change', render);
+  $('genderFilter').addEventListener('change', render);
   $('bNew').onclick = () => openForm(null);
   $('bRef').onclick = load;
   $('bOut').onclick = () => { clearLogin(); location.reload(); };
