@@ -47,6 +47,7 @@ header{padding:1.2rem 0 .6rem}h1{font-size:1.75rem;font-weight:800;margin:0;line
 .sk{height:8.5rem;border-radius:1.2rem;background:linear-gradient(90deg,var(--card),var(--bd),var(--card));background-size:200% 100%;animation:sk 1.2s infinite;margin-bottom:.75rem}
 @keyframes sk{to{background-position:-200% 0}}
 .empty{text-align:center;color:var(--mu);padding:3rem 1rem;display:none}
+.retry{font:inherit;font-weight:800;color:#fff;background:var(--ac);border:0;border-radius:.8rem;padding:.65rem 1.2rem;margin-top:.9rem;cursor:pointer}
 .ov{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center}
 .ov.show{display:flex}@media(min-width:640px){.ov{align-items:center}}
 .sheet{background:var(--bg);width:100%;max-width:30rem;max-height:92%;display:flex;flex-direction:column;border-radius:1.6rem 1.6rem 0 0;animation:up .22s ease-out}
@@ -103,36 +104,23 @@ header{padding:1.2rem 0 .6rem}h1{font-size:1.75rem;font-weight:800;margin:0;line
     <!-- <<< غيّر هنا: سطر الثقة (الجمل اللي تحت العنوان) -->
     <div class="trust"><span>✅ التقديم من غير أي رسوم مقدما</span></div></header>
   <div class="bar">
-    <div class="search"><span>🔍</span><input id="q" type="search" placeholder="ابحث باسم المصنع أو الوظيفة"></div>
+    <div class="search"><span>🔍</span><input id="q" type="search" placeholder="دوّر على مصنع أو وظيفة"></div>
     <div id="seg" class="seg"></div>
     <div id="area" class="chips"></div>
   </div>
-  <div class="meta"><span id="cnt"></span><button id="clr" style="display:none">مسح الفلاتر</button></div>
+  <div class="meta"><span id="cnt"></span><button id="clr" style="display:none">امسح الفلاتر</button></div>
   <div id="list"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
   <a id="fab" class="fab" target="_blank" rel="noopener">💬 استفسار على واتساب</a>
-  <div id="empty" class="empty">😕 مفيش وظايف مطابقة<br>جرّب تغيّر الفلتر أو البحث</div>
+  <div id="empty" class="empty">😕 <span id="emt"></span></div>
 </div>
 <div id="detail" style="display:none"></div>
 <script>
 /* ===== إعدادات ===== */
+// تبويب "المناطق" في الشيت: ترتيب الصفوف فيه = ترتيب أزرار المناطق في الموقع (غيّر الترتيب من الشيت نفسه)
+const AREAS_CSV_URL="https://docs.google.com/spreadsheets/d/1Ri61Py0q36t2EdMCWXa0lgJGDWJfrXjY0gHmqnwS4AM/gviz/tq?tqx=out:csv&headers=1&sheet=%D8%A7%D9%84%D9%85%D9%86%D8%A7%D8%B7%D9%82";
 const PHONE = "201095237207";   // رقم الواتساب بصيغة دولية بدون +
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1Ri61Py0q36t2EdMCWXa0lgJGDWJfrXjY0gHmqnwS4AM/gviz/tq?tqx=out:csv&headers=1&sheet=%D8%A7%D9%84%D9%88%D8%B8%D8%A7%D8%A6%D9%81";
 
-/* بيانات تجريبية تظهر لو الشيت ما اتقراش */
-const SAMPLE = [
-{"المنطقة":"6 أكتوبر","الفئة":"بنات","المصنع":"مصنع أدوية (استيكر)","المؤهل":"نقاب عادي - مؤهلات","الشفت":"9 ساعات (8 ص : 5 م)","المرتب":"200 ج/يوماً","نظام القبض":"يومي / أسبوعي / شهري","السكن":"لا يوجد","السلف":"متاح بعد أسبوع","المواصلات":"خارجية (خطوط)","التأمينات":"بعد 3 شهور","الأجازة":"الجمعة","ظاهر؟":"نعم"},
-{"المنطقة":"6 أكتوبر","الفئة":"شباب وبنات","المصنع":"مصنع أغذية (شيبسي)","المؤهل":"مؤهلات متوسطة وعليا","الشفت":"12 ساعة (شفتات متغيرة)","المرتب":"7000 ج شهرياً","نظام القبض":"شهري","السكن":"لا يوجد","السلف":"متاح","المواصلات":"داخلية","وجبة":"وجبة يومية","التأمينات":"من أول يوم","الأجازة":"يوم أسبوعياً","ظاهر؟":"نعم"},
-{"المنطقة":"مدينة السادات","الفئة":"شباب","المصنع":"مصنع غزل ونسيج","المؤهل":"عمال إنتاج","الشفت":"12 ساعة","المرتب":"6500 ج شهرياً","نظام القبض":"شهري","السكن":"متوفر (مجاناً)","السلف":"متاح","المواصلات":"داخلية","التأمينات":"بعد شهر","الأجازة":"الجمعة","ظاهر؟":"نعم"},
-{"المنطقة":"العاشر من رمضان","الفئة":"شباب","المصنع":"مصنع بلاستيك","المؤهل":"أي مؤهل - لياقة بدنية","الشفت":"12 ساعة (ليلي / نهاري)","المرتب":"6800 ج شهرياً","نظام القبض":"أسبوعي","السكن":"متوفر بخصم 300 ج","السلف":"متاح بعد شهر","المواصلات":"خارجية","وجبة":"وجبة","التأمينات":"بعد 3 شهور","ظاهر؟":"نعم"},
-{"المنطقة":"العاشر من رمضان","الفئة":"بنات","المصنع":"مصنع ملابس جاهزة","المؤهل":"خبرة مش شرط","الشفت":"9 ساعات (8 ص : 5 م)","المرتب":"190 ج/يوماً","نظام القبض":"أسبوعي","السكن":"سكن بنات متوفر","السلف":"متاح","المواصلات":"داخلية","الأجازة":"الجمعة","ظاهر؟":"نعم"},
-{"المنطقة":"بدر","الفئة":"بنات","المصنع":"مصنع منظفات","المؤهل":"نقاب عادي - مؤهلات","الشفت":"8 ساعات","المرتب":"185 ج/يوماً","نظام القبض":"يومي","السكن":"لا يوجد","السلف":"غير متاح","المواصلات":"خارجية (خطوط)","الأجازة":"الجمعة","ظاهر؟":"نعم"},
-{"المنطقة":"بدر","الفئة":"شباب","المصنع":"مصنع ألومنيوم","المؤهل":"عمال إنتاج","الشفت":"12 ساعة","المرتب":"7500 ج شهرياً","نظام القبض":"شهري","السكن":"متوفر","السلف":"متاح","المواصلات":"داخلية","وجبة":"وجبتين","التأمينات":"من أول يوم","ظاهر؟":"نعم"},
-{"المنطقة":"6 أكتوبر","الفئة":"بنات","المصنع":"مصنع لانشون","المؤهل":"مؤهلات - بدون نقاب","الشفت":"9 ساعات","المرتب":"195 ج/يوماً","نظام القبض":"أسبوعي","السكن":"لا يوجد","السلف":"متاح","المواصلات":"خارجية","الأجازة":"الجمعة","ظاهر؟":"نعم"},
-{"المنطقة":"مدينة السادات","الفئة":"بنات","المصنع":"مصنع سايلو","المؤهل":"مؤهلات","الشفت":"8 ساعات","المرتب":"180 ج/يوماً","نظام القبض":"أسبوعي","السكن":"لا يوجد","السلف":"متاح","المواصلات":"خارجية","ظاهر؟":"نعم"},
-{"المنطقة":"العبور","الفئة":"شباب وبنات","المصنع":"مصنع تعبئة وتغليف","المؤهل":"أي مؤهل","الشفت":"10 ساعات","المرتب":"6200 ج شهرياً","نظام القبض":"شهري","السكن":"لا يوجد","السلف":"متاح","المواصلات":"خارجية","وجبة":"وجبة","التأمينات":"بعد 3 شهور","ظاهر؟":"نعم"},
-{"المنطقة":"العبور","الفئة":"شباب","المصنع":"مصنع ثلاجات وتبريد","المؤهل":"دبلوم صنايع","الشفت":"12 ساعة","المرتب":"8000 ج شهرياً","نظام القبض":"شهري","السكن":"متوفر","السلف":"متاح","المواصلات":"داخلية","التأمينات":"من أول يوم","ظاهر؟":"نعم"},
-{"المنطقة":"6 أكتوبر","الفئة":"شباب","المصنع":"مصنع قديم (مخفي للتجربة)","المؤهل":"-","الشفت":"-","المرتب":"-","ظاهر؟":"لا"}
-];
 
 const CORE=["المنطقة","الفئة","المصنع","المؤهل","الشفت","المرتب","ظاهر؟","الحالة","تاريخ الإضافة"];
 const done=j=>(j["الحالة"]||"").includes("مكتمل");   // <<< عمود الحالة = مكتمل
@@ -160,16 +148,41 @@ let JOBS=[],cat="شباب",area="الكل";   // <<< غيّر هنا: الفئة
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
-function parseCSV(t){const r=[];let row=[],f="",q=false;for(let i=0;i<t.length;i++){const c=t[i];
+function parseRows(t){const r=[];let row=[],f="",q=false;for(let i=0;i<t.length;i++){const c=t[i];
  if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=c}
  else if(c=='"')q=true;else if(c==","){row.push(f);f=""}
  else if(c=="\n"){row.push(f);r.push(row);row=[];f=""}else if(c!="\r")f+=c}
  if(f||row.length){row.push(f);r.push(row)}
- const h=r[0].map(x=>x.trim());return r.slice(1).filter(x=>x.some(v=>v.trim())).map(x=>Object.fromEntries(h.map((k,i)=>[k,(x[i]||"").trim()])))}
+ return r}
+function parseCSV(t){const r=parseRows(t);if(!r.length)throw 0;const h=r[0].map(x=>x.trim());return r.slice(1).filter(x=>x.some(v=>v.trim())).map(x=>Object.fromEntries(h.map((k,i)=>[k,(x[i]||"").trim()])))}
 
+/* ===== ترتيب المناطق: مطابقة مرنة (بدر = مدينة بدر، 6اكتوبر = 6 أكتوبر) ===== */
+let AREA_ORDER=[];
+const norm=t=>String(t||"").replace(/[\u064B-\u0652\u0640]/g,"").replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d))
+  .replace(/[أإآ]/g,"ا").replace(/ة/g,"ه").replace(/ى/g,"ي").trim().split(/\s+/)
+  .filter(w=>w&&w!=="مدينه").map(w=>w.replace(/^ال/,"")).join("");
+const sameArea=(a,b)=>{a=norm(a);b=norm(b);if(!a||!b)return false;return a===b||(a.length>=3&&b.length>=3&&(a.includes(b)||b.includes(a)))};
+const areaRank=a=>{const i=AREA_ORDER.findIndex(x=>sameArea(x,a));return i<0?9999:i};
+
+/* ===== تحميل الوظايف ===== */
+async function getText(u,ms){const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);
+  try{const r=await fetch(u,{signal:c.signal});if(!r.ok)throw 0;return await r.text()}finally{clearTimeout(t)}}
+function showErr(){
+  $("cnt").textContent="";$("clr").style.display="none";$("empty").style.display="none";$("seg").innerHTML="";$("area").innerHTML="";
+  $("list").innerHTML='<div class="empty" style="display:block">😕 فيه مشكلة في تحميل الوظايف دلوقتي 🙏<br><button type="button" class="retry" id="retry">دوس هنا وجرّب تاني</button></div>';
+  $("retry").onclick=load;
+}
 async function load(){
-  let d=SAMPLE;
-  if(SHEET_CSV_URL){try{const r=await fetch(SHEET_CSV_URL);if(r.ok)d=parseCSV(await r.text())}catch(e){}}
+  $("list").innerHTML='<div class="sk"></div><div class="sk"></div><div class="sk"></div>';
+  // الطلبين بيتبعتوا مع بعض؛ طلب المناطق ليه مهلة قصيرة وميعطّلش الوظايف
+  const [jr,ar]=await Promise.allSettled([getText(SHEET_CSV_URL,15000),getText(AREAS_CSV_URL,3000)]);
+  if(jr.status!=="fulfilled")return showErr();
+  let d;try{d=parseCSV(jr.value)}catch(e){return showErr()}
+  if(d.length&&!("المصنع" in d[0]))return showErr();
+  AREA_ORDER=[];
+  if(ar.status==="fulfilled"){try{const rows=parseRows(ar.value);
+    if(rows.length&&rows[0].length===1){const st=norm(rows[0][0])===norm("المنطقة")?1:0;   // لو التبويب مش موجود جوجل بترجّع شيت تاني بأعمدة كتير فبنتجاهله
+      AREA_ORDER=rows.slice(st).map(x=>(x[0]||"").trim()).filter(Boolean)}}catch(e){}}
   JOBS=d.filter(j=>(j["ظاهر؟"]||"نعم").trim()!=="لا"&&j["المصنع"]);
   const jq=new URLSearchParams(location.search).get("j");
   if(jq){const k=JOBS.findIndex(x=>hid(x["المصنع"])===jq);history.replaceState(null,"",location.pathname+(k>-1?"#job"+k:""))}
@@ -183,7 +196,8 @@ function draw(){
   const cats=["شباب","بنات"];   // <<< الفئات الظاهرة
   $("seg").innerHTML=cats.map(c=>`<button class="${c===cat?"on":""}" data-v="${c}">${c}</button>`).join("");
   $("seg").querySelectorAll("button").forEach(b=>b.onclick=()=>{cat=b.dataset.v;draw()});
-  const areas=["الكل",...new Set(JOBS.filter(matchCat).map(j=>j["المنطقة"]).filter(Boolean))];
+  const seen=[...new Set(JOBS.filter(matchCat).map(j=>j["المنطقة"]).filter(Boolean))];
+  const areas=["الكل",...seen.map((a,i)=>[a,i]).sort((x,y)=>(areaRank(x[0])-areaRank(y[0]))||(x[1]-y[1])).map(x=>x[0])];   // ترتيب تبويب المناطق، والباقي بعدهم بترتيب الشيت
   if(!areas.includes(area))area="الكل";
   $("area").innerHTML=areas.map(a=>`<button class="chip ${a===area?"on":""}" data-v="${esc(a)}">${esc(a)}</button>`).join("");
   $("area").querySelectorAll("button").forEach(b=>b.onclick=()=>{area=b.dataset.v;draw()});
@@ -192,6 +206,7 @@ function draw(){
   $("cnt").textContent=r.length?`${r.length} وظيفة متاحة`:"";
   $("clr").style.display=(area!=="الكل"||q)?"block":"none";
   $("empty").style.display=r.length?"none":"block";
+  $("emt").textContent=JOBS.length?"مفيش وظايف زي كده، جرّب تغيّر الفلتر أو دوّر على حاجة تانية":"مفيش وظايف متاحة دلوقتي، ارجع كمان شوية";
   $("list").innerHTML=r.map(j=>`<button class="card ${done(j)?"done":""}" data-i="${JOBS.indexOf(j)}" ${done(j)?"disabled":""}>
    <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="bd2">${done(j)?'<span class="badge dn">العدد اكتمل</span>':tags(j)+`<span class="badge ${kind(j["الفئة"]||"")}">${esc(j["الفئة"])}</span>`}</span></div>
    <div class="ttl">${esc(j["المصنع"])}</div><div class="who">${esc(j["المؤهل"])}</div>
@@ -219,7 +234,7 @@ function formHTML(j){return `<div class="ov" id="fo"><div class="sheet"><div cla
    <label class="fl">منين؟<input id="f_p" autocomplete="off" placeholder="المحافظة / المنطقة"></label><div class="er" id="e_p"></div>
    <div class="fl">محتاج شغل بسكن؟<div class="yn" id="f_h"><button type="button" data-v="آه">آه</button><button type="button" data-v="لا">لا</button></div></div>
    <div class="er" id="e_h"></div></div>
-   <div class="fgo"><button type="button" class="btn wa" id="fgo">كمّل على الواتساب</button></div></div></div>`}
+   <div class="fgo"><button type="button" class="btn wa" id="fgo">دوس هنا وكمّل على الواتساب</button></div></div></div>`}
 function setupApply(j,ph){
   const fo=$("fo"),en=$("f_n"),ea=$("f_a"),ep=$("f_p"),eh=$("e_h");let hs="";
   const errs={f_n:$("e_n"),f_a:$("e_a"),f_p:$("e_p")};
@@ -261,12 +276,12 @@ function showDetail(j){
   const groups=[["الشغل",["الشفت","المؤهل","الأجازة"]],["الدفع والمميزات",["نظام القبض","السلف","التأمينات","وجبة"]],["السكن والمواصلات",["السكن","المواصلات"]]];
   const used=groups.flatMap(g=>g[1]);
   const other=Object.keys(j).filter(k=>!CORE.includes(k)&&!used.includes(k)&&j[k]);
-  $("detail").innerHTML=`<div class="w dp"><div class="tb"><button class="exit" id="ex">✕ خروج</button></div>
+  $("detail").innerHTML=`<div class="w dp"><div class="tb"><button class="exit" id="ex">رجوع</button></div>
    <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="bd2">${tags(j)}<span class="badge ${kind(j["الفئة"]||"")}">${esc(j["الفئة"])}</span></span></div>
    <h2 class="ttl">${esc(j["المصنع"])}</h2>
    <div class="hero"><small>💰 المرتب</small><b>${esc(j["المرتب"])}</b></div>
    ${groups.map(g=>sec(g[0],g[1])).join("")}${sec("تفاصيل أخرى",other)}</div>
-   <div class="cta"><button type="button" class="btn wa" id="apply">قدم الآن عبر الواتساب</button><a class="btn" href="tel:+${ph}">📞 اتصل</a><a class="btn sh2" target="_blank" rel="noopener" href="https://wa.me/?text=${shareMsg}">↗ شارك</a></div>${formHTML(j)}`;
+   <div class="cta"><button type="button" class="btn wa" id="apply">قدّم دلوقتي على الواتساب</button><a class="btn" href="tel:+${ph}">📞 اتصل</a><a class="btn sh2" target="_blank" rel="noopener" href="https://wa.me/?text=${shareMsg}">↗ شارك</a></div>${formHTML(j)}`;
   $("main").style.display="none";$("detail").style.display="block";window.scrollTo(0,0);
   $("ex").onclick=exitDetail;setupApply(j,ph);
 }
