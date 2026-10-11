@@ -82,6 +82,8 @@ header h1{margin:0;font-size:18px;color:#fff}
 .sheet .row{position:sticky;bottom:-1px;background:#0B2A4A;padding:10px 0 4px;box-shadow:0 -8px 10px -6px rgba(0,0,0,.45)}
 .meta span.sal{background:#FFE45C;color:#0E3560;font-weight:700;cursor:pointer}
 .meta span.sal.empty{background:transparent;color:#FFE45C;border:1px dashed #FFE45C;font-weight:400}
+.hd{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mv{display:flex;gap:6px;flex:none}.mv .btn{padding:3px 11px;font-size:14px;line-height:1.3}.mv .btn:disabled{opacity:.3}
 .oldhint{color:#fff;opacity:.85;font-size:12px;font-weight:400}
 #salDlg{position:fixed;inset:0;background:rgba(0,20,50,.65);display:flex;align-items:center;justify-content:center;z-index:15;padding:16px}
 #salDlg .box{background:#0B2A4A;border:1px solid #3F7AB5;border-radius:16px;padding:16px;width:100%;max-width:340px;display:grid;gap:10px}
@@ -397,7 +399,8 @@ async function login(pw){
 function val(r, col){ const i = headers.indexOf(col); return i < 0 ? '' : (r.values[i] || ''); }
 
 // بترسم كارت وظيفة واحدة
-function cardHTML(r){
+function cardHTML(r, i, arr){
+  const n = arr ? arr.length : 0;   // i = ترتيب الكارت في القايمة (للأسهم ▲ ▼)
   const hid = val(r, COL.visible).trim() === T.no;
   const done = val(r, COL.status).trim() === T.doneValue;
   const urg = val(r, COL.status).trim() === T.urgentValue;
@@ -409,11 +412,13 @@ function cardHTML(r){
   const salChip = (c, lbl) => '<span class="sal' + (val(r, c) ? '' : ' empty') + '" data-sal="' + esc(c) + '" data-row="' + r.row + '">' +
     (val(r, c) ? esc(lbl + ': ' + val(r, c)) : '+ ' + esc(lbl)) + '</span>';
   const meta = plain + salChip(COL.salary30, '30 يوم') + salChip(COL.salary26, '26 يوم');
+  const mv = '<div class="mv"><button class="btn ghost" data-act="up" data-row="' + r.row + '" aria-label="فوق"' + (i === 0 ? ' disabled' : '') + '>▲</button>' +
+    '<button class="btn ghost" data-act="down" data-row="' + r.row + '" aria-label="تحت"' + (i >= n - 1 ? ' disabled' : '') + '>▼</button></div>';
   return '<div class="card' + (hid ? ' dim' : '') + '">' +
-    '<h2>' + esc(val(r, COL.factory)) +
+    '<div class="hd"><h2>' + esc(val(r, COL.factory)) +
       (done ? '<span class="badge done">' + esc(T.doneBadge) + '</span>' : '') +
       (urg ? '<span class="badge urg">' + esc(T.urgentBadge) + '</span>' : '') +
-      (hid ? '<span class="badge hid">' + esc(T.hiddenBadge) + '</span>' : '') + '</h2>' +
+      (hid ? '<span class="badge hid">' + esc(T.hiddenBadge) + '</span>' : '') + '</h2>' + mv + '</div>' +
     '<div class="meta">' + meta + '</div>' +
     '<div class="acts">' +
       '<button class="btn ghost" data-act="edit" data-row="' + r.row + '">' + esc(T.edit) + '</button>' +
@@ -448,6 +453,7 @@ function render(){
   $('bSearch').textContent = '🔍' + ((area || g || q) && $('filters').classList.contains('hidden') ? ' ●' : '');
   const list = (area || q) ? rows.filter(r => (!area || val(r, COL.area).trim() === area) &&
     (!q || val(r, COL.factory).toLocaleLowerCase('ar').includes(q)) && (!g || kindOf(r) === g)) : [];
+  shownList = list;
   $('title').textContent = T.title + ((area || q) ? ' (' + list.length + ')' : '');
   $('list').innerHTML = (area || q)
     ? (list.length ? list.map(cardHTML).join('') : '<div class="empty">' + esc(T.empty) + '</div>')
@@ -455,6 +461,7 @@ function render(){
 }
 
 // نافذة تعديل المرتب السريع: بتعرض المرتب القديم، ودوس عليه ينزل في الخانة
+let shownList = [];
 let salRow = 0, salCol = '';
 function openSal(row, col){
   const rr = rows.find(x => x.row === row);
@@ -483,6 +490,33 @@ $('salOld').onclick = () => { $('salIn').value = $('salOld').dataset.v || ''; $(
 $('salIn').addEventListener('keydown', e => { if (e.key === 'Enter') saveSal(); if (e.key === 'Escape') closeSal(); });
 $('salDlg').addEventListener('click', e => { if (e.target.id === 'salDlg') closeSal(); });
 
+// ترتيب المصانع: ▲ ▼ بيبدّل مكان المصنع مع اللي فوقه أو تحته في القايمة (بيبدّل بياناتهم في الشيت)
+function rowData(r){ const d = {}; headers.forEach((h, i) => { if (h) d[h] = String(r.values[i] ?? ''); }); return d; }
+async function moveRow(r, dir){
+  if (requestBusy) { toast('فيه طلب شغال بالفعل، استنى لحد ما يخلص.', false); return; }
+  const k = shownList.findIndex(x => x.row === r.row);
+  const o = shownList[k + dir];
+  if (k < 0 || !o) return;
+  const dR = rowData(r), dO = rowData(o);
+  requestBusy = true; setBusyUI(true);
+  try {
+    const a = await api('update', {row: r.row, data: dO});
+    if (!a.ok) { toast(T.errMsg + a.error, false); return; }
+    const b = await api('update', {row: o.row, data: dR});
+    if (!b.ok) {
+      await api('update', {row: r.row, data: dR});   // رجوع للحالة الأولى لو التاني فشل
+      toast('الترتيب ما اتمش، رجّعنا كل حاجة زي ما كانت. جرّب تاني.', false);
+      return;
+    }
+    toast(T.okMsg, true);
+  } catch (e) {
+    toast('حصل خطأ غير متوقع. اضغط تحديث وراجع الترتيب.', false);
+  } finally {
+    requestBusy = false; setBusyUI(false);
+    await load();
+  }
+}
+
 // ===== [7] أزرار الكارت =====
 
 // بتتعامل مع ضغطة أي زرار جوه الكارت
@@ -495,6 +529,8 @@ $('list').addEventListener('click', async e => {
   const r = rows.find(x => x.row === row);
   if (!r) return;
   const act = b.dataset.act;
+  if (act === 'up') return moveRow(r, -1);
+  if (act === 'down') return moveRow(r, 1);
   if (act === 'edit') return openForm(r);
   if (act === 'copy') return openForm(r, true);
   if (act === 'vis'){
