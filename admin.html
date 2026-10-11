@@ -101,6 +101,9 @@ header h1{margin:0;font-size:18px;color:var(--c-main)}
   <header>
     <h1 id="title"></h1>
     <input id="q" type="search">
+    <select id="areaFilter" aria-label="اختيار المكان">
+      <option value="">كل الأماكن</option>
+    </select>
     <div class="bar">
       <button class="btn" id="bNew"></button>
       <button class="btn ghost" id="bCol"></button>
@@ -168,6 +171,7 @@ const T = {
 };
 
 let headers = [], rows = [];
+let modalHistoryOpen = false;
 const $ = id => document.getElementById(id);
 
 // جلسة دخول على نفس الجهاز لمدة 30 دقيقة من آخر نشاط
@@ -317,10 +321,26 @@ function cardHTML(r){
 }
 
 // بترسم القايمة كلها حسب البحث وبحدّث العدد
+function updateAreaFilter(){
+  const filter = $('areaFilter');
+  const selected = filter.value;
+  const areas = [...new Set(rows.map(r => val(r, COL.area).trim()).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b, 'ar'));
+  filter.innerHTML = '<option value="">كل الأماكن</option>' +
+    areas.map(area => '<option value="' + esc(area) + '">' + esc(area) + '</option>').join('');
+  if (areas.includes(selected)) filter.value = selected;
+}
+
+// بترسم القايمة حسب البحث والمكان المختار
 function render(){
+  updateAreaFilter();
   const q = $('q').value.trim().toLowerCase();
-  const list = rows.filter(r => !q || r.values.join(' ').toLowerCase().indexOf(q) >= 0);
-  $('title').textContent = T.title + ' (' + rows.length + ')';
+  const area = $('areaFilter').value;
+  const list = rows.filter(r =>
+    (!q || r.values.join(' ').toLowerCase().indexOf(q) >= 0) &&
+    (!area || val(r, COL.area).trim() === area)
+  );
+  $('title').textContent = T.title + ' (' + list.length + ' من ' + rows.length + ')';
   $('list').innerHTML = list.length ? list.map(cardHTML).join('') : '<div class="empty">' + esc(T.empty) + '</div>';
 }
 
@@ -375,6 +395,10 @@ function openForm(r){
   $('sheet').innerHTML = '<h3>' + esc(r ? T.formEdit : T.formNew) + '</h3>' + fields +
     '<div class="row"><button class="btn" id="fSave">' + esc(T.save) + '</button>' +
     '<button class="btn ghost" id="fCancel">' + esc(T.cancel) + '</button></div>';
+  if ($('modal').classList.contains('hidden')) {
+    history.pushState({adminModal: true}, '', location.href);
+    modalHistoryOpen = true;
+  }
   $('modal').classList.remove('hidden');
   $('fCancel').onclick = closeForm;
   $('fSave').onclick = async () => {
@@ -386,8 +410,22 @@ function openForm(r){
   };
 }
 
-// بتقفل النموذج
-function closeForm(){ $('modal').classList.add('hidden'); $('sheet').innerHTML = ''; }
+// بتقفل النموذج، وزر رجوع الموبايل يقفل النموذج بدل الخروج من الأدمين
+function closeForm(fromPopState){
+  const wasOpen = !$('modal').classList.contains('hidden');
+  $('modal').classList.add('hidden');
+  $('sheet').innerHTML = '';
+  if (wasOpen && modalHistoryOpen && !fromPopState) {
+    modalHistoryOpen = false;
+    history.back();
+  } else if (fromPopState) {
+    modalHistoryOpen = false;
+  }
+}
+
+window.addEventListener('popstate', () => {
+  if (!$('modal').classList.contains('hidden')) closeForm(true);
+});
 
 // ===== [9] خانة جديدة والتحديث والخروج =====
 
@@ -405,6 +443,7 @@ function init(){
   $('loginBtn').onclick = () => { $('loginErr').textContent = ''; login($('pw').value); };
   $('pw').addEventListener('keydown', e => { if (e.key === 'Enter') $('loginBtn').click(); });
   $('q').addEventListener('input', render);
+  $('areaFilter').addEventListener('change', render);
   $('bNew').onclick = () => openForm(null);
   $('bRef').onclick = load;
   $('bOut').onclick = () => { clearLogin(); location.reload(); };
