@@ -21,67 +21,65 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-/* ===== [1] الألوان والتصميم (غيّر من هنا) ===== */
- :root{
-  --c-main:#1769aa;
-  --c-main-dark:#0f4f86;
-  --c-main-soft:#e5f3ff;
-  --c-bg:#1769aa;
-  --c-card:#ffffff;
-  --c-text:#ffffff;
-  --c-sub:#eaf4ff;
-  --c-border:#b9d9f2;
+/* ===== [1] الألوان والتصميم: أزرق مع كتابة بيضاء وصفراء ===== */
+:root{
+  --c-main:#0759A6;
+  --c-main-dark:#06457F;
+  --c-main-soft:#0B67B8;
+  --c-bg:#0867B4;
+  --c-card:#0759A6;
+  --c-text:#FFFFFF;
+  --c-sub:#FFE45C;
+  --c-border:#63B8F2;
   --c-ok:#16803d;
-  --c-bad:#c62828;
-  --c-warn:#9a6b00;
-  --c-highlight:#fff3a6;
+  --c-bad:#ff7777;
+  --c-warn:#FFE45C;
+  --c-highlight:#FFE45C;
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:'Cairo',sans-serif;background:var(--c-bg);color:var(--c-text);font-size:15px}
+body{margin:0;font-family:'Cairo',sans-serif;background:linear-gradient(145deg,#07539A 0%,#0875C9 55%,#075BA7 100%);color:#fff;font-size:15px}
 button,input,select{font-family:inherit;font-size:inherit}
 .hidden{display:none!important}
-.btn{border:0;border-radius:10px;padding:9px 14px;font-weight:600;cursor:pointer;background:var(--c-main);color:#fff}
-.btn:active{background:var(--c-main-dark)}
-.btn.ghost{background:var(--c-main-soft);color:var(--c-main)}
-.btn.danger{background:transparent;color:var(--c-bad);border:1px solid var(--c-bad)}
-.btn:disabled{opacity:.6}
-input,select{width:100%;padding:10px 12px;border:1px solid var(--c-border);border-radius:10px;background:var(--c-card);color:var(--c-text)}
-input:focus,select:focus,.btn:focus-visible{outline:2px solid var(--c-main);outline-offset:1px}
+.btn{border:1px solid #63B8F2;border-radius:10px;padding:9px 14px;font-weight:700;cursor:pointer;background:#064F93;color:#fff}
+.btn:active{background:#043F76}
+.btn.ghost{background:#FFE45C;color:#064F93;border-color:#FFE45C}
+.btn.danger{background:transparent;color:#fff;border:1px solid #FF9B9B}
+.btn:disabled{opacity:.65}
+input,select{width:100%;padding:10px 12px;border:1px solid #63B8F2;border-radius:10px;background:#0759A6;color:#fff}
+input::placeholder{color:#E5F4FF;opacity:1}
+select option{background:#0759A6;color:#fff}
+input:focus,select:focus,.btn:focus-visible{outline:2px solid #FFE45C;outline-offset:2px}
 #login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-.login-box{width:100%;max-width:340px;background:var(--c-card);border:1px solid var(--c-border);border-radius:16px;padding:22px;display:grid;gap:12px}
-.login-box h1{margin:0;font-size:20px;color:var(--c-main)}
-.err{color:var(--c-bad);min-height:20px;font-size:14px}
-header{position:sticky;top:0;z-index:5;background:#1769aa;border-bottom:1px solid #b9d9f2;padding:12px;display:grid;gap:10px}
-header h1{margin:0;font-size:18px;color:#ffffff}
+.login-box{width:100%;max-width:340px;background:#0759A6;border:1px solid #63B8F2;border-radius:16px;padding:22px;display:grid;gap:12px}
+.login-box h1{margin:0;font-size:20px;color:#FFE45C}
+.err{color:#FFE45C;min-height:20px;font-size:14px}
+header{position:sticky;top:0;z-index:5;background:#0759A6;border-bottom:1px solid #63B8F2;padding:12px;display:grid;gap:10px}
+header h1{margin:0;font-size:18px;color:#fff}
 .bar{display:flex;gap:8px;flex-wrap:wrap}
 .bar .btn{flex:1 1 auto;padding:8px 10px;font-size:14px}
 #list{padding:12px;display:grid;gap:10px;max-width:760px;margin:0 auto}
-.card{background:var(--c-card);border:1px solid var(--c-border);border-radius:14px;padding:12px;display:grid;gap:8px}
-.card.dim{opacity:.55}
-.card h2{margin:0;font-size:17px}
+.card{background:#0759A6;border:1px solid #63B8F2;border-radius:14px;padding:12px;display:grid;gap:8px;color:#fff}
+.card.dim{opacity:.65}
+.card h2{margin:0;font-size:17px;color:#FFE45C}
 .meta{display:flex;flex-wrap:wrap;gap:6px}
-.meta span{background:var(--c-main-soft);color:var(--c-main);border-radius:8px;padding:2px 9px;font-size:13px}
+.meta span{background:#0B72C6;color:#fff;border:1px solid #63B8F2;border-radius:8px;padding:2px 9px;font-size:13px}
 .badge{border-radius:8px;padding:2px 9px;font-size:12px;font-weight:700;margin-inline-start:6px}
-.badge.done{background:var(--c-ok);color:#fff}
-.badge.urg{background:#f97316;color:#fff}
-.badge.hid{background:transparent;color:var(--c-warn);border:1px solid var(--c-warn)}
+.badge.done{background:#16803d;color:#fff}
+.badge.urg{background:#FFE45C;color:#064F93}
+.badge.hid{background:transparent;color:#FFE45C;border:1px solid #FFE45C}
 .acts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .acts .btn{padding:8px 4px;font-size:13px}
-.empty{text-align:center;color:#ffffff;padding:30px}
-#title{color:#ffffff}
-.btn.ghost{background:#fff3a6;color:#17365d}
-.sheet{color:#17365d}
-.sheet label{color:#315675}
-#toast{box-shadow:0 4px 18px rgba(0,0,0,.18)}
-#modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;z-index:10}
-.sheet{background:var(--c-card);width:100%;max-width:520px;max-height:90vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px;display:grid;gap:10px}
-.sheet h3{margin:0;color:var(--c-main)}
-.sheet label{font-size:13px;color:var(--c-sub);display:grid;gap:4px}
+.empty{text-align:center;color:#fff;padding:30px}
+#title{color:#fff}
+#modal{position:fixed;inset:0;background:rgba(0,20,50,.65);display:flex;align-items:flex-end;justify-content:center;z-index:10}
+.sheet{background:#0759A6;color:#fff;width:100%;max-width:520px;max-height:90vh;overflow:auto;border:1px solid #63B8F2;border-radius:18px 18px 0 0;padding:16px;display:grid;gap:10px}
+.sheet h3{margin:0;color:#FFE45C}
+.sheet label{font-size:13px;color:#FFE45C;display:grid;gap:4px}
 .sheet .row{display:flex;gap:8px}
 .sheet .row .btn{flex:1}
-#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);padding:10px 18px;border-radius:12px;color:#fff;font-weight:600;z-index:20;max-width:90%}
-#toast.ok{background:var(--c-ok)}
-#toast.bad{background:var(--c-bad)}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);padding:10px 18px;border-radius:12px;color:#fff;font-weight:700;z-index:20;max-width:90%;box-shadow:0 4px 18px rgba(0,0,0,.18)}
+#toast.ok{background:#16803d}
+#toast.bad{background:#B42318}
 </style>
 </head>
 <body>
