@@ -41,7 +41,7 @@ h1{font-size:1.55rem;font-weight:800;margin:0;line-height:1.3}.sub{color:var(--m
 .chip.on{background:var(--acs);border-color:var(--ac);color:var(--ac);font-weight:700}
 .meta{display:flex;justify-content:space-between;align-items:center;color:var(--mu);font-size:.88rem;margin:.6rem 0 .5rem}
 .meta button{font:inherit;color:var(--ac);background:none;border:0;font-weight:700;cursor:pointer}
-.card{display:block;width:100% ;text-align:start;font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:.95rem;padding:clamp(.55rem,2.2vw,.7rem) clamp(.65rem,2.8vw,.85rem);margin-bottom:clamp(.35rem,1.5vw,.5rem);box-shadow:var(--sh);cursor:pointer;transition:transform .12s}
+.card{display:block;width:100%;text-align:start;font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:.95rem;padding:clamp(.55rem,2.2vw,.7rem) clamp(.65rem,2.8vw,.85rem);margin-bottom:clamp(.35rem,1.5vw,.5rem);box-shadow:var(--sh);cursor:pointer;transition:transform .12s}
 .card:active{transform:scale(.985)}
 .top{display:flex;justify-content:space-between;align-items:center;gap:.4rem;font-size:clamp(.74rem,2.7vw,.8rem)}
 .loc{color:var(--mu);font-weight:600}.badge{font-weight:700;border-radius:99px;padding:.1rem .65rem;background:var(--acs);color:var(--ac)}
@@ -84,10 +84,10 @@ h1{font-size:1.55rem;font-weight:800;margin:0;line-height:1.3}.sub{color:var(--m
 .badge.dn{background:#fee2e2;color:#b91c1c}
 .badge.ur{background:#ffedd5;color:#c2410c}.badge.nw{background:#dcfce7;color:#15803d}
 .bd2{display:flex;gap:.3rem;align-items:center}
-.btn.sh2{flex:0 0 auto;padding:.22rem .65rem}
+.btn.sh2{flex:1;padding:.3rem .5rem;font-size:.78rem}
 .cta{padding:.32rem .65rem calc(.32rem + env(safe-area-inset-bottom,0px));border-top:1px solid #C6D8F2;background:#DCE9FA;display:flex;gap:.35rem}
-.btn{display:flex;align-items:center;justify-content:center;flex:1;min-height:1.95rem;text-align:center;text-decoration:none;font:inherit;font-weight:800;font-size:.73rem;border-radius:.62rem;padding:.18rem .28rem;color:#244A86;border:1px solid #AFC8EC;background:#F2F7FF;box-shadow:0 1px 3px rgba(36,74,134,.08);cursor:pointer}
-.btn.wa{flex:2;background:#159B50;color:#fff;border:0;font-size:.8rem;box-shadow:0 2px 7px rgba(22,163,74,.22)}
+.btn{display:flex;align-items:center;justify-content:center;flex:1;min-height:2.1rem;text-align:center;text-decoration:none;font:inherit;font-weight:800;font-size:.78rem;border-radius:.62rem;padding:.2rem .3rem;color:#244A86;border:1px solid #AFC8EC;background:#F2F7FF;box-shadow:0 1px 3px rgba(36,74,134,.08);cursor:pointer}
+.btn.wa{flex:1.8;background:#159B50;color:#fff;border:0;font-size:.82rem;box-shadow:0 2px 7px rgba(22,163,74,.22)}
 .tb{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:.7rem 0 .5rem}
 .exit{font:inherit;font-weight:800;font-size:.85rem;color:var(--tx);background:var(--card);border:1px solid #E5120F;border-radius:.75rem;padding:.32rem .8rem;cursor:pointer}
 .exit .xr{display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:50%;background:#E5120F;color:#fff;font-weight:900;font-size:.82rem;line-height:1;margin-inline-end:.45rem;vertical-align:middle}
@@ -392,13 +392,11 @@ function draw(){
   $("list").querySelectorAll(".card").forEach(b=>b.onclick=()=>go(+b.dataset.i));
 }
 
-/* دالة ديناميكية بالكامل لنسخ بيانات المصانع (تأخذ أي عمود حالي أو جديد أُضيف في الشيت تلقائياً) */
 function buildJobText(j) {
   let msg = `📍 وظيفة: ${j["المصنع"]} - ${j["المنطقة"]}\n`;
   if(!isMulti(j) && j["الشفت"]) msg += `⏰ الشفت: ${hoursOnly(j["الشفت"])}\n`;
   msg += `💰 المرتب: ${payText(j)}\n`;
 
-  // المرور ديناميكياً على كل خصائص وأعمدة المصنع المتاحة في الشيت
   const skipKeys = [...CORE, "المصنع", "المنطقة", "الفئة", "الشفت", "مرتب 30 يوم", "مرتب 26 يوم", "الورديات", "__sh"];
   
   Object.keys(j).forEach(k => {
@@ -502,7 +500,7 @@ function setupApply(j,ph){
   };
 }
 
-async function shareJobAsImage(j, captureElem) {
+async function saveJobAsImage(j, captureElem) {
   try {
     const actionsBar = captureElem.querySelector('.cta');
     if(actionsBar) actionsBar.style.display = 'none';
@@ -516,31 +514,25 @@ async function shareJobAsImage(j, captureElem) {
     
     if(actionsBar) actionsBar.style.display = 'flex';
 
-    canvas.toBlob(async (blob) => {
+    canvas.toBlob((blob) => {
       if (!blob) return;
-      const file = new File([blob], `${j["المصنع"]}.png`, { type: 'image/png' });
-      
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        navigator.share({
-          files: [file],
-          title: `تفاصيل مصنع ${j["المصنع"]}`
-        }).catch(() => {});
-      } else {
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `${j["المصنع"]}.png`;
-        a.click();
-        alert("تم حفظ صورة تفاصيل المصنع على جهازك بنجاح!");
-      }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${j["المصنع"]} - ${j["المنطقة"]}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      alert("🖼️ تم حفظ صورة تفاصيل المصنع في جهازك بنجاح!");
     }, 'image/png');
   } catch (e) {
     const actionsBar = captureElem.querySelector('.cta');
     if(actionsBar) actionsBar.style.display = 'flex';
-    alert("حدث خطأ بسيط، يمكنك استخدام زر '📋 نسخ' لمشاركة تفاصيل المصنع فوراً.");
+    alert("حدث خطأ أثناء حفظ الصورة، يمكنك استخدام زر '📋 نسخ' بدلاً من ذلك.");
   }
 }
 
-/* دالة نسخ تفاصيل المصنع الفردي الديناميكية بالكامل */
 function copySingleJob(j) {
   const msg = buildJobText(j);
   navigator.clipboard.writeText(msg).then(() => {
@@ -565,14 +557,13 @@ function showDetail(j){
   
   const plainSh=/^\s*\d{1,2}\s*(ساعة|ساعات)\s*$/.test(j["الشفت"]||"");
   
-  // بناء الأقسام ديناميكياً لتشمل أي أعمدة جديدة (مثل العنوان) تلقائياً
   const fixedUsed = ["المنطقة","الفئة","المصنع","الشفت","السن","طبيعة العمل","المؤهل","الأجازة","نظام القبض","السلف","التأمينات","وجبة","السكن","المواصلات","المرتب","مرتب 30 يوم","مرتب 26 يوم","تفاصيل المرتب","الورديات","تثبيت","الترتيب","آخر تعديل","ظاهر؟","الحالة","تاريخ الإضافة"];
   const otherKeys = Object.keys(j).filter(k=>!k.startsWith("__")&&!fixedUsed.includes(k)&&j[k]);
   
   const groups=[
-    ["الأساسيات", ["العنوان", "السن", ...(plainSh?[]:["الشفت"]),"طبيعة العمل","المؤهل","الأجازة", ...otherKeys], payTile],
-    ["المرتب والمميزات", ["نظام القبض","السلف","التأمينات","وجبة"]],
-    ["السكن والمواصلات", ["السكن","المواصلات"]]
+    ["الأساسيات", ["العنوان", "السن", ...(plainSh?[]:["الشفت"]), "طبيعة العمل", "المؤهل", "الأجازة", ...otherKeys], payTile],
+    ["المرتب والمميزات", ["نظام القبض", "السلف", "التأمينات", "وجبة"]],
+    ["السكن والمواصلات", ["السكن", "المواصلات"]]
   ];
   
   $("detail").innerHTML=`<div class="w dp" id="captureArea">
@@ -582,14 +573,13 @@ function showDetail(j){
    ${groups.map(g=>sec(g[0],g[1],g[2])).join("")}
    <div class="cta">
      <button type="button" class="btn wa" id="apply">قدّم دلوقتي على الواتساب</button>
-     <a class="btn" href="tel:+${ph}">📞 اتصل</a>
      <button type="button" class="btn sh2" id="shareImgBtn">🖼️ كصورة</button>
      <button type="button" class="btn sh2" id="copyTxtBtn">📋 نسخ</button>
    </div></div>${formHTML(j)}`;
    
   $("main").style.display="none";$("detail").style.display="block";window.scrollTo(0,0);
   $("ex").onclick=exitDetail;
-  $("shareImgBtn").onclick=()=>shareJobAsImage(j, $("captureArea"));
+  $("shareImgBtn").onclick=()=>saveJobAsImage(j, $("captureArea"));
   $("copyTxtBtn").onclick=()=>copySingleJob(j);
   setupApply(j,ph);
 }
