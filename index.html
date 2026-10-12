@@ -209,6 +209,16 @@ header h1{color:#FFFFFF;font-size:1.4rem}header .lead,header .sub{color:var(--mu
 .frow .seg button{flex:none;padding:.3rem .85rem;font-size:.85rem}
 .frow .chips{flex:1;min-width:0;padding:0}
 .chip .n{font-size:.72rem;opacity:.7;margin-inline-start:.15rem}
+/* <<< غيّر هنا: زرار المناطق (قايمة منسدلة بدل الشريط اللي بيتسحب لجنب) */
+.frow .ddw{flex:1;min-width:0}.ddw:empty{display:none}
+.ddb{width:100%;display:flex;align-items:center;justify-content:space-between;gap:.4rem;font:inherit;font-size:.85rem;font-weight:700;border:1px solid var(--bd);background:#172645;color:var(--tx);border-radius:99px;padding:.42rem .85rem;cursor:pointer}
+.ddb span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ddb.on{background:var(--gold);border-color:var(--gold);color:var(--goldD)}
+.at{margin:.2rem .3rem .4rem;color:var(--mu);font-size:.85rem;font-weight:700}
+.ai{display:flex;justify-content:space-between;align-items:center;width:100%;font:inherit;font-size:1rem;color:var(--tx);background:none;border:0;border-bottom:1px solid var(--bd);padding:.8rem .6rem;cursor:pointer;text-align:start}
+.ai:last-child{border-bottom:0}
+.ai .n{color:var(--mu);font-size:.85rem}
+.ai.on{background:#22355D;color:var(--gold);font-weight:800;border-radius:.6rem}.ai.on .n{color:var(--gold)}
 </style>
 </head>
 <body>
@@ -218,13 +228,14 @@ header h1{color:#FFFFFF;font-size:1.4rem}header .lead,header .sub{color:var(--mu
     <!-- <<< غيّر هنا: سطر الثقة (الجمل اللي تحت العنوان) -->
     <div class="trust"><span>✅ التقديم من غير أي رسوم مقدما</span><a id="fab" class="wap" target="_blank" rel="noopener">💬 اسأل على واتساب</a></div></header>
   <div class="bar">
-    <div class="frow"><div id="seg" class="seg"></div><div id="area" class="chips"></div></div>
+    <div class="frow"><div id="seg" class="seg"></div><div id="area" class="ddw"></div></div>
   </div>
   <div class="meta"><span id="cnt"></span><button id="clr" style="display:none">امسح الفلاتر</button></div>
   <div id="list"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
   <div id="empty" class="empty">😕 <span id="emt"></span></div>
 </div>
 <div id="detail" style="display:none"></div>
+<div class="ov" id="aov"><div class="sheet"><div class="grab"></div><div class="sb" id="areaList"></div></div></div>
 <script>
 /* ===== إعدادات ===== */
 // تبويب "المناطق" في الشيت: ترتيب الصفوف فيه = ترتيب أزرار المناطق في الموقع (غيّر الترتيب من الشيت نفسه)
@@ -352,8 +363,11 @@ function draw(){
   const areas=["الكل",...seen.map((a,i)=>[a,i]).sort((x,y)=>(areaRank(x[0])-areaRank(y[0]))||(x[1]-y[1])).map(x=>x[0])];   // ترتيب تبويب المناطق، والباقي بعدهم بترتيب الشيت
   if(!areas.includes(area))area="الكل";
   const cntOf=a=>JOBS.filter(j=>matchCat(j)&&!done(j)&&(a==="الكل"||j["المنطقة"]===a)).length;   // عدد المصانع المتاحة في كل مكان
-  $("area").innerHTML=areas.map(a=>`<button class="chip ${a===area?"on":""}" data-v="${esc(a)}">${esc(a)} <span class="n">${cntOf(a)}</span></button>`).join("");
-  $("area").querySelectorAll("button").forEach(b=>b.onclick=()=>{area=b.dataset.v;draw()});
+  // <<< زرار المناطق: بيفتح قايمة منسدلة فيها كل المناطق وعدد الوظايف جنب كل منطقة
+  $("area").innerHTML=`<button type="button" id="areaBtn" class="ddb ${area!=="الكل"?"on":""}"><span>📍 ${area==="الكل"?"كل المناطق":esc(area)}</span><span>▾</span></button>`;
+  $("areaBtn").onclick=openArea;
+  $("areaList").innerHTML=`<p class="at">اختار المنطقة</p>`+areas.map(a=>`<button type="button" class="ai ${a===area?"on":""}" data-v="${esc(a)}"><span>${a==="الكل"?"كل المناطق":esc(a)}</span><span class="n">${cntOf(a)}</span></button>`).join("");
+  $("areaList").querySelectorAll(".ai").forEach(b=>b.onclick=()=>{area=b.dataset.v;closeArea();draw()});
   const r=JOBS.filter(j=>matchCat(j)&&(area==="الكل"||j["المنطقة"]===area)).sort(byOrder);   // المثبّت فوق، وبعده الأعلى مرتب، والمكتمل تحت
   $("cnt").textContent=r.length?`${r.length} وظيفة متاحة`:"";
   $("clr").style.display=(area!=="الكل")?"block":"none";
@@ -374,6 +388,12 @@ function draw(){
   $("list").querySelectorAll(".card").forEach(b=>b.onclick=()=>go(+b.dataset.i));
 }
 $("clr").onclick=()=>{area="الكل";draw()};
+// فتح وقفل قايمة المناطق (زرار الرجوع في الموبايل بيقفلها بس)
+let aOpen=false,ignoreA=false;
+function openArea(){$("aov").classList.add("show");if(!aOpen){aOpen=true;history.pushState({ar:1},"",location.href)}}
+function closeArea(){$("aov").classList.remove("show");if(aOpen){aOpen=false;ignoreA=true;history.back()}}
+$("aov").onclick=e=>{if(e.target===$("aov"))closeArea()};
+window.addEventListener("popstate",()=>{if(ignoreA){ignoreA=false;return}if(aOpen){aOpen=false;$("aov").classList.remove("show")}});
 
 // بلوك المرتب في الكارت من بره (صغير): الساعات + المرتب. لو أكتر من وردية: أعلى مرتب + شارة فيها الورديات التانية
 function payBlock(j){
