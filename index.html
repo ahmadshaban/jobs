@@ -41,7 +41,7 @@ h1{font-size:1.55rem;font-weight:800;margin:0;line-height:1.3}.sub{color:var(--m
 .chip.on{background:var(--acs);border-color:var(--ac);color:var(--ac);font-weight:700}
 .meta{display:flex;justify-content:space-between;align-items:center;color:var(--mu);font-size:.88rem;margin:.6rem 0 .5rem}
 .meta button{font:inherit;color:var(--ac);background:none;border:0;font-weight:700;cursor:pointer}
-.card{display:block;width:100%;text-align:start;font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:.95rem;padding:clamp(.55rem,2.2vw,.7rem) clamp(.65rem,2.8vw,.85rem);margin-bottom:clamp(.35rem,1.5vw,.5rem);box-shadow:var(--sh);cursor:pointer;transition:transform .12s}
+.card{display:block;width:100% ;text-align:start;font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:.95rem;padding:clamp(.55rem,2.2vw,.7rem) clamp(.65rem,2.8vw,.85rem);margin-bottom:clamp(.35rem,1.5vw,.5rem);box-shadow:var(--sh);cursor:pointer;transition:transform .12s}
 .card:active{transform:scale(.985)}
 .top{display:flex;justify-content:space-between;align-items:center;gap:.4rem;font-size:clamp(.74rem,2.7vw,.8rem)}
 .loc{color:var(--mu);font-weight:600}.badge{font-weight:700;border-radius:99px;padding:.1rem .65rem;background:var(--acs);color:var(--ac)}
@@ -270,11 +270,11 @@ const isMulti=j=>!!(j.__sh&&j.__sh.length>1);
 function payText(j){if(isMulti(j))return j.__sh.map(s=>s.h+": "+[s.p30&&"30 يوم "+s.p30,s.p26&&"26 يوم "+s.p26].filter(Boolean).join(" / ")).join(" | ");const a=pays(j);return a.length?a.map(x=>x[0]+": "+x[1]).join(" | "):(j["المرتب"]||"")}
 
 const DEMO=[
-{"المنطقة":"العاشر من رمضان","الفئة":"شباب","المصنع":"مصنع تعبئة (تجريبي)","السن":"18 - 35","طبيعة العمل":"تعبئة وتغليف","المؤهل":"أي مؤهل","الشفت":"12 ساعة","المرتب":"12000 ج في الشهر","تفاصيل المرتب":"9000 أساسي (300 ج في اليوم) + 3000 حافز انتظام","السكن":"متوفر","نظام القبض":"شهري","المواصلات":"داخلية","الحالة":"عاجل","تاريخ الإضافة":TODAY,"ظاهر؟":"نعم"},
-{"المنطقة":"مدينة السادات","الفئة":"شباب","المصنع":"مصنع تغليف (تجريبي)","السن":"18 - 40","طبيعة العمل":"تغليف","المؤهل":"أي مؤهل","الشفت":"10 ساعات","المرتب":"7000 ج في الشهر","السكن":"مفيش","المواصلات":"خارجية","ظاهر؟":"نعم"},
-{"المنطقة":"6 أكتوبر","الفئة":"بنات","المصنع":"مصنع فرز (تجريبي)","السن":"18 - 30","طبيعة العمل":"فرز","المؤهل":"مؤهلات","الشفت":"9 ساعات","المرتب":"200 ج في اليوم","تفاصيل المرتب":"حوالي 5200 ج في الشهر","السكن":"مفيش","المواصلات":"خارجية","ظاهر؟":"نعم"},
-{"المنطقة":"العبور","الفئة":"شباب","المصنع":"مصنع ملابس (تجريبي)","السن":"18 - 35","المؤهل":"أي مؤهل","الشفت":"10 ساعات","مرتب 30 يوم":"8000 ج في الشهر","مرتب 26 يوم":"7000 ج في الشهر","ظاهر؟":"نعم"},
-{"المنطقة":"بدر","الفئة":"شباب وبنات","المصنع":"مصنع مكتمل (تجريبي)","المؤهل":"أي مؤهل","الشفت":"8 ساعات","المرتب":"6500 ج في الشهر","الحالة":"مكتمل","ظاهر؟":"نعم"}
+{"المنطقة":"العاشر من رمضان","الفئة":"شباب","المصنع":"مصنع تعبئة (تجريبي)","العنوان":"المستثمرين بجوار رنين","السن":"18 - 35","طبيعة العمل":"تعبئة وتغليف","المؤهل":"أي مؤهل","الشفت":"12 ساعة","المرتب":"12000 ج في الشهر","تفاصيل المرتب":"9000 أساسي (300 ج في اليوم) + 3000 حافز انتظام","السكن":"متوفر","نظام القبض":"شهري","المواصلات":"داخلية","الحالة":"عاجل","تاريخ الإضافة":TODAY,"ظاهر؟":"نعم"},
+{"المنطقة":"مدينة السادات","الفئة":"شباب","المصنع":"مصنع تغليف (تجريبي)","العنوان":"المنطقة الصناعية الخامسة","السن":"18 - 40","طبيعة العمل":"تغليف","المؤهل":"أي مؤهل","الشفت":"10 ساعات","المرتب":"7000 ج في الشهر","السكن":"مفيش","المواصلات":"خارجية","ظاهر؟":"نعم"},
+{"المنطقة":"6 أكتوبر","الفئة":"بنات","المصنع":"مصنع فرز (تجريبي)","العنوان":"المنطقة الصناعية الأولى","السن":"18 - 30","طبيعة العمل":"فرز","المؤهل":"مؤهلات","الشفت":"9 ساعات","المرتب":"200 ج في اليوم","تفاصيل المرتب":"حوالي 5200 ج في الشهر","السكن":"مفيش","المواصلات":"خارجية","ظاهر؟":"نعم"},
+{"المنطقة":"العبور","الفئة":"شباب","المصنع":"مصنع ملابس (تجريبي)","العنوان":"قطعة 45 بلبيس الصحراوي","السن":"18 - 35","المؤهل":"أي مؤهل","الشفت":"10 ساعات","مرتب 30 يوم":"8000 ج في الشهر","مرتب 26 يوم":"7000 ج في الشهر","ظاهر؟":"نعم"},
+{"المنطقة":"بدر","الفئة":"شباب وبنات","المصنع":"مصنع مكتمل (تجريبي)","العنوان":"مدينة بدر الحي الأزهري","المؤهل":"أي مؤهل","الشفت":"8 ساعات","المرتب":"6500 ج في الشهر","الحالة":"مكتمل","ظاهر؟":"نعم"}
 ];
 
 const REQ={name:true,age:true,from:false,housing:false};
@@ -296,7 +296,7 @@ function isNew(j){const t=(j["تاريخ الإضافة"]||"").match(/(\d{1,4})[
  const days=(Date.now()-new Date(y,m-1,d))/864e5;return days>=-1&&days<=NEW_DAYS}
 
 const tags=j=>(done(j)?'<span class="badge dn">مكتمل</span>':'')+(urgent(j)?'<span class="badge ur">🔥 الأكثر تقديمًا</span>':'')+(isNew(j)?'<span class="badge nw">جديد</span>':'');
-const ICON={"السن":"🎂","طبيعة العمل":"👷","الشفت":"⏰","المؤهل":"🎓","نظام القبض":"💰","السكن":"🏠","السلف":"💵","المواصلات":"🚌","وجبة":"🍽️","التأمينات":"🛡️","الأجازة":"📅"};
+const ICONS={"العنوان":"📍","السن":"🎂","طبيعة العمل":"👷","الشفت":"⏰","المؤهل":"🎓","نظام القبض":"💰","السكن":"🏠","السلف":"💵","المواصلات":"🚌","وجبة":"🍽️","التأمينات":"🛡️","الأجازة":"📅"};
 
 {const ph=PHONE.replace(/\D/g,"");const tp=document.getElementById("tph"),fb=document.getElementById("fab");
  if(tp)tp.textContent="📞 واتساب: 0"+ph.replace(/^20/,"");
@@ -392,7 +392,28 @@ function draw(){
   $("list").querySelectorAll(".card").forEach(b=>b.onclick=()=>go(+b.dataset.i));
 }
 
-/* دالة نسخ تفاصيل المصانع كاملة لمنطقة معينة بتنسيق مرتب جداً وغير متداخل */
+/* دالة ديناميكية بالكامل لنسخ بيانات المصانع (تأخذ أي عمود حالي أو جديد أُضيف في الشيت تلقائياً) */
+function buildJobText(j) {
+  let msg = `📍 وظيفة: ${j["المصنع"]} - ${j["المنطقة"]}\n`;
+  if(!isMulti(j) && j["الشفت"]) msg += `⏰ الشفت: ${hoursOnly(j["الشفت"])}\n`;
+  msg += `💰 المرتب: ${payText(j)}\n`;
+
+  // المرور ديناميكياً على كل خصائص وأعمدة المصنع المتاحة في الشيت
+  const skipKeys = [...CORE, "المصنع", "المنطقة", "الفئة", "الشفت", "مرتب 30 يوم", "مرتب 26 يوم", "الورديات", "__sh"];
+  
+  Object.keys(j).forEach(k => {
+    if(skipKeys.includes(k) || !j[k]) return;
+    const icon = ICONS[k] || "•";
+    if(k === "تفاصيل المرتب") {
+      msg += `📝 ملاحظات: ${j[k]}\n`;
+    } else {
+      msg += `${icon} ${k}: ${j[k]}\n`;
+    }
+  });
+
+  return msg.trim();
+}
+
 function copyAreaJobs(areaName, jobsList) {
   let activeJobs = jobsList.filter(j => !done(j));
   if(!activeJobs.length) return;
@@ -400,25 +421,12 @@ function copyAreaJobs(areaName, jobsList) {
   let msg = `📍 وظايف تعبئة وتغليف وفرز المتاحة في (${areaName}):\n\n`;
   activeJobs.forEach((j, index) => {
     msg += `━━━━━━━━━━━━━━━━━━━━\n`;
-    msg += `${index + 1}️⃣ مصنع: ${j["المصنع"]}\n`;
-    if(!isMulti(j) && j["الشفت"]) msg += `⏰ الشفت: ${hoursOnly(j["الشفت"])}\n`;
-    msg += `💰 المرتب: ${payText(j)}\n`;
-    if(j["تفاصيل المرتب"]) msg += `📝 ملاحظات: ${j["تفاصيل المرتب"]}\n`;
-    if(j["السن"]) msg += `🎂 السن: ${j["السن"]}\n`;
-    if(j["طبيعة العمل"]) msg += `👷 طبيعة العمل: ${j["طبيعة العمل"]}\n`;
-    if(j["المؤهل"]) msg += `🎓 المؤهل: ${j["المؤهل"]}\n`;
-    if(j["نظام القبض"]) msg += `💵 نظام القبض: ${j["نظام القبض"]}\n`;
-    if(j["السكن"]) msg += `🏠 السكن: ${j["السكن"]}\n`;
-    if(j["المواصلات"]) msg += `🚌 المواصلات: ${j["المواصلات"]}\n`;
-    if(j["السلف"]) msg += `💸 السلف: ${j["السلف"]}\n`;
-    if(j["التأمينات"]) msg += `🛡️ التأمينات: ${j["التأمينات"]}\n`;
-    if(j["وجبة"]) msg += `🍽️ وجبة: ${j["وجبة"]}\n`;
-    if(j["الأجازة"]) msg += `📅 الأجازة: ${j["الأجازة"]}\n`;
+    msg += `${index + 1}️⃣ ` + buildJobText(j).replace(/^📍 وظيفة:.*?\n/, "") + `\n`;
   });
   msg += `━━━━━━━━━━━━━━━━━━━━`;
 
   navigator.clipboard.writeText(msg).then(() => {
-    alert(`📋 تم نسخ جميع مصانع (${areaName}) بتنسيق ممتاز ومنظم، يمكنك لصقها في الواتساب مباشرة!`);
+    alert(`📋 تم نسخ جميع مصانع (${areaName}) بكل بياناتها المحدثة بتنسيق ممتاز ومنظم!`);
   }).catch(() => {
     prompt("نسخ النص يدوياً:", msg);
   });
@@ -532,25 +540,11 @@ async function shareJobAsImage(j, captureElem) {
   }
 }
 
-/* دالة نسخ تفاصيل المصنع الفردي عند الضغط على زر نسخ */
+/* دالة نسخ تفاصيل المصنع الفردي الديناميكية بالكامل */
 function copySingleJob(j) {
-  let msg = `📍 وظيفة: ${j["المصنع"]} - ${j["المنطقة"]}\n`;
-  if(!isMulti(j) && j["الشفت"]) msg += `⏰ الشفت: ${hoursOnly(j["الشفت"])}\n`;
-  msg += `💰 المرتب: ${payText(j)}\n`;
-  if(j["تفاصيل المرتب"]) msg += `📝 ملاحظات: ${j["تفاصيل المرتب"]}\n`;
-  if(j["السن"]) msg += `🎂 السن: ${j["السن"]}\n`;
-  if(j["طبيعة العمل"]) msg += `👷 طبيعة العمل: ${j["طبيعة العمل"]}\n`;
-  if(j["المؤهل"]) msg += `🎓 المؤهل: ${j["المؤهل"]}\n`;
-  if(j["نظام القبض"]) msg += `💵 نظام القبض: ${j["نظام القبض"]}\n`;
-  if(j["السكن"]) msg += `🏠 السكن: ${j["السكن"]}\n`;
-  if(j["المواصلات"]) msg += `🚌 المواصلات: ${j["المواصلات"]}\n`;
-  if(j["السلف"]) msg += `💸 السلف: ${j["السلف"]}\n`;
-  if(j["التأمينات"]) msg += `🛡️ التأمينات: ${j["التأمينات"]}\n`;
-  if(j["وجبة"]) msg += `🍽️ وجبة: ${j["وجبة"]}\n`;
-  if(j["الأجازة"]) msg += `📅 الأجازة: ${j["الأجازة"]}`;
-
+  const msg = buildJobText(j);
   navigator.clipboard.writeText(msg).then(() => {
-    alert("📋 تم نسخ تفاصيل المصنع بنجاح!");
+    alert("📋 تم نسخ تفاصيل المصنع كاملة بنجاح!");
   }).catch(() => {
     prompt("نسخ النص يدوياً:", msg);
   });
@@ -559,7 +553,7 @@ function copySingleJob(j) {
 function showDetail(j){
   const ph=PHONE.replace(/\D/g,"");
   
-  const it=k=>`<div class="it ${(k==="طبيعة العمل"||String(j[k]).length>26)?"full":""}"><small>${ICON[k]||"•"} ${esc(k)}</small><b>${esc(j[k])}</b></div>`;
+  const it=k=>`<div class="it ${(k==="طبيعة العمل"||String(j[k]).length>26)?"full":""}"><small>${ICONS[k]||"•"} ${esc(k)}</small><b>${esc(j[k])}</b></div>`;
   const sec=(t,ks,pre)=>{const r=ks.filter(k=>j[k]);return (r.length||pre)?`<div class="sec"><h3>${t}</h3><div class="g2">${pre||""}${r.map(it).join("")}</div></div>`:""};
   const pp=pays(j);
   const noteHTML=j["تفاصيل المرتب"]?`<div class="pnote"><span class="nl">ملاحظات</span><span class="nt">${esc(j["تفاصيل المرتب"])}</span></div>`:"";
@@ -570,15 +564,22 @@ function showDetail(j){
   const payTile=(isMulti(j)?tbl:payTile0)+noteHTML;
   
   const plainSh=/^\s*\d{1,2}\s*(ساعة|ساعات)\s*$/.test(j["الشفت"]||"");
-  const groups=[["الأساسيات",["السن",...(plainSh?[]:["الشفت"]),"طبيعة العمل","المؤهل","الأجازة"],payTile],["المرتب والمميزات",["نظام القبض","السلف","التأمينات","وجبة"]],["السكن والمواصلات",["السكن","المواصلات"]]];
-  const used=groups.flatMap(g=>g[1]);
-  const other=Object.keys(j).filter(k=>!k.startsWith("__")&&!CORE.includes(k)&&!used.includes(k)&&j[k]);
+  
+  // بناء الأقسام ديناميكياً لتشمل أي أعمدة جديدة (مثل العنوان) تلقائياً
+  const fixedUsed = ["المنطقة","الفئة","المصنع","الشفت","السن","طبيعة العمل","المؤهل","الأجازة","نظام القبض","السلف","التأمينات","وجبة","السكن","المواصلات","المرتب","مرتب 30 يوم","مرتب 26 يوم","تفاصيل المرتب","الورديات","تثبيت","الترتيب","آخر تعديل","ظاهر؟","الحالة","تاريخ الإضافة"];
+  const otherKeys = Object.keys(j).filter(k=>!k.startsWith("__")&&!fixedUsed.includes(k)&&j[k]);
+  
+  const groups=[
+    ["الأساسيات", ["العنوان", "السن", ...(plainSh?[]:["الشفت"]),"طبيعة العمل","المؤهل","الأجازة", ...otherKeys], payTile],
+    ["المرتب والمميزات", ["نظام القبض","السلف","التأمينات","وجبة"]],
+    ["السكن والمواصلات", ["السكن","المواصلات"]]
+  ];
   
   $("detail").innerHTML=`<div class="w dp" id="captureArea">
    <div class="tb"><button class="exit" id="ex"><span class="xr">✕</span>رجوع</button></div>
    <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="bd2">${tags(j)}<span class="badge ${kind(j["الفئة"]||"")}">${esc(j["الفئة"])}</span></span></div>
    <h2 class="ttl">${esc(j["المصنع"])}</h2>
-   ${groups.map(g=>sec(g[0],g[1],g[2])).join("")}${sec("حاجات تانية",other)}
+   ${groups.map(g=>sec(g[0],g[1],g[2])).join("")}
    <div class="cta">
      <button type="button" class="btn wa" id="apply">قدّم دلوقتي على الواتساب</button>
      <a class="btn" href="tel:+${ph}">📞 اتصل</a>
