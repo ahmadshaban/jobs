@@ -171,7 +171,7 @@ header h1{margin:0;font-size:18px;color:#fff}
 <div id="toast" class="hidden"></div>
 
 <script>
-const API = 'https://script.google.com/macros/s/AKfycbzwMRST469OBo-ym0Ccn-Ot84jGrL0KEM9SZcnfe-tip2U6-1gyryjnYxdNNsiwbLEyng/exec';
+const API = 'https://script.google.com/macros/s/AKfycbxv8BwNWdKhlsZPpsSeJDbyuWEX7FXMU53522d3iNbhPG_15KAsqJKfEng4DGDWTunPHA/exec';
 
 const COL = {
   factory: 'المصنع', area: 'المنطقة', gender: 'الفئة', mod: 'آخر تعديل', order: 'الترتيب',
@@ -226,9 +226,12 @@ $('bUICustom').onclick = async () => {
   const res = await api('getSettings');
   if (res && res.ok && res.settings) {
     const s = res.settings;
-    $('ui_header_title').value = s.header_title \vert{}\vert{} '';$('ui_header_sub').value = s.header_sub || '';
-    $('ui_wa_btn_text').value = s.wa_btn_text \vert{}\vert{} '';$('ui_whatsapp_phone').value = s.whatsapp_phone || '';
-    $('ui_trust_text').value = s.trust_text \vert{}\vert{} '';$('ui_show_trust').checked = s.show_trust === 'true' || s.show_trust === true;
+    $('ui_header_title').value = s.header_title || '';
+    $('ui_header_sub').value = s.header_sub || '';
+    $('ui_wa_btn_text').value = s.wa_btn_text || '';
+    $('ui_whatsapp_phone').value = s.whatsapp_phone || '';
+    $('ui_trust_text').value = s.trust_text || '';
+    $('ui_show_trust').checked = s.show_trust === 'true' || s.show_trust === true;
     $('ui_show_bar').checked = s.show_bar === 'true' || s.show_bar === true;
     $('ui_show_area_filter').checked = s.show_area_filter === 'true' || s.show_area_filter === true;
     $('ui_show_new_badge').checked = s.show_new_badge === 'true' || s.show_new_badge === true;
@@ -236,13 +239,15 @@ $('bUICustom').onclick = async () => {
     $('ui_show_tags').checked = s.show_tags === 'true' || s.show_tags === true;
     $('ui_show_notes').checked = s.show_notes === 'true' || s.show_notes === true;
     $('ui_title_font_size').value = s.title_font_size || '';
-    $('ui_card_title_size').value = s.card_title_size \vert{}\vert{} '';$('ui_card_pay_size').value = s.card_pay_size || '';
-    $('ui_btn_padding').value = s.btn_padding \vert{}\vert{} '';$('ui_btn_radius').value = s.btn_radius || '';
+    $('ui_card_title_size').value = s.card_title_size || '';
+    $('ui_card_pay_size').value = s.card_pay_size || '';
+    $('ui_btn_padding').value = s.btn_padding || '';
+    $('ui_btn_radius').value = s.btn_radius || '';
   }
   $('uiModal').classList.remove('hidden');
 };
 
-$('cancelUIBtn').onclick = () =>$('uiModal').classList.add('hidden');
+$('cancelUIBtn').onclick = () => $('uiModal').classList.add('hidden');
 
 // حفظ الإعدادات وإرسالها الفعلي للسيرفر
 $('saveUIBtn').onclick = async () => {
@@ -279,9 +284,17 @@ $('saveUIBtn').onclick = async () => {
 
 $('loginBtn').onclick = () => {
   localStorage.setItem(AUTH_KEY, $('pw').value);
-  $('login').classList.add('hidden');$('app').classList.remove('hidden');
+  $('login').classList.add('hidden');
+  $('app').classList.remove('hidden');
   load();
 };
+
+// الدخول التلقائي لو الباسوورد متخزن وصحيح
+if (savedPassword()) {
+  $('login').classList.add('hidden');
+  $('app').classList.remove('hidden');
+  load();
+}
 </script>
 </body>
 </html>

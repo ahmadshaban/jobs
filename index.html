@@ -20,7 +20,6 @@
 :root{
   box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
   --bg:#0E1A33;--card:#172645;--tx:#E8EEF9;--mu:#8FA2C8;--bd:#2A3C66;--ac:#F2C14E;--acs:#22355D;--sh:0 6px 16px rgba(0,0,0,.35);--gold:#F2C14E;--goldD:#2A1D00;--wa:#1FAF5A;--px:1rem;
-  /* ديناميكي من الأدمن */
   --header-title-size: 1.4rem;
   --card-title-size: 1.1rem;
   --card-pay-size: 1.25rem;
@@ -131,9 +130,8 @@ header .lead,header .sub{color:var(--mu);margin:.1rem 0 0;font-size:.95rem}
 <div class="ov" id="aov"><div class="sheet"><div class="grab"></div><div class="sb" id="areaList"></div></div></div>
 
 <script>
-/* ===== إعدادات الشيت والاتصال ===== */
+const API_URL = "https://script.google.com/macros/s/AKfycbxv8BwNWdKhlsZPpsSeJDbyuWEX7FXMU53522d3iNbhPG_15KAsqJKfEng4DGDWTunPHA/exec";
 const AREAS_CSV_URL="https://docs.google.com/spreadsheets/d/1Ri61Py0q36t2EdMCWXa0lgJGDWJfrXjY0gHmqnwS4AM/gviz/tq?tqx=out:csv&headers=1&sheet=%D8%A7%D9%84%D9%85%D9%86%D8%A7%D8%B7%D9%82";
-const SETTINGS_CSV_URL="https://docs.google.com/spreadsheets/d/1Ri61Py0q36t2EdMCWXa0lgJGDWJfrXjY0gHmqnwS4AM/gviz/tq?tqx=out:csv&headers=1&sheet=%D8%A7%D9%84%D8%A5%D8%B9%D8%AF%D8%A7%D8%AF%D8%A7%D8%AA";
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1Ri61Py0q36t2EdMCWXa0lgJGDWJfrXjY0gHmqnwS4AM/gviz/tq?tqx=out:csv&headers=1&sheet=%D8%A7%D9%84%D9%88%D8%B8%D8%A7%D8%A6%D9%81";
 
 let PHONE = "201095237207";
@@ -143,8 +141,8 @@ let UI_SETTINGS = {
   wa_btn_text: "💬 اسأل على واتساب",
   trust_text: "✅ التقديم من غير أي رسوم مقدما",
   show_trust: true,
-  show_area_filter: true,
   show_bar: true,
+  show_area_filter: true,
   show_new_badge: true,
   show_urgent_badge: true,
   show_tags: true,
@@ -171,7 +169,6 @@ function parseShifts(txt){return String(txt||"").split(/\n/).map(l=>l.trim()).fi
 function topShift(a){let b={v:"",h:""},m=0;a.forEach(s=>[s.p30,s.p26].forEach(x=>{const n=numOf(x);if(n>m){m=n;b={v:x,h:s.h}}}));return b}
 function prep(j){const a=parseShifts(j["الورديات"]);j.__sh=a;if(a.length===1){j["الشفت"]=a[0].h;j[P30]=a[0].p30;j[P26]=a[0].p26}else if(a.length>1){j["الشفت"]="";j[P30]="";j[P26]="";j["المرتب"]=""}return j}
 const isMulti=j=>!!(j.__sh&&j.__sh.length>1);
-function payText(j){if(isMulti(j))return j.__sh.map(s=>s.h+": "+[s.p30&&"30 يوم "+s.p30,s.p26&&"26 يوم "+s.p26].filter(Boolean).join(" / ")).join(" | ");const a=pays(j);return a.length?a.map(x=>x[0]+": "+x[1]).join(" | "):(j["المرتب"]||"")}
 
 const REQ={name:true,age:true,from:false,housing:false};
 const AGE_MIN=16,AGE_MAX=60;
@@ -228,25 +225,25 @@ function applyUISettings(){
 
 async function load(){
   $("list").innerHTML='<div class="sk"></div><div class="sk"></div><div class="sk"></div>';
-  const [jr,ar,sr]=await Promise.allSettled([getText(SHEET_CSV_URL,15000),getText(AREAS_CSV_URL,3000),getText(SETTINGS_CSV_URL,3000)]);
   
-  if(sr.status==="fulfilled"){
-    try{
-      const sData = parseCSV(sr.value);
-      sData.forEach(row=>{
-        const k = row["مفتَاح_الإعداد"] || row["Key"];
-        const v = row["القيمة"] || row["Value"];
-        if(k && v !== undefined){
-          if(v === "true" || v === "نعم") UI_SETTINGS[k] = true;
-          else if(v === "false" || v === "لا") UI_SETTINGS[k] = false;
-          else UI_SETTINGS[k] = v;
-          if(k === "whatsapp_phone") PHONE = v;
-        }
-      });
-    }catch(e){}
-  }
+  // سحب الإعدادات من السيرفر (Get Settings)
+  try{
+    const sr = await fetch(API_URL + "?action=getSettings", {cache: "no-store"});
+    const srJson = await sr.json();
+    if(srJson && srJson.ok && srJson.settings){
+      const s = srJson.settings;
+      for(const k in s){
+        let v = s[k];
+        if(v === "true" || v === true) UI_SETTINGS[k] = true;
+        else if(v === "false" || v === false) UI_SETTINGS[k] = false;
+        else UI_SETTINGS[k] = v;
+        if(k === "whatsapp_phone" && v) PHONE = v;
+      }
+    }
+  }catch(e){}
   applyUISettings();
 
+  const [jr,ar]=await Promise.allSettled([getText(SHEET_CSV_URL,15000),getText(AREAS_CSV_URL,3000)]);
   let d=null;
   if(jr.status==="fulfilled"){try{d=parseCSV(jr.value);if(d.length&&!("المصنع" in d[0]))d=null}catch(e){d=null}}
   if(!d) return showErr();
@@ -353,7 +350,7 @@ function setupApply(j,ph){
   const yn=$("f_h").querySelectorAll("button");
   yn.forEach(b=>b.onclick=()=>{eh.textContent="";const was=b.classList.contains("on");yn.forEach(x=>x.classList.remove("on"));if(was){hs=""}else{b.classList.add("on");hs=b.dataset.v}});
   $("fgo").onclick=()=>{
-    const n=en.value.trim().replace(/\s+/g," "),p=ep.value.trim(),a=ea.value.trim().replace(/[٠-٩]/g,d=>"٠١٢٣٥٦٧٨٩".indexOf(d));
+    const n=en.value.trim().replace(/\s+/g," "),p=ep.value.trim(),a=ea.value.trim().replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d));
     clearErr();
     const fail=(el,m)=>{el.classList.add("bad");errs[el.id].textContent=m;el.focus();el.scrollIntoView({block:"center",behavior:"smooth"})};
     if((REQ.name||n)&&n.split(" ").filter(w=>w.length>=2).length<3)return fail(en,"الاسم ناقص، اكتب الاسم ثلاثي كامل");
