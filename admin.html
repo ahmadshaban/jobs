@@ -698,16 +698,16 @@ function formHasUnsavedChanges(){
   return !!formInitialSnapshot && currentFormSnapshot() !== formInitialSnapshot;
 }
 
-// ترتيب حقول النموذج بحيث تكون أرقام التواصل تحت العنوان (المصنع) مباشرة
+// ترتيب حقول النموذج بحيث تكون أرقام التواصل تحت خانة المصنع (العنوان) مباشرة
 function formOrder(){
   const a = headers.indexOf(COL.salary30), b = headers.indexOf(COL.salary26);
   const sIdx = headers.indexOf(COL.shifts);
   const cIdx = headers.indexOf(COL.contacts);
   const rest = headers.map((_, i) => i).filter(i => i !== a && i !== b && i !== sIdx && i !== cIdx);
   
-  // جعل أرقام التواصل تظهر بعد المصنع (العنوان) مباشرة
-  let at = headers.indexOf(COL.factory);
-  const pos = at < 0 ? 1 : rest.indexOf(at) + 1;
+  // إدراج أرقام التواصل بعد خانة اسم المصنع (العنوان) مباشرة
+  let factoryIdx = headers.indexOf(COL.factory);
+  const pos = factoryIdx < 0 ? 1 : rest.indexOf(factoryIdx) + 1;
   rest.splice(pos, 0, cIdx);
   
   let shiftAt = headers.indexOf(COL.shift); if (shiftAt < 0) shiftAt = headers.indexOf(COL.factory);
