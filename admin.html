@@ -40,7 +40,7 @@
 body{margin:0;font-family:'Cairo',sans-serif;background:linear-gradient(145deg,#071C33 0%,#0F3A66 55%,#0A2A4D 100%);color:#fff;font-size:15px}
 button,input,select{font-family:inherit;font-size:inherit}
 .hidden{display:none!important}
-.btn{border:1px solid #3F7AB5;border-radius:10px;padding:9px 14px;font-weight:700;cursor:pointer;background:#0E3560;color:#fff}
+.btn{border:1px solid #3F7AB5;border-radius:9px;padding:7px 11px;font-size:13px;font-weight:700;cursor:pointer;background:#0E3560;color:#fff}
 .btn:active{background:#082A4C}
 .btn.ghost{background:#FFE45C;color:#0E3560;border-color:#FFE45C}
 .btn.danger{background:transparent;color:#fff;border:1px solid #FF9B9B}
@@ -56,19 +56,20 @@ input:focus,select:focus,.btn:focus-visible{outline:2px solid #FFE45C;outline-of
 header{position:sticky;top:0;z-index:5;background:#0B2A4A;border-bottom:1px solid #3F7AB5;padding:12px;display:grid;gap:10px}
 header h1{margin:0;font-size:18px;color:#fff}
 .bar{display:flex;gap:8px;flex-wrap:wrap}
-.bar .btn{flex:1 1 auto;padding:8px 10px;font-size:14px}
+.bar .btn{flex:1 1 auto;padding:6px 8px;font-size:12.5px}
 #list{padding:12px;display:grid;gap:10px;max-width:760px;margin:0 auto}
-.card{background:#0B2A4A;border:1px solid #3F7AB5;border-radius:14px;padding:12px;display:grid;gap:8px;color:#fff}
+.card{background:#0B2A4A;border:1px solid #3F7AB5;border-radius:12px;padding:9px;display:grid;gap:6px;color:#fff}
 .card.dim{opacity:.65}
-.card h2{margin:0;font-size:17px;color:#FFE45C}
+.card h2{margin:0;font-size:15px;color:#FFE45C}
 .meta{display:flex;flex-wrap:wrap;gap:6px}
-.meta span{background:#1A4A7A;color:#fff;border:1px solid #3F7AB5;border-radius:8px;padding:2px 9px;font-size:13px}
-.badge{border-radius:8px;padding:2px 9px;font-size:12px;font-weight:700;margin-inline-start:6px}
+.meta span{background:#1A4A7A;color:#fff;border:1px solid #3F7AB5;border-radius:7px;padding:1px 7px;font-size:11.5px}
+.badge{border-radius:7px;padding:1px 7px;font-size:11px;font-weight:700;margin-inline-start:5px}
 .badge.done{background:#16803d;color:#fff}
+.stats{font-size:12px;color:#CFE3F7;margin-top:6px}
 .badge.urg{background:#FFE45C;color:#0E3560}.badge.pin{background:#C2410C;color:#fff}
 .badge.hid{background:transparent;color:#FFE45C;border:1px solid #FFE45C}
-.acts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.acts .btn{padding:8px 4px;font-size:13px}
+.acts{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.acts .btn{padding:6px 2px;font-size:11.5px;line-height:1.3}
 .empty{text-align:center;color:#fff;padding:30px}
 #title{color:#fff}
 #modal{position:fixed;inset:0;background:rgba(0,20,50,.65);display:flex;align-items:flex-end;justify-content:center;z-index:10}
@@ -83,7 +84,7 @@ header h1{margin:0;font-size:18px;color:#fff}
 .meta span.sal{background:#FFE45C;color:#0E3560;font-weight:700;cursor:pointer}
 .meta span.sal.empty{background:transparent;color:#FFE45C;border:1px dashed #FFE45C;font-weight:400}
 .hd{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.mv{display:flex;gap:6px;flex:none}.mv .btn{padding:3px 11px;font-size:14px;line-height:1.3}.mv .btn:disabled{opacity:.3}
+.mv{display:flex;gap:6px;flex:none}.mv .btn{padding:2px 9px;font-size:13px;line-height:1.3}.mv .btn:disabled{opacity:.3}
 .oldhint{color:#fff;opacity:.85;font-size:12px;font-weight:400}
 #salDlg,#colDlg{position:fixed;inset:0;background:rgba(0,20,50,.65);display:flex;align-items:center;justify-content:center;z-index:15;padding:16px}
 #salDlg .box,#colDlg .box{background:#0B2A4A;border:1px solid #3F7AB5;border-radius:16px;padding:16px;width:100%;max-width:340px;display:grid;gap:10px}
@@ -143,6 +144,7 @@ header h1{margin:0;font-size:18px;color:#fff}
       <button class="btn ghost" id="bRef"></button>
       <button class="btn danger" id="bOut"></button>
     </div>
+    <div id="stats" class="stats"></div>
   </header>
   <div id="list"></div>
   <!-- <<< غيّر هنا: زرار + العايم لإضافة مصنع جديد -->
@@ -174,6 +176,7 @@ const COL = {
   factory: 'المصنع',   // <<< غيّر هنا: اسم عمود المصنع
   area:    'المنطقة',  // <<< غيّر هنا: اسم عمود المنطقة
   gender:  'الفئة',    // <<< غيّر هنا: اسم عمود الفئة
+  mod:     'آخر تعديل', // <<< غيّر هنا: اسم عمود آخر تعديل (الأدمن بيكتبه لوحده)
   pin:     'تثبيت',    // <<< غيّر هنا: اسم عمود التثبيت (قيمته نعم = مثبّت فوق في الموقع)
   shifts:  'الورديات', // <<< غيّر هنا: اسم عمود الورديات (كل وردية في سطر)
   shift:   'الشفت',    // <<< غيّر هنا: اسم عمود الشفت
@@ -188,6 +191,9 @@ const SAL_SUFFIX30 = ' ج في الشهر'; // <<< غيّر هنا: الكلمة
 const SAL_SUFFIX26 = ' ج';          // <<< غيّر هنا: الكلمة اللي بتتضاف تلقائي لو كتبت رقم بس في خانة 26 يوم
 const DATE_COL = 'تاريخ الإضافة'; // <<< غيّر هنا: اسم عمود تاريخ الإضافة
 const todayStr = () => new Date().toISOString().slice(0, 10);
+const nowStr = () => { const d = new Date(), p = n => String(n).padStart(2, '0'); return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds()); };
+// نفس رقم الشير اللي في الموقع (?j=) عشان زرار "عرض" يفتح المصنع بالظبط
+const siteId = n => { let h = 5381; for (const c of String(n)) h = ((h << 5) + h + c.charCodeAt(0)) >>> 0; return h.toString(36); };
 // رقم بس؟ بنكمّله (8000 ← 8000 ج في الشهر). بيفهم الأرقام العربي والفاصلة
 function normSalary(x, col){
   let t = String(x).trim().replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
@@ -217,7 +223,7 @@ const T = {
   hiddenBadge: 'مخفي',                  // <<< غيّر هنا: كلمة مخفي
   doneValue: 'مكتمل',                   // <<< غيّر هنا: القيمة اللي بتتكتب في عمود الحالة
   urgent: 'الأكثر تقديمًا',               // <<< غيّر هنا: زرار الأكثر تقديمًا
-  unurgent: 'إلغاء الأكثر تقديمًا',        // <<< غيّر هنا: زرار الإلغاء
+  unurgent: '🔥 إلغاء',                   // <<< غيّر هنا: زرار إلغاء الأكثر تقديمًا
   urgentBadge: '🔥 الأكثر تقديمًا',        // <<< غيّر هنا: شارة الكارت
   urgentValue: 'الأكثر تقديمًا',          // <<< غيّر هنا: القيمة اللي بتتكتب في عمود الحالة (الموقع بيفهمها وبيفهم "عاجل" القديمة كمان)
   yes: 'نعم',                           // <<< غيّر هنا: قيمة نعم
@@ -357,6 +363,7 @@ async function run(action, extra){
   requestBusy = true;
   setBusyUI(true);
   try{
+    if ((action === 'update' || action === 'add') && extra && extra.data && headers.includes(COL.mod) && !(COL.mod in extra.data)) extra.data[COL.mod] = nowStr();   // آخر تعديل
     const r = await api(action, extra);
     if (!r.ok){ toast(T.errMsg + r.error, false); return false; }
     toast(T.okMsg, true);
@@ -376,7 +383,7 @@ async function run(action, extra){
 async function ensureSalaryCols(){
   try{
     let changed = false;
-    for (const name of [COL.salary30, COL.salary26, COL.shifts, COL.pin]){
+    for (const name of [COL.salary30, COL.salary26, COL.shifts, COL.pin, COL.mod]){
       if (!headers.includes(name)){ const a = await api('addColumn', {name}); if (a.ok) changed = true; }
     }
     if (changed){ const r2 = await api('list'); if (r2.ok){ headers = r2.headers; rows = r2.rows; } }
@@ -449,6 +456,7 @@ function renderShEditor(){
       '<label>نظام 26 يوم + 4 إجازة<input data-sh="p26" data-k="' + k + '" inputmode="numeric" placeholder="مثلًا 8000" value="' + esc(s.p26) + '"></label></div></div>';
   });
   box.innerHTML = h;
+  saveDraft();
   box.querySelectorAll('.shp').forEach(b => b.onclick = () => {
     const p = b.dataset.p, i = shState.findIndex(s => shNum(s.h) === shNum(p));
     if (i >= 0){ const s0 = shState[i]; if ((s0.p30 || s0.p26) && !confirm('تمسح وردية ' + s0.h + ' ومرتباتها؟')) return; shState.splice(i, 1); } else { shState.push({h: p, p30: '', p26: ''}); shState.sort((x, y) => shNum(x.h) - shNum(y.h)); }
@@ -519,13 +527,14 @@ function cardHTML(r, i, arr){
       (hid ? '<span class="badge hid">' + esc(T.hiddenBadge) + '</span>' : '') + '</h2>' + mv + '</div>' +
     '<div class="meta">' + meta + '</div>' +
     '<div class="acts">' +
-      '<button class="btn ghost" data-act="edit" data-row="' + r.row + '">' + esc(T.edit) + '</button>' +
+      '<button class="btn ghost" data-act="edit" data-row="' + r.row + '">✏️ ' + esc(T.edit) + '</button>' +
       '<button class="btn ghost" data-act="copy" data-row="' + r.row + '">' + esc(T.copy) + '</button>' +
       '<button class="btn ghost" data-act="vis" data-row="' + r.row + '">' + esc(hid ? T.show : T.hide) + '</button>' +
       '<button class="btn ghost" data-act="done" data-row="' + r.row + '">' + esc(done ? T.reopen : T.complete) + '</button>' +
       '<button class="btn ghost" data-act="urg" data-row="' + r.row + '">' + esc(urg ? T.unurgent : T.urgent) + '</button>' +
       '<button class="btn ghost" data-act="pin" data-row="' + r.row + '">' + (pin ? 'إلغاء التثبيت' : '📌 تثبيت') + '</button>' +
-      '<button class="btn danger" data-act="del" data-row="' + r.row + '">' + esc(T.del) + '</button>' +
+      '<button class="btn ghost" data-act="view" data-row="' + r.row + '">👁️ عرض</button>' +
+      '<button class="btn danger" data-act="del" data-row="' + r.row + '">🗑️ ' + esc(T.del) + '</button>' +
     '</div></div>';
 }
 
@@ -543,6 +552,8 @@ function updateAreaFilter(){
 // لا تظهر المصانع قبل اختيار مكان
 function render(){
   updateAreaFilter();
+  { const hidN = rows.filter(r => val(r, COL.visible).trim() === T.no).length, doneN = rows.filter(r => val(r, COL.status).trim() === T.doneValue).length, pinN = rows.filter(isPinned).length;
+    $('stats').textContent = (rows.length - hidN - doneN) + ' ظاهر · ' + hidN + ' مخفي · ' + doneN + ' مكتمل' + (pinN ? ' · ' + pinN + ' مثبّت' : ''); }
   const area = $('areaFilter').value;
   const g = $('genderFilter').value;
   // بيحدد الفئة: m = شباب بس، f = بنات بس، b = شباب وبنات مع بعض
@@ -552,7 +563,7 @@ function render(){
   $('bSearch').textContent = '🔍' + ((area || g || q) && $('filters').classList.contains('hidden') ? ' ●' : '');
   const list = (area || q) ? rows.filter(r => (!area || val(r, COL.area).trim() === area) &&
     (!q || val(r, COL.factory).toLocaleLowerCase('ar').includes(q)) && (!g || kindOf(r) === g)) : [];
-  list.sort((x, y) => (isPinned(y) ? 1 : 0) - (isPinned(x) ? 1 : 0));   // المثبّت فوق (والأسهم بتشتغل جوه مجموعة المثبّت بس)
+  list.sort((x, y) => ((isPinned(y) ? 1 : 0) - (isPinned(x) ? 1 : 0)) || (isPinned(x) ? 0 : (val(y, COL.mod) > val(x, COL.mod) ? 1 : val(y, COL.mod) < val(x, COL.mod) ? -1 : 0)));   // المثبّت فوق (والأسهم بتشتغل جوه مجموعة المثبّت بس)
   shownList = list;
   $('title').textContent = T.title + ((area || q) ? ' (' + list.length + ')' : '');
   $('list').innerHTML = (area || q)
@@ -633,12 +644,15 @@ $('list').addEventListener('click', async e => {
   if (act === 'down') return moveRow(r, 1);
   if (act === 'edit') return openForm(r);
   if (act === 'copy') return openForm(r, true);
+  if (act === 'view') return window.open(new URL('index.html', location.href).href + '?j=' + siteId(val(r, COL.factory)), '_blank');   // بيفتح صفحة المصنع زي ما بتظهر للمتقدمين
   if (act === 'vis'){
     const hid = val(r, COL.visible).trim() === T.no;
+    if (!hid && !confirm('تخفي "' + val(r, COL.factory) + '" عن المتقدمين؟')) return;
     return run('update', {row, data:{[COL.visible]: hid ? T.yes : T.no}});
   }
   if (act === 'done'){
     const done = val(r, COL.status).trim() === T.doneValue;
+    if (!done && !confirm('تعلّم "' + val(r, COL.factory) + '" مكتمل؟')) return;
     return run('update', {row, data:{[COL.status]: done ? '' : T.doneValue}});
   }
   if (act === 'urg'){
@@ -683,7 +697,29 @@ function formOrder(){
   return rest;
 }
 // asCopy=true: بيفتح فورم مصنع جديد ببيانات مصنع موجود (اسم المصنع بيتفضّى)
+let draftKeyNow = 'gp_draft:new';
+function saveDraft(){
+  try{
+    if (!formInitialSnapshot) return;
+    const s = currentFormSnapshot();
+    if (s === formInitialSnapshot) localStorage.removeItem(draftKeyNow);
+    else localStorage.setItem(draftKeyNow, JSON.stringify({s, t: Date.now()}));
+  }catch(e){}
+}
+function clearDraft(){ try{ localStorage.removeItem(draftKeyNow); }catch(e){} }
+function applyDraft(s){
+  const arr = JSON.parse(s), last = arr.pop();
+  arr.forEach(([i, v, c]) => {
+    const el = $('sheet').querySelector('[data-i="' + i + '"]'), cu = $('sheet').querySelector('[data-custom-i="' + i + '"]');
+    if (el) el.value = v;
+    if (el && el.value !== v && cu){ el.value = '__custom__'; cu.classList.remove('hidden'); }   // قيمة جديدة كانت مكتوبة
+    if (cu) cu.value = c;
+  });
+  try{ shState = JSON.parse(last); }catch(e){}
+  renderShEditor();
+}
 function openForm(r, asCopy){
+  draftKeyNow = 'gp_draft:' + (asCopy ? 'copy' : (r ? 'r' + r.row : 'new'));
   const src = r; if (asCopy) r = null;
   // تجهيز الورديات: من الخانة الجديدة، وإلا من الخانات القديمة (الشفت + مرتب 30 + مرتب 26) عشان ما يضيعوش
   shState = src ? parseShifts(String(src.values[headers.indexOf(COL.shifts)] ?? '')) : [];
@@ -695,7 +731,7 @@ function openForm(r, asCopy){
   }
   const fields = formOrder().map(i => { const h = headers[i];
     if (!h) return '';
-    if (h === COL.pin) return '';   // التثبيت بزرار 📌 على الكارت
+    if (h === COL.pin || h === COL.mod) return '';   // التثبيت بزرار 📌 على الكارت
     if (h === COL.shifts) return '<div class="shed"><div class="shl">⏰ الورديات (اختار الوردية وحط مرتب النظامين)</div><div id="shBox"></div></div>';
     if (headers.includes(COL.shifts) && (h === COL.shift || h === COL.salary30 || h === COL.salary26)) return '';   // اتحلوا محل الورديات
     if (h === COL.salary) return '';   // <<< غيّر هنا: خانة المرتب القديمة مخفية (استبدلناها بـ 30 يوم و 26 يوم)
@@ -767,6 +803,16 @@ function openForm(r, asCopy){
     });
   });
   formInitialSnapshot = currentFormSnapshot();
+  // مسودة محفوظة من آخر مرة (لو الفورم اتقفلت بالغلط)
+  try{
+    const raw = localStorage.getItem(draftKeyNow);
+    if (raw){
+      const d = JSON.parse(raw);
+      if (d.s && d.s !== formInitialSnapshot && confirm('فيه مسودة محفوظة من آخر مرة. تكمل منها؟')) applyDraft(d.s);
+      else clearDraft();
+    }
+  }catch(e){}
+  $('sheet').oninput = $('sheet').onchange = saveDraft;
   $('fSave').onclick = async () => {
     const data = {};
     $('sheet').querySelectorAll('[data-i]').forEach(el => {
@@ -840,6 +886,7 @@ function closeForm(forceOrFromPopState, fromPopState){
       return;
     }
   }
+  clearDraft();   // اتحفظ أو اتقرر الخروج من غير حفظ
   $('modal').classList.add('hidden');
   $('sheet').innerHTML = '';
   formInitialSnapshot = '';
