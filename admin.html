@@ -525,6 +525,11 @@ function cardHTML(r, i, arr){
   const pin = isPinned(r);
   const hasNew = val(r, COL.salary30) || val(r, COL.salary26);
   const shl = parseShifts(val(r, COL.shifts));
+  const contactsList = parseContacts(val(r, COL.contacts));
+  
+  // أرقام التواصل تظهر تحت العنوان مباشرة في الكارت
+  const contactsHtml = contactsList.length ? '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:2px">' + contactsList.map(c => '<span style="background:#133B63;color:#FFE45C;border:1px solid #3F7AB5;border-radius:6px;padding:2px 8px;font-size:11.5px">📞 ' + esc(c.name + ': ' + c.phone) + '</span>').join('') + '</div>' : '';
+
   const plain = [COL.area, COL.gender, ...(shl.length ? [] : [COL.shift]), ...(hasNew || shl.length ? [] : [COL.salary])]
     .map(c => val(r, c)).filter(Boolean).map(v => '<span>' + esc(v) + '</span>').join('');
   const salChip = (c, lbl) => '<span class="sal' + (val(r, c) ? '' : ' empty') + '" data-sal="' + esc(c) + '" data-row="' + r.row + '">' +
@@ -539,6 +544,7 @@ function cardHTML(r, i, arr){
       (pin ? '<span class="badge pin">📌 مثبّت</span>' : '') +
       (urg ? '<span class="badge urg">' + esc(T.urgentBadge) + '</span>' : '') +
       (hid ? '<span class="badge hid">' + esc(T.hiddenBadge) + '</span>' : '') + '</h2>' + mv + '</div>' +
+    contactsHtml +
     '<div class="meta">' + meta + '</div>' +
     '<div class="acts">' +
       '<button class="btn ghost" data-act="edit" data-row="' + r.row + '">✏️ ' + esc(T.edit) + '</button>' +
@@ -692,14 +698,21 @@ function formHasUnsavedChanges(){
   return !!formInitialSnapshot && currentFormSnapshot() !== formInitialSnapshot;
 }
 
+// ترتيب حقول النموذج بحيث تكون أرقام التواصل تحت العنوان (المصنع) مباشرة
 function formOrder(){
   const a = headers.indexOf(COL.salary30), b = headers.indexOf(COL.salary26);
   const sIdx = headers.indexOf(COL.shifts);
   const cIdx = headers.indexOf(COL.contacts);
   const rest = headers.map((_, i) => i).filter(i => i !== a && i !== b && i !== sIdx && i !== cIdx);
-  let at = headers.indexOf(COL.shift); if (at < 0) at = headers.indexOf(COL.factory);
-  const pos = at < 0 ? rest.length : rest.indexOf(at) + 1;
-  rest.splice(pos, 0, ...[sIdx, a, b, cIdx].filter(i => i >= 0));
+  
+  // جعل أرقام التواصل تظهر بعد المصنع (العنوان) مباشرة
+  let at = headers.indexOf(COL.factory);
+  const pos = at < 0 ? 1 : rest.indexOf(at) + 1;
+  rest.splice(pos, 0, cIdx);
+  
+  let shiftAt = headers.indexOf(COL.shift); if (shiftAt < 0) shiftAt = headers.indexOf(COL.factory);
+  const shiftPos = shiftAt < 0 ? rest.length : rest.indexOf(shiftAt) + 1;
+  rest.splice(shiftPos, 0, ...[sIdx, a, b].filter(i => i >= 0 && !rest.includes(i)));
   return rest;
 }
 
