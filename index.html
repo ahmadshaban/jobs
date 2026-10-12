@@ -162,6 +162,7 @@ header h1{color:#FFFFFF;font-size:1.4rem}header .lead,header .sub{color:var(--mu
 .demo{background:#172645;color:var(--tx);border-color:var(--bd)}.empty{color:#B8C6E3}.retry{background:var(--gold);color:var(--goldD)}
 .note{color:var(--mu)}.fgo{background:var(--bg)}
 
+.nt{display:block;margin-top:.4rem;font-size:.82rem;font-weight:700;line-height:1.55;text-align:start}
 /* ===== جدول الورديات (غيّر الألوان من هنا) ===== */
 .sht{width:100%;border-collapse:collapse;text-align:center;background:var(--gold);color:var(--goldD);border-radius:.6rem;overflow:hidden}
 .sht th{font-size:.7rem;font-weight:800;padding:.3rem .2rem;border-bottom:1px solid rgba(42,29,0,.35)}
@@ -385,9 +386,11 @@ function showDetail(j){
   const sec=(t,ks,pre)=>{const r=ks.filter(k=>j[k]);return (r.length||pre)?`<div class="sec"><h3>${t}</h3><div class="g2">${pre||""}${r.map(it).join("")}</div></div>`:""};
   // المرتب أول مربع جوه "الأساسيات"
   const pp=pays(j);
+  // ملاحظات المرتب (من خانة "تفاصيل المرتب" في الشيت): بتظهر تحت المرتب أو تحت جدول الورديات، ولو فاضية مش بتظهر
+  const noteHTML=j["تفاصيل المرتب"]?`<span class="pm2 nt">📝 ملاحظات: ${esc(j["تفاصيل المرتب"])}</span>`:"";
   const cell=x=>x?esc(String(x).replace(/\s*في الشهر/,"")):"—";
-  const tbl=isMulti(j)?`<div class="it pay2 full"><table class="sht"><tr><th>⏰ الوردية</th><th>30 يوم</th><th>26 يوم + 4 إجازة</th></tr>${j.__sh.map(s=>`<tr><td>${esc(s.h)}</td><td>${cell(s.p30)}</td><td>${cell(s.p26)}</td></tr>`).join("")}</table></div>`:"";
-  const payTile0=`<div class="it pay2 full">${pp.length?pp.map(x=>`<div class="pt"><small>💰 ${esc(x[0])}</small><b>${esc(x[1])}</b></div>`).join(""):`<small>💰 المرتب</small><b>${esc(j["المرتب"]||"")}</b>`}${j["تفاصيل المرتب"]?`<span class="pm2">${esc(j["تفاصيل المرتب"])}</span>`:""}</div>`;
+  const tbl=isMulti(j)?`<div class="it pay2 full"><table class="sht"><tr><th>⏰ الوردية</th><th>30 يوم</th><th>26 يوم + 4 إجازة</th></tr>${j.__sh.map(s=>`<tr><td>${esc(s.h)}</td><td>${cell(s.p30)}</td><td>${cell(s.p26)}</td></tr>`).join("")}</table>${noteHTML}</div>`:"";
+  const payTile0=`<div class="it pay2 full">${pp.length?pp.map(x=>`<div class="pt"><small>💰 ${esc(x[0])}</small><b>${esc(x[1])}</b></div>`).join(""):`<small>💰 المرتب</small><b>${esc(j["المرتب"]||"")}</b>`}${noteHTML}</div>`;
   const payTile=isMulti(j)?tbl:payTile0;
   // <<< غيّر هنا: ترتيب الأقسام وأي خانة تتحط في أنهي قسم
   const groups=[["الأساسيات",["السن","الشفت","طبيعة العمل","المؤهل","الأجازة"],payTile],["المرتب والمميزات",["نظام القبض","السلف","التأمينات","وجبة"]],["السكن والمواصلات",["السكن","المواصلات"]]];
