@@ -227,7 +227,7 @@ const PHONE = "201095237207";   // رقم الواتساب بصيغة دولية
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1Ri61Py0q36t2EdMCWXa0lgJGDWJfrXjY0gHmqnwS4AM/gviz/tq?tqx=out:csv&headers=1&sheet=%D8%A7%D9%84%D9%88%D8%B8%D8%A7%D8%A6%D9%81";
 
 
-const CORE=["المنطقة","الفئة","المصنع","المؤهل","الشفت","السن","طبيعة العمل","المرتب","مرتب 30 يوم","مرتب 26 يوم","تفاصيل المرتب","الورديات","تثبيت","آخر تعديل","ظاهر؟","الحالة","تاريخ الإضافة"];   // "تفاصيل المرتب" عمود اختياري تكتبه بإيدك للمصانع اللي باليومية
+const CORE=["المنطقة","الفئة","المصنع","المؤهل","الشفت","السن","طبيعة العمل","المرتب","مرتب 30 يوم","مرتب 26 يوم","تفاصيل المرتب","الورديات","تثبيت","الترتيب","آخر تعديل","ظاهر؟","الحالة","تاريخ الإضافة"];   // "تفاصيل المرتب" عمود اختياري تكتبه بإيدك للمصانع اللي باليومية
 const done=j=>(j["الحالة"]||"").includes("مكتمل");   // <<< عمود الحالة = مكتمل
 const urgent=j=>/عاجل|الأكثر تقديم/.test(j["الحالة"]||"");   // <<< عمود الحالة = الأكثر تقديمًا (أو عاجل القديمة)
 const NEW_DAYS=3;                                    // <<< غيّر هنا: عدد أيام شارة "جديد"
@@ -269,13 +269,14 @@ const SRC=(()=>{let v="";try{v=(new URLSearchParams(location.search).get("src")|
 // رقم قصير ثابت لكل مصنع (من اسمه) يتحط في لينك الشير: ?j=xxxxxx
 const hid=n=>{let h=5381;for(const c of String(n))h=((h<<5)+h+c.charCodeAt(0))>>>0;return h.toString(36)};
 // ===== الترتيب: المثبّت (عمود "تثبيت" = نعم) فوق بترتيب الشيت، وبعده الباقي بأعلى مرتب، والمكتمل تحت =====
-const pinned=j=>(j["تثبيت"]||"").trim()==="نعم";
-const rank=j=>done(j)?2:pinned(j)?0:1;
+// الترتيب اليدوي: عمود "الترتيب" (رقم). اللي ليه رقم فوق بالرقم، والباقي بأعلى مرتب. (تثبيت = نعم القديمة بتتعامل كرقم 0)
+const manual=j=>{const n=parseFloat(j["الترتيب"]);if(!isNaN(n))return n;return (j["تثبيت"]||"").trim()==="نعم"?0:null};
+const rank=j=>done(j)?2:(manual(j)!==null?0:1);
 // أعلى مرتب في المصنع (من كل الورديات والنظامين). المرتب باليومية بيتحسب × 26 عشان يتقارن بالشهري
 function payScore(j){
   const c=[j[P30],j[P26],j["المرتب"],...(j.__sh||[]).flatMap(s=>[s.p30,s.p26])];
   let m=0;c.forEach(x=>{let n=numOf(x);if(n&&/اليوم|يومي|يومية/.test(String(x)))n*=26;if(n>m)m=n});return m}
-const byOrder=(x,y)=>rank(x)-rank(y)||(rank(x)===1?payScore(y)-payScore(x):0);
+const byOrder=(x,y)=>rank(x)-rank(y)||(rank(x)===0?manual(x)-manual(y):(rank(x)===1?payScore(y)-payScore(x):0));
 // تاريخ الإضافة: الأفضل يتكتب 2026-10-10
 function isNew(j){const t=(j["تاريخ الإضافة"]||"").match(/(\d{1,4})[\/\-.](\d{1,2})[\/\-.](\d{1,4})/);if(!t)return false;
  let y,m,d;if(t[1].length===4){y=+t[1];m=+t[2];d=+t[3]}else{d=+t[1];m=+t[2];y=+t[3];if(y<100)y+=2000}

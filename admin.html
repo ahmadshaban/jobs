@@ -177,6 +177,7 @@ const COL = {
   area:    'المنطقة',  // <<< غيّر هنا: اسم عمود المنطقة
   gender:  'الفئة',    // <<< غيّر هنا: اسم عمود الفئة
   mod:     'آخر تعديل', // <<< غيّر هنا: اسم عمود آخر تعديل (الأدمن بيكتبه لوحده)
+  order:   'الترتيب',  // <<< غيّر هنا: اسم عمود الترتيب اليدوي (رقم، الأدمن بيكتبه لوحده)
   pin:     'تثبيت',    // <<< غيّر هنا: اسم عمود التثبيت (قيمته نعم = مثبّت فوق في الموقع)
   shifts:  'الورديات', // <<< غيّر هنا: اسم عمود الورديات (كل وردية في سطر)
   shift:   'الشفت',    // <<< غيّر هنا: اسم عمود الشفت
@@ -383,7 +384,7 @@ async function run(action, extra){
 async function ensureSalaryCols(){
   try{
     let changed = false;
-    for (const name of [COL.salary30, COL.salary26, COL.shifts, COL.pin, COL.mod]){
+    for (const name of [COL.salary30, COL.salary26, COL.shifts, COL.order, COL.mod]){
       if (!headers.includes(name)){ const a = await api('addColumn', {name}); if (a.ok) changed = true; }
     }
     if (changed){ const r2 = await api('list'); if (r2.ok){ headers = r2.headers; rows = r2.rows; } }
@@ -498,7 +499,16 @@ function val(r, col){ const i = headers.indexOf(col); return i < 0 ? '' : (r.val
 
 // الحالة "الأكثر تقديمًا" (وبتفهم "عاجل" القديمة كمان) والتثبيت
 const isUrgVal = v => String(v || '').trim() === T.urgentValue || String(v || '').trim() === 'عاجل';
-const isPinned = r => val(r, COL.pin).trim() === 'نعم';
+// الترتيب اليدوي: رقم في عمود "الترتيب" (أو تثبيت = نعم القديمة بتتعامل كرقم 0)
+const manualOf = r => { const n = parseFloat(val(r, COL.order)); if (!isNaN(n)) return n; return val(r, COL.pin).trim() === 'نعم' ? 0 : null; };
+const isPinned = r => manualOf(r) !== null;
+// أعلى مرتب للمصنع (نفس حساب الموقع) عشان ترتيب الأدمن يطابق ترتيب الموقع
+function payScoreRow(r){
+  const c = [val(r, COL.salary30), val(r, COL.salary26), val(r, COL.salary), ...parseShifts(val(r, COL.shifts)).flatMap(s => [s.p30, s.p26])];
+  let m = 0; c.forEach(x => { let n = shNum(x); if (n && /اليوم|يومي|يومية/.test(String(x))) n *= 26; if (n > m) m = n; }); return m;
+}
+const rankOf = r => val(r, COL.status).trim() === T.doneValue ? 2 : (isPinned(r) ? 0 : 1);
+const siteOrder = (x, y) => rankOf(x) - rankOf(y) || (rankOf(x) === 0 ? manualOf(x) - manualOf(y) : (rankOf(x) === 1 ? payScoreRow(y) - payScoreRow(x) : 0));
 
 // بترسم كارت وظيفة واحدة
 function cardHTML(r, i, arr){
@@ -517,8 +527,8 @@ function cardHTML(r, i, arr){
     (val(r, c) ? esc(lbl + ': ' + val(r, c)) : '+ ' + esc(lbl)) + '</span>';
   const shChips = shl.map(s => '<span class="sal">' + esc(s.h + (s.p30 ? ' · 30: ' + s.p30.replace(/\s*في الشهر/, '') : '') + (s.p26 ? ' · 26: ' + s.p26.replace(/\s*في الشهر/, '') : '')) + '</span>').join('');
   const meta = plain + (shl.length ? shChips : salChip(COL.salary30, '30 يوم') + salChip(COL.salary26, '26 يوم'));
-  const mv = '<div class="mv"><button class="btn ghost" data-act="up" data-row="' + r.row + '" aria-label="فوق"' + (!pin || i === 0 || !isPinned(arr[i - 1]) ? ' disabled' : '') + '>▲</button>' +
-    '<button class="btn ghost" data-act="down" data-row="' + r.row + '" aria-label="تحت"' + (!pin || i >= n - 1 || !isPinned(arr[i + 1]) ? ' disabled' : '') + '>▼</button></div>';
+  const mv = '<div class="mv"><button class="btn ghost" data-act="up" data-row="' + r.row + '" aria-label="فوق"' + (i === 0 ? ' disabled' : '') + '>▲</button>' +
+    '<button class="btn ghost" data-act="down" data-row="' + r.row + '" aria-label="تحت"' + (i >= n - 1 ? ' disabled' : '') + '>▼</button></div>';
   return '<div class="card' + (hid ? ' dim' : '') + '">' +
     '<div class="hd"><h2>' + esc(val(r, COL.factory)) +
       (done ? '<span class="badge done">' + esc(T.doneBadge) + '</span>' : '') +
@@ -563,7 +573,7 @@ function render(){
   $('bSearch').textContent = '🔍' + ((area || g || q) && $('filters').classList.contains('hidden') ? ' ●' : '');
   const list = (area || q) ? rows.filter(r => (!area || val(r, COL.area).trim() === area) &&
     (!q || val(r, COL.factory).toLocaleLowerCase('ar').includes(q)) && (!g || kindOf(r) === g)) : [];
-  list.sort((x, y) => ((isPinned(y) ? 1 : 0) - (isPinned(x) ? 1 : 0)) || (isPinned(x) ? 0 : (val(y, COL.mod) > val(x, COL.mod) ? 1 : val(y, COL.mod) < val(x, COL.mod) ? -1 : 0)));   // المثبّت فوق (والأسهم بتشتغل جوه مجموعة المثبّت بس)
+  list.sort(siteOrder);   // نفس ترتيب الموقع بالظبط: اليدوي فوق، وبعده الأعلى مرتب، والمكتمل تحت
   shownList = list;
   $('title').textContent = T.title + ((area || q) ? ' (' + list.length + ')' : '');
   $('list').innerHTML = (area || q)
@@ -605,19 +615,23 @@ $('salDlg').addEventListener('click', e => { if (e.target.id === 'salDlg') close
 function rowData(r){ const d = {}; headers.forEach((h, i) => { if (h) d[h] = String(r.values[i] ?? ''); }); return d; }
 async function moveRow(r, dir){
   if (requestBusy) { toast('فيه طلب شغال بالفعل، استنى لحد ما يخلص.', false); return; }
-  const k = shownList.findIndex(x => x.row === r.row);
-  const o = shownList[k + dir];
-  if (k < 0 || !o) return;
-  const dR = rowData(r), dO = rowData(o);
+  const L = shownList.slice();
+  const k = L.findIndex(x => x.row === r.row), k2 = k + dir;
+  if (k < 0 || k2 < 0 || k2 >= L.length) return;
+  [L[k], L[k2]] = [L[k2], L[k]];
+  // بنرقّم كل اللي فوق (من أول القايمة لحد مكان الحركة، وكل اليدوي) بالترتيب الجديد، والباقي يفضل بالمرتب
+  let last = Math.max(k, k2);
+  L.forEach((x, i) => { if (isPinned(x) && i > last) last = i; });
+  const changes = [];
+  for (let i = 0; i <= last; i++){
+    const want = String(i + 1);
+    if (val(L[i], COL.order).trim() !== want) changes.push([L[i].row, want]);
+  }
   requestBusy = true; setBusyUI(true);
   try {
-    const a = await api('update', {row: r.row, data: dO});
-    if (!a.ok) { toast(T.errMsg + a.error, false); return; }
-    const b = await api('update', {row: o.row, data: dR});
-    if (!b.ok) {
-      await api('update', {row: r.row, data: dR});   // رجوع للحالة الأولى لو التاني فشل
-      toast('الترتيب ما اتمش، رجّعنا كل حاجة زي ما كانت. جرّب تاني.', false);
-      return;
+    for (const [row, want] of changes){
+      const a = await api('update', {row, data: {[COL.order]: want}});
+      if (!a.ok) { toast(T.errMsg + a.error + ' (اضغط تحديث وراجع الترتيب)', false); return; }
     }
     toast(T.okMsg, true);
   } catch (e) {
@@ -660,7 +674,8 @@ $('list').addEventListener('click', async e => {
     return run('update', {row, data:{[COL.status]: urg ? '' : T.urgentValue}});
   }
   if (act === 'pin'){
-    return run('update', {row, data:{[COL.pin]: isPinned(r) ? '' : 'نعم'}});
+    const nums = rows.filter(isPinned).map(manualOf);
+    return run('update', {row, data: isPinned(r) ? {[COL.order]: '', [COL.pin]: ''} : {[COL.order]: String(Math.max(0, ...nums) + 1)}});   // تثبيت جديد بينزل آخر المثبّتين، وبالأسهم تغيّر مكانه
   }
   if (act === 'del'){
     if (confirm(T.askDel)) run('delete', {row});
@@ -731,7 +746,7 @@ function openForm(r, asCopy){
   }
   const fields = formOrder().map(i => { const h = headers[i];
     if (!h) return '';
-    if (h === COL.pin || h === COL.mod) return '';   // التثبيت بزرار 📌 على الكارت
+    if (h === COL.pin || h === COL.mod || h === COL.order) return '';   // التثبيت بزرار 📌 على الكارت
     if (h === COL.shifts) return '<div class="shed"><div class="shl">⏰ الورديات (اختار الوردية وحط مرتب النظامين)</div><div id="shBox"></div></div>';
     if (headers.includes(COL.shifts) && (h === COL.shift || h === COL.salary30 || h === COL.salary26)) return '';   // اتحلوا محل الورديات
     if (h === COL.salary) return '';   // <<< غيّر هنا: خانة المرتب القديمة مخفية (استبدلناها بـ 30 يوم و 26 يوم)
