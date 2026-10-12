@@ -92,7 +92,8 @@ header{padding:.65rem 0 .55rem;position:static;background:var(--bg)}  /* <<< ا�
 .btn{display:flex;align-items:center;justify-content:center;flex:1;min-height:1.95rem;text-align:center;text-decoration:none;font:inherit;font-weight:800;font-size:.73rem;border-radius:.62rem;padding:.18rem .28rem;color:#244A86;border:1px solid #AFC8EC;background:#F2F7FF;box-shadow:0 1px 3px rgba(36,74,134,.08)}
 .btn.wa{flex:2;background:#159B50;color:#fff;border:0;font-size:.8rem;box-shadow:0 2px 7px rgba(22,163,74,.22)}
 .tb{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:.7rem 0 .5rem}
-.exit{font:inherit;font-weight:800;font-size:.95rem;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:.85rem;padding:.5rem 1rem;cursor:pointer}
+.exit{font:inherit;font-weight:800;font-size:.85rem;color:var(--tx);background:var(--card);border:1px solid #E5120F;border-radius:.75rem;padding:.32rem .8rem;cursor:pointer}
+.exit .xr{display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:50%;background:#E5120F;color:#fff;font-weight:900;font-size:.82rem;line-height:1;margin-inline-end:.45rem;vertical-align:middle}  /* <<< غيّر هنا: علامة X الحمرا في زرار الرجوع (الحجم واللون) */
 .dp{padding-bottom:4.1rem;scroll-padding-top:4.5rem}.dp .ttl{font-size:1.3rem;margin:.4rem 0 0}
 .cta{position:fixed;inset-inline:0;bottom:0;max-width:40rem;margin:auto}
 .btn.wa{cursor:pointer}
@@ -202,6 +203,12 @@ header h1{color:#FFFFFF;font-size:1.4rem}header .lead,header .sub{color:var(--mu
 .sht{width:100%;border-collapse:collapse;text-align:center;background:var(--gold);color:var(--goldD);border-radius:.6rem;overflow:hidden}
 .sht th{font-size:.7rem;font-weight:800;padding:.3rem .2rem;border-bottom:1px solid rgba(42,29,0,.35)}
 .sht td{font-size:.95rem;font-weight:800;padding:.38rem .2rem}.sht tr+tr td{border-top:1px dashed rgba(42,29,0,.3)}
+/* <<< غيّر هنا: الفلتر في صف واحد (شباب/بنات + الأماكن بتتحرك لجنب) */
+.frow{display:flex;align-items:center;gap:.5rem}
+.frow .seg{flex:none;margin-top:0;padding:.16rem}
+.frow .seg button{flex:none;padding:.3rem .85rem;font-size:.85rem}
+.frow .chips{flex:1;min-width:0;padding:0}
+.chip .n{font-size:.72rem;opacity:.7;margin-inline-start:.15rem}
 </style>
 </head>
 <body>
@@ -211,8 +218,7 @@ header h1{color:#FFFFFF;font-size:1.4rem}header .lead,header .sub{color:var(--mu
     <!-- <<< غيّر هنا: سطر الثقة (الجمل اللي تحت العنوان) -->
     <div class="trust"><span>✅ التقديم من غير أي رسوم مقدما</span><a id="fab" class="wap" target="_blank" rel="noopener">💬 اسأل على واتساب</a></div></header>
   <div class="bar">
-    <div id="seg" class="seg"></div>
-    <div id="area" class="chips"></div>
+    <div class="frow"><div id="seg" class="seg"></div><div id="area" class="chips"></div></div>
   </div>
   <div class="meta"><span id="cnt"></span><button id="clr" style="display:none">امسح الفلاتر</button></div>
   <div id="list"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
@@ -345,7 +351,8 @@ function draw(){
   const seen=[...new Set(JOBS.filter(matchCat).map(j=>j["المنطقة"]).filter(Boolean))];
   const areas=["الكل",...seen.map((a,i)=>[a,i]).sort((x,y)=>(areaRank(x[0])-areaRank(y[0]))||(x[1]-y[1])).map(x=>x[0])];   // ترتيب تبويب المناطق، والباقي بعدهم بترتيب الشيت
   if(!areas.includes(area))area="الكل";
-  $("area").innerHTML=areas.map(a=>`<button class="chip ${a===area?"on":""}" data-v="${esc(a)}">${esc(a)}</button>`).join("");
+  const cntOf=a=>JOBS.filter(j=>matchCat(j)&&!done(j)&&(a==="الكل"||j["المنطقة"]===a)).length;   // عدد المصانع المتاحة في كل مكان
+  $("area").innerHTML=areas.map(a=>`<button class="chip ${a===area?"on":""}" data-v="${esc(a)}">${esc(a)} <span class="n">${cntOf(a)}</span></button>`).join("");
   $("area").querySelectorAll("button").forEach(b=>b.onclick=()=>{area=b.dataset.v;draw()});
   const r=JOBS.filter(j=>matchCat(j)&&(area==="الكل"||j["المنطقة"]===area)).sort(byOrder);   // المثبّت فوق، وبعده الأعلى مرتب، والمكتمل تحت
   $("cnt").textContent=r.length?`${r.length} وظيفة متاحة`:"";
@@ -451,7 +458,7 @@ function showDetail(j){
   const groups=[["الأساسيات",["السن",...(plainSh?[]:["الشفت"]),"طبيعة العمل","المؤهل","الأجازة"],payTile],["المرتب والمميزات",["نظام القبض","السلف","التأمينات","وجبة"]],["السكن والمواصلات",["السكن","المواصلات"]]];
   const used=groups.flatMap(g=>g[1]);
   const other=Object.keys(j).filter(k=>!k.startsWith("__")&&!CORE.includes(k)&&!used.includes(k)&&j[k]);
-  $("detail").innerHTML=`<div class="w dp"><div class="tb"><button class="exit" id="ex">رجوع</button></div>
+  $("detail").innerHTML=`<div class="w dp"><div class="tb"><button class="exit" id="ex"><span class="xr">✕</span>رجوع</button></div>
    <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="bd2">${tags(j)}<span class="badge ${kind(j["الفئة"]||"")}">${esc(j["الفئة"])}</span></span></div>
    <h2 class="ttl">${esc(j["المصنع"])}</h2>
    ${groups.map(g=>sec(g[0],g[1],g[2])).join("")}${sec("حاجات تانية",other)}</div>
