@@ -195,7 +195,7 @@ header h1{color:#FFFFFF;font-size:1.4rem}header .lead,header .sub{color:var(--mu
 .ai .n{color:var(--mu);font-size:.85rem}
 .ai.on{background:#22355D;color:var(--gold);font-weight:800;border-radius:.6rem}.ai.on .n{color:var(--gold)}
 
-/* تصميم زرار مشاركة مصانع المنطقة البارز */
+/* تصميم زرار نسخ مصانع المنطقة البارز */
 .area-share-box { margin-bottom: .6rem; }
 .btn-share-area {
   display: flex;
@@ -232,9 +232,9 @@ header h1{color:#FFFFFF;font-size:1.4rem}header .lead,header .sub{color:var(--mu
     <div class="frow"><div id="seg" class="seg"></div><div id="area" class="ddw"></div></div>
   </div>
   
-  <!-- زرار مشاركة المصانع البارز تحت الفلتر مباشرة -->
+  <!-- زرار نسخ مصانع المنطقة البارز تحت الفلتر مباشرة -->
   <div id="areaShareContainer" class="area-share-box" style="display:none">
-    <button type="button" id="btnShareArea" class="btn-share-area">📲 مشاركة جميع مصانع هذه المنطقة</button>
+    <button type="button" id="btnShareArea" class="btn-share-area">📋 نسخ جميع مصانع هذه المنطقة</button>
   </div>
 
   <div class="meta">
@@ -370,8 +370,8 @@ function draw(){
   const btnShareArea = $("btnShareArea");
   if(area !== "الكل" && r.length > 0){
     shareContainer.style.display = "block";
-    btnShareArea.textContent = `📲 مشاركة جميع مصانع (${area})`;
-    btnShareArea.onclick = () => shareAreaJobs(area, r);
+    btnShareArea.textContent = `📋 نسخ جميع مصانع (${area}) منسقة للواتساب`;
+    btnShareArea.onclick = () => copyAreaJobs(area, r);
   } else {
     shareContainer.style.display = "none";
   }
@@ -392,17 +392,18 @@ function draw(){
   $("list").querySelectorAll(".card").forEach(b=>b.onclick=()=>go(+b.dataset.i));
 }
 
-/* دالة مشاركة تفاصيل المصانع كاملة لمنطقة معينة بدون لينكات وبترتيب منسق */
-function shareAreaJobs(areaName, jobsList) {
+/* دالة نسخ تفاصيل المصانع كاملة لمنطقة معينة بتنسيق مرتب جداً وغير متداخل */
+function copyAreaJobs(areaName, jobsList) {
   let activeJobs = jobsList.filter(j => !done(j));
   if(!activeJobs.length) return;
   
   let msg = `📍 وظايف تعبئة وتغليف وفرز المتاحة في (${areaName}):\n\n`;
   activeJobs.forEach((j, index) => {
+    msg += `━━━━━━━━━━━━━━━━━━━━\n`;
     msg += `${index + 1}️⃣ مصنع: ${j["المصنع"]}\n`;
     if(!isMulti(j) && j["الشفت"]) msg += `⏰ الشفت: ${hoursOnly(j["الشفت"])}\n`;
     msg += `💰 المرتب: ${payText(j)}\n`;
-    if(j["تفاصيل المرتب"]) msg += `📝 ملاحظات المرتب: ${j["تفاصيل المرتب"]}\n`;
+    if(j["تفاصيل المرتب"]) msg += `📝 ملاحظات: ${j["تفاصيل المرتب"]}\n`;
     if(j["السن"]) msg += `🎂 السن: ${j["السن"]}\n`;
     if(j["طبيعة العمل"]) msg += `👷 طبيعة العمل: ${j["طبيعة العمل"]}\n`;
     if(j["المؤهل"]) msg += `🎓 المؤهل: ${j["المؤهل"]}\n`;
@@ -413,20 +414,14 @@ function shareAreaJobs(areaName, jobsList) {
     if(j["التأمينات"]) msg += `🛡️ التأمينات: ${j["التأمينات"]}\n`;
     if(j["وجبة"]) msg += `🍽️ وجبة: ${j["وجبة"]}\n`;
     if(j["الأجازة"]) msg += `📅 الأجازة: ${j["الأجازة"]}\n`;
-    
-    if(index < activeJobs.length - 1) {
-      msg += `------------------\n`;
-    }
   });
+  msg += `━━━━━━━━━━━━━━━━━━━━`;
 
-  if (navigator.share) {
-    navigator.share({
-      title: `مصانع ${areaName}`,
-      text: msg
-    }).catch(()=>{});
-  } else {
-    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-  }
+  navigator.clipboard.writeText(msg).then(() => {
+    alert(`📋 تم نسخ جميع مصانع (${areaName}) بتنسيق ممتاز ومنظم، يمكنك لصقها في الواتساب مباشرة!`);
+  }).catch(() => {
+    prompt("نسخ النص يدوياً:", msg);
+  });
 }
 
 $("clr").onclick=()=>{area="الكل";draw()};
@@ -533,13 +528,36 @@ async function shareJobAsImage(j, captureElem) {
   } catch (e) {
     const actionsBar = captureElem.querySelector('.cta');
     if(actionsBar) actionsBar.style.display = 'flex';
-    alert("حدث خطأ بسيط، يمكنك استخدام زر '📲 نص' لمشاركة تفاصيل المصنع فوراً.");
+    alert("حدث خطأ بسيط، يمكنك استخدام زر '📋 نسخ' لمشاركة تفاصيل المصنع فوراً.");
   }
+}
+
+/* دالة نسخ تفاصيل المصنع الفردي عند الضغط على زر نسخ */
+function copySingleJob(j) {
+  let msg = `📍 وظيفة: ${j["المصنع"]} - ${j["المنطقة"]}\n`;
+  if(!isMulti(j) && j["الشفت"]) msg += `⏰ الشفت: ${hoursOnly(j["الشفت"])}\n`;
+  msg += `💰 المرتب: ${payText(j)}\n`;
+  if(j["تفاصيل المرتب"]) msg += `📝 ملاحظات: ${j["تفاصيل المرتب"]}\n`;
+  if(j["السن"]) msg += `🎂 السن: ${j["السن"]}\n`;
+  if(j["طبيعة العمل"]) msg += `👷 طبيعة العمل: ${j["طبيعة العمل"]}\n`;
+  if(j["المؤهل"]) msg += `🎓 المؤهل: ${j["المؤهل"]}\n`;
+  if(j["نظام القبض"]) msg += `💵 نظام القبض: ${j["نظام القبض"]}\n`;
+  if(j["السكن"]) msg += `🏠 السكن: ${j["السكن"]}\n`;
+  if(j["المواصلات"]) msg += `🚌 المواصلات: ${j["المواصلات"]}\n`;
+  if(j["السلف"]) msg += `💸 السلف: ${j["السلف"]}\n`;
+  if(j["التأمينات"]) msg += `🛡️ التأمينات: ${j["التأمينات"]}\n`;
+  if(j["وجبة"]) msg += `🍽️ وجبة: ${j["وجبة"]}\n`;
+  if(j["الأجازة"]) msg += `📅 الأجازة: ${j["الأجازة"]}`;
+
+  navigator.clipboard.writeText(msg).then(() => {
+    alert("📋 تم نسخ تفاصيل المصنع بنجاح!");
+  }).catch(() => {
+    prompt("نسخ النص يدوياً:", msg);
+  });
 }
 
 function showDetail(j){
   const ph=PHONE.replace(/\D/g,"");
-  const shareMsgText=encodeURIComponent(`وظيفة: ${j["المصنع"]} - ${j["المنطقة"]}\n${(!isMulti(j)&&j["الشفت"])?"وردية "+hoursOnly(j["الشفت"])+"\n":""}${payText(j)}`);
   
   const it=k=>`<div class="it ${(k==="طبيعة العمل"||String(j[k]).length>26)?"full":""}"><small>${ICON[k]||"•"} ${esc(k)}</small><b>${esc(j[k])}</b></div>`;
   const sec=(t,ks,pre)=>{const r=ks.filter(k=>j[k]);return (r.length||pre)?`<div class="sec"><h3>${t}</h3><div class="g2">${pre||""}${r.map(it).join("")}</div></div>`:""};
@@ -565,12 +583,13 @@ function showDetail(j){
      <button type="button" class="btn wa" id="apply">قدّم دلوقتي على الواتساب</button>
      <a class="btn" href="tel:+${ph}">📞 اتصل</a>
      <button type="button" class="btn sh2" id="shareImgBtn">🖼️ كصورة</button>
-     <a class="btn sh2" target="_blank" rel="noopener" href="https://wa.me/?text=${shareMsgText}">📲 نص</a>
+     <button type="button" class="btn sh2" id="copyTxtBtn">📋 نسخ</button>
    </div></div>${formHTML(j)}`;
    
   $("main").style.display="none";$("detail").style.display="block";window.scrollTo(0,0);
   $("ex").onclick=exitDetail;
   $("shareImgBtn").onclick=()=>shareJobAsImage(j, $("captureArea"));
+  $("copyTxtBtn").onclick=()=>copySingleJob(j);
   setupApply(j,ph);
 }
 
