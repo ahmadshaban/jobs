@@ -65,7 +65,7 @@ header h1{margin:0;font-size:18px;color:#fff}
 .meta span{background:#1A4A7A;color:#fff;border:1px solid #3F7AB5;border-radius:8px;padding:2px 9px;font-size:13px}
 .badge{border-radius:8px;padding:2px 9px;font-size:12px;font-weight:700;margin-inline-start:6px}
 .badge.done{background:#16803d;color:#fff}
-.badge.urg{background:#FFE45C;color:#0E3560}
+.badge.urg{background:#FFE45C;color:#0E3560}.badge.pin{background:#C2410C;color:#fff}
 .badge.hid{background:transparent;color:#FFE45C;border:1px solid #FFE45C}
 .acts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .acts .btn{padding:8px 4px;font-size:13px}
@@ -174,6 +174,7 @@ const COL = {
   factory: 'المصنع',   // <<< غيّر هنا: اسم عمود المصنع
   area:    'المنطقة',  // <<< غيّر هنا: اسم عمود المنطقة
   gender:  'الفئة',    // <<< غيّر هنا: اسم عمود الفئة
+  pin:     'تثبيت',    // <<< غيّر هنا: اسم عمود التثبيت (قيمته نعم = مثبّت فوق في الموقع)
   shifts:  'الورديات', // <<< غيّر هنا: اسم عمود الورديات (كل وردية في سطر)
   shift:   'الشفت',    // <<< غيّر هنا: اسم عمود الشفت
   salary:  'المرتب',   // <<< غيّر هنا: اسم عمود المرتب
@@ -215,10 +216,10 @@ const T = {
   doneBadge: 'مكتمل',                   // <<< غيّر هنا: شارة الكارت المكتمل
   hiddenBadge: 'مخفي',                  // <<< غيّر هنا: كلمة مخفي
   doneValue: 'مكتمل',                   // <<< غيّر هنا: القيمة اللي بتتكتب في عمود الحالة
-  urgent: 'عاجل',                       // <<< غيّر هنا: زرار عاجل
-  unurgent: 'إلغاء عاجل',               // <<< غيّر هنا: زرار إلغاء عاجل
-  urgentBadge: 'عاجل',                  // <<< غيّر هنا: شارة الكارت العاجل
-  urgentValue: 'عاجل',                  // <<< غيّر هنا: القيمة اللي بتتكتب في عمود الحالة للعاجل (لازم تطابق الموقع)
+  urgent: 'الأكثر تقديمًا',               // <<< غيّر هنا: زرار الأكثر تقديمًا
+  unurgent: 'إلغاء الأكثر تقديمًا',        // <<< غيّر هنا: زرار الإلغاء
+  urgentBadge: '🔥 الأكثر تقديمًا',        // <<< غيّر هنا: شارة الكارت
+  urgentValue: 'الأكثر تقديمًا',          // <<< غيّر هنا: القيمة اللي بتتكتب في عمود الحالة (الموقع بيفهمها وبيفهم "عاجل" القديمة كمان)
   yes: 'نعم',                           // <<< غيّر هنا: قيمة نعم
   no: 'لا',                             // <<< غيّر هنا: قيمة لا
   save: 'حفظ',                          // <<< غيّر هنا: زرار الحفظ
@@ -375,7 +376,7 @@ async function run(action, extra){
 async function ensureSalaryCols(){
   try{
     let changed = false;
-    for (const name of [COL.salary30, COL.salary26, COL.shifts]){
+    for (const name of [COL.salary30, COL.salary26, COL.shifts, COL.pin]){
       if (!headers.includes(name)){ const a = await api('addColumn', {name}); if (a.ok) changed = true; }
     }
     if (changed){ const r2 = await api('list'); if (r2.ok){ headers = r2.headers; rows = r2.rows; } }
@@ -487,12 +488,17 @@ function colCheck(){ $('colGo').disabled = $('colIn').value.trim() !== $('colSel
 // بترجع قيمة عمود معين من صف
 function val(r, col){ const i = headers.indexOf(col); return i < 0 ? '' : (r.values[i] || ''); }
 
+// الحالة "الأكثر تقديمًا" (وبتفهم "عاجل" القديمة كمان) والتثبيت
+const isUrgVal = v => String(v || '').trim() === T.urgentValue || String(v || '').trim() === 'عاجل';
+const isPinned = r => val(r, COL.pin).trim() === 'نعم';
+
 // بترسم كارت وظيفة واحدة
 function cardHTML(r, i, arr){
   const n = arr ? arr.length : 0;   // i = ترتيب الكارت في القايمة (للأسهم ▲ ▼)
   const hid = val(r, COL.visible).trim() === T.no;
   const done = val(r, COL.status).trim() === T.doneValue;
-  const urg = val(r, COL.status).trim() === T.urgentValue;
+  const urg = isUrgVal(val(r, COL.status));
+  const pin = isPinned(r);
   const hasNew = val(r, COL.salary30) || val(r, COL.salary26);
   // خانات عادية (المنطقة، الفئة، الشفت، والمرتب القديم لو المصنع لسه ما اتعدّلش)
   const shl = parseShifts(val(r, COL.shifts));
@@ -503,11 +509,12 @@ function cardHTML(r, i, arr){
     (val(r, c) ? esc(lbl + ': ' + val(r, c)) : '+ ' + esc(lbl)) + '</span>';
   const shChips = shl.map(s => '<span class="sal">' + esc(s.h + (s.p30 ? ' · 30: ' + s.p30.replace(/\s*في الشهر/, '') : '') + (s.p26 ? ' · 26: ' + s.p26.replace(/\s*في الشهر/, '') : '')) + '</span>').join('');
   const meta = plain + (shl.length ? shChips : salChip(COL.salary30, '30 يوم') + salChip(COL.salary26, '26 يوم'));
-  const mv = '<div class="mv"><button class="btn ghost" data-act="up" data-row="' + r.row + '" aria-label="فوق"' + (i === 0 ? ' disabled' : '') + '>▲</button>' +
-    '<button class="btn ghost" data-act="down" data-row="' + r.row + '" aria-label="تحت"' + (i >= n - 1 ? ' disabled' : '') + '>▼</button></div>';
+  const mv = '<div class="mv"><button class="btn ghost" data-act="up" data-row="' + r.row + '" aria-label="فوق"' + (!pin || i === 0 || !isPinned(arr[i - 1]) ? ' disabled' : '') + '>▲</button>' +
+    '<button class="btn ghost" data-act="down" data-row="' + r.row + '" aria-label="تحت"' + (!pin || i >= n - 1 || !isPinned(arr[i + 1]) ? ' disabled' : '') + '>▼</button></div>';
   return '<div class="card' + (hid ? ' dim' : '') + '">' +
     '<div class="hd"><h2>' + esc(val(r, COL.factory)) +
       (done ? '<span class="badge done">' + esc(T.doneBadge) + '</span>' : '') +
+      (pin ? '<span class="badge pin">📌 مثبّت</span>' : '') +
       (urg ? '<span class="badge urg">' + esc(T.urgentBadge) + '</span>' : '') +
       (hid ? '<span class="badge hid">' + esc(T.hiddenBadge) + '</span>' : '') + '</h2>' + mv + '</div>' +
     '<div class="meta">' + meta + '</div>' +
@@ -517,6 +524,7 @@ function cardHTML(r, i, arr){
       '<button class="btn ghost" data-act="vis" data-row="' + r.row + '">' + esc(hid ? T.show : T.hide) + '</button>' +
       '<button class="btn ghost" data-act="done" data-row="' + r.row + '">' + esc(done ? T.reopen : T.complete) + '</button>' +
       '<button class="btn ghost" data-act="urg" data-row="' + r.row + '">' + esc(urg ? T.unurgent : T.urgent) + '</button>' +
+      '<button class="btn ghost" data-act="pin" data-row="' + r.row + '">' + (pin ? 'إلغاء التثبيت' : '📌 تثبيت') + '</button>' +
       '<button class="btn danger" data-act="del" data-row="' + r.row + '">' + esc(T.del) + '</button>' +
     '</div></div>';
 }
@@ -544,6 +552,7 @@ function render(){
   $('bSearch').textContent = '🔍' + ((area || g || q) && $('filters').classList.contains('hidden') ? ' ●' : '');
   const list = (area || q) ? rows.filter(r => (!area || val(r, COL.area).trim() === area) &&
     (!q || val(r, COL.factory).toLocaleLowerCase('ar').includes(q)) && (!g || kindOf(r) === g)) : [];
+  list.sort((x, y) => (isPinned(y) ? 1 : 0) - (isPinned(x) ? 1 : 0));   // المثبّت فوق (والأسهم بتشتغل جوه مجموعة المثبّت بس)
   shownList = list;
   $('title').textContent = T.title + ((area || q) ? ' (' + list.length + ')' : '');
   $('list').innerHTML = (area || q)
@@ -633,8 +642,11 @@ $('list').addEventListener('click', async e => {
     return run('update', {row, data:{[COL.status]: done ? '' : T.doneValue}});
   }
   if (act === 'urg'){
-    const urg = val(r, COL.status).trim() === T.urgentValue;
+    const urg = isUrgVal(val(r, COL.status));
     return run('update', {row, data:{[COL.status]: urg ? '' : T.urgentValue}});
+  }
+  if (act === 'pin'){
+    return run('update', {row, data:{[COL.pin]: isPinned(r) ? '' : 'نعم'}});
   }
   if (act === 'del'){
     if (confirm(T.askDel)) run('delete', {row});
@@ -683,6 +695,7 @@ function openForm(r, asCopy){
   }
   const fields = formOrder().map(i => { const h = headers[i];
     if (!h) return '';
+    if (h === COL.pin) return '';   // التثبيت بزرار 📌 على الكارت
     if (h === COL.shifts) return '<div class="shed"><div class="shl">⏰ الورديات (اختار الوردية وحط مرتب النظامين)</div><div id="shBox"></div></div>';
     if (headers.includes(COL.shifts) && (h === COL.shift || h === COL.salary30 || h === COL.salary26)) return '';   // اتحلوا محل الورديات
     if (h === COL.salary) return '';   // <<< غيّر هنا: خانة المرتب القديمة مخفية (استبدلناها بـ 30 يوم و 26 يوم)
@@ -700,7 +713,7 @@ function openForm(r, asCopy){
     } else if (h === COL.status){
       input = '<select data-i="' + i + '"><option value=""' + (v === '' ? ' selected' : '') + '></option>' +
         '<option value="' + esc(T.doneValue) + '"' + (v === T.doneValue ? ' selected' : '') + '>' + esc(T.doneValue) + '</option>' +
-        '<option value="' + esc(T.urgentValue) + '"' + (v === T.urgentValue ? ' selected' : '') + '>' + esc(T.urgentValue) + '</option></select>';
+        '<option value="' + esc(T.urgentValue) + '"' + (isUrgVal(v) ? ' selected' : '') + '>' + esc(T.urgentValue) + '</option></select>';
     } else if (!/(المصنع|اسم المصنع|factory)/i.test(h) && !/(المرتب|الراتب|مرتب|راتب|salary)/i.test(h)) {
       const known = presetOptions(h);
       // نضمن إدراج القيمة الحالية كما هي بعد تنظيفها، حتى لو لم تعد موجودة في بقية الصفوف.
