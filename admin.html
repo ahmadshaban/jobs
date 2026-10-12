@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-/* ===== [1] الألوان والتصميم: كحلي غامق مع كتابة بيضاء وصفراء (غيّر الألوان من هنا) ===== */
+/* ===== [1] الألوان والتصميم: كحلي غامق مع كتابة بيضاء وصفراء ===== */
 :root{
   --c-main:#0B2A4A;
   --c-main-dark:#08203A;
@@ -179,7 +179,7 @@ const COL = {
   salary:  'المرتب',
   salary30: 'مرتب 30 يوم',
   salary26: 'مرتب 26 يوم',
-  contacts: 'أرقام التواصل', // عمود أرقام التواصل الجديد
+  contacts: 'أرقام التواصل',
   visible: 'ظاهر؟',
   status:  'الحالة'
 };
@@ -606,7 +606,7 @@ async function saveSal(){
 }
 $('salSave').onclick = saveSal;
 $('salCancel').onclick = closeSal;
-$('salOld').onclick = () => { $('salIn').value = $('salOld'].dataset.v || ''; $('salIn').focus(); };
+$('salOld').onclick = () => { $('salIn').value = $('salOld').dataset.v || ''; $('salIn').focus(); };
 $('salIn').addEventListener('keydown', e => { if (e.key === 'Enter') saveSal(); if (e.key === 'Escape') closeSal(); });
 $('salDlg').addEventListener('click', e => { if (e.target.id === 'salDlg') closeSal(); });
 
