@@ -111,7 +111,7 @@ header h1{margin:0;font-size:18px;color:#fff}
 <div id="uiModal" class="hidden">
   <div class="sheet">
     <h3>🎨 تخصيص صفحة الـ Index والتصميم</h3>
-    <p style="font-size:12px;color:#CFE3F7;margin:0">عدّل أي حاجة في تصميم وصفحة العرض وهتسمع فوراً بدون تعديل الكود!</p>
+    <p style="font-size:12px;color:#CFE3F7;margin:0">عدّل أي حاجة في تصميم وصفحة العرض وسيتم حفظها مباشرة في السيرفر!</p>
     
     <label>العنوان الرئيسي في الأعلى
       <input id="ui_header_title" type="text" placeholder="عمال تعبئة وتغليف وفرز">
@@ -134,7 +134,7 @@ header h1{margin:0;font-size:18px;color:#fff}
     </label>
 
     <h4 style="color:#FFE45C;margin:10px 0 0">إخفاء وإظهار العناصر:</h4>
-    <div class="toggle-row"><label>إظهار سطر الثقة زر الواتساب العلوي</label><input type="checkbox" id="ui_show_trust"></div>
+    <div class="toggle-row"><label>إظهار سطر الثقة وزر الواتساب العلوي</label><input type="checkbox" id="ui_show_trust"></div>
     <div class="toggle-row"><label>إظهار الفلتر العلوي (شريط الفئات)</label><input type="checkbox" id="ui_show_bar"></div>
     <div class="toggle-row"><label>إظهار فلتر المناطق</label><input type="checkbox" id="ui_show_area_filter"></div>
     <div class="toggle-row"><label>إظهار شارة "جديد"</label><input type="checkbox" id="ui_show_new_badge"></div>
@@ -221,29 +221,30 @@ function render(){
   }).join('') : '<div class="empty">اختار مكان أو ابحث لمشاهدة الوظائف</div>';
 }
 
-// التحكم وإدارة الواجهة والتصميم
-$('bUICustom').onclick = () => {$('ui_header_title').value = "عمال تعبئة وتغليف وفرز";
-  $('ui_header_sub').value = "قدّم من الموبايل في دقايق واختار الفرصة المناسبة ليك";
-  $('ui_wa_btn_text').value = "💬 اسأل على واتساب";
-  $('ui_whatsapp_phone').value = "201095237207";
-  $('ui_trust_text').value = "✅ التقديم من غير أي رسوم مقدما";
-  $('ui_show_trust').checked = true;
-  $('ui_show_bar').checked = true;
-  $('ui_show_area_filter').checked = true;
-  $('ui_show_new_badge').checked = true;
-  $('ui_show_urgent_badge').checked = true;
-  $('ui_show_tags').checked = true;
-  $('ui_show_notes').checked = true;
-  $('ui_title_font_size').value = "1.4rem";
-  $('ui_card_title_size').value = "1.1rem";
-  $('ui_card_pay_size').value = "1.25rem";
-  $('ui_btn_padding').value = ".32rem .65rem";
-  $('ui_btn_radius').value = ".62rem";
+// فتح نافذة تخصيص الواجهة وجلب القيم الحالية من السيرفر
+$('bUICustom').onclick = async () => {
+  const res = await api('getSettings');
+  if (res && res.ok && res.settings) {
+    const s = res.settings;
+    $('ui_header_title').value = s.header_title \vert{}\vert{} '';$('ui_header_sub').value = s.header_sub || '';
+    $('ui_wa_btn_text').value = s.wa_btn_text \vert{}\vert{} '';$('ui_whatsapp_phone').value = s.whatsapp_phone || '';
+    $('ui_trust_text').value = s.trust_text \vert{}\vert{} '';$('ui_show_trust').checked = s.show_trust === 'true' || s.show_trust === true;
+    $('ui_show_bar').checked = s.show_bar === 'true' || s.show_bar === true;
+    $('ui_show_area_filter').checked = s.show_area_filter === 'true' || s.show_area_filter === true;
+    $('ui_show_new_badge').checked = s.show_new_badge === 'true' || s.show_new_badge === true;
+    $('ui_show_urgent_badge').checked = s.show_urgent_badge === 'true' || s.show_urgent_badge === true;
+    $('ui_show_tags').checked = s.show_tags === 'true' || s.show_tags === true;
+    $('ui_show_notes').checked = s.show_notes === 'true' || s.show_notes === true;
+    $('ui_title_font_size').value = s.title_font_size || '';
+    $('ui_card_title_size').value = s.card_title_size \vert{}\vert{} '';$('ui_card_pay_size').value = s.card_pay_size || '';
+    $('ui_btn_padding').value = s.btn_padding \vert{}\vert{} '';$('ui_btn_radius').value = s.btn_radius || '';
+  }
   $('uiModal').classList.remove('hidden');
 };
 
 $('cancelUIBtn').onclick = () =>$('uiModal').classList.add('hidden');
 
+// حفظ الإعدادات وإرسالها الفعلي للسيرفر
 $('saveUIBtn').onclick = async () => {
   const settingsData = {
     header_title: $('ui_header_title').value,
@@ -265,8 +266,15 @@ $('saveUIBtn').onclick = async () => {
     btn_radius: $('ui_btn_radius').value
   };
 
-  alert('تم حفظ إعدادات الواجهة والتصميم بنجاح! ستظهر التعديلات فوراً في صفحة الـ Index.');
-  $('uiModal').classList.add('hidden');
+  const res = await api('saveSettings', { settings: settingsData });
+  
+  if (res && res.ok) {
+    alert('تم حفظ إعدادات الواجهة وتفعيلها في الشيت بنجاح! ستظهر التعديلات فوراً في صفحة الـ Index.');
+    $('uiModal').classList.add('hidden');
+    location.reload();
+  } else {
+    alert('حدث خطأ أثناء الحفظ: ' + (res ? res.error : 'خطأ غير معروف'));
+  }
 };
 
 $('loginBtn').onclick = () => {
