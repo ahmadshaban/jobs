@@ -220,7 +220,6 @@ header h1{color:#FFFFFF;font-size:1.4rem}header .lead,header .sub{color:var(--mu
 }
 .btn-share-area:active { transform: scale(.98); }
 
-/* أزرار خيارات القائمة المنبثقة للنسخ */
 .menu-btn {
   width: 100%;
   font: inherit;
@@ -240,6 +239,53 @@ header h1{color:#FFFFFF;font-size:1.4rem}header .lead,header .sub{color:var(--mu
   gap: .5rem;
 }
 .menu-btn:active { background: var(--acs); border-color: var(--ac); }
+
+/* تنسيق أرقام التواصل تحت العنوان */
+.contacts-box {
+  margin-top: .45rem;
+  padding-top: .45rem;
+  border-top: 1px dashed var(--bd);
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+}
+.contacts-title {
+  font-size: .72rem;
+  color: var(--gold);
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+}
+.contact-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--bd);
+  border-radius: .6rem;
+  padding: .25rem .55rem;
+  font-size: .8rem;
+}
+.contact-info {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+.contact-name { font-weight: 700; color: #fff; }
+.contact-num { font-weight: 800; color: var(--gold); direction: ltr; }
+.call-btn {
+  background: #16a34a;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 99px;
+  padding: .15rem .5rem;
+  font-size: .7rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: .2rem;
+}
 </style>
 </head>
 <body>
@@ -257,9 +303,8 @@ header h1{color:#FFFFFF;font-size:1.4rem}header .lead,header .sub{color:var(--mu
     <div class="frow"><div id="seg" class="seg"></div><div id="area" class="ddw"></div></div>
   </div>
   
-  <!-- زرار نسخ مصانع المنطقة البارز تحت الفلتر مباشرة -->
   <div id="areaShareContainer" class="area-share-box" style="display:none">
-    <button type="button" id="btnShareArea" class="btn-share-area">📋 خيارات مشاركة مصانع هذه المنطقة</button>
+    <button type="button" id="btnShareArea" class="btn-share-area">📋 مشاركة مصانع هذه المنطقة</button>
   </div>
 
   <div class="meta">
@@ -294,7 +339,7 @@ const AREAS_CSV_URL="https://docs.google.com/spreadsheets/d/1Ri61Py0q36t2EdMCWXa
 const PHONE = "201095237207";
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1Ri61Py0q36t2EdMCWXa0lgJGDWJfrXjY0gHmqnwS4AM/gviz/tq?tqx=out:csv&headers=1&sheet=%D8%A7%D9%84%D9%88%D8%B8%D8%A7%D8%A6%D9%81";
 
-const CORE=["المنطقة","الفئة","المصنع","المؤهل","الشفت","السن","طبيعة العمل","المرتب","مرتب 30 يوم","مرتب 26 يوم","تفاصيل المرتب","الورديات","تثبيت","الترتيب","آخر تعديل","ظاهر؟","الحالة","تاريخ الإضافة"];
+const CORE=["المنطقة","الفئة","المصنع","المؤهل","الشفت","السن","طبيعة العمل","المرتب","مرتب 30 يوم","مرتب 26 يوم","تفاصيل المرتب","الورديات","أرقام التواصل","تثبيت","الترتيب","آخر تعديل","ظاهر؟","الحالة","تاريخ الإضافة"];
 const done=j=>(j["الحالة"]||"").includes("مكتمل");
 const urgent=j=>/عاجل|الأكثر تقديم/.test(j["الحالة"]||"");
 const NEW_DAYS=3;
@@ -305,18 +350,50 @@ const P30="مرتب 30 يوم", P26="مرتب 26 يوم", OFF26="26 يوم عم�
 
 function pays(j){const a=[];if(j[P30])a.push(["30 يوم عمل",j[P30]]);if(j[P26])a.push([OFF26,j[P26]]);return a}
 const numOf=s=>{const t=String(s||"").replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/,/g,"");const m=t.match(/\d+(\.\d+)?/);return m?+m[0]:0};
+
 function parseShifts(txt){return String(txt||"").split(/\n/).map(l=>l.trim()).filter(Boolean).map(l=>{const p=l.split("|").map(x=>x.trim());const s={h:p[0]||"",p30:"",p26:""};p.slice(1).forEach(x=>{const m=x.match(/^(30|26)\s*يوم\s*:\s*(.*)$/);if(m)s["p"+m[1]]=m[2].trim()});return s}).filter(s=>s.h||s.p30||s.p26)}
+
+/* تحليل أرقام التواصل المنظمة، مع الاستخراج التلقائي من خانة العنوان لو خانة أرقام التواصل فاضية */
+function parseContacts(j){
+  let list = [];
+  // 1. فحص خانة أرقام التواصل المستقلة إن وجدت
+  if(j["أرقام التواصل"]) {
+    String(j["أرقام التواصل"]).split(/\n/).forEach(l => {
+      const p = l.split("|").map(x=>x.trim());
+      if(p[0]) list.push({ name: p[1]?p[0]:"المسؤول", phone: p[1]||p[0] });
+    });
+  }
+  // 2. الاستخراج التلقائي الذكي من خانة العنوان القديم لو أرقام التواصل فاضية
+  if(list.length === 0 && j["العنوان"]) {
+    const addr = j["العنوان"];
+    // البحث عن أرقام هواتف مصرية تبدأ بـ 01 ويتكون من 10 أو 11 رقم
+    const phoneRegex = /(?:01[0125]\d{8}|(?:\+2)?01[0125]\d{8})/g;
+    let match;
+    while ((match = phoneRegex.exec(addr)) !== null) {
+      const phoneNum = match[0];
+      // محاولة استخراج اسم مسبق للرقم (مثل اسم الشخص قبل الرقم بكلمات قليلة)
+      const subStr = addr.substring(Math.max(0, match.index - 25), match.index);
+      const cleanName = subStr.replace(/[:\-,\s]+$/, "").split(/[\s,\-]+/).pop() || "المسؤول";
+      list.push({ name: isNaN(cleanName)?cleanName:"المسؤول", phone: phoneNum });
+    }
+  }
+  return list;
+}
+
 function topShift(a){let b={v:"",h:""},m=0;a.forEach(s=>[s.p30,s.p26].forEach(x=>{const n=numOf(x);if(n>m){m=n;b={v:x,h:s.h}}}));return b}
-function prep(j){const a=parseShifts(j["الورديات"]);j.__sh=a;if(a.length===1){j["الشفت"]=a[0].h;j[P30]=a[0].p30;j[P26]=a[0].p26}else if(a.length>1){j["الشفت"]="";j[P30]="";j[P26]="";j["المرتب"]=""}return j}
+function prep(j){
+  const a=parseShifts(j["الورديات"]);
+  j.__sh=a;
+  j.__contacts=parseContacts(j);
+  if(a.length===1){j["الشفت"]=a[0].h;j[P30]=a[0].p30;j[P26]=a[0].p26}else if(a.length>1){j["الشفت"]="";j[P30]="";j[P26]="";j["المرتب"]=""}
+  return j;
+}
 const isMulti=j=>!!(j.__sh&&j.__sh.length>1);
 function payText(j){if(isMulti(j))return j.__sh.map(s=>s.h+": "+[s.p30&&"30 يوم "+s.p30,s.p26&&"26 يوم "+s.p26].filter(Boolean).join(" / ")).join(" | ");const a=pays(j);return a.length?a.map(x=>x[0]+": "+x[1]).join(" | "):(j["المرتب"]||"")}
 
 const DEMO=[
-{"المنطقة":"العاشر من رمضان","الفئة":"شباب","المصنع":"مصنع تعبئة (تجريبي)","العنوان":"المستثمرين بجوار رنين","السن":"18 - 35","طبيعة العمل":"تعبئة وتغليف","المؤهل":"أي مؤهل","الشفت":"12 ساعة","المرتب":"12000 ج في الشهر","تفاصيل المرتب":"9000 أساسي (300 ج في اليوم) + 3000 حافز انتظام","السكن":"متوفر","نظام القبض":"شهري","المواصلات":"داخلية","الحالة":"عاجل","تاريخ الإضافة":TODAY,"ظاهر؟":"نعم"},
-{"المنطقة":"مدينة السادات","الفئة":"شباب","المصنع":"مصنع تغليف (تجريبي)","العنوان":"المنطقة الصناعية الخامسة","السن":"18 - 40","طبيعة العمل":"تغليف","المؤهل":"أي مؤهل","الشفت":"10 ساعات","المرتب":"7000 ج في الشهر","السكن":"مفيش","المواصلات":"خارجية","ظاهر؟":"نعم"},
-{"المنطقة":"6 أكتوبر","الفئة":"بنات","المصنع":"مصنع فرز (تجريبي)","العنوان":"المنطقة الصناعية الأولى","السن":"18 - 30","طبيعة العمل":"فرز","المؤهل":"مؤهلات","الشفت":"9 ساعات","المرتب":"200 ج في اليوم","تفاصيل المرتب":"حوالي 5200 ج في الشهر","السكن":"مفيش","المواصلات":"خارجية","ظاهر؟":"نعم"},
-{"المنطقة":"العبور","الفئة":"شباب","المصنع":"مصنع ملابس (تجريبي)","العنوان":"قطعة 45 بلبيس الصحراوي","السن":"18 - 35","المؤهل":"أي مؤهل","الشفت":"10 ساعات","مرتب 30 يوم":"8000 ج في الشهر","مرتب 26 يوم":"7000 ج في الشهر","ظاهر؟":"نعم"},
-{"المنطقة":"بدر","الفئة":"شباب وبنات","المصنع":"مصنع مكتمل (تجريبي)","العنوان":"مدينة بدر الحي الأزهري","المؤهل":"أي مؤهل","الشفت":"8 ساعات","المرتب":"6500 ج في الشهر","الحالة":"مكتمل","ظاهر؟":"نعم"}
+{"المنطقة":"العاشر من رمضان","الفئة":"شباب","المصنع":"مصنع تعبئة (تجريبي)","العنوان":"المستثمرين بجوار رنين - للتواصل أحمد 01012345678","السن":"18 - 35","طبيعة العمل":"تعبئة وتغليف","المؤهل":"أي مؤهل","الشفت":"12 ساعة","المرتب":"12000 ج في الشهر","تفاصيل المرتب":"9000 أساسي (300 ج في اليوم) + 3000 حافز انتظام","السكن":"متوفر","نظام القبض":"شهري","المواصلات":"داخلية","الحالة":"عاجل","تاريخ الإضافة":TODAY,"ظاهر؟":"نعم"},
+{"المنطقة":"مدينة السادات","الفئة":"شباب","المصنع":"مصنع تغليف (تجريبي)","العنوان":"المنطقة الصناعية الخامسة","السن":"18 - 40","طبيعة العمل":"تغليف","المؤهل":"أي مؤهل","الشفت":"10 ساعات","المرتب":"7000 ج في الشهر","السكن":"مفيش","المواصلات":"خارجية","ظاهر؟":"نعم"}
 ];
 
 const REQ={name:true,age:true,from:false,housing:false};
@@ -387,9 +464,7 @@ async function load(){
   const jq = urlParams.get("j");
   const areaParam = urlParams.get("area");
   
-  if(areaParam) {
-    area = areaParam;
-  }
+  if(areaParam) { area = areaParam; }
   
   if(jq){const k=JOBS.findIndex(x=>hid(x["المصنع"])===jq);history.replaceState(null,"",location.pathname+(k>-1?"#job"+k:""))}
   draw();route();
@@ -447,7 +522,7 @@ function buildJobText(j) {
   if(!isMulti(j) && j["الشفت"]) msg += `⏰ الشفت: ${hoursOnly(j["الشفت"])}\n`;
   msg += `💰 المرتب: ${payText(j)}\n`;
 
-  const skipKeys = [...CORE, "المصنع", "المنطقة", "الفئة", "الشفت", "مرتب 30 يوم", "مرتب 26 يوم", "الورديات", "العنوان", "__sh"];
+  const skipKeys = [...CORE, "المصنع", "المنطقة", "الفئة", "الشفت", "مرتب 30 يوم", "مرتب 26 يوم", "الورديات", "العنوان", "أرقام التواصل", "__sh", "__contacts"];
   
   Object.keys(j).forEach(k => {
     if(skipKeys.includes(k) || !j[k]) return;
@@ -461,6 +536,13 @@ function buildJobText(j) {
 
   if(j["العنوان"]) {
     msg += `📍 العنوان: ${j["العنوان"]}\n`;
+  }
+  
+  if(j.__contacts && j.__contacts.length) {
+    msg += `📞 أرقام التواصل عند الوصول:\n`;
+    j.__contacts.forEach(c => {
+      msg += `  • ${c.name}: ${c.phone}\n`;
+    });
   }
 
   return msg.trim();
@@ -644,8 +726,30 @@ async function saveJobAsImage(j, captureElem) {
 function showDetail(j){
   const ph=PHONE.replace(/\D/g,"");
   
-  const it=k=>`<div class="it ${(k==="طبيعة العمل"||k==="العنوان"||String(j[k]).length>26)?"full":""}"><small>${ICONS[k]||"•"} ${esc(k)}</small><b>${esc(j[k])}</b></div>`;
-  const sec=(t,ks,pre)=>{const r=ks.filter(k=>j[k]);return (r.length||pre)?`<div class="sec"><h3>${t}</h3><div class="g2">${pre||""}${r.map(it).join("")}</div></div>`:""};
+  let addressHTML = `<b>${esc(j["العنوان"]||"غير محدد")}</b>`;
+  if(j.__contacts && j.__contacts.length) {
+    addressHTML += `<div class="contacts-box">
+      <span class="contacts-title">📞 أرقام التواصل عند الوصول:</span>
+      ${j.__contacts.map(c=>`
+        <div class="contact-item">
+          <div class="contact-info">
+            <span class="contact-name">👤 ${esc(c.name)}:</span>
+            <span class="contact-num">📱 ${esc(c.phone)}</span>
+          </div>
+          <a href="tel:${esc(c.phone)}" class="call-btn">📞 اتصال</a>
+        </div>
+      `).join("")}
+    </div>`;
+  }
+  
+  const it=k=> {
+    if(k==="العنوان") {
+      return `<div class="it full"><small>📍 العنوان وأرقام التواصل</small>${addressHTML}</div>`;
+    }
+    return `<div class="it ${(k==="طبيعة العمل"||String(j[k]).length>26)?"full":""}"><small>${ICONS[k]||"•"} ${esc(k)}</small><b>${esc(j[k])}</b></div>`;
+  };
+
+  const sec=(t,ks,pre)=>{const r=ks.filter(k=>j[k] || (k==="العنوان" && (j["العنوان"] || (j.__contacts && j.__contacts.length))));return (r.length||pre)?`<div class="sec"><h3>${t}</h3><div class="g2">${pre||""}${r.map(it).join("")}</div></div>`:""};
   const pp=pays(j);
   const noteHTML=j["تفاصيل المرتب"]?`<div class="pnote"><span class="nl">ملاحظات</span><span class="nt">${esc(j["تفاصيل المرتب"])}</span></div>`:"";
   const cell=x=>x?esc(String(x).replace(/\s*في الشهر/,"")):"—";
@@ -656,11 +760,9 @@ function showDetail(j){
   
   const plainSh=/^\s*\d{1,2}\s*(ساعة|ساعات)\s*$/.test(j["الشفت"]||"");
   
-  // تجميع أي خانات جديدة إضافية تلقائياً من الأكسل
-  const fixedUsed = ["المنطقة","الفئة","المصنع","العنوان","الشفت","السن","طبيعة العمل","المؤهل","الأجازة","نظام القبض","السلف","التأمينات","وجبة","السكن","المواصلات","المرتب","مرتب 30 يوم","مرتب 26 يوم","تفاصيل المرتب","الورديات","تثبيت","الترتيب","آخر تعديل","ظاهر؟","الحالة","تاريخ الإضافة"];
+  const fixedUsed = ["المنطقة","الفئة","المصنع","العنوان","أرقام التواصل","الشفت","السن","طبيعة العمل","المؤهل","الأجازة","نظام القبض","السلف","التأمينات","وجبة","السكن","المواصلات","المرتب","مرتب 30 يوم","مرتب 26 يوم","تفاصيل المرتب","الورديات","تثبيت","الترتيب","آخر تعديل","ظاهر؟","الحالة","تاريخ الإضافة"];
   const otherKeys = Object.keys(j).filter(k=>!k.startsWith("__")&&!fixedUsed.includes(k)&&j[k]);
   
-  // وضع العنوان دايماً في آخر خانة بصفحة التفاصيل
   const groups=[
     ["الأساسيات", ["السن", ...(plainSh?[]:["الشفت"]), "طبيعة العمل", "المؤهل", "الأجازة"], payTile],
     ["المرتب والمميزات", ["نظام القبض", "السلف", "التأمينات", "وجبة"]],
