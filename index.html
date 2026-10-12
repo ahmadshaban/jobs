@@ -392,7 +392,7 @@ function showDetail(j){
   // <<< غيّر هنا: ترتيب الأقسام وأي خانة تتحط في أنهي قسم
   const groups=[["الأساسيات",["السن","الشفت","طبيعة العمل","المؤهل","الأجازة"],payTile],["المرتب والمميزات",["نظام القبض","السلف","التأمينات","وجبة"]],["السكن والمواصلات",["السكن","المواصلات"]]];
   const used=groups.flatMap(g=>g[1]);
-  const other=Object.keys(j).filter(k=>!CORE.includes(k)&&!used.includes(k)&&j[k]);
+  const other=Object.keys(j).filter(k=>!k.startsWith("__")&&!CORE.includes(k)&&!used.includes(k)&&j[k]);
   $("detail").innerHTML=`<div class="w dp"><div class="tb"><button class="exit" id="ex">رجوع</button></div>
    <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="bd2">${tags(j)}<span class="badge ${kind(j["الفئة"]||"")}">${esc(j["الفئة"])}</span></span></div>
    <h2 class="ttl">${esc(j["المصنع"])}</h2>
