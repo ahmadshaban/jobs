@@ -93,6 +93,12 @@ header h1{margin:0;font-size:18px;color:#fff}
 #toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);padding:10px 18px;border-radius:12px;color:#fff;font-weight:700;z-index:20;max-width:90%;box-shadow:0 4px 18px rgba(0,0,0,.18)}
 #toast.ok{background:#16803d}
 #toast.bad{background:#B42318}
+/* ===== محرر الورديات (غيّر الألوان من هنا) ===== */
+.shed{display:grid;gap:8px}.shl{font-size:13px;color:#FFE45C}
+.shp-row{display:flex;flex-wrap:wrap;gap:6px}.shp.on{background:#FFE45C;color:#0E3560;font-weight:700}
+.shb{background:#0B2A4A;border:1px solid #3F7AB5;border-radius:12px;padding:10px;display:grid;gap:8px}
+.shh{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#FFE45C}.shh input{flex:1}
+.shg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 </style>
 </head>
 <body>
@@ -158,6 +164,7 @@ const COL = {
   factory: 'المصنع',   // <<< غيّر هنا: اسم عمود المصنع
   area:    'المنطقة',  // <<< غيّر هنا: اسم عمود المنطقة
   gender:  'الفئة',    // <<< غيّر هنا: اسم عمود الفئة
+  shifts:  'الورديات', // <<< غيّر هنا: اسم عمود الورديات (كل وردية في سطر)
   shift:   'الشفت',    // <<< غيّر هنا: اسم عمود الشفت
   salary:  'المرتب',   // <<< غيّر هنا: اسم عمود المرتب
   salary30: 'مرتب 30 يوم', // <<< غيّر هنا: اسم عمود مرتب 30 يوم عمل
@@ -358,7 +365,7 @@ async function run(action, extra){
 async function ensureSalaryCols(){
   try{
     let changed = false;
-    for (const name of [COL.salary30, COL.salary26]){
+    for (const name of [COL.salary30, COL.salary26, COL.shifts]){
       if (!headers.includes(name)){ const a = await api('addColumn', {name}); if (a.ok) changed = true; }
     }
     if (changed){ const r2 = await api('list'); if (r2.ok){ headers = r2.headers; rows = r2.rows; } }
@@ -393,6 +400,54 @@ async function login(pw){
   render();
 }
 
+
+// ===== الورديات: قراءة وكتابة خانة "الورديات" (كل سطر = وردية: 12 ساعة | 30 يوم: 9000 | 26 يوم: 8000) =====
+const SH_PRESETS = ['8 ساعات', '12 ساعة', '16 ساعة'];   // <<< غيّر هنا: الورديات الجاهزة
+let shState = [];
+function shNum(s){ const m = String(s || '').replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).match(/\d+/); return m ? +m[0] : 0; }
+function parseShifts(txt){
+  return String(txt || '').split(/\n/).map(l => l.trim()).filter(Boolean).map(l => {
+    const p = l.split('|').map(x => x.trim()), s = {h: p[0] || '', p30: '', p26: ''};
+    p.slice(1).forEach(x => { const m = x.match(/^(30|26)\s*يوم\s*:\s*(.*)$/); if (m) s['p' + m[1]] = m[2].trim(); });
+    return s;
+  }).filter(s => s.h || s.p30 || s.p26);
+}
+function shLabel(raw){ const n = shNum(raw); return n ? (n === 8 ? '8 ساعات' : n + ' ساعة') : String(raw || '').trim(); }
+function serializeShifts(){
+  const clean = v => String(v || '').replace(/[|\n]/g, ' ').trim();
+  return shState.filter(s => clean(s.h)).map(s => {
+    const parts = [clean(s.h)];
+    const p30 = clean(s.p30) ? normSalary(clean(s.p30), COL.salary30) : '';
+    const p26 = clean(s.p26) ? normSalary(clean(s.p26), COL.salary26) : '';
+    if (p30) parts.push('30 يوم: ' + p30);
+    if (p26) parts.push('26 يوم: ' + p26);
+    return parts.join(' | ');
+  }).join('\n');
+}
+// بترسم محرر الورديات جوه الفورم: أزرار 8/12/16 وتحت كل وردية مختارة خانتين المرتب
+function renderShEditor(){
+  const box = $('shBox'); if (!box) return;
+  const isOn = p => shState.some(s => shNum(s.h) === shNum(p));
+  let h = '<div class="shp-row">' + SH_PRESETS.map(p => '<button type="button" class="btn ghost shp' + (isOn(p) ? ' on' : '') + '" data-p="' + esc(p) + '">' + esc(p) + '</button>').join('') +
+    '<button type="button" class="btn ghost" id="shAdd">+ وردية تانية</button></div>';
+  shState.forEach((s, k) => {
+    const preset = SH_PRESETS.some(p => shNum(p) === shNum(s.h));
+    h += '<div class="shb"><div class="shh">' + (preset ? '<b>' + esc(s.h) + '</b>' : '<input data-sh="h" data-k="' + k + '" placeholder="عدد الساعات (مثلًا 10 ساعة)" value="' + esc(s.h) + '">') +
+      (preset ? '' : '<button type="button" class="btn danger shx" data-k="' + k + '">مسح</button>') + '</div>' +
+      '<div class="shg"><label>نظام 30 يوم<input data-sh="p30" data-k="' + k + '" inputmode="numeric" placeholder="مثلًا 9000" value="' + esc(s.p30) + '"></label>' +
+      '<label>نظام 26 يوم + 4 إجازة<input data-sh="p26" data-k="' + k + '" inputmode="numeric" placeholder="مثلًا 8000" value="' + esc(s.p26) + '"></label></div></div>';
+  });
+  box.innerHTML = h;
+  box.querySelectorAll('.shp').forEach(b => b.onclick = () => {
+    const p = b.dataset.p, i = shState.findIndex(s => shNum(s.h) === shNum(p));
+    if (i >= 0) shState.splice(i, 1); else { shState.push({h: p, p30: '', p26: ''}); shState.sort((x, y) => shNum(x.h) - shNum(y.h)); }
+    renderShEditor();
+  });
+  $('shAdd').onclick = () => { shState.push({h: '', p30: '', p26: ''}); renderShEditor(); };
+  box.querySelectorAll('.shx').forEach(b => b.onclick = () => { shState.splice(+b.dataset.k, 1); renderShEditor(); });
+  box.querySelectorAll('input[data-sh]').forEach(el => el.addEventListener('input', () => { shState[+el.dataset.k][el.dataset.sh] = el.value; }));
+}
+
 // ===== [6] عرض الكروت والبحث =====
 
 // بترجع قيمة عمود معين من صف
@@ -406,12 +461,14 @@ function cardHTML(r, i, arr){
   const urg = val(r, COL.status).trim() === T.urgentValue;
   const hasNew = val(r, COL.salary30) || val(r, COL.salary26);
   // خانات عادية (المنطقة، الفئة، الشفت، والمرتب القديم لو المصنع لسه ما اتعدّلش)
-  const plain = [COL.area, COL.gender, COL.shift, ...(hasNew ? [] : [COL.salary])]
+  const shl = parseShifts(val(r, COL.shifts));
+  const plain = [COL.area, COL.gender, ...(shl.length ? [] : [COL.shift]), ...(hasNew || shl.length ? [] : [COL.salary])]
     .map(c => val(r, c)).filter(Boolean).map(v => '<span>' + esc(v) + '</span>').join('');
   // خانتين المرتب: دوس على أي واحدة تعدّلها من مكانها (الفاضية بتظهر بـ +)
   const salChip = (c, lbl) => '<span class="sal' + (val(r, c) ? '' : ' empty') + '" data-sal="' + esc(c) + '" data-row="' + r.row + '">' +
     (val(r, c) ? esc(lbl + ': ' + val(r, c)) : '+ ' + esc(lbl)) + '</span>';
-  const meta = plain + salChip(COL.salary30, '30 يوم') + salChip(COL.salary26, '26 يوم');
+  const shChips = shl.map(s => '<span class="sal">' + esc(s.h + (s.p30 ? ' · 30: ' + s.p30.replace(/\s*في الشهر/, '') : '') + (s.p26 ? ' · 26: ' + s.p26.replace(/\s*في الشهر/, '') : '')) + '</span>').join('');
+  const meta = plain + (shl.length ? shChips : salChip(COL.salary30, '30 يوم') + salChip(COL.salary26, '26 يوم'));
   const mv = '<div class="mv"><button class="btn ghost" data-act="up" data-row="' + r.row + '" aria-label="فوق"' + (i === 0 ? ' disabled' : '') + '>▲</button>' +
     '<button class="btn ghost" data-act="down" data-row="' + r.row + '" aria-label="تحت"' + (i >= n - 1 ? ' disabled' : '') + '>▼</button></div>';
   return '<div class="card' + (hid ? ' dim' : '') + '">' +
@@ -564,7 +621,7 @@ function currentFormSnapshot(){
     const index = el.dataset.i;
     const custom = $('sheet').querySelector('[data-custom-i="' + index + '"]');
     return [index, el.value, custom ? custom.value : ''];
-  }));
+  }).concat([JSON.stringify(shState)]));
 }
 function formHasUnsavedChanges(){
   return !!formInitialSnapshot && currentFormSnapshot() !== formInitialSnapshot;
@@ -572,17 +629,28 @@ function formHasUnsavedChanges(){
 // بترتّب الخانات: خانتين المرتب بعد الشفت على طول (أو بعد اسم المصنع)
 function formOrder(){
   const a = headers.indexOf(COL.salary30), b = headers.indexOf(COL.salary26);
-  const rest = headers.map((_, i) => i).filter(i => i !== a && i !== b);
+  const sIdx = headers.indexOf(COL.shifts);
+  const rest = headers.map((_, i) => i).filter(i => i !== a && i !== b && i !== sIdx);
   let at = headers.indexOf(COL.shift); if (at < 0) at = headers.indexOf(COL.factory);
   const pos = at < 0 ? rest.length : rest.indexOf(at) + 1;
-  rest.splice(pos, 0, ...[a, b].filter(i => i >= 0));
+  rest.splice(pos, 0, ...[sIdx, a, b].filter(i => i >= 0));
   return rest;
 }
 // asCopy=true: بيفتح فورم مصنع جديد ببيانات مصنع موجود (اسم المصنع بيتفضّى)
 function openForm(r, asCopy){
   const src = r; if (asCopy) r = null;
+  // تجهيز الورديات: من الخانة الجديدة، وإلا من الخانات القديمة (الشفت + مرتب 30 + مرتب 26) عشان ما يضيعوش
+  shState = src ? parseShifts(String(src.values[headers.indexOf(COL.shifts)] ?? '')) : [];
+  if (src && !shState.length){
+    const oh = String(src.values[headers.indexOf(COL.shift)] ?? '').trim();
+    const o30 = String(src.values[headers.indexOf(COL.salary30)] ?? '').trim() || String(src.values[headers.indexOf(COL.salary)] ?? '').trim();
+    const o26 = String(src.values[headers.indexOf(COL.salary26)] ?? '').trim();
+    if (oh || o30 || o26) shState = [{h: oh ? shLabel(oh) : '', p30: o30, p26: o26}];
+  }
   const fields = formOrder().map(i => { const h = headers[i];
     if (!h) return '';
+    if (h === COL.shifts) return '<div class="shed"><div class="shl">⏰ الورديات (اختار الوردية وحط مرتب النظامين)</div><div id="shBox"></div></div>';
+    if (headers.includes(COL.shifts) && (h === COL.shift || h === COL.salary30 || h === COL.salary26)) return '';   // اتحلوا محل الورديات
     if (h === COL.salary) return '';   // <<< غيّر هنا: خانة المرتب القديمة مخفية (استبدلناها بـ 30 يوم و 26 يوم)
     // تنظيف المسافات الزائدة حتى تتطابق القيمة المحفوظة مع خيار القائمة.
     let v = src ? String(src.values[i] ?? '').trim() : (h === COL.visible ? T.yes : '');
@@ -631,6 +699,7 @@ function openForm(r, asCopy){
     modalHistoryOpen = true;
   }
   $('modal').classList.remove('hidden');
+  renderShEditor();
   $('fCancel').onclick = closeForm;
   $('sheet').querySelectorAll('select[data-i]').forEach(el => {
     el.addEventListener('change', () => {
@@ -658,6 +727,11 @@ function openForm(r, asCopy){
       if (!(c in data)) return;
       data[c] = normSalary(data[c], c);
     });
+    // الورديات: بنجمّعهم في الخانة (كل وردية في سطر)
+    if (headers.includes(COL.shifts)){
+      data[COL.shifts] = serializeShifts();
+      if (!data[COL.shifts] && !confirm('مفيش ورديات ولا مرتبات. تحفظ كده؟')) return;
+    }
     // تاريخ الإضافة أوتوماتيك للمصنع الجديد لو فاضي
     if (!r && DATE_COL in data && !String(data[DATE_COL]).trim()) data[DATE_COL] = todayStr();
     // فحص قبل الحفظ
@@ -665,7 +739,7 @@ function openForm(r, asCopy){
       toast('اكتب اسم المصنع الأول.', false);
       return;
     }
-    if ((COL.salary30 in data || COL.salary26 in data) && !String(data[COL.salary30] || '').trim() && !String(data[COL.salary26] || '').trim()) {
+    if (!(COL.shifts in data) && (COL.salary30 in data || COL.salary26 in data) && !String(data[COL.salary30] || '').trim() && !String(data[COL.salary26] || '').trim()) {
       if (!confirm('خانتين المرتب فاضيين (30 يوم و 26 يوم). تحفظ كده؟')) return;
     }
     if (!r) {

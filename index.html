@@ -162,6 +162,10 @@ header h1{color:#FFFFFF;font-size:1.4rem}header .lead,header .sub{color:var(--mu
 .demo{background:#172645;color:var(--tx);border-color:var(--bd)}.empty{color:#B8C6E3}.retry{background:var(--gold);color:var(--goldD)}
 .note{color:var(--mu)}.fgo{background:var(--bg)}
 
+/* ===== جدول الورديات (غيّر الألوان من هنا) ===== */
+.sht{width:100%;border-collapse:collapse;text-align:center;background:var(--gold);color:var(--goldD);border-radius:.6rem;overflow:hidden}
+.sht th{font-size:.7rem;font-weight:800;padding:.3rem .2rem;border-bottom:1px solid rgba(42,29,0,.35)}
+.sht td{font-size:.95rem;font-weight:800;padding:.38rem .2rem}.sht tr+tr td{border-top:1px dashed rgba(42,29,0,.3)}
 </style>
 </head>
 <body>
@@ -187,7 +191,7 @@ const PHONE = "201095237207";   // رقم الواتساب بصيغة دولية
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1Ri61Py0q36t2EdMCWXa0lgJGDWJfrXjY0gHmqnwS4AM/gviz/tq?tqx=out:csv&headers=1&sheet=%D8%A7%D9%84%D9%88%D8%B8%D8%A7%D8%A6%D9%81";
 
 
-const CORE=["المنطقة","الفئة","المصنع","المؤهل","الشفت","السن","طبيعة العمل","المرتب","مرتب 30 يوم","مرتب 26 يوم","تفاصيل المرتب","ظاهر؟","الحالة","تاريخ الإضافة"];   // "تفاصيل المرتب" عمود اختياري تكتبه بإيدك للمصانع اللي باليومية
+const CORE=["المنطقة","الفئة","المصنع","المؤهل","الشفت","السن","طبيعة العمل","المرتب","مرتب 30 يوم","مرتب 26 يوم","تفاصيل المرتب","الورديات","ظاهر؟","الحالة","تاريخ الإضافة"];   // "تفاصيل المرتب" عمود اختياري تكتبه بإيدك للمصانع اللي باليومية
 const done=j=>(j["الحالة"]||"").includes("مكتمل");   // <<< عمود الحالة = مكتمل
 const urgent=j=>(j["الحالة"]||"").includes("عاجل");   // <<< عمود الحالة = عاجل
 const NEW_DAYS=3;                                    // <<< غيّر هنا: عدد أيام شارة "جديد"
@@ -201,7 +205,15 @@ const TODAY=new Date().toISOString().slice(0,10);
 const P30="مرتب 30 يوم", P26="مرتب 26 يوم", OFF26="26 يوم عمل + 4 أيام إجازة";
 // بترجّع الخانات اللي فيها قيمة بس (30 / 26 / أو الاتنين). لو الاتنين فاضيين بترجع المرتب القديم
 function pays(j){const a=[];if(j[P30])a.push(["30 يوم عمل",j[P30]]);if(j[P26])a.push([OFF26,j[P26]]);return a}
-function payText(j){const a=pays(j);return a.length?a.map(x=>x[0]+": "+x[1]).join(" | "):(j["المرتب"]||"")}
+// ===== الورديات: كل سطر في خانة "الورديات" = وردية. الشكل: 12 ساعة | 30 يوم: 9000 | 26 يوم: 8000 =====
+const numOf=s=>{const t=String(s||"").replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/,/g,"");const m=t.match(/\d+(\.\d+)?/);return m?+m[0]:0};
+function parseShifts(txt){return String(txt||"").split(/\n/).map(l=>l.trim()).filter(Boolean).map(l=>{const p=l.split("|").map(x=>x.trim());const s={h:p[0]||"",p30:"",p26:""};p.slice(1).forEach(x=>{const m=x.match(/^(30|26)\s*يوم\s*:\s*(.*)$/);if(m)s["p"+m[1]]=m[2].trim()});return s}).filter(s=>s.h||s.p30||s.p26)}
+// أعلى مرتب في كل الورديات (للكارت من بره)
+function topPay(a){let b="",v=0;a.forEach(s=>[s.p30,s.p26].forEach(x=>{const n=numOf(x);if(n>v){v=n;b=x}}));return b}
+// وردية واحدة: بنحطها في الخانات القديمة عشان الشكل يفضل زي ما هو. أكتر من وردية: بنخبي القديم ونعرض الجدول
+function prep(j){const a=parseShifts(j["الورديات"]);j.__sh=a;if(a.length===1){j["الشفت"]=a[0].h;j[P30]=a[0].p30;j[P26]=a[0].p26}else if(a.length>1){j["الشفت"]="";j[P30]="";j[P26]="";j["المرتب"]=""}return j}
+const isMulti=j=>!!(j.__sh&&j.__sh.length>1);
+function payText(j){if(isMulti(j))return j.__sh.map(s=>s.h+": "+[s.p30&&"30 يوم "+s.p30,s.p26&&"26 يوم "+s.p26].filter(Boolean).join(" / ")).join(" | ");const a=pays(j);return a.length?a.map(x=>x[0]+": "+x[1]).join(" | "):(j["المرتب"]||"")}
 const DEMO=[
 {"المنطقة":"العاشر من رمضان","الفئة":"شباب","المصنع":"مصنع تعبئة (تجريبي)","السن":"18 - 35","طبيعة العمل":"تعبئة وتغليف","المؤهل":"أي مؤهل","الشفت":"12 ساعة","المرتب":"12000 ج في الشهر","تفاصيل المرتب":"9000 أساسي (300 ج في اليوم) + 3000 حافز انتظام","السكن":"متوفر","نظام القبض":"شهري","المواصلات":"داخلية","الحالة":"عاجل","تاريخ الإضافة":TODAY,"ظاهر؟":"نعم"},
 {"المنطقة":"مدينة السادات","الفئة":"شباب","المصنع":"مصنع تغليف (تجريبي)","السن":"18 - 40","طبيعة العمل":"تغليف","المؤهل":"أي مؤهل","الشفت":"10 ساعات","المرتب":"7000 ج في الشهر","السكن":"مفيش","المواصلات":"خارجية","ظاهر؟":"نعم"},
@@ -271,7 +283,7 @@ async function load(){
   if(ar.status==="fulfilled"){try{const rows=parseRows(ar.value);
     if(rows.length&&rows[0].length===1){const st=norm(rows[0][0])===norm("المنطقة")?1:0;   // لو التبويب مش موجود جوجل بترجّع شيت تاني بأعمدة كتير فبنتجاهله
       AREA_ORDER=rows.slice(st).map(x=>(x[0]||"").trim()).filter(Boolean)}}catch(e){}}
-  JOBS=d.filter(j=>(j["ظاهر؟"]||"نعم").trim()!=="لا"&&j["المصنع"]);
+  JOBS=d.filter(j=>(j["ظاهر؟"]||"نعم").trim()!=="لا"&&j["المصنع"]).map(prep);
   const jq=new URLSearchParams(location.search).get("j");
   if(jq){const k=JOBS.findIndex(x=>hid(x["المصنع"])===jq);history.replaceState(null,"",location.pathname+(k>-1?"#job"+k:""))}
   draw();route();
@@ -300,15 +312,15 @@ function draw(){
   const okv=v=>v&&!NEG.test(v.trim());
   $("list").innerHTML=r.map(j=>{
    // <<< غيّر هنا: خانات الكارت من بره (السن، الشفت) — طبيعة العمل جوه صفحة التفاصيل بس — الفاضي مش بيظهر
-   const fx=[["السن",j["السن"]],["الشفت",j["الشفت"]?hoursOnly(j["الشفت"]):""]].filter(x=>x[1]);
+   const fx=[["السن",j["السن"]],["الشفت",isMulti(j)?j.__sh.length+" ورديات":(j["الشفت"]?hoursOnly(j["الشفت"]):"")]].filter(x=>x[1]);
    const tg=(okv(j["السكن"])?'<span>🏠 سكن</span>':'')+(okv(j["المواصلات"])?'<span>🚌 مواصلات '+esc(j["المواصلات"])+'</span>':'');
    return `<button class="card ${done(j)?"done":""}" data-i="${JOBS.indexOf(j)}" ${done(j)?"disabled":""}>
    <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="bd2">${tags(j)}</span></div>
    <div class="ttl">${esc(j["المصنع"])}</div>
-   ${pays(j).length?`<div class="pays">${pays(j).map(x=>`<div class="pay"><small>${esc(x[0])}</small>${esc(x[1])}</div>`).join("")}</div>`:(j["المرتب"]?`<div class="pay">${esc(j["المرتب"])}</div>`:"")}
+   ${isMulti(j)?`<div class="pay"><small>أعلى مرتب</small>${esc(topPay(j.__sh))}</div>`:pays(j).length?`<div class="pays">${pays(j).map(x=>`<div class="pay"><small>${esc(x[0])}</small>${esc(x[1])}</div>`).join("")}</div>`:(j["المرتب"]?`<div class="pay">${esc(j["المرتب"])}</div>`:"")}
    ${fx.length?`<div class="fx">${fx.map(x=>`<div><small>${esc(x[0])}</small><b>${esc(x[1])}</b></div>`).join("")}</div>`:""}
    ${tg?`<div class="tg">${tg}</div>`:""}
-   ${done(j)?'<span class="more">اكتمل العدد</span>':'<span class="more">لو عايز تعرف تفاصيل أكتر دوس هنا ←</span>'}</button>`}).join("");
+   ${done(j)?'<span class="more">اكتمل العدد</span>':'<span class="more">'+(isMulti(j)?'لو عايز تفاصيل أكتر وباقي الورديات دوس هنا ←':'لو عايز تعرف تفاصيل أكتر دوس هنا ←')+'</span>'}</button>`}).join("");
   $("list").querySelectorAll(".card").forEach(b=>b.onclick=()=>go(+b.dataset.i));
 }
 $("clr").onclick=()=>{area="الكل";draw()};
@@ -369,7 +381,10 @@ function showDetail(j){
   const sec=(t,ks,pre)=>{const r=ks.filter(k=>j[k]);return (r.length||pre)?`<div class="sec"><h3>${t}</h3><div class="g2">${pre||""}${r.map(it).join("")}</div></div>`:""};
   // المرتب أول مربع جوه "الأساسيات"
   const pp=pays(j);
-  const payTile=`<div class="it pay2 full">${pp.length?pp.map(x=>`<div class="pt"><small>💰 ${esc(x[0])}</small><b>${esc(x[1])}</b></div>`).join(""):`<small>💰 المرتب</small><b>${esc(j["المرتب"]||"")}</b>`}${j["تفاصيل المرتب"]?`<span class="pm2">${esc(j["تفاصيل المرتب"])}</span>`:""}</div>`;
+  const cell=x=>x?esc(String(x).replace(/\s*في الشهر/,"")):"—";
+  const tbl=isMulti(j)?`<div class="it pay2 full"><table class="sht"><tr><th>⏰ الوردية</th><th>30 يوم</th><th>26 يوم + 4 إجازة</th></tr>${j.__sh.map(s=>`<tr><td>${esc(s.h)}</td><td>${cell(s.p30)}</td><td>${cell(s.p26)}</td></tr>`).join("")}</table></div>`:"";
+  const payTile0=`<div class="it pay2 full">${pp.length?pp.map(x=>`<div class="pt"><small>💰 ${esc(x[0])}</small><b>${esc(x[1])}</b></div>`).join(""):`<small>💰 المرتب</small><b>${esc(j["المرتب"]||"")}</b>`}${j["تفاصيل المرتب"]?`<span class="pm2">${esc(j["تفاصيل المرتب"])}</span>`:""}</div>`;
+  const payTile=isMulti(j)?tbl:payTile0;
   // <<< غيّر هنا: ترتيب الأقسام وأي خانة تتحط في أنهي قسم
   const groups=[["الأساسيات",["السن","الشفت","طبيعة العمل","المؤهل","الأجازة"],payTile],["المرتب والمميزات",["نظام القبض","السلف","التأمينات","وجبة"]],["السكن والمواصلات",["السكن","المواصلات"]]];
   const used=groups.flatMap(g=>g[1]);
