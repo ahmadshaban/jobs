@@ -342,14 +342,18 @@ function formHTML(j){return `<div class="ov" id="fo"><div class="sheet"><div cla
    <div class="fl">محتاج شغل بسكن؟<div class="yn" id="f_h"><button type="button" data-v="آه">آه</button><button type="button" data-v="لا">لا</button></div></div>
    <div class="er" id="e_h"></div></div>
    <div class="fgo"><button type="button" class="btn wa" id="fgo">دوس هنا وكمّل على الواتساب</button></div></div></div>`}
+let foOpen=false,foHide=null,ignoreFo=0;
+window.addEventListener("popstate",()=>{if(ignoreFo>0){ignoreFo--;return}if(foOpen){foOpen=false;if(foHide)foHide()}});
 function setupApply(j,ph){
   const fo=$("fo"),en=$("f_n"),ea=$("f_a"),ep=$("f_p"),eh=$("e_h");let hs="";
   const errs={f_n:$("e_n"),f_a:$("e_a"),f_p:$("e_p")};
   const clearErr=()=>{[en,ea,ep].forEach(x=>x.classList.remove("bad"));Object.values(errs).forEach(e=>e.textContent="");eh.textContent=""};
   [en,ea,ep].forEach(x=>x.addEventListener("input",()=>{x.classList.remove("bad");errs[x.id].textContent=""}));
   try{const s=JSON.parse(localStorage.getItem(SAVE_KEY)||"{}");en.value=s.n||"";ea.value=s.a||"";ep.value=s.p||""}catch(e){}
-  const close=()=>fo.classList.remove("show");
-  $("apply").onclick=()=>{clearErr();fo.classList.add("show");setTimeout(()=>{(en.value?ea:en).focus()},250)};
+  // زرار الرجوع: لو فورم التقديم مفتوح، الرجوع بيقفله بس ويفضل في صفحة المصنع
+  foOpen=false;foHide=()=>fo.classList.remove("show");
+  const close=()=>{foHide();if(foOpen){foOpen=false;ignoreFo++;history.back()}};
+  $("apply").onclick=()=>{clearErr();fo.classList.add("show");if(!foOpen){foOpen=true;history.pushState({fo:1},"",location.href)};setTimeout(()=>{(en.value?ea:en).focus()},250)};
   $("fx").onclick=close;fo.onclick=e=>{if(e.target===fo)close()};
   const yn=$("f_h").querySelectorAll("button");
   yn.forEach(b=>b.onclick=()=>{eh.textContent="";const was=b.classList.contains("on");yn.forEach(x=>x.classList.remove("on"));if(was){hs=""}else{b.classList.add("on");hs=b.dataset.v}});

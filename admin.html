@@ -85,11 +85,13 @@ header h1{margin:0;font-size:18px;color:#fff}
 .hd{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .mv{display:flex;gap:6px;flex:none}.mv .btn{padding:3px 11px;font-size:14px;line-height:1.3}.mv .btn:disabled{opacity:.3}
 .oldhint{color:#fff;opacity:.85;font-size:12px;font-weight:400}
-#salDlg{position:fixed;inset:0;background:rgba(0,20,50,.65);display:flex;align-items:center;justify-content:center;z-index:15;padding:16px}
-#salDlg .box{background:#0B2A4A;border:1px solid #3F7AB5;border-radius:16px;padding:16px;width:100%;max-width:340px;display:grid;gap:10px}
-#salDlg h3{margin:0;color:#FFE45C;font-size:16px}
+#salDlg,#colDlg{position:fixed;inset:0;background:rgba(0,20,50,.65);display:flex;align-items:center;justify-content:center;z-index:15;padding:16px}
+#salDlg .box,#colDlg .box{background:#0B2A4A;border:1px solid #3F7AB5;border-radius:16px;padding:16px;width:100%;max-width:340px;display:grid;gap:10px}
+#salDlg h3,#colDlg h3{margin:0;color:#FFE45C;font-size:16px}
 #salOld{font-size:13px;color:#fff;background:#1A4A7A;border-radius:8px;padding:6px 10px;cursor:pointer}
-#salDlg .row{display:flex;gap:8px}#salDlg .row .btn{flex:1}
+#salDlg .row,#colDlg .row{display:flex;gap:8px}#salDlg .row .btn,#colDlg .row .btn{flex:1}
+.clr{padding:2px 10px;font-size:12px;justify-self:start}
+#colDlg small{color:#fff;font-size:12px}
 #toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);padding:10px 18px;border-radius:12px;color:#fff;font-weight:700;z-index:20;max-width:90%;box-shadow:0 4px 18px rgba(0,0,0,.18)}
 #toast.ok{background:#16803d}
 #toast.bad{background:#B42318}
@@ -137,6 +139,7 @@ header h1{margin:0;font-size:18px;color:#fff}
       <button class="btn ghost" id="bSearch" aria-label="الفلتر" style="flex:0 0 auto">🔍</button>
       <button class="btn" id="bNew"></button>
       <button class="btn ghost" id="bCol"></button>
+      <button class="btn danger" id="bDelCol">مسح عمود</button>
       <button class="btn ghost" id="bRef"></button>
       <button class="btn danger" id="bOut"></button>
     </div>
@@ -153,6 +156,13 @@ header h1{margin:0;font-size:18px;color:#fff}
   <div id="salOld" class="hidden"></div>
   <input id="salIn" type="text" autocomplete="off" placeholder="اكتب الرقم بس">
   <div class="row"><button class="btn" id="salSave">حفظ</button><button class="btn ghost" id="salCancel">إلغاء</button></div>
+</div></div>
+<div id="colDlg" class="hidden"><div class="box">
+  <h3>مسح عمود من الشيت</h3>
+  <small>العمود هيتمسح من الشيت بكل بياناته ومش بيرجع. الأعمدة الأساسية مش بتظهر هنا.</small>
+  <select id="colSel"></select>
+  <input id="colIn" type="text" autocomplete="off" placeholder="اكتب اسم العمود للتأكيد">
+  <div class="row"><button class="btn danger" id="colGo" disabled>امسح العمود</button><button class="btn ghost" id="colCancel">إلغاء</button></div>
 </div></div>
 <div id="toast" class="hidden"></div>
 
@@ -433,20 +443,44 @@ function renderShEditor(){
   shState.forEach((s, k) => {
     const preset = SH_PRESETS.some(p => shNum(p) === shNum(s.h));
     h += '<div class="shb"><div class="shh">' + (preset ? '<b>' + esc(s.h) + '</b>' : '<input data-sh="h" data-k="' + k + '" placeholder="عدد الساعات (مثلًا 10 ساعة)" value="' + esc(s.h) + '">') +
-      (preset ? '' : '<button type="button" class="btn danger shx" data-k="' + k + '">مسح</button>') + '</div>' +
+      '<button type="button" class="btn danger shx" data-k="' + k + '">مسح</button></div>' +
       '<div class="shg"><label>نظام 30 يوم<input data-sh="p30" data-k="' + k + '" inputmode="numeric" placeholder="مثلًا 9000" value="' + esc(s.p30) + '"></label>' +
       '<label>نظام 26 يوم + 4 إجازة<input data-sh="p26" data-k="' + k + '" inputmode="numeric" placeholder="مثلًا 8000" value="' + esc(s.p26) + '"></label></div></div>';
   });
   box.innerHTML = h;
   box.querySelectorAll('.shp').forEach(b => b.onclick = () => {
     const p = b.dataset.p, i = shState.findIndex(s => shNum(s.h) === shNum(p));
-    if (i >= 0) shState.splice(i, 1); else { shState.push({h: p, p30: '', p26: ''}); shState.sort((x, y) => shNum(x.h) - shNum(y.h)); }
+    if (i >= 0){ const s0 = shState[i]; if ((s0.p30 || s0.p26) && !confirm('تمسح وردية ' + s0.h + ' ومرتباتها؟')) return; shState.splice(i, 1); } else { shState.push({h: p, p30: '', p26: ''}); shState.sort((x, y) => shNum(x.h) - shNum(y.h)); }
     renderShEditor();
   });
   $('shAdd').onclick = () => { shState.push({h: '', p30: '', p26: ''}); renderShEditor(); };
-  box.querySelectorAll('.shx').forEach(b => b.onclick = () => { shState.splice(+b.dataset.k, 1); renderShEditor(); });
+  box.querySelectorAll('.shx').forEach(b => b.onclick = () => { const s0 = shState[+b.dataset.k]; if (!confirm('تمسح وردية ' + (s0.h || 'الجديدة') + (s0.p30 || s0.p26 ? ' ومرتباتها' : '') + '؟')) return; shState.splice(+b.dataset.k, 1); renderShEditor(); });
   box.querySelectorAll('input[data-sh]').forEach(el => el.addEventListener('input', () => { shState[+el.dataset.k][el.dataset.sh] = el.value; }));
 }
+
+// ===== زرار الرجوع: كل نافذة صغيرة بتتسجل كطبقة، والرجوع بيقفل آخر طبقة بس =====
+const layers = [];
+let ignorePop = 0;
+function openLayer(el){
+  el.classList.remove('hidden');
+  history.pushState({adminLayer: true}, '', location.href);
+  layers.push(el);
+}
+function closeLayer(el){
+  if (layers[layers.length - 1] !== el) return;
+  layers.pop(); el.classList.add('hidden');
+  ignorePop++; history.back();
+}
+// مسح عمود: لازم تختار العمود وتكتب اسمه عشان زرار المسح يشتغل
+const PROTECTED_COLS = () => [COL.factory, COL.area, COL.gender, COL.visible, COL.status, COL.shifts, DATE_COL];   // <<< غيّر هنا: الأعمدة المحمية من المسح
+function openDelCol(){
+  const list = headers.filter(h => h && !PROTECTED_COLS().includes(h));
+  if (!list.length){ toast('مفيش أعمدة تتمسح (الباقي أساسي).', false); return; }
+  $('colSel').innerHTML = list.map(h => '<option value="' + esc(h) + '">' + esc(h) + '</option>').join('');
+  $('colIn').value = ''; $('colGo').disabled = true;
+  openLayer($('colDlg')); $('colIn').focus();
+}
+function colCheck(){ $('colGo').disabled = $('colIn').value.trim() !== $('colSel').value; }
 
 // ===== [6] عرض الكروت والبحث =====
 
@@ -532,10 +566,10 @@ function openSal(row, col){
   $('salOld').textContent = 'المرتب القديم: ' + old + '  (دوس هنا تستخدمه)';
   $('salOld').dataset.v = old;
   $('salIn').value = cur || (col === COL.salary30 ? legacy : '');
-  $('salDlg').classList.remove('hidden');
+  openLayer($('salDlg'));
   $('salIn').focus(); $('salIn').select();
 }
-function closeSal(){ $('salDlg').classList.add('hidden'); }
+function closeSal(){ closeLayer($('salDlg')); }
 async function saveSal(){
   const v = normSalary($('salIn').value, salCol);
   closeSal();
@@ -689,7 +723,8 @@ function openForm(r, asCopy){
       const was = src ? (String(src.values[i] ?? '').trim() || String(src.values[headers.indexOf(COL.salary)] ?? '').trim()) : '';
       if (was) hint = '<small class="oldhint">المرتب القديم: ' + esc(was) + '</small>';
     }
-    return '<label>' + esc(h) + input + hint + '</label>';
+    const clr = (h === COL.factory || h === COL.visible) ? '' : '<button type="button" class="btn danger clr" data-clr="' + i + '">مسح</button>';
+    return '<label>' + esc(h) + input + hint + clr + '</label>';
   }).join('');
   $('sheet').innerHTML = '<h3>' + esc(r ? T.formEdit : T.formNew) + '</h3>' + fields +
     '<div class="row"><button class="btn" id="fSave">' + esc(T.save) + '</button>' +
@@ -701,6 +736,14 @@ function openForm(r, asCopy){
   $('modal').classList.remove('hidden');
   renderShEditor();
   $('fCancel').onclick = closeForm;
+  // زرار مسح الخانة: بيفضّي القيمة بعد تأكيد (ومش بيتحفظ إلا لما تدوس حفظ)
+  $('sheet').querySelectorAll('.clr').forEach(b => b.onclick = e => {
+    e.preventDefault();
+    const idx = b.dataset.clr, el = $('sheet').querySelector('[data-i="' + idx + '"]'), cu = $('sheet').querySelector('[data-custom-i="' + idx + '"]');
+    if (!el || !(el.value && el.value !== '__custom__' || (cu && cu.value))) return;
+    if (!confirm('تمسح محتوى خانة "' + headers[+idx] + '"؟')) return;
+    el.value = ''; if (cu){ cu.value = ''; cu.classList.add('hidden'); }
+  });
   $('sheet').querySelectorAll('select[data-i]').forEach(el => {
     el.addEventListener('change', () => {
       const custom = $('sheet').querySelector('[data-custom-i="' + el.dataset.i + '"]');
@@ -796,7 +839,9 @@ function closeForm(forceOrFromPopState, fromPopState){
 }
 
 window.addEventListener('popstate', () => {
-  if (!$('modal').classList.contains('hidden')) closeForm(true, true);
+  if (ignorePop > 0){ ignorePop--; return; }                                   // رجوع عملناه إحنا بعد قفل نافذة
+  if (layers.length){ layers.pop().classList.add('hidden'); return; }       // الرجوع يقفل آخر نافذة صغيرة
+  if (!$('modal').classList.contains('hidden')) closeForm(true, true);       // وبعدها فورم المصنع
 });
 
 // ===== [9] خانة جديدة والتحديث والخروج =====
@@ -825,6 +870,17 @@ function init(){
   $('bCol').onclick = () => {
     const name = prompt(T.askCol);
     if (name !== null) run('addColumn', {name});
+  };
+  $('bDelCol').onclick = openDelCol;
+  $('colSel').onchange = colCheck; $('colIn').oninput = colCheck;
+  $('colCancel').onclick = () => closeLayer($('colDlg'));
+  $('colDlg').addEventListener('click', e => { if (e.target.id === 'colDlg') closeLayer($('colDlg')); });
+  $('colGo').onclick = async () => {
+    const name = $('colSel').value;
+    if ($('colIn').value.trim() !== name) return;
+    if (!confirm('آخر تأكيد: مسح عمود "' + name + '" نهائيًا؟')) return;
+    closeLayer($('colDlg'));
+    await run('deleteColumn', {name});
   };
   $('modal').addEventListener('click', e => { if (e.target.id === 'modal') closeForm(); });
 
