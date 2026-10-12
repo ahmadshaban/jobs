@@ -1,16 +1,40 @@
 <!DOCTYPE html>
+<!--
+  فهرس الأجزاء:
+  [1] الألوان والتصميم (CSS)
+  [2] هيكل الصفحة (HTML)
+  [3] الإعدادات والنصوص وأسماء الأعمدة (JS)
+  [4] الاتصال بالشيت
+  [5] شاشة الدخول
+  [6] عرض الكروت والبحث
+  [7] أزرار الكارت (تعديل / إخفاء / اكتمل / مسح)
+  [8] نموذج الإضافة والتعديل
+  [9] خانة جديدة والتحديث والخروج
+-->
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow, noarchive">
-<title>لوحة الوظايف والأدمن الشاملة</title>
+<title>لوحة الوظايف</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
+/* ===== [1] الألوان والتصميم: كحلي غامق مع كتابة بيضاء وصفراء (غيّر الألوان من هنا) ===== */
 :root{
-  --c-main:#0B2A4A;--c-main-dark:#08203A;--c-main-soft:#123A63;--c-bg:#0D2F52;--c-card:#0B2A4A;--c-text:#FFFFFF;--c-sub:#FFE45C;--c-border:#3F7AB5;--c-ok:#16803d;--c-bad:#ff7777;--c-warn:#FFE45C;--c-highlight:#FFE45C;
+  --c-main:#0B2A4A;
+  --c-main-dark:#08203A;
+  --c-main-soft:#123A63;
+  --c-bg:#0D2F52;
+  --c-card:#0B2A4A;
+  --c-text:#FFFFFF;
+  --c-sub:#FFE45C;
+  --c-border:#3F7AB5;
+  --c-ok:#16803d;
+  --c-bad:#ff7777;
+  --c-warn:#FFE45C;
+  --c-highlight:#FFE45C;
 }
 *{box-sizing:border-box}
 body{margin:0;font-family:'Cairo',sans-serif;background:linear-gradient(145deg,#071C33 0%,#0F3A66 55%,#0A2A4D 100%);color:#fff;font-size:15px}
@@ -47,254 +71,904 @@ header h1{margin:0;font-size:18px;color:#fff}
 .acts{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
 .acts .btn{padding:6px 2px;font-size:11.5px;line-height:1.3}
 .empty{text-align:center;color:#fff;padding:30px}
-#modal,#uiModal{position:fixed;inset:0;background:rgba(0,20,50,.65);display:flex;align-items:flex-end;justify-content:center;z-index:10}
-.sheet{background:#0B2A4A;color:#fff;width:100%;max-width:560px;max-height:90vh;overflow:auto;border:1px solid #3F7AB5;border-radius:18px 18px 0 0;padding:16px;display:grid;gap:10px}
+#title{color:#fff}
+#modal{position:fixed;inset:0;background:rgba(0,20,50,.65);display:flex;align-items:flex-end;justify-content:center;z-index:10}
+.sheet{background:#0B2A4A;color:#fff;width:100%;max-width:520px;max-height:90vh;overflow:auto;border:1px solid #3F7AB5;border-radius:18px 18px 0 0;padding:16px;display:grid;gap:10px}
 .sheet h3{margin:0;color:#FFE45C}
 .sheet label{font-size:13px;color:#FFE45C;display:grid;gap:4px}
 .sheet .row{display:flex;gap:8px}
 .sheet .row .btn{flex:1}
 .fab{position:fixed;bottom:20px;inset-inline-end:16px;z-index:6;width:56px;height:56px;border-radius:50%;border:0;background:#FFE45C;color:#0E3560;font-size:32px;font-weight:700;line-height:1;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+.fab:disabled{opacity:.5}
+.sheet .row{position:sticky;bottom:-1px;background:#0B2A4A;padding:10px 0 4px;box-shadow:0 -8px 10px -6px rgba(0,0,0,.45)}
+.meta span.sal{background:#FFE45C;color:#0E3560;font-weight:700;cursor:pointer}
+.meta span.sal.empty{background:transparent;color:#FFE45C;border:1px dashed #FFE45C;font-weight:400}
+.hd{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mv{display:flex;gap:6px;flex:none}.mv .btn{padding:2px 9px;font-size:13px;line-height:1.3}.mv .btn:disabled{opacity:.3}
+.oldhint{color:#fff;opacity:.85;font-size:12px;font-weight:400}
 #salDlg,#colDlg{position:fixed;inset:0;background:rgba(0,20,50,.65);display:flex;align-items:center;justify-content:center;z-index:15;padding:16px}
 #salDlg .box,#colDlg .box{background:#0B2A4A;border:1px solid #3F7AB5;border-radius:16px;padding:16px;width:100%;max-width:340px;display:grid;gap:10px}
-#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);padding:10px 18px;border-radius:12px;color:#fff;font-weight:700;z-index:20;max-width:90%}
-#toast.ok{background:#16803d}#toast.bad{background:#B42318}
-.toggle-row{display:flex;align-items:center;justify-content:space-between;background:#123A63;padding:8px 12px;border-radius:8px;margin-top:4px}
-.toggle-row label{color:#fff;font-size:13px}
+#salDlg h3,#colDlg h3{margin:0;color:#FFE45C;font-size:16px}
+#salOld{font-size:13px;color:#fff;background:#1A4A7A;border-radius:8px;padding:6px 10px;cursor:pointer}
+#salDlg .row,#colDlg .row{display:flex;gap:8px}#salDlg .row .btn,#colDlg .row .btn{flex:1}
+.clr{padding:2px 10px;font-size:12px;justify-self:start}
+#colDlg small{color:#fff;font-size:12px}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);padding:10px 18px;border-radius:12px;color:#fff;font-weight:700;z-index:20;max-width:90%;box-shadow:0 4px 18px rgba(0,0,0,.18)}
+#toast.ok{background:#16803d}
+#toast.bad{background:#B42318}
+/* ===== محرر الورديات (غيّر الألوان من هنا) ===== */
+.shed{display:grid;gap:8px}.shl{font-size:13px;color:#FFE45C}
+.shp-row{display:flex;flex-wrap:wrap;gap:6px}.shp.on{background:#FFE45C;color:#0E3560;font-weight:700}
+.shb{background:#0B2A4A;border:1px solid #3F7AB5;border-radius:12px;padding:10px;display:grid;gap:8px}
+.shh{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#FFE45C}.shh input{flex:1}
+.shg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 </style>
 </head>
 <body>
 
+<!-- ===== [2] هيكل الصفحة ===== -->
 <div id="login">
   <div class="login-box">
-    <h1 id="loginTitle">دخول الأدمن</h1>
-    <input id="pw" type="password" autocomplete="current-password" placeholder="كلمة السر">
+    <h1 id="loginTitle"></h1>
+    <input id="pw" type="password" autocomplete="current-password">
     <div class="err" id="loginErr"></div>
-    <button class="btn" id="loginBtn">دخول</button>
+    <button class="btn" id="loginBtn"></button>
   </div>
 </div>
 
 <div id="app" class="hidden">
   <header>
-    <h1 id="title">الوظايف</h1>
+    <h1 id="title"></h1>
+    <!-- <<< غيّر هنا: كل الفلاتر (المكان، الفئة، البحث) جوه الصندوق ده، وأيقونة 🔍 بتظهره وتخفيه -->
     <div id="filters" style="display:grid;gap:10px">
-      <div style="display:flex;gap:8px">
-        <select id="areaFilter"><option value="">اختار المكان أولًا</option></select>
-        <select id="genderFilter">
-          <option value="">الكل</option>
-          <option value="m">شباب</option>
-          <option value="f">بنات</option>
-          <option value="b">شباب وبنات</option>
-        </select>
-      </div>
-      <input id="q" type="search" placeholder="دوّر باسم المصنع...">
+    <div style="display:flex;gap:8px">
+      <select id="areaFilter" aria-label="اختيار المكان" required>
+        <option value="">اختار المكان أولًا</option>
+      </select>
+      <!-- <<< غيّر هنا: فلتر الفئة (شباب / بنات / شباب وبنات) -->
+      <select id="genderFilter" aria-label="اختيار الفئة">
+        <option value="">الكل</option>
+        <option value="m">شباب</option>
+        <option value="f">بنات</option>
+        <option value="b">شباب وبنات</option>
+      </select>
+    </div>
+    <!-- <<< غيّر هنا: خانة البحث باسم المصنع -->
+    <input id="q" type="search" placeholder="دوّر باسم المصنع..." aria-label="بحث باسم المصنع">
     </div>
     <div class="bar">
-      <button class="btn ghost" id="bSearch" style="flex:0 0 auto">🔍</button>
-      <button class="btn" id="bNew">وظيفة جديدة</button>
-      <button class="btn ghost" id="bUICustom">🎨 تخصيص الواجهة والتصميم</button>
-      <button class="btn ghost" id="bCol">خانة جديدة</button>
+      <button class="btn ghost" id="bSearch" aria-label="الفلتر" style="flex:0 0 auto">🔍</button>
+      <button class="btn" id="bNew"></button>
+      <button class="btn ghost" id="bCol"></button>
       <button class="btn danger" id="bDelCol">مسح عمود</button>
-      <button class="btn ghost" id="bRef">تحديث</button>
-      <button class="btn danger" id="bOut">خروج</button>
+      <button class="btn ghost" id="bRef"></button>
+      <button class="btn danger" id="bOut"></button>
     </div>
     <div id="stats" class="stats"></div>
   </header>
-
   <div id="list"></div>
-  <button class="fab" id="fab">+</button>
+  <!-- <<< غيّر هنا: زرار + العايم لإضافة مصنع جديد -->
+  <button class="fab" id="fab" aria-label="وظيفة جديدة">+</button>
 </div>
 
-<!-- Modal الوظيفة -->
 <div id="modal" class="hidden"><div class="sheet" id="sheet"></div></div>
-
-<!-- Modal تخصيص الواجهة والتصميم -->
-<div id="uiModal" class="hidden">
-  <div class="sheet">
-    <h3>🎨 تخصيص صفحة الـ Index والتصميم</h3>
-    <p style="font-size:12px;color:#CFE3F7;margin:0">عدّل أي حاجة في تصميم وصفحة العرض وسيتم حفظها مباشرة في السيرفر!</p>
-    
-    <label>العنوان الرئيسي في الأعلى
-      <input id="ui_header_title" type="text" placeholder="عمال تعبئة وتغليف وفرز">
-    </label>
-
-    <label>الجملة الترويجية (تحت العنوان)
-      <input id="ui_header_sub" type="text" placeholder="قدّم من الموبايل في دقايق...">
-    </label>
-
-    <label>نص زرار الواتساب العايم
-      <input id="ui_wa_btn_text" type="text" placeholder="💬 اسأل على واتساب">
-    </label>
-
-    <label>رقم الواتساب (بالصيغة الدولية)
-      <input id="ui_whatsapp_phone" type="text" placeholder="201095237207">
-    </label>
-
-    <label>نص سطر الثقة
-      <input id="ui_trust_text" type="text" placeholder="✅ التقديم من غير أي رسوم مقدما">
-    </label>
-
-    <h4 style="color:#FFE45C;margin:10px 0 0">إخفاء وإظهار العناصر:</h4>
-    <div class="toggle-row"><label>إظهار سطر الثقة وزر الواتساب العلوي</label><input type="checkbox" id="ui_show_trust"></div>
-    <div class="toggle-row"><label>إظهار الفلتر العلوي (شريط الفئات)</label><input type="checkbox" id="ui_show_bar"></div>
-    <div class="toggle-row"><label>إظهار فلتر المناطق</label><input type="checkbox" id="ui_show_area_filter"></div>
-    <div class="toggle-row"><label>إظهار شارة "جديد"</label><input type="checkbox" id="ui_show_new_badge"></div>
-    <div class="toggle-row"><label>إظهار شارة "الأكثر تقديمًا"</label><input type="checkbox" id="ui_show_urgent_badge"></div>
-    <div class="toggle-row"><label>إظهار شارات السكن والمواصلات</label><input type="checkbox" id="ui_show_tags"></div>
-    <div class="toggle-row"><label>إظهار ملاحظات المرتب</label><input type="checkbox" id="ui_show_notes"></div>
-
-    <h4 style="color:#FFE45C;margin:10px 0 0">أحجام الخطوط والأزرار:</h4>
-    <label>حجم خط العنوان الرئيسي (مثال: 1.4rem)
-      <input id="ui_title_font_size" type="text" placeholder="1.4rem">
-    </label>
-    <label>حجم خط عنوان المصنع داخل الكارت (مثال: 1.1rem)
-      <input id="ui_card_title_size" type="text" placeholder="1.1rem">
-    </label>
-    <label>حجم خط المرتب (مثال: 1.25rem)
-      <input id="ui_card_pay_size" type="text" placeholder="1.25rem">
-    </label>
-    <label>حجم الهامش الداخلي للأزرار Padding (مثال: .32rem .65rem)
-      <input id="ui_btn_padding" type="text" placeholder=".32rem .65rem">
-    </label>
-    <label>استدوار حواف الأزرار Border Radius (مثال: .62rem)
-      <input id="ui_btn_radius" type="text" placeholder=".62rem">
-    </label>
-
-    <div class="row" style="margin-top:10px">
-      <button class="btn" id="saveUIBtn">حفظ إعدادات الواجهة</button>
-      <button class="btn ghost" id="cancelUIBtn">إلغاء</button>
-    </div>
-  </div>
-</div>
-
-<div id="salDlg" class="hidden"><div class="box"><h3 id="salT"></h3><input id="salIn" type="text"><div class="row"><button class="btn" id="salSave">حفظ</button><button class="btn ghost" id="salCancel">إلغاء</button></div></div></div>
-<div id="colDlg" class="hidden"><div class="box"><h3>مسح عمود</h3><select id="colSel"></select><input id="colIn" type="text"><div class="row"><button class="btn danger" id="colGo" disabled>امسح</button><button class="btn ghost" id="colCancel">إلغاء</button></div></div></div>
+<!-- <<< غيّر هنا: نافذة تعديل المرتب السريع (بتفتح جوه الصفحة، مش رسالة المتصفح) -->
+<div id="salDlg" class="hidden"><div class="box">
+  <h3 id="salT"></h3>
+  <div id="salOld" class="hidden"></div>
+  <input id="salIn" type="text" autocomplete="off" placeholder="اكتب الرقم بس">
+  <div class="row"><button class="btn" id="salSave">حفظ</button><button class="btn ghost" id="salCancel">إلغاء</button></div>
+</div></div>
+<div id="colDlg" class="hidden"><div class="box">
+  <h3>مسح عمود من الشيت</h3>
+  <small>العمود هيتمسح من الشيت بكل بياناته ومش بيرجع. الأعمدة الأساسية مش بتظهر هنا.</small>
+  <select id="colSel"></select>
+  <input id="colIn" type="text" autocomplete="off" placeholder="اكتب اسم العمود للتأكيد">
+  <div class="row"><button class="btn danger" id="colGo" disabled>امسح العمود</button><button class="btn ghost" id="colCancel">إلغاء</button></div>
+</div></div>
 <div id="toast" class="hidden"></div>
 
 <script>
-const API = 'https://script.google.com/macros/s/AKfycbxv8BwNWdKhlsZPpsSeJDbyuWEX7FXMU53522d3iNbhPG_15KAsqJKfEng4DGDWTunPHA/exec';
+// ===== [3] الإعدادات والنصوص وأسماء الأعمدة (غيّر من هنا) =====
+const API = 'https://script.google.com/macros/s/AKfycbzwMRST469OBo-ym0Ccn-Ot84jGrL0KEM9SZcnfe-tip2U6-1gyryjnYxdNNsiwbLEyng/exec'; // <<< غيّر هنا: رابط الـ Web app بعد النشر
 
 const COL = {
-  factory: 'المصنع', area: 'المنطقة', gender: 'الفئة', mod: 'آخر تعديل', order: 'الترتيب',
-  pin: 'تثبيت', shifts: 'الورديات', shift: 'الشفت', salary: 'المرتب', salary30: 'مرتب 30 يوم',
-  salary26: 'مرتب 26 يوم', visible: 'ظاهر؟', status: 'الحالة'
+  factory: 'المصنع',   // <<< غيّر هنا: اسم عمود المصنع
+  area:    'المنطقة',  // <<< غيّر هنا: اسم عمود المنطقة
+  gender:  'الفئة',    // <<< غيّر هنا: اسم عمود الفئة
+  mod:     'آخر تعديل', // <<< غيّر هنا: اسم عمود آخر تعديل (الأدمن بيكتبه لوحده)
+  order:   'الترتيب',  // <<< غيّر هنا: اسم عمود الترتيب اليدوي (رقم، الأدمن بيكتبه لوحده)
+  pin:     'تثبيت',    // <<< غيّر هنا: اسم عمود التثبيت (قيمته نعم = مثبّت فوق في الموقع)
+  shifts:  'الورديات', // <<< غيّر هنا: اسم عمود الورديات (كل وردية في سطر)
+  shift:   'الشفت',    // <<< غيّر هنا: اسم عمود الشفت
+  salary:  'المرتب',   // <<< غيّر هنا: اسم عمود المرتب
+  salary30: 'مرتب 30 يوم', // <<< غيّر هنا: اسم عمود مرتب 30 يوم عمل
+  salary26: 'مرتب 26 يوم', // <<< غيّر هنا: اسم عمود مرتب 26 يوم عمل
+  visible: 'ظاهر؟',    // <<< غيّر هنا: اسم عمود الظهور
+  status:  'الحالة'    // <<< غيّر هنا: اسم عمود الحالة
 };
 
-const AUTH_KEY = 'first_service_admin_pw';
-function savedPassword(){ return localStorage.getItem(AUTH_KEY) || ''; }
+const SAL_SUFFIX30 = ' ج في الشهر'; // <<< غيّر هنا: الكلمة اللي بتتضاف تلقائي لو كتبت رقم بس في خانة 30 يوم
+const SAL_SUFFIX26 = ' ج';          // <<< غيّر هنا: الكلمة اللي بتتضاف تلقائي لو كتبت رقم بس في خانة 26 يوم
+const DATE_COL = 'تاريخ الإضافة'; // <<< غيّر هنا: اسم عمود تاريخ الإضافة
+const todayStr = () => new Date().toISOString().slice(0, 10);
+const nowStr = () => { const d = new Date(), p = n => String(n).padStart(2, '0'); return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds()); };
+// نفس رقم الشير اللي في الموقع (?j=) عشان زرار "عرض" يفتح المصنع بالظبط
+const siteId = n => { let h = 5381; for (const c of String(n)) h = ((h << 5) + h + c.charCodeAt(0)) >>> 0; return h.toString(36); };
+// رقم بس؟ بنكمّله (8000 ← 8000 ج في الشهر). بيفهم الأرقام العربي والفاصلة
+function normSalary(x, col){
+  let t = String(x).trim().replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+  if (/^[\d.,]+$/.test(t)) t = t.replace(/,/g, '') + (col === COL.salary26 ? SAL_SUFFIX26 : SAL_SUFFIX30);
+  return t;
+}
 
+const T = {
+  loginTitle: 'دخول الأدمن',            // <<< غيّر هنا: عنوان شاشة الدخول
+  pwHint: 'كلمة السر',                  // <<< غيّر هنا: نص خانة كلمة السر
+  login: 'دخول',                        // <<< غيّر هنا: زرار الدخول
+  wrongPw: 'كلمة السر غلط',             // <<< غيّر هنا: رسالة كلمة السر الغلط
+  noApi: 'حط رابط الـ Web app في ثابت API الأول', // <<< غيّر هنا: رسالة نسيان الرابط
+  title: 'الوظايف',                     // <<< غيّر هنا: عنوان الصفحة
+  newJob: 'وظيفة جديدة',                // <<< غيّر هنا: زرار وظيفة جديدة
+  newCol: 'خانة جديدة',                 // <<< غيّر هنا: زرار خانة جديدة
+  refresh: 'تحديث',                     // <<< غيّر هنا: زرار التحديث
+  logout: 'خروج',                       // <<< غيّر هنا: زرار الخروج
+  copy: 'نسخ',                           // <<< غيّر هنا: زرار نسخ المصنع
+  edit: 'تعديل',                        // <<< غيّر هنا: زرار التعديل
+  hide: 'إخفاء',                        // <<< غيّر هنا: زرار الإخفاء
+  show: 'إظهار',                        // <<< غيّر هنا: زرار الإظهار
+  complete: 'اكتمل',                    // <<< غيّر هنا: زرار اكتمل
+  reopen: 'إعادة فتح',                  // <<< غيّر هنا: زرار إعادة الفتح
+  del: 'مسح',                           // <<< غيّر هنا: زرار المسح
+  doneBadge: 'مكتمل',                   // <<< غيّر هنا: شارة الكارت المكتمل
+  hiddenBadge: 'مخفي',                  // <<< غيّر هنا: كلمة مخفي
+  doneValue: 'مكتمل',                   // <<< غيّر هنا: القيمة اللي بتتكتب في عمود الحالة
+  urgent: 'الأكثر تقديمًا',               // <<< غيّر هنا: زرار الأكثر تقديمًا
+  unurgent: '🔥 إلغاء',                   // <<< غيّر هنا: زرار إلغاء الأكثر تقديمًا
+  urgentBadge: '🔥 الأكثر تقديمًا',        // <<< غيّر هنا: شارة الكارت
+  urgentValue: 'الأكثر تقديمًا',          // <<< غيّر هنا: القيمة اللي بتتكتب في عمود الحالة (الموقع بيفهمها وبيفهم "عاجل" القديمة كمان)
+  yes: 'نعم',                           // <<< غيّر هنا: قيمة نعم
+  no: 'لا',                             // <<< غيّر هنا: قيمة لا
+  save: 'حفظ',                          // <<< غيّر هنا: زرار الحفظ
+  cancel: 'إلغاء',                      // <<< غيّر هنا: زرار الإلغاء
+  formNew: 'وظيفة جديدة',               // <<< غيّر هنا: عنوان نموذج الإضافة
+  formEdit: 'تعديل الوظيفة',            // <<< غيّر هنا: عنوان نموذج التعديل
+  askDel: 'متأكد إنك عايز تمسح الوظيفة دي؟', // <<< غيّر هنا: سؤال تأكيد المسح
+  askCol: 'اسم الخانة الجديدة؟',        // <<< غيّر هنا: سؤال اسم الخانة
+  empty: 'مفيش وظايف',                  // <<< غيّر هنا: رسالة لما القايمة فاضية
+  okMsg: 'تمت العملية بنجاح',           // <<< غيّر هنا: رسالة النجاح
+  errMsg: 'حصل خطأ: ',                  // <<< غيّر هنا: بداية رسالة الخطأ
+  netErr: 'مفيش اتصال بالسيرفر'         // <<< غيّر هنا: رسالة قطع الاتصال
+};
+
+let headers = [], rows = [];
+let modalHistoryOpen = false;
+let requestBusy = false;
+let formInitialSnapshot = '';
+let bypassDirtyWarning = false;
 const $ = id => document.getElementById(id);
 
+// جلسة دخول على نفس الجهاز لمدة 30 دقيقة من آخر نشاط
+const AUTH_KEY = 'first_service_admin_pw';
+const ACTIVITY_KEY = 'first_service_admin_last_activity';
+const SESSION_IDLE_MS = 30 * 60 * 1000;
+let sessionCheckTimer = null;
+function savedPassword(){ return localStorage.getItem(AUTH_KEY) || ''; }
+function touchSession(){
+  if (savedPassword()) localStorage.setItem(ACTIVITY_KEY, String(Date.now()));
+}
+function clearLogin(){
+  localStorage.removeItem(AUTH_KEY);
+  localStorage.removeItem(ACTIVITY_KEY);
+  if (sessionCheckTimer) { clearInterval(sessionCheckTimer); sessionCheckTimer = null; }
+}
+function sessionIsValid(){
+  const pw = savedPassword();
+  const last = Number(localStorage.getItem(ACTIVITY_KEY) || 0);
+  return !!pw && !!last && (Date.now() - last < SESSION_IDLE_MS);
+}
+function expireLogin(){
+  clearLogin();
+  $('app').classList.add('hidden');
+  $('login').classList.remove('hidden');
+  $('pw').value = '';
+  $('loginErr').textContent = 'انتهت جلسة الدخول، اكتب كلمة السر مرة أخرى';
+}
+function startSessionChecks(){
+  if (sessionCheckTimer) clearInterval(sessionCheckTimer);
+  sessionCheckTimer = setInterval(() => {
+    if (savedPassword() && !sessionIsValid()) expireLogin();
+  }, 15000);
+}
+// تحديث وقت النشاط عند التفاعل مع اللوحة، مع فحص انتهاء الجلسة عند الرجوع للصفحة
+['click','keydown','input','touchstart','scroll'].forEach(type => {
+  document.addEventListener(type, () => { if (sessionIsValid()) touchSession(); }, {passive:true});
+});
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && savedPassword()) {
+    if (sessionIsValid()) touchSession(); else expireLogin();
+  }
+});
+window.addEventListener('focus', () => {
+  if (savedPassword()) { if (sessionIsValid()) touchSession(); else expireLogin(); }
+});
+
+// بتهرب أي نص قبل ما يتحط في HTML
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"'`]/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c]));
+}
+
+// بتظهر رسالة صغيرة تقول نجحت ولا فيه خطأ
+let toastTimer;
+function toast(msg, ok){
+  const t = $('toast');
+  t.textContent = msg; t.className = ok ? 'ok' : 'bad';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className = 'hidden', 2800);
+}
+
+// ===== [4] الاتصال بالشيت =====
+
+// بتبعت الطلب للـ Web app وبترجع الرد
 async function api(action, extra){
+  if (API.indexOf('PASTE_') === 0) return {ok:false, error:T.noApi};
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 20000);
   try{
     const r = await fetch(API, {
       method:'POST',
       headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body:JSON.stringify(Object.assign({password:savedPassword(), action}, extra||{}))
+      body:JSON.stringify(Object.assign({password:savedPassword(), action}, extra||{})),
+      signal:controller.signal
     });
-    return await r.json();
+    if (!r.ok) return {ok:false, error:'السيرفر رجّع خطأ (' + r.status + ')'};
+    try {
+      return await r.json();
+    } catch(parseError) {
+      return {ok:false, error:'وصل رد غير مفهوم من السيرفر. جرّب التحديث بعد التأكد من الاتصال.'};
+    }
   }catch(e){
-    return {ok:false, error:'حدث خطأ في الاتصال بالسيرفر'};
+    if (e && e.name === 'AbortError') {
+      return {ok:false, error:'الاتصال اتأخر أكثر من 20 ثانية. لم نعدّل الصفحة تلقائيًا؛ افحص الاتصال ثم جرّب مرة أخرى.'};
+    }
+    return {ok:false, error:T.netErr + ' — جرّب مرة أخرى بعد لحظات'};
+  }finally{
+    clearTimeout(timeoutId);
   }
 }
 
-let headers = [], rows = [];
-
+// بتحمل العناوين والصفوف من الشيت وتعرضهم
 async function load(){
   const r = await api('list');
-  if (!r.ok){ alert('خطأ في التحميل: ' + r.error); return; }
+  if (!r.ok){ toast(T.errMsg + r.error, false); return false; }
   headers = r.headers; rows = r.rows; render();
+  return true;
 }
 
+// تعطيل الأزرار أثناء الطلب وإرجاعها بعد النجاح أو الخطأ
+function setBusyUI(busy){
+  document.querySelectorAll('#app button, #sheet button').forEach(btn => {
+    if (btn.id === 'fCancel') return;
+    if (busy) { btn.dataset.wasDisabled = btn.disabled ? '1' : '0'; btn.disabled = true; }
+    else { btn.disabled = btn.dataset.wasDisabled === '1'; delete btn.dataset.wasDisabled; }
+  });
+}
+
+// بتنفذ أمر وتظهر النتيجة وتحدّث القايمة
+async function run(action, extra){
+  if (requestBusy) {
+    toast('فيه طلب شغال بالفعل، استنى لحد ما يخلص.', false);
+    return false;
+  }
+  requestBusy = true;
+  setBusyUI(true);
+  try{
+    if ((action === 'update' || action === 'add') && extra && extra.data && headers.includes(COL.mod) && !(COL.mod in extra.data)) extra.data[COL.mod] = nowStr();   // آخر تعديل
+    const r = await api(action, extra);
+    if (!r.ok){ toast(T.errMsg + r.error, false); return false; }
+    toast(T.okMsg, true);
+    const refreshed = await load();
+    if (!refreshed) toast('تم إرسال العملية، لكن تعذر تحديث القائمة. اضغط تحديث بعد التأكد من الاتصال.', false);
+    return true;
+  }catch(e){
+    toast('حصل خطأ غير متوقع. جرّب مرة أخرى.', false);
+    return false;
+  }finally{
+    requestBusy = false;
+    setBusyUI(false);
+  }
+}
+
+// بتضيف عمودين المرتب (30 يوم / 26 يوم) في الشيت أوتوماتيك لو مش موجودين
+async function ensureSalaryCols(){
+  try{
+    let changed = false;
+    for (const name of [COL.salary30, COL.salary26, COL.shifts, COL.order, COL.mod]){
+      if (!headers.includes(name)){ const a = await api('addColumn', {name}); if (a.ok) changed = true; }
+    }
+    if (changed){ const r2 = await api('list'); if (r2.ok){ headers = r2.headers; rows = r2.rows; } }
+  }catch(e){}
+}
+
+// ===== [5] شاشة الدخول =====
+
+// بتجرب كلمة السر بنداء list وتفتح اللوحة لو صح
+async function login(pw){
+  const previousPw = savedPassword();
+  if (!pw) { $('loginErr').textContent = T.pwHint; return; }
+  localStorage.setItem(AUTH_KEY, pw);
+  localStorage.setItem(ACTIVITY_KEY, String(Date.now()));
+  $('loginBtn').disabled = true;
+  const r = await api('list');
+  $('loginBtn').disabled = false;
+  if (!r.ok){
+    // لا نمسح بيانات الجلسة بسبب انقطاع الإنترنت؛ نمسحها فقط عند رفض كلمة السر صراحةً
+    if (String(r.error || '').trim() === 'كلمة السر غلط') clearLogin();
+    else if (!previousPw) clearLogin();
+    $('loginErr').textContent = (r.error === 'كلمة السر غلط') ? T.wrongPw : r.error;
+    return;
+  }
+  localStorage.setItem(AUTH_KEY, pw);
+  touchSession();
+  startSessionChecks();
+  headers = r.headers; rows = r.rows;
+  await ensureSalaryCols();
+  $('loginErr').textContent = '';
+  $('login').classList.add('hidden'); $('app').classList.remove('hidden');
+  render();
+}
+
+
+// ===== الورديات: قراءة وكتابة خانة "الورديات" (كل سطر = وردية: 12 ساعة | 30 يوم: 9000 | 26 يوم: 8000) =====
+const SH_PRESETS = ['8 ساعات', '12 ساعة', '16 ساعة'];   // <<< غيّر هنا: الورديات الجاهزة
+let shState = [];
+function shNum(s){ const m = String(s || '').replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).match(/\d+/); return m ? +m[0] : 0; }
+function parseShifts(txt){
+  return String(txt || '').split(/\n/).map(l => l.trim()).filter(Boolean).map(l => {
+    const p = l.split('|').map(x => x.trim()), s = {h: p[0] || '', p30: '', p26: ''};
+    p.slice(1).forEach(x => { const m = x.match(/^(30|26)\s*يوم\s*:\s*(.*)$/); if (m) s['p' + m[1]] = m[2].trim(); });
+    return s;
+  }).filter(s => s.h || s.p30 || s.p26);
+}
+function shLabel(raw){ const n = shNum(raw); return n ? (n === 8 ? '8 ساعات' : n + ' ساعة') : String(raw || '').trim(); }
+function serializeShifts(){
+  const clean = v => String(v || '').replace(/[|\n]/g, ' ').trim();
+  return shState.filter(s => clean(s.h)).map(s => {
+    const parts = [clean(s.h)];
+    const p30 = clean(s.p30) ? normSalary(clean(s.p30), COL.salary30) : '';
+    const p26 = clean(s.p26) ? normSalary(clean(s.p26), COL.salary26) : '';
+    if (p30) parts.push('30 يوم: ' + p30);
+    if (p26) parts.push('26 يوم: ' + p26);
+    return parts.join(' | ');
+  }).join('\n');
+}
+// بترسم محرر الورديات جوه الفورم: أزرار 8/12/16 وتحت كل وردية مختارة خانتين المرتب
+function renderShEditor(){
+  const box = $('shBox'); if (!box) return;
+  const isOn = p => shState.some(s => shNum(s.h) === shNum(p));
+  let h = '<div class="shp-row">' + SH_PRESETS.map(p => '<button type="button" class="btn ghost shp' + (isOn(p) ? ' on' : '') + '" data-p="' + esc(p) + '">' + esc(p) + '</button>').join('') +
+    '<button type="button" class="btn ghost" id="shAdd">+ وردية تانية</button></div>';
+  shState.forEach((s, k) => {
+    const preset = SH_PRESETS.some(p => shNum(p) === shNum(s.h));
+    h += '<div class="shb"><div class="shh">' + (preset ? '<b>' + esc(s.h) + '</b>' : '<input data-sh="h" data-k="' + k + '" placeholder="عدد الساعات (مثلًا 10 ساعة)" value="' + esc(s.h) + '">') +
+      '<button type="button" class="btn danger shx" data-k="' + k + '">مسح</button></div>' +
+      '<div class="shg"><label>نظام 30 يوم<input data-sh="p30" data-k="' + k + '" inputmode="numeric" placeholder="مثلًا 9000" value="' + esc(s.p30) + '"></label>' +
+      '<label>نظام 26 يوم + 4 إجازة<input data-sh="p26" data-k="' + k + '" inputmode="numeric" placeholder="مثلًا 8000" value="' + esc(s.p26) + '"></label></div></div>';
+  });
+  box.innerHTML = h;
+  saveDraft();
+  box.querySelectorAll('.shp').forEach(b => b.onclick = () => {
+    const p = b.dataset.p, i = shState.findIndex(s => shNum(s.h) === shNum(p));
+    if (i >= 0){ const s0 = shState[i]; if ((s0.p30 || s0.p26) && !confirm('تمسح وردية ' + s0.h + ' ومرتباتها؟')) return; shState.splice(i, 1); } else { shState.push({h: p, p30: '', p26: ''}); shState.sort((x, y) => shNum(x.h) - shNum(y.h)); }
+    renderShEditor();
+  });
+  $('shAdd').onclick = () => { shState.push({h: '', p30: '', p26: ''}); renderShEditor(); };
+  box.querySelectorAll('.shx').forEach(b => b.onclick = () => { const s0 = shState[+b.dataset.k]; if (!confirm('تمسح وردية ' + (s0.h || 'الجديدة') + (s0.p30 || s0.p26 ? ' ومرتباتها' : '') + '؟')) return; shState.splice(+b.dataset.k, 1); renderShEditor(); });
+  box.querySelectorAll('input[data-sh]').forEach(el => el.addEventListener('input', () => { shState[+el.dataset.k][el.dataset.sh] = el.value; }));
+}
+
+// ===== زرار الرجوع: كل نافذة صغيرة بتتسجل كطبقة، والرجوع بيقفل آخر طبقة بس =====
+const layers = [];
+let ignorePop = 0;
+function openLayer(el){
+  el.classList.remove('hidden');
+  history.pushState({adminLayer: true}, '', location.href);
+  layers.push(el);
+}
+function closeLayer(el){
+  if (layers[layers.length - 1] !== el) return;
+  layers.pop(); el.classList.add('hidden');
+  ignorePop++; history.back();
+}
+// مسح عمود: لازم تختار العمود وتكتب اسمه عشان زرار المسح يشتغل
+const PROTECTED_COLS = () => [COL.factory, COL.area, COL.gender, COL.visible, COL.status, COL.shifts, DATE_COL];   // <<< غيّر هنا: الأعمدة المحمية من المسح
+function openDelCol(){
+  const list = headers.filter(h => h && !PROTECTED_COLS().includes(h));
+  if (!list.length){ toast('مفيش أعمدة تتمسح (الباقي أساسي).', false); return; }
+  $('colSel').innerHTML = list.map(h => '<option value="' + esc(h) + '">' + esc(h) + '</option>').join('');
+  $('colIn').value = ''; $('colGo').disabled = true;
+  openLayer($('colDlg')); $('colIn').focus();
+}
+function colCheck(){ $('colGo').disabled = $('colIn').value.trim() !== $('colSel').value; }
+
+// ===== [6] عرض الكروت والبحث =====
+
+// بترجع قيمة عمود معين من صف
+function val(r, col){ const i = headers.indexOf(col); return i < 0 ? '' : (r.values[i] || ''); }
+
+// الحالة "الأكثر تقديمًا" (وبتفهم "عاجل" القديمة كمان) والتثبيت
+const isUrgVal = v => String(v || '').trim() === T.urgentValue || String(v || '').trim() === 'عاجل';
+// الترتيب اليدوي: رقم في عمود "الترتيب" (أو تثبيت = نعم القديمة بتتعامل كرقم 0)
+const manualOf = r => { const n = parseFloat(val(r, COL.order)); if (!isNaN(n)) return n; return val(r, COL.pin).trim() === 'نعم' ? 0 : null; };
+const isPinned = r => manualOf(r) !== null;
+// أعلى مرتب للمصنع (نفس حساب الموقع) عشان ترتيب الأدمن يطابق ترتيب الموقع
+function payScoreRow(r){
+  const c = [val(r, COL.salary30), val(r, COL.salary26), val(r, COL.salary), ...parseShifts(val(r, COL.shifts)).flatMap(s => [s.p30, s.p26])];
+  let m = 0; c.forEach(x => { let n = shNum(x); if (n && /اليوم|يومي|يومية/.test(String(x))) n *= 26; if (n > m) m = n; }); return m;
+}
+const rankOf = r => val(r, COL.status).trim() === T.doneValue ? 2 : (isPinned(r) ? 0 : 1);
+const siteOrder = (x, y) => rankOf(x) - rankOf(y) || (rankOf(x) === 0 ? manualOf(x) - manualOf(y) : (rankOf(x) === 1 ? payScoreRow(y) - payScoreRow(x) : 0));
+
+// بترسم كارت وظيفة واحدة
+function cardHTML(r, i, arr){
+  const n = arr ? arr.length : 0;   // i = ترتيب الكارت في القايمة (للأسهم ▲ ▼)
+  const hid = val(r, COL.visible).trim() === T.no;
+  const done = val(r, COL.status).trim() === T.doneValue;
+  const urg = isUrgVal(val(r, COL.status));
+  const pin = isPinned(r);
+  const hasNew = val(r, COL.salary30) || val(r, COL.salary26);
+  // خانات عادية (المنطقة، الفئة، الشفت، والمرتب القديم لو المصنع لسه ما اتعدّلش)
+  const shl = parseShifts(val(r, COL.shifts));
+  const plain = [COL.area, COL.gender, ...(shl.length ? [] : [COL.shift]), ...(hasNew || shl.length ? [] : [COL.salary])]
+    .map(c => val(r, c)).filter(Boolean).map(v => '<span>' + esc(v) + '</span>').join('');
+  // خانتين المرتب: دوس على أي واحدة تعدّلها من مكانها (الفاضية بتظهر بـ +)
+  const salChip = (c, lbl) => '<span class="sal' + (val(r, c) ? '' : ' empty') + '" data-sal="' + esc(c) + '" data-row="' + r.row + '">' +
+    (val(r, c) ? esc(lbl + ': ' + val(r, c)) : '+ ' + esc(lbl)) + '</span>';
+  const shChips = shl.map(s => '<span class="sal">' + esc(s.h + (s.p30 ? ' · 30: ' + s.p30.replace(/\s*في الشهر/, '') : '') + (s.p26 ? ' · 26: ' + s.p26.replace(/\s*في الشهر/, '') : '')) + '</span>').join('');
+  const meta = plain + (shl.length ? shChips : salChip(COL.salary30, '30 يوم') + salChip(COL.salary26, '26 يوم'));
+  const mv = '<div class="mv"><button class="btn ghost" data-act="up" data-row="' + r.row + '" aria-label="فوق"' + (i === 0 ? ' disabled' : '') + '>▲</button>' +
+    '<button class="btn ghost" data-act="down" data-row="' + r.row + '" aria-label="تحت"' + (i >= n - 1 ? ' disabled' : '') + '>▼</button></div>';
+  return '<div class="card' + (hid ? ' dim' : '') + '">' +
+    '<div class="hd"><h2>' + esc(val(r, COL.factory)) +
+      (done ? '<span class="badge done">' + esc(T.doneBadge) + '</span>' : '') +
+      (pin ? '<span class="badge pin">📌 مثبّت</span>' : '') +
+      (urg ? '<span class="badge urg">' + esc(T.urgentBadge) + '</span>' : '') +
+      (hid ? '<span class="badge hid">' + esc(T.hiddenBadge) + '</span>' : '') + '</h2>' + mv + '</div>' +
+    '<div class="meta">' + meta + '</div>' +
+    '<div class="acts">' +
+      '<button class="btn ghost" data-act="edit" data-row="' + r.row + '">✏️ ' + esc(T.edit) + '</button>' +
+      '<button class="btn ghost" data-act="copy" data-row="' + r.row + '">' + esc(T.copy) + '</button>' +
+      '<button class="btn ghost" data-act="vis" data-row="' + r.row + '">' + esc(hid ? T.show : T.hide) + '</button>' +
+      '<button class="btn ghost" data-act="done" data-row="' + r.row + '">' + esc(done ? T.reopen : T.complete) + '</button>' +
+      '<button class="btn ghost" data-act="urg" data-row="' + r.row + '">' + esc(urg ? T.unurgent : T.urgent) + '</button>' +
+      '<button class="btn ghost" data-act="pin" data-row="' + r.row + '">' + (pin ? 'إلغاء التثبيت' : '📌 تثبيت') + '</button>' +
+      '<button class="btn ghost" data-act="view" data-row="' + r.row + '">👁️ عرض</button>' +
+      '<button class="btn danger" data-act="del" data-row="' + r.row + '">🗑️ ' + esc(T.del) + '</button>' +
+    '</div></div>';
+}
+
+// قائمة الأماكن تُبنى من البيانات الفعلية في الشيت
+function updateAreaFilter(){
+  const filter = $('areaFilter');
+  const selected = filter.value;
+  const areas = [...new Set(rows.map(r => val(r, COL.area).trim()).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b, 'ar'));
+  filter.innerHTML = '<option value="">اختار المكان أولًا</option>' +
+    areas.map(area => '<option value="' + esc(area) + '">' + esc(area) + '</option>').join('');
+  if (areas.includes(selected)) filter.value = selected;
+}
+
+// لا تظهر المصانع قبل اختيار مكان
 function render(){
+  updateAreaFilter();
+  { const hidN = rows.filter(r => val(r, COL.visible).trim() === T.no).length, doneN = rows.filter(r => val(r, COL.status).trim() === T.doneValue).length, pinN = rows.filter(isPinned).length;
+    $('stats').textContent = (rows.length - hidN - doneN) + ' ظاهر · ' + hidN + ' مخفي · ' + doneN + ' مكتمل' + (pinN ? ' · ' + pinN + ' مثبّت' : ''); }
   const area = $('areaFilter').value;
+  const g = $('genderFilter').value;
+  // بيحدد الفئة: m = شباب بس، f = بنات بس، b = شباب وبنات مع بعض
+  const kindOf = r => { const t = val(r, COL.gender); const m = /شباب/.test(t), f = /بنات/.test(t); return (m && f) ? 'b' : m ? 'm' : f ? 'f' : ''; };
   const q = $('q').value.trim().toLocaleLowerCase('ar');
-  
-  const list = (area || q) ? rows.filter(r => {
-    const factory = (r.values[headers.indexOf(COL.factory)] || '').toLocaleLowerCase('ar');
-    const areaVal = r.values[headers.indexOf(COL.area)] || '';
-    return (!area || areaVal === area) && (!q || factory.includes(q));
-  }) : [];
-
-  $('list').innerHTML = list.length ? list.map(r => {
-    const f = r.values[headers.indexOf(COL.factory)] || '';
-    return `<div class="card"><h2>${f}</h2></div>`;
-  }).join('') : '<div class="empty">اختار مكان أو ابحث لمشاهدة الوظائف</div>';
+  // نقطة جنب الأيقونة لو فيه فلتر شغال والفلاتر مخفية
+  $('bSearch').textContent = '🔍' + ((area || g || q) && $('filters').classList.contains('hidden') ? ' ●' : '');
+  const list = (area || q) ? rows.filter(r => (!area || val(r, COL.area).trim() === area) &&
+    (!q || val(r, COL.factory).toLocaleLowerCase('ar').includes(q)) && (!g || kindOf(r) === g)) : [];
+  list.sort(siteOrder);   // نفس ترتيب الموقع بالظبط: اليدوي فوق، وبعده الأعلى مرتب، والمكتمل تحت
+  shownList = list;
+  $('title').textContent = T.title + ((area || q) ? ' (' + list.length + ')' : '');
+  $('list').innerHTML = (area || q)
+    ? (list.length ? list.map(cardHTML).join('') : '<div class="empty">' + esc(T.empty) + '</div>')
+    : '<div class="empty">اختار المكان من القائمة، أو اكتب اسم المصنع في البحث.</div>';
 }
 
-// فتح نافذة تخصيص الواجهة وجلب القيم الحالية من السيرفر
-$('bUICustom').onclick = async () => {
-  const res = await api('getSettings');
-  if (res && res.ok && res.settings) {
-    const s = res.settings;
-    $('ui_header_title').value = s.header_title || '';
-    $('ui_header_sub').value = s.header_sub || '';
-    $('ui_wa_btn_text').value = s.wa_btn_text || '';
-    $('ui_whatsapp_phone').value = s.whatsapp_phone || '';
-    $('ui_trust_text').value = s.trust_text || '';
-    $('ui_show_trust').checked = s.show_trust === 'true' || s.show_trust === true;
-    $('ui_show_bar').checked = s.show_bar === 'true' || s.show_bar === true;
-    $('ui_show_area_filter').checked = s.show_area_filter === 'true' || s.show_area_filter === true;
-    $('ui_show_new_badge').checked = s.show_new_badge === 'true' || s.show_new_badge === true;
-    $('ui_show_urgent_badge').checked = s.show_urgent_badge === 'true' || s.show_urgent_badge === true;
-    $('ui_show_tags').checked = s.show_tags === 'true' || s.show_tags === true;
-    $('ui_show_notes').checked = s.show_notes === 'true' || s.show_notes === true;
-    $('ui_title_font_size').value = s.title_font_size || '';
-    $('ui_card_title_size').value = s.card_title_size || '';
-    $('ui_card_pay_size').value = s.card_pay_size || '';
-    $('ui_btn_padding').value = s.btn_padding || '';
-    $('ui_btn_radius').value = s.btn_radius || '';
+// نافذة تعديل المرتب السريع: بتعرض المرتب القديم، ودوس عليه ينزل في الخانة
+let shownList = [];
+let salRow = 0, salCol = '';
+function openSal(row, col){
+  const rr = rows.find(x => x.row === row);
+  if (!rr) return;
+  salRow = row; salCol = col;
+  const legacy = String(val(rr, COL.salary) || '').trim();
+  const cur = String(val(rr, col) || '').trim();
+  const old = cur || legacy;
+  $('salT').textContent = col + ' — ' + val(rr, COL.factory);
+  $('salOld').classList.toggle('hidden', !old);
+  $('salOld').textContent = 'المرتب القديم: ' + old + '  (دوس هنا تستخدمه)';
+  $('salOld').dataset.v = old;
+  $('salIn').value = cur || (col === COL.salary30 ? legacy : '');
+  openLayer($('salDlg'));
+  $('salIn').focus(); $('salIn').select();
+}
+function closeSal(){ closeLayer($('salDlg')); }
+async function saveSal(){
+  const v = normSalary($('salIn').value, salCol);
+  closeSal();
+  await run('update', {row: salRow, data: {[salCol]: v}});
+}
+$('salSave').onclick = saveSal;
+$('salCancel').onclick = closeSal;
+$('salOld').onclick = () => { $('salIn').value = $('salOld').dataset.v || ''; $('salIn').focus(); };
+$('salIn').addEventListener('keydown', e => { if (e.key === 'Enter') saveSal(); if (e.key === 'Escape') closeSal(); });
+$('salDlg').addEventListener('click', e => { if (e.target.id === 'salDlg') closeSal(); });
+
+// ترتيب المصانع: ▲ ▼ بيبدّل مكان المصنع مع اللي فوقه أو تحته في القايمة (بيبدّل بياناتهم في الشيت)
+function rowData(r){ const d = {}; headers.forEach((h, i) => { if (h) d[h] = String(r.values[i] ?? ''); }); return d; }
+async function moveRow(r, dir){
+  if (requestBusy) { toast('فيه طلب شغال بالفعل، استنى لحد ما يخلص.', false); return; }
+  const L = shownList.slice();
+  const k = L.findIndex(x => x.row === r.row), k2 = k + dir;
+  if (k < 0 || k2 < 0 || k2 >= L.length) return;
+  [L[k], L[k2]] = [L[k2], L[k]];
+  // بنرقّم كل اللي فوق (من أول القايمة لحد مكان الحركة، وكل اليدوي) بالترتيب الجديد، والباقي يفضل بالمرتب
+  let last = Math.max(k, k2);
+  L.forEach((x, i) => { if (isPinned(x) && i > last) last = i; });
+  const changes = [];
+  for (let i = 0; i <= last; i++){
+    const want = String(i + 1);
+    if (val(L[i], COL.order).trim() !== want) changes.push([L[i].row, want]);
   }
-  $('uiModal').classList.remove('hidden');
-};
+  requestBusy = true; setBusyUI(true);
+  try {
+    for (const [row, want] of changes){
+      const a = await api('update', {row, data: {[COL.order]: want}});
+      if (!a.ok) { toast(T.errMsg + a.error + ' (اضغط تحديث وراجع الترتيب)', false); return; }
+    }
+    toast(T.okMsg, true);
+  } catch (e) {
+    toast('حصل خطأ غير متوقع. اضغط تحديث وراجع الترتيب.', false);
+  } finally {
+    requestBusy = false; setBusyUI(false);
+    await load();
+  }
+}
 
-$('cancelUIBtn').onclick = () => $('uiModal').classList.add('hidden');
+// ===== [7] أزرار الكارت =====
 
-// حفظ الإعدادات وإرسالها الفعلي للسيرفر
-$('saveUIBtn').onclick = async () => {
-  const settingsData = {
-    header_title: $('ui_header_title').value,
-    header_sub: $('ui_header_sub').value,
-    wa_btn_text: $('ui_wa_btn_text').value,
-    whatsapp_phone: $('ui_whatsapp_phone').value,
-    trust_text: $('ui_trust_text').value,
-    show_trust: $('ui_show_trust').checked,
-    show_bar: $('ui_show_bar').checked,
-    show_area_filter: $('ui_show_area_filter').checked,
-    show_new_badge: $('ui_show_new_badge').checked,
-    show_urgent_badge: $('ui_show_urgent_badge').checked,
-    show_tags: $('ui_show_tags').checked,
-    show_notes: $('ui_show_notes').checked,
-    title_font_size: $('ui_title_font_size').value,
-    card_title_size: $('ui_card_title_size').value,
-    card_pay_size: $('ui_card_pay_size').value,
-    btn_padding: $('ui_btn_padding').value,
-    btn_radius: $('ui_btn_radius').value
+// بتتعامل مع ضغطة أي زرار جوه الكارت
+$('list').addEventListener('click', async e => {
+  const sal = e.target.closest('[data-sal]');
+  if (sal) return openSal(Number(sal.dataset.row), sal.dataset.sal);
+  const b = e.target.closest('button[data-act]');
+  if (!b) return;
+  const row = Number(b.dataset.row);
+  const r = rows.find(x => x.row === row);
+  if (!r) return;
+  const act = b.dataset.act;
+  if (act === 'up') return moveRow(r, -1);
+  if (act === 'down') return moveRow(r, 1);
+  if (act === 'edit') return openForm(r);
+  if (act === 'copy') return openForm(r, true);
+  if (act === 'view') return window.open(new URL('index.html', location.href).href + '?j=' + siteId(val(r, COL.factory)), '_blank');   // بيفتح صفحة المصنع زي ما بتظهر للمتقدمين
+  if (act === 'vis'){
+    const hid = val(r, COL.visible).trim() === T.no;
+    if (!hid && !confirm('تخفي "' + val(r, COL.factory) + '" عن المتقدمين؟')) return;
+    return run('update', {row, data:{[COL.visible]: hid ? T.yes : T.no}});
+  }
+  if (act === 'done'){
+    const done = val(r, COL.status).trim() === T.doneValue;
+    if (!done && !confirm('تعلّم "' + val(r, COL.factory) + '" مكتمل؟')) return;
+    return run('update', {row, data:{[COL.status]: done ? '' : T.doneValue}});
+  }
+  if (act === 'urg'){
+    const urg = isUrgVal(val(r, COL.status));
+    return run('update', {row, data:{[COL.status]: urg ? '' : T.urgentValue}});
+  }
+  if (act === 'pin'){
+    const nums = rows.filter(isPinned).map(manualOf);
+    return run('update', {row, data: isPinned(r) ? {[COL.order]: '', [COL.pin]: ''} : {[COL.order]: String(Math.max(0, ...nums) + 1)}});   // تثبيت جديد بينزل آخر المثبّتين، وبالأسهم تغيّر مكانه
+  }
+  if (act === 'del'){
+    if (confirm(T.askDel)) run('delete', {row});
+  }
+});
+
+// ===== [8] نموذج الإضافة والتعديل =====
+
+// بتبني النموذج من عناوين الأعمدة وتفتحه (r فاضي = وظيفة جديدة)
+// اختيارات متكررة مجمعة من البيانات الحالية والمرجع السابق؛ المرتب واسم المصنع يظلان كتابة يدوية
+function presetOptions(header){
+  // الاختيارات من القيم المسجلة فعلًا في الشيت، بعد إزالة الفراغات والتكرار.
+  return [...new Set(rows.map(row => String(val(row, header) ?? '').trim()).filter(Boolean))];
+}
+
+function currentFormSnapshot(){
+  return JSON.stringify([...$('sheet').querySelectorAll('[data-i]')].map(el => {
+    const index = el.dataset.i;
+    const custom = $('sheet').querySelector('[data-custom-i="' + index + '"]');
+    return [index, el.value, custom ? custom.value : ''];
+  }).concat([JSON.stringify(shState)]));
+}
+function formHasUnsavedChanges(){
+  return !!formInitialSnapshot && currentFormSnapshot() !== formInitialSnapshot;
+}
+// بترتّب الخانات: خانتين المرتب بعد الشفت على طول (أو بعد اسم المصنع)
+function formOrder(){
+  const a = headers.indexOf(COL.salary30), b = headers.indexOf(COL.salary26);
+  const sIdx = headers.indexOf(COL.shifts);
+  const rest = headers.map((_, i) => i).filter(i => i !== a && i !== b && i !== sIdx);
+  let at = headers.indexOf(COL.shift); if (at < 0) at = headers.indexOf(COL.factory);
+  const pos = at < 0 ? rest.length : rest.indexOf(at) + 1;
+  rest.splice(pos, 0, ...[sIdx, a, b].filter(i => i >= 0));
+  return rest;
+}
+// asCopy=true: بيفتح فورم مصنع جديد ببيانات مصنع موجود (اسم المصنع بيتفضّى)
+let draftKeyNow = 'gp_draft:new';
+function saveDraft(){
+  try{
+    if (!formInitialSnapshot) return;
+    const s = currentFormSnapshot();
+    if (s === formInitialSnapshot) localStorage.removeItem(draftKeyNow);
+    else localStorage.setItem(draftKeyNow, JSON.stringify({s, t: Date.now()}));
+  }catch(e){}
+}
+function clearDraft(){ try{ localStorage.removeItem(draftKeyNow); }catch(e){} }
+function applyDraft(s){
+  const arr = JSON.parse(s), last = arr.pop();
+  arr.forEach(([i, v, c]) => {
+    const el = $('sheet').querySelector('[data-i="' + i + '"]'), cu = $('sheet').querySelector('[data-custom-i="' + i + '"]');
+    if (el) el.value = v;
+    if (el && el.value !== v && cu){ el.value = '__custom__'; cu.classList.remove('hidden'); }   // قيمة جديدة كانت مكتوبة
+    if (cu) cu.value = c;
+  });
+  try{ shState = JSON.parse(last); }catch(e){}
+  renderShEditor();
+}
+function openForm(r, asCopy){
+  draftKeyNow = 'gp_draft:' + (asCopy ? 'copy' : (r ? 'r' + r.row : 'new'));
+  const src = r; if (asCopy) r = null;
+  // تجهيز الورديات: من الخانة الجديدة، وإلا من الخانات القديمة (الشفت + مرتب 30 + مرتب 26) عشان ما يضيعوش
+  shState = src ? parseShifts(String(src.values[headers.indexOf(COL.shifts)] ?? '')) : [];
+  if (src && !shState.length){
+    const oh = String(src.values[headers.indexOf(COL.shift)] ?? '').trim();
+    const o30 = String(src.values[headers.indexOf(COL.salary30)] ?? '').trim() || String(src.values[headers.indexOf(COL.salary)] ?? '').trim();
+    const o26 = String(src.values[headers.indexOf(COL.salary26)] ?? '').trim();
+    if (oh || o30 || o26) shState = [{h: oh ? shLabel(oh) : '', p30: o30, p26: o26}];
+  }
+  const fields = formOrder().map(i => { const h = headers[i];
+    if (!h) return '';
+    if (h === COL.pin || h === COL.mod || h === COL.order) return '';   // التثبيت بزرار 📌 على الكارت
+    if (h === COL.shifts) return '<div class="shed"><div class="shl">⏰ الورديات (اختار الوردية وحط مرتب النظامين)</div><div id="shBox"></div></div>';
+    if (headers.includes(COL.shifts) && (h === COL.shift || h === COL.salary30 || h === COL.salary26)) return '';   // اتحلوا محل الورديات
+    if (h === COL.salary) return '';   // <<< غيّر هنا: خانة المرتب القديمة مخفية (استبدلناها بـ 30 يوم و 26 يوم)
+    // تنظيف المسافات الزائدة حتى تتطابق القيمة المحفوظة مع خيار القائمة.
+    let v = src ? String(src.values[i] ?? '').trim() : (h === COL.visible ? T.yes : '');
+    if (asCopy && h === COL.factory) v = '';      // المصنع الجديد لازم له اسم جديد
+    if (asCopy && h === COL.status) v = '';       // النسخة الجديدة مش مكتملة ولا عاجلة
+    if (!r && h === DATE_COL) v = todayStr();     // تاريخ الإضافة أوتوماتيك للمصنع الجديد
+    // لو المصنع قديم وخانة 30 يوم فاضية، ننقل المرتب القديم فيها عشان ما يضيعش
+    if (src && h === COL.salary30 && !v) v = String(src.values[headers.indexOf(COL.salary)] ?? '').trim();
+    let input;
+    if (h === COL.visible){
+      input = '<select data-i="' + i + '">' +
+        [T.yes, T.no].map(o => '<option value="' + esc(o) + '"' + (o === v ? ' selected' : '') + '>' + esc(o) + '</option>').join('') + '</select>';
+    } else if (h === COL.status){
+      input = '<select data-i="' + i + '"><option value=""' + (v === '' ? ' selected' : '') + '></option>' +
+        '<option value="' + esc(T.doneValue) + '"' + (v === T.doneValue ? ' selected' : '') + '>' + esc(T.doneValue) + '</option>' +
+        '<option value="' + esc(T.urgentValue) + '"' + (isUrgVal(v) ? ' selected' : '') + '>' + esc(T.urgentValue) + '</option></select>';
+    } else if (!/(المصنع|اسم المصنع|factory)/i.test(h) && !/(المرتب|الراتب|مرتب|راتب|salary)/i.test(h)) {
+      const known = presetOptions(h);
+      // نضمن إدراج القيمة الحالية كما هي بعد تنظيفها، حتى لو لم تعد موجودة في بقية الصفوف.
+      const opts = [...new Set([...known, ...(v ? [v] : [])].filter(Boolean))];
+      if (opts.length) {
+        input = '<select data-i="' + i + '">' +
+          '<option value=""' + (v === '' ? ' selected' : '') + '>— اختر —</option>' +
+          opts.map(o => '<option value="' + esc(o) + '"' + (o === v ? ' selected' : '') + '>' + esc(o) + '</option>').join('') +
+          '<option value="__custom__">إدخال قيمة جديدة...</option></select>' +
+          '<input class="custom-field hidden" data-custom-i="' + i + '" placeholder="اكتب قيمة جديدة" value="">';
+      } else {
+        input = '<input data-i="' + i + '" value="' + esc(v) + '">';
+      }
+    } else {
+      input = '<input data-i="' + i + '" value="' + esc(v) + '">';
+    }
+    // تحت خانتين المرتب: القديم كان كام (بيفضل ظاهر وانت بتعدّل)
+    let hint = '';
+    if (h === COL.salary30 || h === COL.salary26) {
+      const was = src ? (String(src.values[i] ?? '').trim() || String(src.values[headers.indexOf(COL.salary)] ?? '').trim()) : '';
+      if (was) hint = '<small class="oldhint">المرتب القديم: ' + esc(was) + '</small>';
+    }
+    const clr = (h === COL.factory || h === COL.visible) ? '' : '<button type="button" class="btn danger clr" data-clr="' + i + '">مسح</button>';
+    return '<label>' + esc(h) + input + hint + clr + '</label>';
+  }).join('');
+  $('sheet').innerHTML = '<h3>' + esc(r ? T.formEdit : T.formNew) + '</h3>' + fields +
+    '<div class="row"><button class="btn" id="fSave">' + esc(T.save) + '</button>' +
+    '<button class="btn ghost" id="fCancel">' + esc(T.cancel) + '</button></div>';
+  if ($('modal').classList.contains('hidden')) {
+    history.pushState({adminModal: true}, '', location.href);
+    modalHistoryOpen = true;
+  }
+  $('modal').classList.remove('hidden');
+  renderShEditor();
+  $('fCancel').onclick = closeForm;
+  // زرار مسح الخانة: بيفضّي القيمة بعد تأكيد (ومش بيتحفظ إلا لما تدوس حفظ)
+  $('sheet').querySelectorAll('.clr').forEach(b => b.onclick = e => {
+    e.preventDefault();
+    const idx = b.dataset.clr, el = $('sheet').querySelector('[data-i="' + idx + '"]'), cu = $('sheet').querySelector('[data-custom-i="' + idx + '"]');
+    if (!el || !(el.value && el.value !== '__custom__' || (cu && cu.value))) return;
+    if (!confirm('تمسح محتوى خانة "' + headers[+idx] + '"؟')) return;
+    el.value = ''; if (cu){ cu.value = ''; cu.classList.add('hidden'); }
+  });
+  $('sheet').querySelectorAll('select[data-i]').forEach(el => {
+    el.addEventListener('change', () => {
+      const custom = $('sheet').querySelector('[data-custom-i="' + el.dataset.i + '"]');
+      if (custom) {
+        custom.classList.toggle('hidden', el.value !== '__custom__');
+        if (el.value === '__custom__') custom.focus();
+      }
+    });
+  });
+  formInitialSnapshot = currentFormSnapshot();
+  // مسودة محفوظة من آخر مرة (لو الفورم اتقفلت بالغلط)
+  try{
+    const raw = localStorage.getItem(draftKeyNow);
+    if (raw){
+      const d = JSON.parse(raw);
+      if (d.s && d.s !== formInitialSnapshot && confirm('فيه مسودة محفوظة من آخر مرة. تكمل منها؟')) applyDraft(d.s);
+      else clearDraft();
+    }
+  }catch(e){}
+  $('sheet').oninput = $('sheet').onchange = saveDraft;
+  $('fSave').onclick = async () => {
+    const data = {};
+    $('sheet').querySelectorAll('[data-i]').forEach(el => {
+      const index = Number(el.dataset.i);
+      const custom = $('sheet').querySelector('[data-custom-i="' + index + '"]');
+      data[headers[index]] = (el.value === '__custom__' && custom) ? custom.value.trim() : el.value;
+    });
+    if ([...$('sheet').querySelectorAll('select[data-i]')].some(el => el.value === '__custom__' && !$('sheet').querySelector('[data-custom-i="' + el.dataset.i + '"]').value.trim())) {
+      toast('اكتب القيمة الجديدة أو اختار قيمة من القائمة.', false);
+      return;
+    }
+    // رقم بس في خانة المرتب؟ بنكمّلها أوتوماتيك (8000 ← 8000 ج في الشهر)
+    [COL.salary30, COL.salary26].forEach(c => {
+      if (!(c in data)) return;
+      data[c] = normSalary(data[c], c);
+    });
+    // الورديات: بنجمّعهم في الخانة (كل وردية في سطر)
+    if (headers.includes(COL.shifts)){
+      data[COL.shifts] = serializeShifts();
+      if (!data[COL.shifts] && !confirm('مفيش ورديات ولا مرتبات. تحفظ كده؟')) return;
+    }
+    // تاريخ الإضافة أوتوماتيك للمصنع الجديد لو فاضي
+    if (!r && DATE_COL in data && !String(data[DATE_COL]).trim()) data[DATE_COL] = todayStr();
+    // فحص قبل الحفظ
+    if (headers.includes(COL.factory) && !String(data[COL.factory] || '').trim()) {
+      toast('اكتب اسم المصنع الأول.', false);
+      return;
+    }
+    if (!(COL.shifts in data) && (COL.salary30 in data || COL.salary26 in data) && !String(data[COL.salary30] || '').trim() && !String(data[COL.salary26] || '').trim()) {
+      if (!confirm('خانتين المرتب فاضيين (30 يوم و 26 يوم). تحفظ كده؟')) return;
+    }
+    if (!r) {
+      const factoryHeader = headers.find(h => /(المصنع|اسم المصنع|factory)/i.test(h));
+      const areaHeader = headers.find(h => /(المنطقة|المكان|area|location)/i.test(h));
+      const factoryName = factoryHeader ? String(data[factoryHeader] || '').trim().toLocaleLowerCase('ar') : '';
+      const areaName = areaHeader ? String(data[areaHeader] || '').trim().toLocaleLowerCase('ar') : '';
+      if (factoryName) {
+        const duplicate = rows.find(row => {
+          const existingName = String(val(row, factoryHeader) || '').trim().toLocaleLowerCase('ar');
+          const existingArea = areaHeader ? String(val(row, areaHeader) || '').trim().toLocaleLowerCase('ar') : '';
+          return existingName === factoryName && (!areaHeader || existingArea === areaName);
+        });
+        if (duplicate && !confirm('تنبيه: يوجد مصنع بنفس الاسم' + (areaName ? ' في نفس المنطقة' : '') + '. هل تريد الإضافة رغم ذلك؟')) return;
+      }
+    }
+    $('fSave').disabled = true;
+    $('fSave').textContent = 'جارٍ الحفظ...';
+    const ok = r ? await run('update', {row:r.row, data}) : await run('add', {data});
+    if (ok) closeForm(true);
+    else {
+      $('fSave').disabled = false;
+      $('fSave').textContent = T.save;
+    }
   };
-
-  const res = await api('saveSettings', { settings: settingsData });
-  
-  if (res && res.ok) {
-    alert('تم حفظ إعدادات الواجهة وتفعيلها في الشيت بنجاح! ستظهر التعديلات فوراً في صفحة الـ Index.');
-    $('uiModal').classList.add('hidden');
-    location.reload();
-  } else {
-    alert('حدث خطأ أثناء الحفظ: ' + (res ? res.error : 'خطأ غير معروف'));
-  }
-};
-
-$('loginBtn').onclick = () => {
-  localStorage.setItem(AUTH_KEY, $('pw').value);
-  $('login').classList.add('hidden');
-  $('app').classList.remove('hidden');
-  load();
-};
-
-// الدخول التلقائي لو الباسوورد متخزن وصحيح
-if (savedPassword()) {
-  $('login').classList.add('hidden');
-  $('app').classList.remove('hidden');
-  load();
 }
+
+// بتقفل النموذج، وزر رجوع الموبايل يقفل النموذج بدل الخروج من الأدمين
+function closeForm(forceOrFromPopState, fromPopState){
+  // forceOrFromPopState=true يسمح بالإغلاق بعد نجاح الحفظ؛ القيمة الثانية خاصة بزر الرجوع.
+  const force = forceOrFromPopState === true && fromPopState !== true;
+  const isPop = forceOrFromPopState === true && fromPopState === true;
+  const wasOpen = !$('modal').classList.contains('hidden');
+  if (!wasOpen) return;
+  if (!force && !bypassDirtyWarning && formHasUnsavedChanges()) {
+    const leave = confirm('فيه تعديلات لسه ما اتحفظتش. هل تريد الخروج من غير حفظ؟');
+    if (!leave) {
+      if (isPop) {
+        history.pushState({adminModal: true}, '', location.href);
+        modalHistoryOpen = true;
+      }
+      return;
+    }
+  }
+  clearDraft();   // اتحفظ أو اتقرر الخروج من غير حفظ
+  $('modal').classList.add('hidden');
+  $('sheet').innerHTML = '';
+  formInitialSnapshot = '';
+  if (wasOpen && modalHistoryOpen && !isPop && !force) {
+    modalHistoryOpen = false;
+    history.back();
+  } else if (isPop || force) {
+    modalHistoryOpen = false;
+  }
+}
+
+window.addEventListener('popstate', () => {
+  if (ignorePop > 0){ ignorePop--; return; }                                   // رجوع عملناه إحنا بعد قفل نافذة
+  if (layers.length){ layers.pop().classList.add('hidden'); return; }       // الرجوع يقفل آخر نافذة صغيرة
+  if (!$('modal').classList.contains('hidden')) closeForm(true, true);       // وبعدها فورم المصنع
+});
+
+// ===== [9] خانة جديدة والتحديث والخروج =====
+
+// بتربط الزراير والبحث ودخول الإنتر
+function init(){
+  $('loginTitle').textContent = T.loginTitle;
+  $('pw').placeholder = T.pwHint;
+  $('loginBtn').textContent = T.login;
+  $('bNew').textContent = T.newJob;
+  $('bCol').textContent = T.newCol;
+  $('bRef').textContent = T.refresh;
+  $('bOut').textContent = T.logout;
+
+  $('loginBtn').onclick = () => { $('loginErr').textContent = ''; login($('pw').value); };
+  $('pw').addEventListener('keydown', e => { if (e.key === 'Enter') $('loginBtn').click(); });
+  $('areaFilter').addEventListener('change', render);
+  $('genderFilter').addEventListener('change', render);
+  $('q').addEventListener('input', render);
+  // أيقونة 🔍: بتظهر وتخفي كل الفلاتر (المكان + الفئة + البحث). الفلتر المختار بيفضل شغال وهو مخفي
+  $('bSearch').onclick = () => { $('filters').classList.toggle('hidden'); render(); };
+  $('fab').onclick = () => $('bNew').click();
+  $('bNew').onclick = () => openForm(null);
+  $('bRef').onclick = load;
+  $('bOut').onclick = () => { clearLogin(); location.reload(); };
+  $('bCol').onclick = () => {
+    const name = prompt(T.askCol);
+    if (name !== null) run('addColumn', {name});
+  };
+  $('bDelCol').onclick = openDelCol;
+  $('colSel').onchange = colCheck; $('colIn').oninput = colCheck;
+  $('colCancel').onclick = () => closeLayer($('colDlg'));
+  $('colDlg').addEventListener('click', e => { if (e.target.id === 'colDlg') closeLayer($('colDlg')); });
+  $('colGo').onclick = async () => {
+    const name = $('colSel').value;
+    if ($('colIn').value.trim() !== name) return;
+    if (!confirm('آخر تأكيد: مسح عمود "' + name + '" نهائيًا؟')) return;
+    closeLayer($('colDlg'));
+    await run('deleteColumn', {name});
+  };
+  $('modal').addEventListener('click', e => { if (e.target.id === 'modal') closeForm(); });
+
+  const saved = savedPassword();
+  if (saved && sessionIsValid()) {
+    touchSession();
+    startSessionChecks();
+    login(saved);
+  } else {
+    clearLogin();
+  }
+}
+init();
 </script>
 </body>
 </html>
