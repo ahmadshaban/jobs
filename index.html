@@ -162,6 +162,17 @@ header h1{color:#FFFFFF;font-size:1.4rem}header .lead,header .sub{color:var(--mu
 .demo{background:#172645;color:var(--tx);border-color:var(--bd)}.empty{color:#B8C6E3}.retry{background:var(--gold);color:var(--goldD)}
 .note{color:var(--mu)}.fgo{background:var(--bg)}
 
+/* ===== الكارت من بره: مضغوط (غيّر المقاسات من هنا) ===== */
+.card .pbox{background:var(--gold);color:var(--goldD);border-radius:.7rem;padding:.3rem .4rem .35rem;margin:.3rem 0;text-align:center}
+.card .pcells{display:flex;gap:.4rem;justify-content:center}
+.card .pc{flex:1;min-width:0}.card .pc+.pc{border-inline-start:1px dashed rgba(42,29,0,.35);padding-inline-start:.4rem}
+.card .pc b{display:block;font-size:clamp(1.02rem,4.3vw,1.2rem);font-weight:800;line-height:1.3;color:var(--goldD)}
+.card .pbox .tag{font-size:.68rem;padding:.04rem .5rem;margin:0 0 .15rem}
+.card .pay{font-size:clamp(1.05rem,4.5vw,1.25rem);padding:.3rem .6rem;margin:.3rem 0}
+.card .pay small{font-size:.7rem;margin-bottom:.1rem}
+.card .more{margin-top:.35rem;padding-top:.3rem;font-size:.8rem}
+.card .tg{margin-top:.25rem}
+.hp{margin-bottom:.25rem}
 /* ===== بلوك الملاحظات (من خانة "تفاصيل المرتب") — غيّر اللون من هنا: #C2410C ===== */
 .pnote{display:block;grid-column:1/-1;width:100%;box-sizing:border-box;background:#C2410C;border-radius:.7rem;padding:.38rem .6rem;margin-top:.4rem;text-align:start}
 .pnote .nl{display:inline-block;background:#FFF8DC;color:#9A3412;border-radius:99px;padding:.04rem .55rem;font-size:.68rem;font-weight:800;line-height:1.4;margin-bottom:.15rem}
@@ -222,6 +233,7 @@ function pays(j){const a=[];if(j[P30])a.push(["30 يوم عمل",j[P30]]);if(j[P
 const numOf=s=>{const t=String(s||"").replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/,/g,"");const m=t.match(/\d+(\.\d+)?/);return m?+m[0]:0};
 function parseShifts(txt){return String(txt||"").split(/\n/).map(l=>l.trim()).filter(Boolean).map(l=>{const p=l.split("|").map(x=>x.trim());const s={h:p[0]||"",p30:"",p26:""};p.slice(1).forEach(x=>{const m=x.match(/^(30|26)\s*يوم\s*:\s*(.*)$/);if(m)s["p"+m[1]]=m[2].trim()});return s}).filter(s=>s.h||s.p30||s.p26)}
 // أعلى مرتب في كل الورديات (للكارت من بره)
+function topShift(a){let b={v:"",h:""},m=0;a.forEach(s=>[s.p30,s.p26].forEach(x=>{const n=numOf(x);if(n>m){m=n;b={v:x,h:s.h}}}));return b}
 function topPay(a){let b="",v=0;a.forEach(s=>[s.p30,s.p26].forEach(x=>{const n=numOf(x);if(n>v){v=n;b=x}}));return b}
 // وردية واحدة: بنحطها في الخانات القديمة عشان الشكل يفضل زي ما هو. أكتر من وردية: بنخبي القديم ونعرض الجدول
 function prep(j){const a=parseShifts(j["الورديات"]);j.__sh=a;if(a.length===1){j["الشفت"]=a[0].h;j[P30]=a[0].p30;j[P26]=a[0].p26}else if(a.length>1){j["الشفت"]="";j[P30]="";j[P26]="";j["المرتب"]=""}return j}
@@ -324,21 +336,29 @@ function draw(){
   const NEG=/لا يوجد|مفيش|^لا$|غير متوفر/;
   const okv=v=>v&&!NEG.test(v.trim());
   $("list").innerHTML=r.map(j=>{
-   // <<< غيّر هنا: خانات الكارت من بره (السن، الشفت) — طبيعة العمل جوه صفحة التفاصيل بس — الفاضي مش بيظهر
-   const fx=[["السن",j["السن"]],["الشفت",isMulti(j)?j.__sh.length+" ورديات":(j["الشفت"]?hoursOnly(j["الشفت"]):"")]].filter(x=>x[1]);
+   // الكارت من بره: عدد الساعات + المرتب + الملاحظات + سكن/مواصلات بس. السن وباقي التفاصيل جوه صفحة المصنع
    const tg=(okv(j["السكن"])?'<span>🏠 سكن</span>':'')+(okv(j["المواصلات"])?'<span>🚌 مواصلات '+esc(j["المواصلات"])+'</span>':'');
    return `<button class="card ${done(j)?"done":""}" data-i="${JOBS.indexOf(j)}" ${done(j)?"disabled":""}>
    <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="bd2">${tags(j)}</span></div>
    <div class="ttl">${esc(j["المصنع"])}</div>
-   ${isMulti(j)?`<div class="pay"><small>أعلى مرتب</small>${esc(topPay(j.__sh))}</div><div class="more2">فيه ورديات تانية، دوس لباقي التفاصيل ←</div>`:pays(j).length?`<div class="pays">${pays(j).map(x=>`<div class="pay"><small class="tag">${esc(x[0])}</small>${esc(x[1])}</div>`).join("")}</div>`:(j["المرتب"]?`<div class="pay">${esc(j["المرتب"])}</div>`:"")}
+   ${payBlock(j)}
    ${j["تفاصيل المرتب"]&&!done(j)?`<div class="pnote"><span class="nl">ملاحظات</span><span class="nt">${esc(j["تفاصيل المرتب"])}</span></div>`:""}
-   ${fx.length?`<div class="fx">${fx.map(x=>`<div><small>${esc(x[0])}</small><b>${esc(x[1])}</b></div>`).join("")}</div>`:""}
    ${tg?`<div class="tg">${tg}</div>`:""}
-   ${done(j)?'<span class="more">اكتمل العدد</span>':'<span class="more">لو عايز تعرف تفاصيل أكتر دوس هنا ←</span>'}</button>`}).join("");
+   ${done(j)?'<span class="more">اكتمل العدد</span>':(isMulti(j)?'':'<span class="more">لو عايز تعرف تفاصيل أكتر دوس هنا ←</span>')}</button>`}).join("");
   $("list").querySelectorAll(".card").forEach(b=>b.onclick=()=>go(+b.dataset.i));
 }
 $("clr").onclick=()=>{area="الكل";draw()};
 
+// بلوك المرتب في الكارت من بره (صغير): الساعات + المرتب. لو أكتر من وردية: أعلى مرتب + شارة فيها الورديات التانية
+function payBlock(j){
+  if(isMulti(j)){
+    const t=topShift(j.__sh),ns=j.__sh.map(s=>numOf(s.h)),all=ns.every(n=>n>0);
+    const lst=all?ns.join(" و")+" ساعة":j.__sh.map(s=>s.h).join(" و");
+    return `<div class="pay"><small>أعلى مرتب${t.h?" · وردية "+esc(hoursOnly(t.h)):""}</small>${esc(t.v)}</div><div class="more2">${j.__sh.length} ورديات: ${esc(lst)}، دوس لباقي التفاصيل ←</div>`}
+  const hrs=j["الشفت"]?hoursOnly(j["الشفت"]):"",pa=pays(j),old=j["المرتب"];
+  if(!hrs&&!pa.length&&!old)return "";
+  const pc=(l,v)=>`<div class="pc">${l?`<small class="tag">${esc(l)}</small>`:""}<b>${esc(v)}</b></div>`;
+  return `<div class="pbox">${hrs?`<span class="tag hrs">وردية ${esc(hrs)}</span>`:""}<div class="pcells">${pa.length?pa.map(x=>pc(x[0],x[1])).join(""):(old?pc("",old):"")}</div></div>`}
 let came=false,sy=0;
 function go(i){came=true;sy=window.scrollY;location.hash="job"+i}
 function exitDetail(){if(came){came=false;history.back()}else{location.hash=""}}
@@ -384,6 +404,7 @@ function setupApply(j,ph){
     if(REQ.housing&&!hs){eh.textContent="اختار آه أو لا";return}
     try{localStorage.setItem(SAVE_KEY,JSON.stringify({n:n,a:a,p:p}))}catch(e){}
     const L=["السلام عليكم، عايز أقدم على وظيفة: "+j["المصنع"]+" - "+j["المنطقة"],""];
+    if(!isMulti(j)&&j["الشفت"])L.splice(1,0,"الوردية: "+hoursOnly(j["الشفت"]));
     if(n)L.push("الاسم: "+n);if(a)L.push("السن: "+a);if(p)L.push("منين: "+p);if(hs)L.push("محتاج سكن: "+hs);if(SRC)L.push("المصدر: "+SRC);
     const u="https://wa.me/"+ph+"?text="+encodeURIComponent(L.join("\n"));
     close();window.open(u,"_blank")||(location.href=u);
@@ -392,7 +413,7 @@ function setupApply(j,ph){
 function showDetail(j){
   const ph=PHONE.replace(/\D/g,""),
    link=location.origin+location.pathname+"?j="+hid(j["المصنع"]),
-   shareMsg=encodeURIComponent(`وظيفة: ${j["المصنع"]} - ${j["المنطقة"]}\n${payText(j)}\n${link}`);
+   shareMsg=encodeURIComponent(`وظيفة: ${j["المصنع"]} - ${j["المنطقة"]}\n${(!isMulti(j)&&j["الشفت"])?"وردية "+hoursOnly(j["الشفت"])+"\n":""}${payText(j)}\n${link}`);
   // مربع: اسم الخانة فوق وقيمتها تحت. القيمة الطويلة ياخد صف كامل
   const it=k=>`<div class="it ${(k==="طبيعة العمل"||String(j[k]).length>26)?"full":""}"><small>${ICON[k]||"•"} ${esc(k)}</small><b>${esc(j[k])}</b></div>`;
   // قسم: عنوان + مربعاته (بيتخطى الخانات الفاضية)
@@ -403,10 +424,12 @@ function showDetail(j){
   const noteHTML=j["تفاصيل المرتب"]?`<div class="pnote"><span class="nl">ملاحظات</span><span class="nt">${esc(j["تفاصيل المرتب"])}</span></div>`:"";
   const cell=x=>x?esc(String(x).replace(/\s*في الشهر/,"")):"—";
   const tbl=isMulti(j)?`<div class="it pay2 full"><table class="sht"><tr><th>⏰ الوردية</th><th><span class="tag">30 يوم</span></th><th><span class="tag">26 يوم + 4 إجازة</span></th></tr>${j.__sh.map(s=>`<tr><td>${esc(s.h)}</td><td>${cell(s.p30)}</td><td>${cell(s.p26)}</td></tr>`).join("")}</table></div>`:"";
-  const payTile0=`<div class="it pay2 full">${pp.length?pp.map(x=>`<div class="pt"><small class="tag">${esc(x[0])}</small><b>${esc(x[1])}</b></div>`).join(""):`<small>💰 المرتب</small><b>${esc(j["المرتب"]||"")}</b>`}</div>`;
+  const hrsPill=(!isMulti(j)&&j["الشفت"])?`<div class="hp"><span class="tag">وردية ${esc(hoursOnly(j["الشفت"]))}</span></div>`:"";
+  const payTile0=`<div class="it pay2 full">${hrsPill}${pp.length?pp.map(x=>`<div class="pt"><small class="tag">${esc(x[0])}</small><b>${esc(x[1])}</b></div>`).join(""):`<small>💰 المرتب</small><b>${esc(j["المرتب"]||"")}</b>`}</div>`;
   const payTile=(isMulti(j)?tbl:payTile0)+noteHTML;   // الملاحظات بلوك لوحده بعد المرتب على طول
   // <<< غيّر هنا: ترتيب الأقسام وأي خانة تتحط في أنهي قسم
-  const groups=[["الأساسيات",["السن","الشفت","طبيعة العمل","المؤهل","الأجازة"],payTile],["المرتب والمميزات",["نظام القبض","السلف","التأمينات","وجبة"]],["السكن والمواصلات",["السكن","المواصلات"]]];
+  const plainSh=/^\s*\d{1,2}\s*(ساعة|ساعات)\s*$/.test(j["الشفت"]||"");   // لو الشفت ساعات بس هو ظاهر في شارة المرتب
+  const groups=[["الأساسيات",["السن",...(plainSh?[]:["الشفت"]),"طبيعة العمل","المؤهل","الأجازة"],payTile],["المرتب والمميزات",["نظام القبض","السلف","التأمينات","وجبة"]],["السكن والمواصلات",["السكن","المواصلات"]]];
   const used=groups.flatMap(g=>g[1]);
   const other=Object.keys(j).filter(k=>!k.startsWith("__")&&!CORE.includes(k)&&!used.includes(k)&&j[k]);
   $("detail").innerHTML=`<div class="w dp"><div class="tb"><button class="exit" id="ex">رجوع</button></div>
