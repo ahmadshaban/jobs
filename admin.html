@@ -96,7 +96,7 @@ header h1{margin:0;font-size:18px;color:#fff}
 #toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);padding:10px 18px;border-radius:12px;color:#fff;font-weight:700;z-index:20;max-width:90%;box-shadow:0 4px 18px rgba(0,0,0,.18)}
 #toast.ok{background:#16803d}
 #toast.bad{background:#B42318}
-/* ===== محرر الورديات (غيّر الألوان من هنا) ===== */
+/* ===== محرر الورديات وأرقام التواصل ===== */
 .shed{display:grid;gap:8px}.shl{font-size:13px;color:#FFE45C}
 .shp-row{display:flex;flex-wrap:wrap;gap:6px}.shp.on{background:#FFE45C;color:#0E3560;font-weight:700}
 .shb{background:#0B2A4A;border:1px solid #3F7AB5;border-radius:12px;padding:10px;display:grid;gap:8px}
@@ -119,13 +119,11 @@ header h1{margin:0;font-size:18px;color:#fff}
 <div id="app" class="hidden">
   <header>
     <h1 id="title"></h1>
-    <!-- <<< غيّر هنا: كل الفلاتر (المكان، الفئة، البحث) جوه الصندوق ده، وأيقونة 🔍 بتظهره وتخفيه -->
     <div id="filters" style="display:grid;gap:10px">
     <div style="display:flex;gap:8px">
       <select id="areaFilter" aria-label="اختيار المكان" required>
         <option value="">اختار المكان أولًا</option>
       </select>
-      <!-- <<< غيّر هنا: فلتر الفئة (شباب / بنات / شباب وبنات) -->
       <select id="genderFilter" aria-label="اختيار الفئة">
         <option value="">الكل</option>
         <option value="m">شباب</option>
@@ -133,7 +131,6 @@ header h1{margin:0;font-size:18px;color:#fff}
         <option value="b">شباب وبنات</option>
       </select>
     </div>
-    <!-- <<< غيّر هنا: خانة البحث باسم المصنع -->
     <input id="q" type="search" placeholder="دوّر باسم المصنع..." aria-label="بحث باسم المصنع">
     </div>
     <div class="bar">
@@ -147,12 +144,10 @@ header h1{margin:0;font-size:18px;color:#fff}
     <div id="stats" class="stats"></div>
   </header>
   <div id="list"></div>
-  <!-- <<< غيّر هنا: زرار + العايم لإضافة مصنع جديد -->
   <button class="fab" id="fab" aria-label="وظيفة جديدة">+</button>
 </div>
 
 <div id="modal" class="hidden"><div class="sheet" id="sheet"></div></div>
-<!-- <<< غيّر هنا: نافذة تعديل المرتب السريع (بتفتح جوه الصفحة، مش رسالة المتصفح) -->
 <div id="salDlg" class="hidden"><div class="box">
   <h3 id="salT"></h3>
   <div id="salOld" class="hidden"></div>
@@ -169,33 +164,32 @@ header h1{margin:0;font-size:18px;color:#fff}
 <div id="toast" class="hidden"></div>
 
 <script>
-// ===== [3] الإعدادات والنصوص وأسماء الأعمدة (غيّر من هنا) =====
-const API = 'https://script.google.com/macros/s/AKfycbzwMRST469OBo-ym0Ccn-Ot84jGrL0KEM9SZcnfe-tip2U6-1gyryjnYxdNNsiwbLEyng/exec'; // <<< غيّر هنا: رابط الـ Web app بعد النشر
+// ===== [3] الإعدادات والنصوص وأسماء الأعمدة =====
+const API = 'https://script.google.com/macros/s/AKfycbzwMRST469OBo-ym0Ccn-Ot84jGrL0KEM9SZcnfe-tip2U6-1gyryjnYxdNNsiwbLEyng/exec';
 
 const COL = {
-  factory: 'المصنع',   // <<< غيّر هنا: اسم عمود المصنع
-  area:    'المنطقة',  // <<< غيّر هنا: اسم عمود المنطقة
-  gender:  'الفئة',    // <<< غيّر هنا: اسم عمود الفئة
-  mod:     'آخر تعديل', // <<< غيّر هنا: اسم عمود آخر تعديل (الأدمن بيكتبه لوحده)
-  order:   'الترتيب',  // <<< غيّر هنا: اسم عمود الترتيب اليدوي (رقم، الأدمن بيكتبه لوحده)
-  pin:     'تثبيت',    // <<< غيّر هنا: اسم عمود التثبيت (قيمته نعم = مثبّت فوق في الموقع)
-  shifts:  'الورديات', // <<< غيّر هنا: اسم عمود الورديات (كل وردية في سطر)
-  shift:   'الشفت',    // <<< غيّر هنا: اسم عمود الشفت
-  salary:  'المرتب',   // <<< غيّر هنا: اسم عمود المرتب
-  salary30: 'مرتب 30 يوم', // <<< غيّر هنا: اسم عمود مرتب 30 يوم عمل
-  salary26: 'مرتب 26 يوم', // <<< غيّر هنا: اسم عمود مرتب 26 يوم عمل
-  visible: 'ظاهر؟',    // <<< غيّر هنا: اسم عمود الظهور
-  status:  'الحالة'    // <<< غيّر هنا: اسم عمود الحالة
+  factory: 'المصنع',
+  area:    'المنطقة',
+  gender:  'الفئة',
+  mod:     'آخر تعديل',
+  order:   'الترتيب',
+  pin:     'تثبيت',
+  shifts:  'الورديات',
+  shift:   'الشفت',
+  salary:  'المرتب',
+  salary30: 'مرتب 30 يوم',
+  salary26: 'مرتب 26 يوم',
+  contacts: 'أرقام التواصل', // عمود أرقام التواصل الجديد
+  visible: 'ظاهر؟',
+  status:  'الحالة'
 };
 
-const SAL_SUFFIX30 = ' ج في الشهر'; // <<< غيّر هنا: الكلمة اللي بتتضاف تلقائي لو كتبت رقم بس في خانة 30 يوم
-const SAL_SUFFIX26 = ' ج';          // <<< غيّر هنا: الكلمة اللي بتتضاف تلقائي لو كتبت رقم بس في خانة 26 يوم
-const DATE_COL = 'تاريخ الإضافة'; // <<< غيّر هنا: اسم عمود تاريخ الإضافة
+const SAL_SUFFIX30 = ' ج في الشهر';
+const SAL_SUFFIX26 = ' ج';
+const DATE_COL = 'تاريخ الإضافة';
 const todayStr = () => new Date().toISOString().slice(0, 10);
 const nowStr = () => { const d = new Date(), p = n => String(n).padStart(2, '0'); return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds()); };
-// نفس رقم الشير اللي في الموقع (?j=) عشان زرار "عرض" يفتح المصنع بالظبط
 const siteId = n => { let h = 5381; for (const c of String(n)) h = ((h << 5) + h + c.charCodeAt(0)) >>> 0; return h.toString(36); };
-// رقم بس؟ بنكمّله (8000 ← 8000 ج في الشهر). بيفهم الأرقام العربي والفاصلة
 function normSalary(x, col){
   let t = String(x).trim().replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
   if (/^[\d.,]+$/.test(t)) t = t.replace(/,/g, '') + (col === COL.salary26 ? SAL_SUFFIX26 : SAL_SUFFIX30);
@@ -203,42 +197,42 @@ function normSalary(x, col){
 }
 
 const T = {
-  loginTitle: 'دخول الأدمن',            // <<< غيّر هنا: عنوان شاشة الدخول
-  pwHint: 'كلمة السر',                  // <<< غيّر هنا: نص خانة كلمة السر
-  login: 'دخول',                        // <<< غيّر هنا: زرار الدخول
-  wrongPw: 'كلمة السر غلط',             // <<< غيّر هنا: رسالة كلمة السر الغلط
-  noApi: 'حط رابط الـ Web app في ثابت API الأول', // <<< غيّر هنا: رسالة نسيان الرابط
-  title: 'الوظايف',                     // <<< غيّر هنا: عنوان الصفحة
-  newJob: 'وظيفة جديدة',                // <<< غيّر هنا: زرار وظيفة جديدة
-  newCol: 'خانة جديدة',                 // <<< غيّر هنا: زرار خانة جديدة
-  refresh: 'تحديث',                     // <<< غيّر هنا: زرار التحديث
-  logout: 'خروج',                       // <<< غيّر هنا: زرار الخروج
-  copy: 'نسخ',                           // <<< غيّر هنا: زرار نسخ المصنع
-  edit: 'تعديل',                        // <<< غيّر هنا: زرار التعديل
-  hide: 'إخفاء',                        // <<< غيّر هنا: زرار الإخفاء
-  show: 'إظهار',                        // <<< غيّر هنا: زرار الإظهار
-  complete: 'اكتمل',                    // <<< غيّر هنا: زرار اكتمل
-  reopen: 'إعادة فتح',                  // <<< غيّر هنا: زرار إعادة الفتح
-  del: 'مسح',                           // <<< غيّر هنا: زرار المسح
-  doneBadge: 'مكتمل',                   // <<< غيّر هنا: شارة الكارت المكتمل
-  hiddenBadge: 'مخفي',                  // <<< غيّر هنا: كلمة مخفي
-  doneValue: 'مكتمل',                   // <<< غيّر هنا: القيمة اللي بتتكتب في عمود الحالة
-  urgent: 'الأكثر تقديمًا',               // <<< غيّر هنا: زرار الأكثر تقديمًا
-  unurgent: '🔥 إلغاء',                   // <<< غيّر هنا: زرار إلغاء الأكثر تقديمًا
-  urgentBadge: '🔥 الأكثر تقديمًا',        // <<< غيّر هنا: شارة الكارت
-  urgentValue: 'الأكثر تقديمًا',          // <<< غيّر هنا: القيمة اللي بتتكتب في عمود الحالة (الموقع بيفهمها وبيفهم "عاجل" القديمة كمان)
-  yes: 'نعم',                           // <<< غيّر هنا: قيمة نعم
-  no: 'لا',                             // <<< غيّر هنا: قيمة لا
-  save: 'حفظ',                          // <<< غيّر هنا: زرار الحفظ
-  cancel: 'إلغاء',                      // <<< غيّر هنا: زرار الإلغاء
-  formNew: 'وظيفة جديدة',               // <<< غيّر هنا: عنوان نموذج الإضافة
-  formEdit: 'تعديل الوظيفة',            // <<< غيّر هنا: عنوان نموذج التعديل
-  askDel: 'متأكد إنك عايز تمسح الوظيفة دي؟', // <<< غيّر هنا: سؤال تأكيد المسح
-  askCol: 'اسم الخانة الجديدة؟',        // <<< غيّر هنا: سؤال اسم الخانة
-  empty: 'مفيش وظايف',                  // <<< غيّر هنا: رسالة لما القايمة فاضية
-  okMsg: 'تمت العملية بنجاح',           // <<< غيّر هنا: رسالة النجاح
-  errMsg: 'حصل خطأ: ',                  // <<< غيّر هنا: بداية رسالة الخطأ
-  netErr: 'مفيش اتصال بالسيرفر'         // <<< غيّر هنا: رسالة قطع الاتصال
+  loginTitle: 'دخول الأدمن',
+  pwHint: 'كلمة السر',
+  login: 'دخول',
+  wrongPw: 'كلمة السر غلط',
+  noApi: 'حط رابط الـ Web app في ثابت API الأول',
+  title: 'الوظايف',
+  newJob: 'وظيفة جديدة',
+  newCol: 'خانة جديدة',
+  refresh: 'تحديث',
+  logout: 'خروج',
+  copy: 'نسخ',
+  edit: 'تعديل',
+  hide: 'إخفاء',
+  show: 'إظهار',
+  complete: 'اكتمل',
+  reopen: 'إعادة فتح',
+  del: 'مسح',
+  doneBadge: 'مكتمل',
+  hiddenBadge: 'مخفي',
+  doneValue: 'مكتمل',
+  urgent: 'الأكثر تقديمًا',
+  unurgent: '🔥 إلغاء',
+  urgentBadge: '🔥 الأكثر تقديمًا',
+  urgentValue: 'الأكثر تقديمًا',
+  yes: 'نعم',
+  no: 'لا',
+  save: 'حفظ',
+  cancel: 'إلغاء',
+  formNew: 'وظيفة جديدة',
+  formEdit: 'تعديل الوظيفة',
+  askDel: 'متأكد إنك عايز تمسح الوظيفة دي؟',
+  askCol: 'اسم الخانة الجديدة؟',
+  empty: 'مفيش وظايف',
+  okMsg: 'تمت العملية بنجاح',
+  errMsg: 'حصل خطأ: ',
+  netErr: 'مفيش اتصال بالسيرفر'
 };
 
 let headers = [], rows = [];
@@ -248,7 +242,6 @@ let formInitialSnapshot = '';
 let bypassDirtyWarning = false;
 const $ = id => document.getElementById(id);
 
-// جلسة دخول على نفس الجهاز لمدة 30 دقيقة من آخر نشاط
 const AUTH_KEY = 'first_service_admin_pw';
 const ACTIVITY_KEY = 'first_service_admin_last_activity';
 const SESSION_IDLE_MS = 30 * 60 * 1000;
@@ -280,7 +273,6 @@ function startSessionChecks(){
     if (savedPassword() && !sessionIsValid()) expireLogin();
   }, 15000);
 }
-// تحديث وقت النشاط عند التفاعل مع اللوحة، مع فحص انتهاء الجلسة عند الرجوع للصفحة
 ['click','keydown','input','touchstart','scroll'].forEach(type => {
   document.addEventListener(type, () => { if (sessionIsValid()) touchSession(); }, {passive:true});
 });
@@ -293,13 +285,11 @@ window.addEventListener('focus', () => {
   if (savedPassword()) { if (sessionIsValid()) touchSession(); else expireLogin(); }
 });
 
-// بتهرب أي نص قبل ما يتحط في HTML
 function esc(s){
   return String(s == null ? '' : s).replace(/[&<>"'`]/g, c =>
     ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c]));
 }
 
-// بتظهر رسالة صغيرة تقول نجحت ولا فيه خطأ
 let toastTimer;
 function toast(msg, ok){
   const t = $('toast');
@@ -309,8 +299,6 @@ function toast(msg, ok){
 }
 
 // ===== [4] الاتصال بالشيت =====
-
-// بتبعت الطلب للـ Web app وبترجع الرد
 async function api(action, extra){
   if (API.indexOf('PASTE_') === 0) return {ok:false, error:T.noApi};
   const controller = new AbortController();
@@ -338,7 +326,6 @@ async function api(action, extra){
   }
 }
 
-// بتحمل العناوين والصفوف من الشيت وتعرضهم
 async function load(){
   const r = await api('list');
   if (!r.ok){ toast(T.errMsg + r.error, false); return false; }
@@ -346,7 +333,6 @@ async function load(){
   return true;
 }
 
-// تعطيل الأزرار أثناء الطلب وإرجاعها بعد النجاح أو الخطأ
 function setBusyUI(busy){
   document.querySelectorAll('#app button, #sheet button').forEach(btn => {
     if (btn.id === 'fCancel') return;
@@ -355,7 +341,6 @@ function setBusyUI(busy){
   });
 }
 
-// بتنفذ أمر وتظهر النتيجة وتحدّث القايمة
 async function run(action, extra){
   if (requestBusy) {
     toast('فيه طلب شغال بالفعل، استنى لحد ما يخلص.', false);
@@ -364,7 +349,7 @@ async function run(action, extra){
   requestBusy = true;
   setBusyUI(true);
   try{
-    if ((action === 'update' || action === 'add') && extra && extra.data && headers.includes(COL.mod) && !(COL.mod in extra.data)) extra.data[COL.mod] = nowStr();   // آخر تعديل
+    if ((action === 'update' || action === 'add') && extra && extra.data && headers.includes(COL.mod) && !(COL.mod in extra.data)) extra.data[COL.mod] = nowStr();
     const r = await api(action, extra);
     if (!r.ok){ toast(T.errMsg + r.error, false); return false; }
     toast(T.okMsg, true);
@@ -380,11 +365,10 @@ async function run(action, extra){
   }
 }
 
-// بتضيف عمودين المرتب (30 يوم / 26 يوم) في الشيت أوتوماتيك لو مش موجودين
-async function ensureSalaryCols(){
+async function ensureRequiredCols(){
   try{
     let changed = false;
-    for (const name of [COL.salary30, COL.salary26, COL.shifts, COL.order, COL.mod]){
+    for (const name of [COL.salary30, COL.salary26, COL.shifts, COL.contacts, COL.order, COL.mod]){
       if (!headers.includes(name)){ const a = await api('addColumn', {name}); if (a.ok) changed = true; }
     }
     if (changed){ const r2 = await api('list'); if (r2.ok){ headers = r2.headers; rows = r2.rows; } }
@@ -392,8 +376,6 @@ async function ensureSalaryCols(){
 }
 
 // ===== [5] شاشة الدخول =====
-
-// بتجرب كلمة السر بنداء list وتفتح اللوحة لو صح
 async function login(pw){
   const previousPw = savedPassword();
   if (!pw) { $('loginErr').textContent = T.pwHint; return; }
@@ -403,7 +385,6 @@ async function login(pw){
   const r = await api('list');
   $('loginBtn').disabled = false;
   if (!r.ok){
-    // لا نمسح بيانات الجلسة بسبب انقطاع الإنترنت؛ نمسحها فقط عند رفض كلمة السر صراحةً
     if (String(r.error || '').trim() === 'كلمة السر غلط') clearLogin();
     else if (!previousPw) clearLogin();
     $('loginErr').textContent = (r.error === 'كلمة السر غلط') ? T.wrongPw : r.error;
@@ -413,16 +394,17 @@ async function login(pw){
   touchSession();
   startSessionChecks();
   headers = r.headers; rows = r.rows;
-  await ensureSalaryCols();
+  await ensureRequiredCols();
   $('loginErr').textContent = '';
   $('login').classList.add('hidden'); $('app').classList.remove('hidden');
   render();
 }
 
-
-// ===== الورديات: قراءة وكتابة خانة "الورديات" (كل سطر = وردية: 12 ساعة | 30 يوم: 9000 | 26 يوم: 8000) =====
-const SH_PRESETS = ['8 ساعات', '12 ساعة', '16 ساعة'];   // <<< غيّر هنا: الورديات الجاهزة
+// ===== الورديات وأرقام التواصل =====
+const SH_PRESETS = ['8 ساعات', '12 ساعة', '16 ساعة'];
 let shState = [];
+let contactsState = [];
+
 function shNum(s){ const m = String(s || '').replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).match(/\d+/); return m ? +m[0] : 0; }
 function parseShifts(txt){
   return String(txt || '').split(/\n/).map(l => l.trim()).filter(Boolean).map(l => {
@@ -443,7 +425,20 @@ function serializeShifts(){
     return parts.join(' | ');
   }).join('\n');
 }
-// بترسم محرر الورديات جوه الفورم: أزرار 8/12/16 وتحت كل وردية مختارة خانتين المرتب
+
+function parseContacts(txt){
+  return String(txt || '').split(/\n/).map(l => l.trim()).filter(Boolean).map(l => {
+    const p = l.split('|').map(x => x.trim());
+    return { name: p[1] ? p[0] : 'المسؤول', phone: p[1] || p[0] || '' };
+  }).filter(c => c.phone);
+}
+function serializeContacts(){
+  const clean = v => String(v || '').replace(/[|\n]/g, ' ').trim();
+  return contactsState.filter(c => clean(c.phone)).map(c => {
+    return clean(c.name || 'المسؤول') + ' | ' + clean(c.phone);
+  }).join('\n');
+}
+
 function renderShEditor(){
   const box = $('shBox'); if (!box) return;
   const isOn = p => shState.some(s => shNum(s.h) === shNum(p));
@@ -468,7 +463,25 @@ function renderShEditor(){
   box.querySelectorAll('input[data-sh]').forEach(el => el.addEventListener('input', () => { shState[+el.dataset.k][el.dataset.sh] = el.value; }));
 }
 
-// ===== زرار الرجوع: كل نافذة صغيرة بتتسجل كطبقة، والرجوع بيقفل آخر طبقة بس =====
+function renderContactsEditor(){
+  const box = $('contactsBox'); if (!box) return;
+  let h = '<div style="display:flex;justify-content:flex-end;margin-bottom:4px"><button type="button" class="btn ghost" id="contactAdd">+ إضافة رقم تواصل</button></div>';
+  if(contactsState.length === 0) {
+    h += '<div style="font-size:12px;color:#8FA2C8;padding:4px 0">مفيش أرقام تواصل مسجلة. ادوس إضافة رقم لتسجيل المسؤولين.</div>';
+  }
+  contactsState.forEach((c, k) => {
+    h += '<div class="shb"><div class="shg" style="grid-template-columns:1fr 2fr auto;align-items:end">' +
+      '<label>اسم المسؤول<input data-ct="name" data-k="' + k + '" placeholder="مثلًا أحمد" value="' + esc(c.name) + '"></label>' +
+      '<label>رقم الموبايل<input data-ct="phone" data-k="' + k + '" inputmode="tel" placeholder="01012345678" value="' + esc(c.phone) + '"></label>' +
+      '<button type="button" class="btn danger ctx" data-k="' + k + '" style="height:42px">مسح</button></div></div>';
+  });
+  box.innerHTML = h;
+  saveDraft();
+  $('contactAdd').onclick = () => { contactsState.push({name: 'المسؤول', phone: ''}); renderContactsEditor(); };
+  box.querySelectorAll('.ctx').forEach(b => b.onclick = () => { contactsState.splice(+b.dataset.k, 1); renderContactsEditor(); });
+  box.querySelectorAll('input[data-ct]').forEach(el => el.addEventListener('input', () => { contactsState[+el.dataset.k][el.dataset.ct] = el.value; }));
+}
+
 const layers = [];
 let ignorePop = 0;
 function openLayer(el){
@@ -481,8 +494,7 @@ function closeLayer(el){
   layers.pop(); el.classList.add('hidden');
   ignorePop++; history.back();
 }
-// مسح عمود: لازم تختار العمود وتكتب اسمه عشان زرار المسح يشتغل
-const PROTECTED_COLS = () => [COL.factory, COL.area, COL.gender, COL.visible, COL.status, COL.shifts, DATE_COL];   // <<< غيّر هنا: الأعمدة المحمية من المسح
+const PROTECTED_COLS = () => [COL.factory, COL.area, COL.gender, COL.visible, COL.status, COL.shifts, COL.contacts, DATE_COL];
 function openDelCol(){
   const list = headers.filter(h => h && !PROTECTED_COLS().includes(h));
   if (!list.length){ toast('مفيش أعمدة تتمسح (الباقي أساسي).', false); return; }
@@ -493,16 +505,11 @@ function openDelCol(){
 function colCheck(){ $('colGo').disabled = $('colIn').value.trim() !== $('colSel').value; }
 
 // ===== [6] عرض الكروت والبحث =====
-
-// بترجع قيمة عمود معين من صف
 function val(r, col){ const i = headers.indexOf(col); return i < 0 ? '' : (r.values[i] || ''); }
 
-// الحالة "الأكثر تقديمًا" (وبتفهم "عاجل" القديمة كمان) والتثبيت
 const isUrgVal = v => String(v || '').trim() === T.urgentValue || String(v || '').trim() === 'عاجل';
-// الترتيب اليدوي: رقم في عمود "الترتيب" (أو تثبيت = نعم القديمة بتتعامل كرقم 0)
 const manualOf = r => { const n = parseFloat(val(r, COL.order)); if (!isNaN(n)) return n; return val(r, COL.pin).trim() === 'نعم' ? 0 : null; };
 const isPinned = r => manualOf(r) !== null;
-// أعلى مرتب للمصنع (نفس حساب الموقع) عشان ترتيب الأدمن يطابق ترتيب الموقع
 function payScoreRow(r){
   const c = [val(r, COL.salary30), val(r, COL.salary26), val(r, COL.salary), ...parseShifts(val(r, COL.shifts)).flatMap(s => [s.p30, s.p26])];
   let m = 0; c.forEach(x => { let n = shNum(x); if (n && /اليوم|يومي|يومية/.test(String(x))) n *= 26; if (n > m) m = n; }); return m;
@@ -510,19 +517,16 @@ function payScoreRow(r){
 const rankOf = r => val(r, COL.status).trim() === T.doneValue ? 2 : (isPinned(r) ? 0 : 1);
 const siteOrder = (x, y) => rankOf(x) - rankOf(y) || (rankOf(x) === 0 ? manualOf(x) - manualOf(y) : (rankOf(x) === 1 ? payScoreRow(y) - payScoreRow(x) : 0));
 
-// بترسم كارت وظيفة واحدة
 function cardHTML(r, i, arr){
-  const n = arr ? arr.length : 0;   // i = ترتيب الكارت في القايمة (للأسهم ▲ ▼)
+  const n = arr ? arr.length : 0;
   const hid = val(r, COL.visible).trim() === T.no;
   const done = val(r, COL.status).trim() === T.doneValue;
   const urg = isUrgVal(val(r, COL.status));
   const pin = isPinned(r);
   const hasNew = val(r, COL.salary30) || val(r, COL.salary26);
-  // خانات عادية (المنطقة، الفئة، الشفت، والمرتب القديم لو المصنع لسه ما اتعدّلش)
   const shl = parseShifts(val(r, COL.shifts));
   const plain = [COL.area, COL.gender, ...(shl.length ? [] : [COL.shift]), ...(hasNew || shl.length ? [] : [COL.salary])]
     .map(c => val(r, c)).filter(Boolean).map(v => '<span>' + esc(v) + '</span>').join('');
-  // خانتين المرتب: دوس على أي واحدة تعدّلها من مكانها (الفاضية بتظهر بـ +)
   const salChip = (c, lbl) => '<span class="sal' + (val(r, c) ? '' : ' empty') + '" data-sal="' + esc(c) + '" data-row="' + r.row + '">' +
     (val(r, c) ? esc(lbl + ': ' + val(r, c)) : '+ ' + esc(lbl)) + '</span>';
   const shChips = shl.map(s => '<span class="sal">' + esc(s.h + (s.p30 ? ' · 30: ' + s.p30.replace(/\s*في الشهر/, '') : '') + (s.p26 ? ' · 26: ' + s.p26.replace(/\s*في الشهر/, '') : '')) + '</span>').join('');
@@ -548,7 +552,6 @@ function cardHTML(r, i, arr){
     '</div></div>';
 }
 
-// قائمة الأماكن تُبنى من البيانات الفعلية في الشيت
 function updateAreaFilter(){
   const filter = $('areaFilter');
   const selected = filter.value;
@@ -559,21 +562,18 @@ function updateAreaFilter(){
   if (areas.includes(selected)) filter.value = selected;
 }
 
-// لا تظهر المصانع قبل اختيار مكان
 function render(){
   updateAreaFilter();
   { const hidN = rows.filter(r => val(r, COL.visible).trim() === T.no).length, doneN = rows.filter(r => val(r, COL.status).trim() === T.doneValue).length, pinN = rows.filter(isPinned).length;
     $('stats').textContent = (rows.length - hidN - doneN) + ' ظاهر · ' + hidN + ' مخفي · ' + doneN + ' مكتمل' + (pinN ? ' · ' + pinN + ' مثبّت' : ''); }
   const area = $('areaFilter').value;
   const g = $('genderFilter').value;
-  // بيحدد الفئة: m = شباب بس، f = بنات بس، b = شباب وبنات مع بعض
   const kindOf = r => { const t = val(r, COL.gender); const m = /شباب/.test(t), f = /بنات/.test(t); return (m && f) ? 'b' : m ? 'm' : f ? 'f' : ''; };
   const q = $('q').value.trim().toLocaleLowerCase('ar');
-  // نقطة جنب الأيقونة لو فيه فلتر شغال والفلاتر مخفية
   $('bSearch').textContent = '🔍' + ((area || g || q) && $('filters').classList.contains('hidden') ? ' ●' : '');
   const list = (area || q) ? rows.filter(r => (!area || val(r, COL.area).trim() === area) &&
     (!q || val(r, COL.factory).toLocaleLowerCase('ar').includes(q)) && (!g || kindOf(r) === g)) : [];
-  list.sort(siteOrder);   // نفس ترتيب الموقع بالظبط: اليدوي فوق، وبعده الأعلى مرتب، والمكتمل تحت
+  list.sort(siteOrder);
   shownList = list;
   $('title').textContent = T.title + ((area || q) ? ' (' + list.length + ')' : '');
   $('list').innerHTML = (area || q)
@@ -581,7 +581,6 @@ function render(){
     : '<div class="empty">اختار المكان من القائمة، أو اكتب اسم المصنع في البحث.</div>';
 }
 
-// نافذة تعديل المرتب السريع: بتعرض المرتب القديم، ودوس عليه ينزل في الخانة
 let shownList = [];
 let salRow = 0, salCol = '';
 function openSal(row, col){
@@ -607,19 +606,16 @@ async function saveSal(){
 }
 $('salSave').onclick = saveSal;
 $('salCancel').onclick = closeSal;
-$('salOld').onclick = () => { $('salIn').value = $('salOld').dataset.v || ''; $('salIn').focus(); };
+$('salOld').onclick = () => { $('salIn').value = $('salOld'].dataset.v || ''; $('salIn').focus(); };
 $('salIn').addEventListener('keydown', e => { if (e.key === 'Enter') saveSal(); if (e.key === 'Escape') closeSal(); });
 $('salDlg').addEventListener('click', e => { if (e.target.id === 'salDlg') closeSal(); });
 
-// ترتيب المصانع: ▲ ▼ بيبدّل مكان المصنع مع اللي فوقه أو تحته في القايمة (بيبدّل بياناتهم في الشيت)
-function rowData(r){ const d = {}; headers.forEach((h, i) => { if (h) d[h] = String(r.values[i] ?? ''); }); return d; }
 async function moveRow(r, dir){
   if (requestBusy) { toast('فيه طلب شغال بالفعل، استنى لحد ما يخلص.', false); return; }
   const L = shownList.slice();
   const k = L.findIndex(x => x.row === r.row), k2 = k + dir;
   if (k < 0 || k2 < 0 || k2 >= L.length) return;
   [L[k], L[k2]] = [L[k2], L[k]];
-  // بنرقّم كل اللي فوق (من أول القايمة لحد مكان الحركة، وكل اليدوي) بالترتيب الجديد، والباقي يفضل بالمرتب
   let last = Math.max(k, k2);
   L.forEach((x, i) => { if (isPinned(x) && i > last) last = i; });
   const changes = [];
@@ -643,8 +639,6 @@ async function moveRow(r, dir){
 }
 
 // ===== [7] أزرار الكارت =====
-
-// بتتعامل مع ضغطة أي زرار جوه الكارت
 $('list').addEventListener('click', async e => {
   const sal = e.target.closest('[data-sal]');
   if (sal) return openSal(Number(sal.dataset.row), sal.dataset.sal);
@@ -658,7 +652,7 @@ $('list').addEventListener('click', async e => {
   if (act === 'down') return moveRow(r, 1);
   if (act === 'edit') return openForm(r);
   if (act === 'copy') return openForm(r, true);
-  if (act === 'view') return window.open(new URL('index.html', location.href).href + '?j=' + siteId(val(r, COL.factory)), '_blank');   // بيفتح صفحة المصنع زي ما بتظهر للمتقدمين
+  if (act === 'view') return window.open(new URL('index.html', location.href).href + '?j=' + siteId(val(r, COL.factory)), '_blank');
   if (act === 'vis'){
     const hid = val(r, COL.visible).trim() === T.no;
     if (!hid && !confirm('تخفي "' + val(r, COL.factory) + '" عن المتقدمين؟')) return;
@@ -675,7 +669,7 @@ $('list').addEventListener('click', async e => {
   }
   if (act === 'pin'){
     const nums = rows.filter(isPinned).map(manualOf);
-    return run('update', {row, data: isPinned(r) ? {[COL.order]: '', [COL.pin]: ''} : {[COL.order]: String(Math.max(0, ...nums) + 1)}});   // تثبيت جديد بينزل آخر المثبّتين، وبالأسهم تغيّر مكانه
+    return run('update', {row, data: isPinned(r) ? {[COL.order]: '', [COL.pin]: ''} : {[COL.order]: String(Math.max(0, ...nums) + 1)}});
   }
   if (act === 'del'){
     if (confirm(T.askDel)) run('delete', {row});
@@ -683,11 +677,7 @@ $('list').addEventListener('click', async e => {
 });
 
 // ===== [8] نموذج الإضافة والتعديل =====
-
-// بتبني النموذج من عناوين الأعمدة وتفتحه (r فاضي = وظيفة جديدة)
-// اختيارات متكررة مجمعة من البيانات الحالية والمرجع السابق؛ المرتب واسم المصنع يظلان كتابة يدوية
 function presetOptions(header){
-  // الاختيارات من القيم المسجلة فعلًا في الشيت، بعد إزالة الفراغات والتكرار.
   return [...new Set(rows.map(row => String(val(row, header) ?? '').trim()).filter(Boolean))];
 }
 
@@ -696,22 +686,23 @@ function currentFormSnapshot(){
     const index = el.dataset.i;
     const custom = $('sheet').querySelector('[data-custom-i="' + index + '"]');
     return [index, el.value, custom ? custom.value : ''];
-  }).concat([JSON.stringify(shState)]));
+  }).concat([JSON.stringify(shState), JSON.stringify(contactsState)]));
 }
 function formHasUnsavedChanges(){
   return !!formInitialSnapshot && currentFormSnapshot() !== formInitialSnapshot;
 }
-// بترتّب الخانات: خانتين المرتب بعد الشفت على طول (أو بعد اسم المصنع)
+
 function formOrder(){
   const a = headers.indexOf(COL.salary30), b = headers.indexOf(COL.salary26);
   const sIdx = headers.indexOf(COL.shifts);
-  const rest = headers.map((_, i) => i).filter(i => i !== a && i !== b && i !== sIdx);
+  const cIdx = headers.indexOf(COL.contacts);
+  const rest = headers.map((_, i) => i).filter(i => i !== a && i !== b && i !== sIdx && i !== cIdx);
   let at = headers.indexOf(COL.shift); if (at < 0) at = headers.indexOf(COL.factory);
   const pos = at < 0 ? rest.length : rest.indexOf(at) + 1;
-  rest.splice(pos, 0, ...[sIdx, a, b].filter(i => i >= 0));
+  rest.splice(pos, 0, ...[sIdx, a, b, cIdx].filter(i => i >= 0));
   return rest;
 }
-// asCopy=true: بيفتح فورم مصنع جديد ببيانات مصنع موجود (اسم المصنع بيتفضّى)
+
 let draftKeyNow = 'gp_draft:new';
 function saveDraft(){
   try{
@@ -723,20 +714,23 @@ function saveDraft(){
 }
 function clearDraft(){ try{ localStorage.removeItem(draftKeyNow); }catch(e){} }
 function applyDraft(s){
-  const arr = JSON.parse(s), last = arr.pop();
+  const arr = JSON.parse(s), lastCt = arr.pop(), lastSh = arr.pop();
   arr.forEach(([i, v, c]) => {
     const el = $('sheet').querySelector('[data-i="' + i + '"]'), cu = $('sheet').querySelector('[data-custom-i="' + i + '"]');
     if (el) el.value = v;
-    if (el && el.value !== v && cu){ el.value = '__custom__'; cu.classList.remove('hidden'); }   // قيمة جديدة كانت مكتوبة
+    if (el && el.value !== v && cu){ el.value = '__custom__'; cu.classList.remove('hidden'); }
     if (cu) cu.value = c;
   });
-  try{ shState = JSON.parse(last); }catch(e){}
+  try{ shState = JSON.parse(lastSh); }catch(e){}
+  try{ contactsState = JSON.parse(lastCt); }catch(e){}
   renderShEditor();
+  renderContactsEditor();
 }
+
 function openForm(r, asCopy){
   draftKeyNow = 'gp_draft:' + (asCopy ? 'copy' : (r ? 'r' + r.row : 'new'));
   const src = r; if (asCopy) r = null;
-  // تجهيز الورديات: من الخانة الجديدة، وإلا من الخانات القديمة (الشفت + مرتب 30 + مرتب 26) عشان ما يضيعوش
+  
   shState = src ? parseShifts(String(src.values[headers.indexOf(COL.shifts)] ?? '')) : [];
   if (src && !shState.length){
     const oh = String(src.values[headers.indexOf(COL.shift)] ?? '').trim();
@@ -744,19 +738,23 @@ function openForm(r, asCopy){
     const o26 = String(src.values[headers.indexOf(COL.salary26)] ?? '').trim();
     if (oh || o30 || o26) shState = [{h: oh ? shLabel(oh) : '', p30: o30, p26: o26}];
   }
+
+  contactsState = src ? parseContacts(String(src.values[headers.indexOf(COL.contacts)] ?? '')) : [];
+
   const fields = formOrder().map(i => { const h = headers[i];
     if (!h) return '';
-    if (h === COL.pin || h === COL.mod || h === COL.order) return '';   // التثبيت بزرار 📌 على الكارت
+    if (h === COL.pin || h === COL.mod || h === COL.order) return '';
     if (h === COL.shifts) return '<div class="shed"><div class="shl">⏰ الورديات (اختار الوردية وحط مرتب النظامين)</div><div id="shBox"></div></div>';
-    if (headers.includes(COL.shifts) && (h === COL.shift || h === COL.salary30 || h === COL.salary26)) return '';   // اتحلوا محل الورديات
-    if (h === COL.salary) return '';   // <<< غيّر هنا: خانة المرتب القديمة مخفية (استبدلناها بـ 30 يوم و 26 يوم)
-    // تنظيف المسافات الزائدة حتى تتطابق القيمة المحفوظة مع خيار القائمة.
+    if (h === COL.contacts) return '<div class="shed" style="margin-top:6px"><div class="shl">📞 أرقام التواصل عند الوصول (أضف المسؤول والرقم)</div><div id="contactsBox"></div></div>';
+    if (headers.includes(COL.shifts) && (h === COL.shift || h === COL.salary30 || h === COL.salary26)) return '';
+    if (h === COL.salary) return '';
+    
     let v = src ? String(src.values[i] ?? '').trim() : (h === COL.visible ? T.yes : '');
-    if (asCopy && h === COL.factory) v = '';      // المصنع الجديد لازم له اسم جديد
-    if (asCopy && h === COL.status) v = '';       // النسخة الجديدة مش مكتملة ولا عاجلة
-    if (!r && h === DATE_COL) v = todayStr();     // تاريخ الإضافة أوتوماتيك للمصنع الجديد
-    // لو المصنع قديم وخانة 30 يوم فاضية، ننقل المرتب القديم فيها عشان ما يضيعش
+    if (asCopy && h === COL.factory) v = '';
+    if (asCopy && h === COL.status) v = '';
+    if (!r && h === DATE_COL) v = todayStr();
     if (src && h === COL.salary30 && !v) v = String(src.values[headers.indexOf(COL.salary)] ?? '').trim();
+    
     let input;
     if (h === COL.visible){
       input = '<select data-i="' + i + '">' +
@@ -767,7 +765,6 @@ function openForm(r, asCopy){
         '<option value="' + esc(T.urgentValue) + '"' + (isUrgVal(v) ? ' selected' : '') + '>' + esc(T.urgentValue) + '</option></select>';
     } else if (!/(المصنع|اسم المصنع|factory)/i.test(h) && !/(المرتب|الراتب|مرتب|راتب|salary)/i.test(h)) {
       const known = presetOptions(h);
-      // نضمن إدراج القيمة الحالية كما هي بعد تنظيفها، حتى لو لم تعد موجودة في بقية الصفوف.
       const opts = [...new Set([...known, ...(v ? [v] : [])].filter(Boolean))];
       if (opts.length) {
         input = '<select data-i="' + i + '">' +
@@ -781,7 +778,7 @@ function openForm(r, asCopy){
     } else {
       input = '<input data-i="' + i + '" value="' + esc(v) + '">';
     }
-    // تحت خانتين المرتب: القديم كان كام (بيفضل ظاهر وانت بتعدّل)
+    
     let hint = '';
     if (h === COL.salary30 || h === COL.salary26) {
       const was = src ? (String(src.values[i] ?? '').trim() || String(src.values[headers.indexOf(COL.salary)] ?? '').trim()) : '';
@@ -790,17 +787,20 @@ function openForm(r, asCopy){
     const clr = (h === COL.factory || h === COL.visible) ? '' : '<button type="button" class="btn danger clr" data-clr="' + i + '">مسح</button>';
     return '<label>' + esc(h) + input + hint + clr + '</label>';
   }).join('');
+  
   $('sheet').innerHTML = '<h3>' + esc(r ? T.formEdit : T.formNew) + '</h3>' + fields +
     '<div class="row"><button class="btn" id="fSave">' + esc(T.save) + '</button>' +
     '<button class="btn ghost" id="fCancel">' + esc(T.cancel) + '</button></div>';
+  
   if ($('modal').classList.contains('hidden')) {
     history.pushState({adminModal: true}, '', location.href);
     modalHistoryOpen = true;
   }
   $('modal').classList.remove('hidden');
   renderShEditor();
+  renderContactsEditor();
+  
   $('fCancel').onclick = closeForm;
-  // زرار مسح الخانة: بيفضّي القيمة بعد تأكيد (ومش بيتحفظ إلا لما تدوس حفظ)
   $('sheet').querySelectorAll('.clr').forEach(b => b.onclick = e => {
     e.preventDefault();
     const idx = b.dataset.clr, el = $('sheet').querySelector('[data-i="' + idx + '"]'), cu = $('sheet').querySelector('[data-custom-i="' + idx + '"]');
@@ -817,8 +817,8 @@ function openForm(r, asCopy){
       }
     });
   });
+  
   formInitialSnapshot = currentFormSnapshot();
-  // مسودة محفوظة من آخر مرة (لو الفورم اتقفلت بالغلط)
   try{
     const raw = localStorage.getItem(draftKeyNow);
     if (raw){
@@ -827,6 +827,7 @@ function openForm(r, asCopy){
       else clearDraft();
     }
   }catch(e){}
+  
   $('sheet').oninput = $('sheet').onchange = saveDraft;
   $('fSave').onclick = async () => {
     const data = {};
@@ -835,44 +836,25 @@ function openForm(r, asCopy){
       const custom = $('sheet').querySelector('[data-custom-i="' + index + '"]');
       data[headers[index]] = (el.value === '__custom__' && custom) ? custom.value.trim() : el.value;
     });
-    if ([...$('sheet').querySelectorAll('select[data-i]')].some(el => el.value === '__custom__' && !$('sheet').querySelector('[data-custom-i="' + el.dataset.i + '"]').value.trim())) {
-      toast('اكتب القيمة الجديدة أو اختار قيمة من القائمة.', false);
-      return;
-    }
-    // رقم بس في خانة المرتب؟ بنكمّلها أوتوماتيك (8000 ← 8000 ج في الشهر)
+    
     [COL.salary30, COL.salary26].forEach(c => {
       if (!(c in data)) return;
       data[c] = normSalary(data[c], c);
     });
-    // الورديات: بنجمّعهم في الخانة (كل وردية في سطر)
+    
     if (headers.includes(COL.shifts)){
       data[COL.shifts] = serializeShifts();
-      if (!data[COL.shifts] && !confirm('مفيش ورديات ولا مرتبات. تحفظ كده؟')) return;
     }
-    // تاريخ الإضافة أوتوماتيك للمصنع الجديد لو فاضي
+    if (headers.includes(COL.contacts)){
+      data[COL.contacts] = serializeContacts();
+    }
+    
     if (!r && DATE_COL in data && !String(data[DATE_COL]).trim()) data[DATE_COL] = todayStr();
-    // فحص قبل الحفظ
     if (headers.includes(COL.factory) && !String(data[COL.factory] || '').trim()) {
       toast('اكتب اسم المصنع الأول.', false);
       return;
     }
-    if (!(COL.shifts in data) && (COL.salary30 in data || COL.salary26 in data) && !String(data[COL.salary30] || '').trim() && !String(data[COL.salary26] || '').trim()) {
-      if (!confirm('خانتين المرتب فاضيين (30 يوم و 26 يوم). تحفظ كده؟')) return;
-    }
-    if (!r) {
-      const factoryHeader = headers.find(h => /(المصنع|اسم المصنع|factory)/i.test(h));
-      const areaHeader = headers.find(h => /(المنطقة|المكان|area|location)/i.test(h));
-      const factoryName = factoryHeader ? String(data[factoryHeader] || '').trim().toLocaleLowerCase('ar') : '';
-      const areaName = areaHeader ? String(data[areaHeader] || '').trim().toLocaleLowerCase('ar') : '';
-      if (factoryName) {
-        const duplicate = rows.find(row => {
-          const existingName = String(val(row, factoryHeader) || '').trim().toLocaleLowerCase('ar');
-          const existingArea = areaHeader ? String(val(row, areaHeader) || '').trim().toLocaleLowerCase('ar') : '';
-          return existingName === factoryName && (!areaHeader || existingArea === areaName);
-        });
-        if (duplicate && !confirm('تنبيه: يوجد مصنع بنفس الاسم' + (areaName ? ' في نفس المنطقة' : '') + '. هل تريد الإضافة رغم ذلك؟')) return;
-      }
-    }
+    
     $('fSave').disabled = true;
     $('fSave').textContent = 'جارٍ الحفظ...';
     const ok = r ? await run('update', {row:r.row, data}) : await run('add', {data});
@@ -884,9 +866,7 @@ function openForm(r, asCopy){
   };
 }
 
-// بتقفل النموذج، وزر رجوع الموبايل يقفل النموذج بدل الخروج من الأدمين
 function closeForm(forceOrFromPopState, fromPopState){
-  // forceOrFromPopState=true يسمح بالإغلاق بعد نجاح الحفظ؛ القيمة الثانية خاصة بزر الرجوع.
   const force = forceOrFromPopState === true && fromPopState !== true;
   const isPop = forceOrFromPopState === true && fromPopState === true;
   const wasOpen = !$('modal').classList.contains('hidden');
@@ -901,7 +881,7 @@ function closeForm(forceOrFromPopState, fromPopState){
       return;
     }
   }
-  clearDraft();   // اتحفظ أو اتقرر الخروج من غير حفظ
+  clearDraft();
   $('modal').classList.add('hidden');
   $('sheet').innerHTML = '';
   formInitialSnapshot = '';
@@ -914,14 +894,12 @@ function closeForm(forceOrFromPopState, fromPopState){
 }
 
 window.addEventListener('popstate', () => {
-  if (ignorePop > 0){ ignorePop--; return; }                                   // رجوع عملناه إحنا بعد قفل نافذة
-  if (layers.length){ layers.pop().classList.add('hidden'); return; }       // الرجوع يقفل آخر نافذة صغيرة
-  if (!$('modal').classList.contains('hidden')) closeForm(true, true);       // وبعدها فورم المصنع
+  if (ignorePop > 0){ ignorePop--; return; }
+  if (layers.length){ layers.pop().classList.add('hidden'); return; }
+  if (!$('modal').classList.contains('hidden')) closeForm(true, true);
 });
 
 // ===== [9] خانة جديدة والتحديث والخروج =====
-
-// بتربط الزراير والبحث ودخول الإنتر
 function init(){
   $('loginTitle').textContent = T.loginTitle;
   $('pw').placeholder = T.pwHint;
@@ -936,7 +914,6 @@ function init(){
   $('areaFilter').addEventListener('change', render);
   $('genderFilter').addEventListener('change', render);
   $('q').addEventListener('input', render);
-  // أيقونة 🔍: بتظهر وتخفي كل الفلاتر (المكان + الفئة + البحث). الفلتر المختار بيفضل شغال وهو مخفي
   $('bSearch').onclick = () => { $('filters').classList.toggle('hidden'); render(); };
   $('fab').onclick = () => $('bNew').click();
   $('bNew').onclick = () => openForm(null);
