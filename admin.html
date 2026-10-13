@@ -527,7 +527,6 @@ function cardHTML(r, i, arr){
   const shl = parseShifts(val(r, COL.shifts));
   const contactsList = parseContacts(val(r, COL.contacts));
   
-  // أرقام التواصل تظهر تحت العنوان مباشرة في الكارت
   const contactsHtml = contactsList.length ? '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:2px">' + contactsList.map(c => '<span style="background:#133B63;color:#FFE45C;border:1px solid #3F7AB5;border-radius:6px;padding:2px 8px;font-size:11.5px">📞 ' + esc(c.name + ': ' + c.phone) + '</span>').join('') + '</div>' : '';
 
   const plain = [COL.area, COL.gender, ...(shl.length ? [] : [COL.shift]), ...(hasNew || shl.length ? [] : [COL.salary])]
@@ -698,17 +697,17 @@ function formHasUnsavedChanges(){
   return !!formInitialSnapshot && currentFormSnapshot() !== formInitialSnapshot;
 }
 
-// ترتيب حقول النموذج بحيث تكون أرقام التواصل تحت خانة المصنع (العنوان) مباشرة
+// ترتيب حقول النموذج: المصنع في البداية، وفي النهاية خالص (العنوان وأرقام التواصل تحتها)
 function formOrder(){
   const a = headers.indexOf(COL.salary30), b = headers.indexOf(COL.salary26);
   const sIdx = headers.indexOf(COL.shifts);
   const cIdx = headers.indexOf(COL.contacts);
+  
+  // استبعاد الحقول الخاصة بالمرتبات والورديات والتواصل لإعادة ترتيبها
   const rest = headers.map((_, i) => i).filter(i => i !== a && i !== b && i !== sIdx && i !== cIdx);
   
-  // إدراج أرقام التواصل بعد خانة اسم المصنع (العنوان) مباشرة
-  let factoryIdx = headers.indexOf(COL.factory);
-  const pos = factoryIdx < 0 ? 1 : rest.indexOf(factoryIdx) + 1;
-  rest.splice(pos, 0, cIdx);
+  // وضع أرقام التواصل في النهاية خالص (بحيث تكون تحت خانة العنوان/المصنع)
+  rest.push(cIdx);
   
   let shiftAt = headers.indexOf(COL.shift); if (shiftAt < 0) shiftAt = headers.indexOf(COL.factory);
   const shiftPos = shiftAt < 0 ? rest.length : rest.indexOf(shiftAt) + 1;
