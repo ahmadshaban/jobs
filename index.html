@@ -514,7 +514,7 @@ function draw(){
    <div class="ttl">${esc(j["المصنع"])}</div>
    ${payBlock(j)}
    ${j["تفاصيل المرتب"]&&!done(j)?`<div class="pnote"><span class="nl">ملاحظات</span><span class="nt">${esc(j["تفاصيل المرتب"])}</span></div>`:""}
-   ${done(j)?'<span class="more">اكتمل العدد</span>':`${tg?`<div class="tg">${tg}</div>`:""}<div class="cbar">اضغط لعرض التفاصيل الكاملة ◂</div>`}</button>`}).join("");
+   ${done(j)?'<span class="more">اكتمل العدد</span>':`<div class="cbar">اضغط لعرض التفاصيل الكاملة ◂</div>`}</button>`}).join("");
   $("list").querySelectorAll(".card").forEach(b=>b.onclick=()=>go(+b.dataset.i));
 }
 
