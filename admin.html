@@ -472,7 +472,7 @@ function renderContactsEditor(){
   contactsState.forEach((c, k) => {
     h += '<div class="shb"><div class="shg" style="grid-template-columns:1fr 2fr auto;align-items:end">' +
       '<label>اسم المسؤول<input data-ct="name" data-k="' + k + '" placeholder="مثلًا أحمد" value="' + esc(c.name) + '"></label>' +
-      '<label>رقم الموبايل<input data-ct="phone" data-k="' + k + '" inputmode="tel" placeholder="01012345678" value="' + esc(c.phone) + '"></label>' +
+      '<label>رقم الموبايل<input data-ct="phone" data-k="' + k + '" inputmode="tel" value="' + esc(c.phone) + '"></label>' +
       '<button type="button" class="btn danger ctx" data-k="' + k + '" style="height:42px">مسح</button></div></div>';
   });
   box.innerHTML = h;
