@@ -162,6 +162,7 @@ header h1{color:#FFFFFF;font-size:1.4rem}header .lead,header .sub{color:var(--mu
 .card .tg{margin-top:.2rem;align-items:center}.card .tg span{font-size:.72rem;padding:.05rem .5rem}
 .card .tg .go{margin-inline-start:auto;background:none;color:var(--gold);font-weight:800;font-size:.8rem;padding:0}
 .card .more{margin-top:.25rem;padding-top:.25rem}
+.card .cbar{margin-top:.4rem;padding:.4rem .5rem;border-radius:.65rem;background:var(--acs);color:var(--gold);border:1px solid var(--gold);font-weight:800;font-size:.82rem;text-align:center}
 .card .pbox{background:var(--gold);color:var(--goldD);border-radius:.7rem;padding:.3rem .4rem .35rem;margin:.3rem 0;text-align:center}
 .card .pcells{display:flex;gap:.4rem;justify-content:center}
 .card .pc{flex:1;min-width:0}.card .pc+.pc{border-inline-start:1px dashed rgba(42,29,0,.35);padding-inline-start:.4rem}
@@ -513,7 +514,7 @@ function draw(){
    <div class="ttl">${esc(j["المصنع"])}</div>
    ${payBlock(j)}
    ${j["تفاصيل المرتب"]&&!done(j)?`<div class="pnote"><span class="nl">ملاحظات</span><span class="nt">${esc(j["تفاصيل المرتب"])}</span></div>`:""}
-   ${done(j)?'<span class="more">اكتمل العدد</span>':((tg||!isMulti(j))?`<div class="tg">${tg}${isMulti(j)?'':'<span class="go">تفاصيل ←</span>'}</div>`:"")}</button>`}).join("");
+   ${done(j)?'<span class="more">اكتمل العدد</span>':`${tg?`<div class="tg">${tg}</div>`:""}<div class="cbar">اضغط لعرض التفاصيل الكاملة ◂</div>`}</button>`}).join("");
   $("list").querySelectorAll(".card").forEach(b=>b.onclick=()=>go(+b.dataset.i));
 }
 
