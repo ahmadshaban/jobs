@@ -303,7 +303,7 @@ html.fo-lock,html.fo-lock body{overflow:hidden}
 #fo .sb .sh .x{width:2.4rem;height:2.4rem;font-size:1rem}
 #fo .sb .fl{font-size:clamp(.82rem,3.5vw,.95rem);margin-top:clamp(.6rem,2.6vw,.95rem)}
 #fo .sb .fl input{padding:clamp(.55rem,2.4vw,.75rem) .85rem}
-#fo .fgo{padding-left:clamp(.9rem,4vw,1.4rem);padding-right:clamp(.9rem,4vw,1.4rem);padding-bottom:calc(2.4rem + env(safe-area-inset-bottom,0px))}
+#fo .fgo{padding:0 0 env(safe-area-inset-bottom,0px);margin-top:clamp(.7rem,3vw,1rem);border-top:0;background:transparent}
 #fo .fgo .btn{min-height:clamp(2.6rem,11vw,3rem);font-size:clamp(.92rem,3.8vw,1rem)}
 .wcta{flex-wrap:wrap}.wnote{flex:1 1 100%;text-align:center;font-weight:800;font-size:.8rem;line-height:1.5;color:var(--gold,#244A86);padding:.1rem .2rem .15rem}.dp.wk{padding-bottom:8rem}
 </style>
@@ -678,8 +678,8 @@ function formHTML(j){return `<div class="ov" id="fo"><div class="sheet"><div cla
    <div class="sh"><h2 class="ttl" style="margin:.2rem 0 0">قدّم على ${esc(j["المصنع"])}</h2><button type="button" class="exit" id="fx"><span class="xr">✕</span>رجوع</button></div>
    <label class="fl">👤 الاسم ثلاثي<input id="f_n" autocomplete="name"></label><div class="er" id="e_n"></div>
    <label class="fl">🔢 السن<input id="f_a" inputmode="numeric" maxlength="2" autocomplete="off"></label><div class="er" id="e_a"></div>
-   <label class="fl">📞 رقم التليفون<input id="f_t" type="tel" inputmode="tel" maxlength="15" autocomplete="tel" placeholder="01XXXXXXXXX"></label><div class="er" id="e_t"></div></div>
-   <div class="fgo"><button type="button" class="btn wa" id="fgo">دوس هنا وكمّل على الواتساب</button></div></div></div>`}
+   <label class="fl">📞 رقم التليفون<input id="f_t" type="tel" inputmode="tel" maxlength="15" autocomplete="tel" placeholder="01XXXXXXXXX"></label><div class="er" id="e_t"></div>
+   <div class="fgo"><button type="button" class="btn wa" id="fgo">دوس هنا وكمّل على الواتساب</button></div></div></div></div>`}
 
 let foOpen=false,foHide=null,ignoreFo=0;
 window.addEventListener("popstate",()=>{if(ignoreFo>0){ignoreFo--;return}if(foOpen){foOpen=false;if(foHide)foHide()}});
