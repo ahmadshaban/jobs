@@ -305,6 +305,7 @@ html.fo-lock,html.fo-lock body{overflow:hidden}
 .sb .fl input{padding:clamp(.55rem,2.4vw,.75rem) .85rem}
 .fgo{padding-left:clamp(.9rem,4vw,1.4rem);padding-right:clamp(.9rem,4vw,1.4rem)}
 .fgo .btn{min-height:clamp(2.6rem,11vw,3rem);font-size:clamp(.92rem,3.8vw,1rem)}
+.wcta{flex-wrap:wrap}.wnote{flex:1 1 100%;text-align:center;font-weight:800;font-size:.8rem;line-height:1.5;color:var(--gold,#244A86);padding:.1rem .2rem .15rem}.dp.wk{padding-bottom:8rem}
 </style>
 </head>
 <body>
@@ -354,9 +355,18 @@ html.fo-lock,html.fo-lock body{overflow:hidden}
 </div></div></div>
 
 <script>
-const AREAS_CSV_URL="https://docs.google.com/spreadsheets/d/1Ri61Py0q36t2EdMCWXa0lgJGDWJfrXjY0gHmqnwS4AM/gviz/tq?tqx=out:csv&headers=1&sheet=%D8%A7%D9%84%D9%85%D9%86%D8%A7%D8%B7%D9%82";
+const WORKER_SHEET_ID="1DGOL70SHQXJbaklzqdnizSrArmN-8wBE--48QKvgZhI";
+const CC_RX=/^[A-Za-z0-9_-]{30,60}$/;
+const CC_ID=(()=>{let v="";try{v=(new URLSearchParams(location.search).get("cc")||"").trim();
+  if(CC_RX.test(v)){try{sessionStorage.setItem("jobcc",v)}catch(e){}
+    const u=new URL(location.href);u.searchParams.delete("cc");history.replaceState(null,"",u.pathname+u.search+u.hash)}
+  else{v="";try{v=sessionStorage.getItem("jobcc")||""}catch(e){}}}catch(e){}
+  return CC_RX.test(v)?v:""})();
+const IS_CC=!!CC_ID;
+const GV="https://docs.google.com/spreadsheets/d/"+(IS_CC?CC_ID:WORKER_SHEET_ID)+"/gviz/tq?tqx=out:csv&headers=1&sheet=";
+const AREAS_CSV_URL=GV+encodeURIComponent("المناطق");
 const PHONE = "201095237207";
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1Ri61Py0q36t2EdMCWXa0lgJGDWJfrXjY0gHmqnwS4AM/gviz/tq?tqx=out:csv&headers=1&sheet=%D8%A7%D9%84%D9%88%D8%B8%D8%A7%D8%A6%D9%81";
+const SHEET_CSV_URL=GV+encodeURIComponent("الوظائف");
 
 const CORE=["المنطقة","الفئة","المصنع","المؤهل","الشفت","السن","طبيعة العمل","المرتب","مرتب 30 يوم","مرتب 26 يوم","تفاصيل المرتب","الورديات","أرقام التواصل","تثبيت","الترتيب","آخر تعديل","ظاهر؟","الحالة","تاريخ الإضافة"];
 const done=j=>(j["الحالة"]||"").includes("مكتمل");
@@ -399,11 +409,12 @@ function parseContacts(j){
   return list;
 }
 
+const cleanAddr=a=>{a=String(a||"");if(IS_CC)return a;return a.replace(/\s*(?:و?كلّ?مني|و?(?:ت|ا)تصل)(?:\s+(?:ع|على))?(?:\s+(?:الرقم|رقم))?\s*[:：\-–_]*\s*$/,"").trim()};
 function topShift(a){let b={v:"",h:""},m=0;a.forEach(s=>[s.p30,s.p26].forEach(x=>{const n=numOf(x);if(n>m){m=n;b={v:x,h:s.h}}}));return b}
 function prep(j){
   const a=parseShifts(j["الورديات"]);
   j.__sh=a;
-  j.__contacts=parseContacts(j);
+  j.__contacts=IS_CC?parseContacts(j):[];
   if(a.length===1){j["الشفت"]=a[0].h;j[P30]=a[0].p30;j[P26]=a[0].p26}else if(a.length>1){j["الشفت"]="";j[P30]="";j[P26]="";j["المرتب"]=""}
   return j;
 }
@@ -553,8 +564,8 @@ function buildJobText(j) {
     }
   });
 
-  if(j["العنوان"]) {
-    msg += `📍 العنوان: ${j["العنوان"]}\n`;
+  if(cleanAddr(j["العنوان"])) {
+    msg += `📍 العنوان: ${cleanAddr(j["العنوان"])}\n`;
   }
   
   if(j.__contacts && j.__contacts.length) {
@@ -741,7 +752,7 @@ async function saveJobAsImage(j, captureElem) {
 function showDetail(j){
   const ph=PHONE.replace(/\D/g,"");
   
-  let addressHTML = `<b>${esc(j["العنوان"]||"غير محدد")}</b>`;
+  let addressHTML = `<b>${esc(cleanAddr(j["العنوان"])||"غير محدد")}</b>`;
   if(j.__contacts && j.__contacts.length) {
     addressHTML += `<div class="contacts-box">
       <span class="contacts-title">📞 أرقام التواصل عند الوصول:</span>
@@ -759,7 +770,7 @@ function showDetail(j){
   
   const it=k=> {
     if(k==="العنوان") {
-      return `<div class="it full"><small>📍 العنوان وأرقام التواصل</small>${addressHTML}</div>`;
+      return `<div class="it full"><small>${IS_CC?"📍 العنوان وأرقام التواصل":"📍 العنوان"}</small>${addressHTML}</div>`;
     }
     return `<div class="it ${(k==="طبيعة العمل"||String(j[k]).length>26)?"full":""}"><small>${ICONS[k]||"•"} ${esc(k)}</small><b>${esc(j[k])}</b></div>`;
   };
@@ -784,22 +795,22 @@ function showDetail(j){
     ["السكن والمواصلات والأقسام الإضافية", ["السكن", "المواصلات", ...otherKeys, "العنوان"]]
   ];
   
-  $("detail").innerHTML=`<div class="w dp" id="captureArea">
+  $("detail").innerHTML=`<div class="w dp${IS_CC?"":" wk"}" id="captureArea">
    <div class="tb"><button class="exit" id="ex"><span class="xr">✕</span>رجوع</button></div>
    <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="bd2">${tags(j)}<span class="badge ${kind(j["الفئة"]||"")}">${esc(j["الفئة"])}</span></span></div>
    <h2 class="ttl">${esc(j["المصنع"])}</h2>
    ${groups.map(g=>sec(g[0],g[1],g[2])).join("")}
-   <div class="cta">
-     <button type="button" class="btn wa" id="apply">قدّم دلوقتي على الواتساب</button>
+   <div class="cta${IS_CC?"":" wcta"}">
+     ${IS_CC?`<button type="button" class="btn wa" id="apply">قدّم دلوقتي على الواتساب</button>`:`<div class="wnote">للتقديم على الوظيفة، ارجع للمسؤول اللي بعتلك اللينك ده وهو يكمّلك إجراءات التقديم.</div>`}
      <button type="button" class="btn sh2" id="shareImgBtn">🖼️ نسخ كصورة</button>
      <button type="button" class="btn sh2" id="copyTxtBtn">📋 نسخ</button>
-   </div></div>${formHTML(j)}`;
+   </div></div>${IS_CC?formHTML(j):""}`;
    
   $("main").style.display="none";$("detail").style.display="block";window.scrollTo(0,0);
   $("ex").onclick=exitDetail;
   $("shareImgBtn").onclick=()=>saveJobAsImage(j, $("captureArea"));
   $("copyTxtBtn").onclick=()=>openSingleCopyModal(j);
-  setupApply(j,ph);
+  if(IS_CC)setupApply(j,ph);
 }
 
 window.addEventListener("hashchange",route);
