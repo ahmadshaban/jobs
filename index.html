@@ -678,10 +678,10 @@ function setupApply(j,ph){
     if(a&&(+a<AGE_MIN||+a>AGE_MAX))return fail(ea,"السن لازم يكون من "+AGE_MIN+" لـ "+AGE_MAX);
     if(t&&!/^\+?\d{10,14}$/.test(t))return fail(et,"رقم التليفون غلط، اكتبه بالأرقام (مثال 01012345678)");
     try{localStorage.setItem(SAVE_KEY,JSON.stringify({n:n,a:a,t:t}))}catch(e){}
-    const L=["👋 السلام عليكم، عايز أقدم على وظيفة",""];
+    const L=[];
     if(n)L.push("👤 *الاسم:* "+n);if(a)L.push("🔢 *السن:* "+a);if(t)L.push("📞 *رقم التليفون:* "+t);
-    L.push("","📍 *المكان:* "+j["المنطقة"],"🏭 *المصنع:* "+j["المصنع"]);
-    if(SRC)L.push("","المصدر: "+SRC);
+    L.push("📍 *المكان:* "+j["المنطقة"],"🏭 *المصنع:* "+j["المصنع"]);
+    if(SRC)L.push("المصدر: "+SRC);
     const u="https://wa.me/"+ph+"?text="+encodeURIComponent(L.join("\n"));
     close();window.open(u,"_blank")||(location.href=u);
   };
