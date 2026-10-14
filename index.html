@@ -289,6 +289,7 @@ header h1{color:#FFFFFF;font-size:1.4rem}header .lead,header .sub{color:var(--mu
 }
 
 /* apply form: full screen, responsive */
+#fo .sh .x{background:#E5120F;border-color:#E5120F;color:#fff;font-weight:900}
 @keyframes fin{from{opacity:0}to{opacity:1}}
 html.fo-lock,html.fo-lock body{overflow:hidden}
 .ov{background:var(--bg);align-items:stretch;touch-action:none}
@@ -378,7 +379,7 @@ function parseContacts(j){
   if(j["أرقام التواصل"]) {
     String(j["أرقام التواصل"]).split(/\n/).forEach(l => {
       const p = l.split("|").map(x=>x.trim());
-      if(p[0]) list.push({ name: p[1]?p[0]:"المسؤول", phone: p[1]||p[0] });
+      if(p[0]) list.push({ name: p[1]?p[0]:"", phone: p[1]||p[0] });
     });
   }
   // 2. الاستخراج التلقائي الذكي من خانة العنوان القديم لو أرقام التواصل فاضية
@@ -391,8 +392,8 @@ function parseContacts(j){
       const phoneNum = match[0];
       // محاولة استخراج اسم مسبق للرقم (مثل اسم الشخص قبل الرقم بكلمات قليلة)
       const subStr = addr.substring(Math.max(0, match.index - 25), match.index);
-      const cleanName = subStr.replace(/[:\-,\s]+$/, "").split(/[\s,\-]+/).pop() || "المسؤول";
-      list.push({ name: isNaN(cleanName)?cleanName:"المسؤول", phone: phoneNum });
+      const cleanName = subStr.replace(/[:\-,\s]+$/, "").split(/[\s,\-]+/).pop() || "";
+      list.push({ name: isNaN(cleanName)?cleanName:"", phone: phoneNum });
     }
   }
   return list;
@@ -559,7 +560,7 @@ function buildJobText(j) {
   if(j.__contacts && j.__contacts.length) {
     msg += `📞 أرقام التواصل عند الوصول:\n`;
     j.__contacts.forEach(c => {
-      msg += `  • ${c.name}: ${c.phone}\n`;
+      msg += `  • ${c.name?c.name+": ":""}${c.phone}\n`;
     });
   }
 
@@ -668,7 +669,7 @@ function formHTML(j){return `<div class="ov" id="fo"><div class="sheet"><div cla
    <div class="sh"><h2 class="ttl" style="margin:.2rem 0 0">قدّم على ${esc(j["المصنع"])}</h2><button type="button" class="x" id="fx">✕</button></div>
    <label class="fl">👤 الاسم ثلاثي<input id="f_n" autocomplete="name"></label><div class="er" id="e_n"></div>
    <label class="fl">🔢 السن<input id="f_a" inputmode="numeric" maxlength="2" autocomplete="off"></label><div class="er" id="e_a"></div>
-   <label class="fl">📞 رقم التليفون (اختياري)<input id="f_t" type="tel" inputmode="tel" maxlength="15" autocomplete="tel" placeholder="01XXXXXXXXX"></label><div class="er" id="e_t"></div></div>
+   <label class="fl">📞 رقم التليفون<input id="f_t" type="tel" inputmode="tel" maxlength="15" autocomplete="tel" placeholder="01XXXXXXXXX"></label><div class="er" id="e_t"></div></div>
    <div class="fgo"><button type="button" class="btn wa" id="fgo">دوس هنا وكمّل على الواتساب</button></div></div></div>`}
 
 let foOpen=false,foHide=null,ignoreFo=0;
@@ -747,7 +748,7 @@ function showDetail(j){
       ${j.__contacts.map(c=>`
         <div class="contact-item">
           <div class="contact-info">
-            <span class="contact-name">👤 ${esc(c.name)}:</span>
+            ${c.name?`<span class="contact-name">👤 ${esc(c.name)}:</span>`:""}
             <span class="contact-num">📱 ${esc(c.phone)}</span>
           </div>
           <a href="tel:${esc(c.phone)}" class="call-btn">📞 اتصال</a>
