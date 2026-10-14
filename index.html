@@ -606,7 +606,7 @@ function openAreaCopyModal(areaName, jobsList) {
     let msg = `📍 وظايف تعبئة وتغليف وفرز المتاحة في (${areaName}):\n\n`;
     activeJobs.forEach((j, index) => {
       msg += `━━━━━━━━━━━━━━━━━━━━\n`;
-      msg += `${index + 1}️⃣ ` + buildJobText(j).replace(/^📍 وظيفة:.*?\n/, "") + `\n`;
+      msg += `${index + 1}️⃣ ` + buildJobText(j) + `\n`;
     });
     msg += `━━━━━━━━━━━━━━━━━━━━`;
 
