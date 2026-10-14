@@ -357,7 +357,7 @@ html.fo-lock,html.fo-lock body{overflow:hidden}
 <script>
 const WORKER_SHEET_ID="1DGOL70SHQXJbaklzqdnizSrArmN-8wBE--48QKvgZhI";
 const CC_RX=/^[A-Za-z0-9_-]{30,60}$/;
-const CC_BLOB="oqBpkrX65JaOiG6ZfmtzwRXI6NvFi+40340/WftKluuVSmT9o4fY3mZJI9r3aBPiJyEzHZt7x8nkIqvKdPSjpoy7os/zyB3oaO7gXuk4dRyUTBrwPGeaSw==";
+const CC_SHEET_ID="1UXAwDfIn3oxU68byv1I6dIrdQaKm2OXhhj7NoHlwRBU";
 const CC_PAGE=/\/callcenter(\.html)?\/?$/.test(location.pathname);
 const SITE_BASE=location.origin+location.pathname.replace(/callcenter(\.html)?\/?$/,"");
 let CC_ID=(()=>{let v="";try{v=(new URLSearchParams(location.search).get("cc")||"").trim()}catch(e){}return CC_RX.test(v)?v:""})();
@@ -365,22 +365,6 @@ let IS_CC=false,GV="",AREAS_CSV_URL="",SHEET_CSV_URL="";
 const PHONE = "201095237207";
 function setSrc(){IS_CC=!!CC_ID;GV="https://docs.google.com/spreadsheets/d/"+(IS_CC?CC_ID:WORKER_SHEET_ID)+"/gviz/tq?tqx=out:csv&headers=1&sheet=";AREAS_CSV_URL=GV+encodeURIComponent("المناطق");SHEET_CSV_URL=GV+encodeURIComponent("الوظائف")}
 setSrc();
-const normCode=c=>String(c||"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
-async function ccFromCode(code){try{const b=Uint8Array.from(atob(CC_BLOB),c=>c.charCodeAt(0)),e=new TextEncoder();
-  const km=await crypto.subtle.importKey("raw",e.encode(normCode(code)),"PBKDF2",false,["deriveKey"]);
-  const key=await crypto.subtle.deriveKey({name:"PBKDF2",salt:b.slice(0,16),iterations:600000,hash:"SHA-256"},km,{name:"AES-GCM",length:256},false,["decrypt"]);
-  const v=new TextDecoder().decode(await crypto.subtle.decrypt({name:"AES-GCM",iv:b.slice(16,28)},key,b.slice(28)));
-  return CC_RX.test(v)?v:""}catch(e){return ""}}
-function askCode(msg){return new Promise(res=>{const o=document.createElement("div");
-  o.style.cssText="position:fixed;inset:0;z-index:99999;background:var(--bg,#0E1A33);display:flex;align-items:center;justify-content:center;padding:1rem";
-  o.innerHTML='<div style="width:100%;max-width:22rem;text-align:center;color:var(--tx,#fff)"><h2 style="margin:.2rem 0 .6rem">لينك الكول سنتر</h2><p style="margin:0 0 .8rem;font-size:.9rem;opacity:.85">اكتب الكود (مرة واحدة على الجهاز ده)</p><input id="ccin" inputmode="numeric" dir="ltr" autocomplete="off" autocapitalize="none" spellcheck="false" style="width:100%;box-sizing:border-box;padding:.7rem;border-radius:.6rem;border:1px solid var(--bd,#2A3C66);background:#22355D;color:#fff;font-size:1rem;text-align:center"><div id="ccer" style="min-height:1.3rem;margin:.4rem 0;color:#ff8a80;font-size:.85rem"></div><button id="ccgo" style="width:100%;padding:.7rem;border:0;border-radius:.6rem;background:var(--wa,#1FAF5A);color:#fff;font-weight:800;font-size:1rem">دخول</button></div>';
-  document.body.appendChild(o);const i=o.querySelector("#ccin"),e=o.querySelector("#ccer"),b=o.querySelector("#ccgo");e.textContent=msg||"";
-  const go=()=>{const v=i.value.trim();if(!v){e.textContent="اكتب الكود";return}b.disabled=true;b.textContent="ثواني...";setTimeout(()=>{o.remove();res(v)},30)};
-  b.onclick=go;i.onkeydown=ev=>{if(ev.key==="Enter")go()};setTimeout(()=>i.focus(),50)})}
-async function ccUnlock(){let id="";try{id=localStorage.getItem("jobcc")||""}catch(e){}if(!CC_RX.test(id))id="";let msg="";
-  while(!id){const c=await askCode(msg);id=await ccFromCode(c);if(!id)msg="الكود غلط، جرّب تاني"}
-  try{localStorage.setItem("jobcc",id)}catch(e){}return id}
-
 const CORE=["المنطقة","الفئة","المصنع","المؤهل","الشفت","السن","طبيعة العمل","المرتب","مرتب 30 يوم","مرتب 26 يوم","تفاصيل المرتب","الورديات","أرقام التواصل","تثبيت","الترتيب","آخر تعديل","ظاهر؟","الحالة","تاريخ الإضافة"];
 const done=j=>(j["الحالة"]||"").includes("مكتمل");
 const urgent=j=>/عاجل|الأكثر تقديم/.test(j["الحالة"]||"");
@@ -491,7 +475,7 @@ function showErr(){
   $("retry").onclick=load;
 }
 async function load(){
-  if(CC_PAGE&&!CC_ID){CC_ID=await ccUnlock();setSrc()}
+  if(CC_PAGE&&!CC_ID){CC_ID=CC_SHEET_ID;setSrc()}
   $("list").innerHTML='<div class="sk"></div><div class="sk"></div><div class="sk"></div>';
   const [jr,ar]=await Promise.allSettled([getText(SHEET_CSV_URL,15000),getText(AREAS_CSV_URL,3000)]);
   let d=null,demo=false;
