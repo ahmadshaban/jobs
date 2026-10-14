@@ -287,6 +287,23 @@ header h1{color:#FFFFFF;font-size:1.4rem}header .lead,header .sub{color:var(--mu
   align-items: center;
   gap: .2rem;
 }
+
+/* apply form: full screen, responsive */
+@keyframes fin{from{opacity:0}to{opacity:1}}
+html.fo-lock,html.fo-lock body{overflow:hidden}
+.ov{background:var(--bg);align-items:stretch;touch-action:none}
+.sheet{max-width:34rem;max-height:none;height:100%;height:100dvh;border-radius:0;animation:fin .18s ease-out}
+.grab{display:none}
+.sheet>.sb{flex:1 1 auto;min-height:0}
+.fgo{flex:none}
+.sb{padding:0 clamp(.9rem,4vw,1.4rem) 1rem;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch}
+.sb .sh{position:sticky;top:0;z-index:2;align-items:center;background:var(--bg);margin:0 calc(-1*clamp(.9rem,4vw,1.4rem)) .2rem;padding:calc(.55rem + env(safe-area-inset-top,0px)) clamp(.9rem,4vw,1.4rem) .55rem;border-bottom:1px solid var(--bd)}
+.sb .sh .ttl{margin:0!important;font-size:clamp(.95rem,4vw,1.1rem)}
+.sb .sh .x{width:2.4rem;height:2.4rem;font-size:1rem}
+.sb .fl{font-size:clamp(.82rem,3.5vw,.95rem);margin-top:clamp(.6rem,2.6vw,.95rem)}
+.sb .fl input{padding:clamp(.55rem,2.4vw,.75rem) .85rem}
+.fgo{padding-left:clamp(.9rem,4vw,1.4rem);padding-right:clamp(.9rem,4vw,1.4rem)}
+.fgo .btn{min-height:clamp(2.6rem,11vw,3rem);font-size:clamp(.92rem,3.8vw,1rem)}
 </style>
 </head>
 <body>
@@ -664,9 +681,9 @@ function setupApply(j,ph){
   [en,ea,et].forEach(x=>x.addEventListener("input",()=>{x.classList.remove("bad");errs[x.id].textContent=""}));
   try{const s=JSON.parse(localStorage.getItem(SAVE_KEY)||"{}");en.value=s.n||"";ea.value=s.a||"";et.value=s.t||""}catch(e){}
   
-  foOpen=false;foHide=()=>fo.classList.remove("show");
+  foOpen=false;foHide=()=>{fo.classList.remove("show");document.documentElement.classList.remove("fo-lock")};
   const close=()=>{foHide();if(foOpen){foOpen=false;ignoreFo++;history.back()}};
-  $("apply").onclick=()=>{clearErr();fo.classList.add("show");if(!foOpen){foOpen=true;history.pushState({fo:1},"",location.href)};setTimeout(()=>{(en.value?ea:en).focus()},250)};
+  $("apply").onclick=()=>{clearErr();fo.classList.add("show");document.documentElement.classList.add("fo-lock");if(!foOpen){foOpen=true;history.pushState({fo:1},"",location.href)};setTimeout(()=>{(en.value?ea:en).focus()},250)};
   $("fx").onclick=close;fo.onclick=e=>{if(e.target===fo)close()};
   $("fgo").onclick=()=>{
     const dg=s=>s.replace(/[٠-٩]/g,x=>"٠١٢٣٤٥٦٧٨٩".indexOf(x));
