@@ -429,13 +429,13 @@ function serializeShifts(){
 function parseContacts(txt){
   return String(txt || '').split(/\n/).map(l => l.trim()).filter(Boolean).map(l => {
     const p = l.split('|').map(x => x.trim());
-    return { name: p[1] ? p[0] : 'المسؤول', phone: p[1] || p[0] || '' };
+    return { name: p[1] ? p[0] : '', phone: p[1] || p[0] || '' };
   }).filter(c => c.phone);
 }
 function serializeContacts(){
   const clean = v => String(v || '').replace(/[|\n]/g, ' ').trim();
   return contactsState.filter(c => clean(c.phone)).map(c => {
-    return clean(c.name || 'المسؤول') + ' | ' + clean(c.phone);
+    const nm = clean(c.name); return nm ? nm + ' | ' + clean(c.phone) : clean(c.phone);
   }).join('\n');
 }
 
@@ -477,7 +477,7 @@ function renderContactsEditor(){
   });
   box.innerHTML = h;
   saveDraft();
-  $('contactAdd').onclick = () => { contactsState.push({name: 'المسؤول', phone: ''}); renderContactsEditor(); };
+  $('contactAdd').onclick = () => { contactsState.push({name: '', phone: ''}); renderContactsEditor(); };
   box.querySelectorAll('.ctx').forEach(b => b.onclick = () => { contactsState.splice(+b.dataset.k, 1); renderContactsEditor(); });
   box.querySelectorAll('input[data-ct]').forEach(el => el.addEventListener('input', () => { contactsState[+el.dataset.k][el.dataset.ct] = el.value; }));
 }
