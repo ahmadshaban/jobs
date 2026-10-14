@@ -53,7 +53,9 @@ input:focus,select:focus,.btn:focus-visible{outline:2px solid #FFE45C;outline-of
 .login-box{width:100%;max-width:340px;background:#0B2A4A;border:1px solid #3F7AB5;border-radius:16px;padding:22px;display:grid;gap:12px}
 .login-box h1{margin:0;font-size:20px;color:#FFE45C}
 .err{color:#FFE45C;min-height:20px;font-size:14px}
-header{position:sticky;top:0;z-index:5;background:#0B2A4A;border-bottom:1px solid #3F7AB5;padding:12px;display:grid;gap:10px}
+header{background:#0B2A4A;border-bottom:1px solid #3F7AB5;padding:12px;display:grid;gap:10px}
+#pinbar{position:sticky;top:0;z-index:5;background:#0B2A4A;border-bottom:1px solid #3F7AB5;padding:8px 12px}
+#pinbar .selrow{display:flex;gap:8px}
 header h1{margin:0;font-size:18px;color:#fff}
 .bar{display:flex;gap:8px;flex-wrap:wrap}
 .bar .btn{flex:1 1 auto;padding:6px 8px;font-size:12.5px}
@@ -120,17 +122,6 @@ header h1{margin:0;font-size:18px;color:#fff}
   <header>
     <h1 id="title"></h1>
     <div id="filters" style="display:grid;gap:10px">
-    <div style="display:flex;gap:8px">
-      <select id="areaFilter" aria-label="اختيار المكان" required>
-        <option value="">اختار المكان أولًا</option>
-      </select>
-      <select id="genderFilter" aria-label="اختيار الفئة">
-        <option value="">الكل</option>
-        <option value="m">شباب</option>
-        <option value="f">بنات</option>
-        <option value="b">شباب وبنات</option>
-      </select>
-    </div>
     <input id="q" type="search" placeholder="دوّر باسم المصنع..." aria-label="بحث باسم المصنع">
     </div>
     <div class="bar">
@@ -143,6 +134,17 @@ header h1{margin:0;font-size:18px;color:#fff}
     </div>
     <div id="stats" class="stats"></div>
   </header>
+  <div id="pinbar"><div class="selrow">
+      <select id="areaFilter" aria-label="اختيار المكان" required>
+        <option value="">اختار المكان أولًا</option>
+      </select>
+      <select id="genderFilter" aria-label="اختيار الفئة">
+        <option value="">الكل</option>
+        <option value="m">شباب</option>
+        <option value="f">بنات</option>
+        <option value="b">شباب وبنات</option>
+      </select>
+  </div></div>
   <div id="list"></div>
   <button class="fab" id="fab" aria-label="وظيفة جديدة">+</button>
 </div>
@@ -575,7 +577,7 @@ function render(){
   const g = $('genderFilter').value;
   const kindOf = r => { const t = val(r, COL.gender); const m = /شباب/.test(t), f = /بنات/.test(t); return (m && f) ? 'b' : m ? 'm' : f ? 'f' : ''; };
   const q = $('q').value.trim().toLocaleLowerCase('ar');
-  $('bSearch').textContent = '🔍' + ((area || g || q) && $('filters').classList.contains('hidden') ? ' ●' : '');
+  $('bSearch').textContent = '🔍' + (q && $('filters').classList.contains('hidden') ? ' ●' : '');
   const list = (area || q) ? rows.filter(r => (!area || val(r, COL.area).trim() === area) &&
     (!q || val(r, COL.factory).toLocaleLowerCase('ar').includes(q)) && (!g || kindOf(r) === g)) : [];
   list.sort(siteOrder);
