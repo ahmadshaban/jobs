@@ -373,8 +373,9 @@ html.fo-lock,html.fo-lock body{overflow:hidden}
 const WORKER_SHEET_ID="1DGOL70SHQXJbaklzqdnizSrArmN-8wBE--48QKvgZhI";
 const CC_RX=/^[A-Za-z0-9_-]{30,60}$/;
 const CC_SHEET_ID="1UXAwDfIn3oxU68byv1I6dIrdQaKm2OXhhj7NoHlwRBU";
-const CC_PAGE=/\/callcenter(\.html)?\/?$/.test(location.pathname);
-const SITE_BASE=location.origin+location.pathname.replace(/callcenter(\.html)?\/?$/,"");
+const WORKER_PAGE=/\/callcenter(\.html)?\/?$/.test(location.pathname);
+const CC_PAGE=!WORKER_PAGE;
+const SITE_BASE=location.origin+location.pathname.replace(/[^\/]*$/,"")+"callcenter.html";
 let CC_ID=(()=>{let v="";try{v=(new URLSearchParams(location.search).get("cc")||"").trim()}catch(e){}return CC_RX.test(v)?v:""})();
 let IS_CC=false,GV="",AREAS_CSV_URL="",SHEET_CSV_URL="";
 const PHONE = "201095237207";
