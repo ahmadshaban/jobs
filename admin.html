@@ -165,11 +165,7 @@ input.bad,select.bad{border-color:#FF7777;box-shadow:0 0 0 2px rgba(255,119,119,
 <div id="app" class="hidden">
   <header>
     <h1 id="title"></h1>
-    <div id="filters" style="display:grid;gap:10px">
-    <input id="q" type="search" placeholder="دوّر باسم المصنع..." aria-label="بحث باسم المصنع">
-    </div>
     <div class="bar">
-      <button class="btn ghost" id="bSearch" aria-label="الفلتر" style="flex:0 0 auto">🔍</button>
       <button class="btn" id="bNew"></button>
       <button class="btn ghost" id="bCol"></button>
       <button class="btn danger" id="bDelCol">مسح عمود</button>
@@ -638,8 +634,7 @@ function render(){
   const area = $('areaFilter').value;
   const g = $('genderFilter').value;
   const kindOf = r => { const t = val(r, COL.gender); const m = /شباب/.test(t), f = /بنات/.test(t); return (m && f) ? 'b' : m ? 'm' : f ? 'f' : ''; };
-  const q = $('q').value.trim().toLocaleLowerCase('ar');
-  $('bSearch').textContent = '🔍' + (q && $('filters').classList.contains('hidden') ? ' ●' : '');
+  const q = '';
   const list = (area || q) ? rows.filter(r => (!area || val(r, COL.area).trim() === area) &&
     (!q || val(r, COL.factory).toLocaleLowerCase('ar').includes(q)) && (!g || kindOf(r) === g)) : [];
   list.sort(siteOrder);
@@ -647,7 +642,7 @@ function render(){
   $('title').textContent = T.title + ((area || q) ? ' (' + list.length + ')' : '');
   $('list').innerHTML = (area || q)
     ? (list.length ? list.map(cardHTML).join('') : '<div class="empty">' + esc(T.empty) + '</div>')
-    : '<div class="empty">اختار المكان من القائمة، أو اكتب اسم المصنع في البحث.</div>';
+    : '<div class="empty">اختار المكان من القائمة.</div>';
 }
 
 let shownList = [];
@@ -998,8 +993,6 @@ function init(){
   $('pw').addEventListener('keydown', e => { if (e.key === 'Enter') $('loginBtn').click(); });
   $('areaFilter').addEventListener('change', render);
   $('genderFilter').addEventListener('change', render);
-  let qTimer; $('q').addEventListener('input', () => { clearTimeout(qTimer); qTimer = setTimeout(render, 180); });
-  $('bSearch').onclick = () => { $('filters').classList.toggle('hidden'); render(); };
   $('fab').onclick = () => $('bNew').click();
   $('bNew').onclick = () => openForm(null);
   $('bRef').onclick = load;
