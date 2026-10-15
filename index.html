@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="وظائف المصانع" id="atn">
+<meta name="apple-mobile-web-app-title" content="Job Gate Main" id="atn">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Crect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%230E1A33%27/%3E%3Ctext x=%2750%27 y=%2770%27 font-size=%2760%27 text-anchor=%27middle%27%3E%F0%9F%8F%AD%3C/text%3E%3C/svg%3E">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>عمال تعبئة وتغليف وفرز</title>
@@ -458,7 +458,7 @@ const CC_RX=/^[A-Za-z0-9_-]{30,60}$/;
 const CC_SHEET_ID="1UXAwDfIn3oxU68byv1I6dIrdQaKm2OXhhj7NoHlwRBU";
 const WORKER_PAGE=/\/callcenter(\.html)?\/?$/.test(location.pathname);
 const CC_PAGE=!WORKER_PAGE;
-(function(){try{if(WORKER_PAGE){var m=document.getElementById("mf"),a=document.getElementById("ati"),t=document.getElementById("atn");if(m)m.href="manifest-cc.json";if(a)a.href="cc-apple-touch-icon.png";if(t)t.content="وظائف CC"}if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(function(){})}catch(e){}})();
+(function(){try{if(WORKER_PAGE){var m=document.getElementById("mf"),a=document.getElementById("ati"),t=document.getElementById("atn");if(m)m.href="manifest-cc.json";if(a)a.href="cc-apple-touch-icon.png";if(t)t.content="Job Gate CC"}if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(function(){})}catch(e){}})();
 const SITE_BASE=location.origin+location.pathname.replace(/[^\/]*$/,"")+"callcenter.html";
 let CC_ID=(()=>{let v="";try{v=(new URLSearchParams(location.search).get("cc")||"").trim()}catch(e){}return CC_RX.test(v)?v:""})();
 let IS_CC=false,GV="",AREAS_CSV_URL="",SHEET_CSV_URL="";
