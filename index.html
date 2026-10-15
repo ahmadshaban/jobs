@@ -8,8 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>عمال تعبئة وتغليف وفرز</title>
 
-<!-- مكتبة التقاط الصور المستقرة -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<meta name="description" content="وظايف مصانع تعبئة وتغليف وفرز - قدّم من الموبايل في دقايق">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="عمال تعبئة وتغليف وفرز">
@@ -19,6 +18,8 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
@@ -331,11 +332,59 @@ header .lead,header .sub{font-size:.85rem;line-height:1.5;margin:0 0 .2rem}
 .frow .seg{gap:.45rem}
 .frow .seg button{font-size:.92rem;padding:.5rem 0;line-height:1.4}
 .frow .ddb{font-size:.92rem;padding:.5rem .9rem;line-height:1.4}
+
+/* ===== polish v2: مسافات موحدة + قراءة + لمس + ديسكتوب ===== */
+:root{--s1:.25rem;--s2:.5rem;--s3:.75rem;--s4:1rem;--s5:1.5rem}
+body{-webkit-text-size-adjust:100%}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:.4rem}
+.fl input:focus-visible,.search input:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+/* خطوط مقروءة (حد أدنى .8rem) */
+.card .top,.fhint,.contacts-title,.call-btn,.card .tg span,.card .pnote .nl,.card .pbox .tag,.card .pay small,.it small,.sht th,.sht th .tag,.chip .n,.badge,.card .badge,.trust span,.trust a,.tag,.pay small.tag,.pt small.tag,.it.pay2 small.tag{font-size:.8rem}
+.card .pnote .nt{font-size:.85rem}.card .more2{font-size:.85rem}.it b{font-size:.92rem}
+header .lead,header .sub{font-size:.92rem}.btn.sh2{font-size:.85rem}
+/* مسافات */
+header{padding:.9rem var(--px)}
+.flab{margin:var(--s3) 0 var(--s1)}
+.fhint{margin:0 0 var(--s3);text-align:start}
+.bar{padding:var(--s2) 0}
+.frow{gap:var(--s3)}.frow .seg{gap:var(--s3)}
+.meta{margin:var(--s4) 0 var(--s3)}
+.card{padding:.8rem .9rem;margin-bottom:.9rem}
+.card .ttl{margin:.2rem 0 .6rem}
+.card .pbox,.card .pay{margin:.55rem 0}
+.card .pnote{margin:.45rem 0 .55rem}
+.card .more2{margin:.55rem 0}
+.card .tg{margin-top:.55rem;gap:.4rem}
+.card .cbar{margin-top:.7rem;padding:.6rem}
+.sec{padding:.8rem .85rem;margin-top:.75rem}
+.g2{gap:.5rem}.it{padding:.55rem .7rem}
+.contacts-box{gap:.5rem}.contact-item{padding:.4rem .6rem}
+@media(max-width:380px){.card{padding:.7rem .75rem}}
+/* أهداف لمس 44px */
+.seg button,.chip,.ddb,.menu-btn,.btn,.exit,.yn button,.retry,.meta button,.btn-share-area{min-height:2.75rem}
+.x,#fo .sb .sh .x{width:2.75rem;height:2.75rem}
+.call-btn{min-height:2.5rem;padding:.3rem .9rem}
+.meta button{padding:.5rem .6rem}
+.cta{padding:.5rem max(.65rem,env(safe-area-inset-left)) calc(.5rem + env(safe-area-inset-bottom,0px))}
+.dp{padding-bottom:5.5rem}.dp.wk{padding-bottom:9.5rem}
+/* حالة اكتمل العدد: النص يفضل مقروء */
+.card.done{opacity:1;filter:none}
+.card.done .top,.card.done .ttl,.card.done .pbox,.card.done .pay,.card.done .pnote{opacity:.55;filter:grayscale(.6)}
+.card.done .more{display:block;text-align:center;margin-top:.6rem;padding:.45rem;border-radius:.6rem;background:rgba(179,32,47,.28);color:#FFD1D6;font-weight:800;font-size:.9rem}
+/* تحميل وفاضي */
+.sk{height:8.5rem;border-radius:1rem;margin-bottom:.9rem}
+.empty{font-size:1.05rem;line-height:1.8;padding:3rem 1rem}
+/* شاشات كبيرة */
+@media(min-width:900px){
+  .w{max-width:56rem}.w.dp{max-width:40rem}
+  #list{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;align-items:start}
+  #list .card,#list .sk{margin-bottom:0}#list .empty{grid-column:1/-1}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
-<div class="w" id="main">
-  <div id="demo" class="demo" style="display:none">⚠️ تجربة: دي بيانات وهمية، الشيت مش متاح من هنا</div>
+<main class="w" id="main">
   <header>
     <p class="sub lead">قدّم من الموبايل في دقايق واختار الفرصة المناسبة ليك</p>
     <h1>عمال تعبئة وتغليف وفرز</h1>
@@ -344,10 +393,10 @@ header .lead,header .sub{font-size:.85rem;line-height:1.5;margin:0 0 .2rem}
       <a id="fab" class="wap" target="_blank" rel="noopener">💬 اسأل على واتساب</a>
     </div>
   </header>
+  <div class="flab">🔎 دوّر على الوظايف اللي تناسبك:</div>
+  <div class="fhint">👆 دوس على شباب / بنات أو على المنطقة عشان تفلتر الوظايف</div>
   <div class="bar">
-    <div class="flab">🔎 دوّر على الوظايف اللي تناسبك:</div>
     <div class="frow"><div id="seg" class="seg"></div><div id="area" class="ddw"></div></div>
-    <div class="fhint">👆 دوس على شباب / بنات أو على المنطقة عشان تفلتر الوظايف</div>
   </div>
   
   <div id="areaShareContainer" class="area-share-box" style="display:none">
@@ -355,12 +404,12 @@ header .lead,header .sub{font-size:.85rem;line-height:1.5;margin:0 0 .2rem}
   </div>
 
   <div class="meta">
-    <span id="cnt"></span>
+    <span id="cnt" role="status" aria-live="polite"></span>
     <button id="clr" style="display:none">امسح الفلاتر</button>
   </div>
   <div id="list"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
-  <div id="empty" class="empty">😕 <span id="emt"></span></div>
-</div>
+  <div id="empty" class="empty" role="status">😕 <span id="emt"></span></div>
+</main>
 
 <div id="detail" style="display:none"></div>
 
@@ -369,14 +418,14 @@ header .lead,header .sub{font-size:.85rem;line-height:1.5;margin:0 0 .2rem}
 
 <!-- شيت الخيارات المنبثقة لنسخ مصانع المنطقة -->
 <div class="ov" id="areaCopyOv"><div class="sheet"><div class="grab"></div><div class="sb">
-  <div class="sh"><h3 class="ttl" style="margin:.2rem 0 0" id="areaCopyTitle">خيارات المشاركة</h3><button type="button" class="x" id="closeAreaCopy">✕</button></div>
+  <div class="sh"><h3 class="ttl" style="margin:.2rem 0 0" id="areaCopyTitle">خيارات المشاركة</h3><button type="button" class="x" id="closeAreaCopy" aria-label="إغلاق">✕</button></div>
   <button type="button" class="menu-btn" id="btnCopyAreaText">📋 نسخ جميع المصانع كنص (واتساب)</button>
   <button type="button" class="menu-btn" id="btnCopyAreaLink">🔗 نسخ رابط المنطقة المفلتر</button>
 </div></div></div>
 
 <!-- شيت الخيارات المنبثقة لنسخ الوظيفة الواحدة -->
 <div class="ov" id="singleCopyOv"><div class="sheet"><div class="grab"></div><div class="sb">
-  <div class="sh"><h3 class="ttl" style="margin:.2rem 0 0">خيارات مشاركة الوظيفة</h3><button type="button" class="x" id="closeSingleCopy">✕</button></div>
+  <div class="sh"><h3 class="ttl" style="margin:.2rem 0 0">خيارات مشاركة الوظيفة</h3><button type="button" class="x" id="closeSingleCopy" aria-label="إغلاق">✕</button></div>
   <button type="button" class="menu-btn" id="btnCopySingleText">📋 نسخ التفاصيل كاملة كنص</button>
   <button type="button" class="menu-btn" id="btnCopySingleLink">🔗 نسخ الرابط المباشر للوظيفة</button>
 </div></div></div>
@@ -397,8 +446,6 @@ const CORE=["المنطقة","الفئة","المصنع","المؤهل","الش�
 const done=j=>(j["الحالة"]||"").includes("مكتمل");
 const urgent=j=>/عاجل|الأكثر تقديم/.test(j["الحالة"]||"");
 const NEW_DAYS=3;
-const REAL_HOSTS=["ahmadshaban.github.io"];
-const IS_DEMO_HOST=!REAL_HOSTS.includes(location.hostname);
 const TODAY=new Date().toISOString().slice(0,10);
 const P30="مرتب 30 يوم", P26="مرتب 26 يوم", OFF26="26 يوم عمل + 4 أيام إجازة";
 
@@ -446,10 +493,6 @@ function prep(j){
 const isMulti=j=>!!(j.__sh&&j.__sh.length>1);
 function payText(j){if(isMulti(j))return j.__sh.map(s=>s.h+": "+[s.p30&&"30 يوم "+s.p30,s.p26&&"26 يوم "+s.p26].filter(Boolean).join(" / ")).join(" | ");const a=pays(j);return a.length?a.map(x=>x[0]+": "+x[1]).join(" | "):(j["المرتب"]||"")}
 
-const DEMO=[
-{"المنطقة":"العاشر من رمضان","الفئة":"شباب","المصنع":"مصنع تعبئة (تجريبي)","العنوان":"المستثمرين بجوار رنين - للتواصل أحمد 01012345678","السن":"18 - 35","طبيعة العمل":"تعبئة وتغليف","المؤهل":"أي مؤهل","الشفت":"12 ساعة","المرتب":"12000 ج في الشهر","تفاصيل المرتب":"9000 أساسي (300 ج في اليوم) + 3000 حافز انتظام","السكن":"متوفر","نظام القبض":"شهري","المواصلات":"داخلية","الحالة":"عاجل","تاريخ الإضافة":TODAY,"ظاهر؟":"نعم"},
-{"المنطقة":"مدينة السادات","الفئة":"شباب","المصنع":"مصنع تغليف (تجريبي)","العنوان":"المنطقة الصناعية الخامسة","السن":"18 - 40","طبيعة العمل":"تغليف","المؤهل":"أي مؤهل","الشفت":"10 ساعات","المرتب":"7000 ج في الشهر","السكن":"مفيش","المواصلات":"خارجية","ظاهر؟":"نعم"}
-];
 
 const REQ={name:true,age:true,from:false,housing:false};
 const AGE_MIN=16,AGE_MAX=60;
@@ -502,28 +545,46 @@ function showErr(){
   $("list").innerHTML='<div class="empty" style="display:block">😕 فيه مشكلة في تحميل الوظايف دلوقتي 🙏<br><button type="button" class="retry" id="retry">دوس هنا وجرّب تاني</button></div>';
   $("retry").onclick=load;
 }
-async function load(){
-  if(CC_PAGE&&!CC_ID){CC_ID=CC_SHEET_ID;setSrc()}
-  $("list").innerHTML='<div class="sk"></div><div class="sk"></div><div class="sk"></div>';
-  const [jr,ar]=await Promise.allSettled([getText(SHEET_CSV_URL,15000),getText(AREAS_CSV_URL,3000)]);
-  let d=null,demo=false;
-  if(jr.status==="fulfilled"){try{d=parseCSV(jr.value);if(d.length&&!("المصنع" in d[0]))d=null}catch(e){d=null}}
-  if(!d){if(CC_PAGE){try{localStorage.removeItem("jobcc")}catch(e){}CC_ID="";setSrc()}if(!IS_DEMO_HOST)return showErr();d=DEMO;demo=true}
-  $("demo").style.display=demo?"block":"none";
+const CK="jobs_cache_v2";
+const sid=()=>IS_CC?CC_ID:WORKER_SHEET_ID;
+function readCache(){try{const c=JSON.parse(localStorage.getItem(CK)||"null");return c&&c.id===sid()&&typeof c.j==="string"?c:null}catch(e){return null}}
+function writeCache(j,a){try{localStorage.setItem(CK,JSON.stringify({id:sid(),t:Date.now(),j:j,a:a}))}catch(e){}}
+const getRetry=(u,ms)=>getText(u,ms).catch(()=>getText(u,ms));
+function jobsOK(jt){try{const d=parseCSV(jt);return !d.length||("المصنع" in d[0])}catch(e){return false}}
+function applyData(jt,at){
+  const d=parseCSV(jt);
   AREA_ORDER=[];
-  if(ar.status==="fulfilled"){try{const rows=parseRows(ar.value);
+  if(at){try{const rows=parseRows(at);
     if(rows.length&&rows[0].length===1){const st=norm(rows[0][0])===norm("المنطقة")?1:0;
       AREA_ORDER=rows.slice(st).map(x=>(x[0]||"").trim()).filter(Boolean)}}catch(e){}}
   JOBS=d.filter(j=>(j["ظاهر؟"]||"نعم").trim()!=="لا"&&j["المصنع"]).map(prep);
-  
-  const urlParams = new URLSearchParams(location.search);
-  const jq = urlParams.get("j");
-  const areaParam = urlParams.get("area");
-  
-  if(areaParam) { area = areaParam; }
-  
-  if(jq){const k=JOBS.findIndex(x=>hid(x["المصنع"])===jq);history.replaceState(null,"",location.pathname+(IS_CC&&!CC_PAGE?"?cc="+encodeURIComponent(CC_ID):"")+(k>-1?"#job"+k:""))}
-  draw();route();
+}
+let FIRST=true;
+function afterApply(){
+  if(FIRST){
+    const urlParams=new URLSearchParams(location.search);
+    const jq=urlParams.get("j"),areaParam=urlParams.get("area");
+    if(areaParam)area=areaParam;
+    if(jq){const k=JOBS.findIndex(x=>hid(x["المصنع"])===jq);history.replaceState(null,"",location.pathname+(IS_CC&&!CC_PAGE?"?cc="+encodeURIComponent(CC_ID):"")+(k>-1?"#job"+k:""))}
+  }
+  draw();
+  if(FIRST){route();FIRST=false}
+}
+async function load(){
+  if(CC_PAGE&&!CC_ID){CC_ID=CC_SHEET_ID;setSrc()}
+  const ck=readCache();
+  let shown=false;
+  if(ck&&jobsOK(ck.j)){applyData(ck.j,ck.a);shown=true;afterApply()}
+  else $("list").innerHTML='<div class="sk"></div><div class="sk"></div><div class="sk"></div>';
+  const [jr,ar]=await Promise.allSettled([getRetry(SHEET_CSV_URL,8000),getText(AREAS_CSV_URL,3000)]);
+  const jt=jr.status==="fulfilled"?jr.value:null,at=ar.status==="fulfilled"?ar.value:"";
+  if(jt===null||!jobsOK(jt)){
+    if(!shown){if(CC_PAGE){try{localStorage.removeItem("jobcc")}catch(e){}CC_ID="";setSrc()}showErr()}
+    return}
+  if(shown&&ck.j===jt&&ck.a===at)return;
+  writeCache(jt,at);
+  if(shown&&$("detail").style.display!=="none")return;
+  applyData(jt,at);afterApply();
 }
 const kind=c=>c.includes("بنات")&&c.includes("شباب")?"":c.includes("بنات")?"g":"m";
 function hoursOnly(value){const s=String(value||"").trim();const m=s.match(/(\d{1,2})\s*ساعة/);if(m)return m[1]+" ساعة";const n=s.match(/(\d{1,2})\s*ساعات/);if(n)return n[1]+" ساعة";return s||"مش محدد"}
@@ -558,7 +619,7 @@ function draw(){
   }
 
   $("empty").style.display=r.length?"none":"block";
-  $("emt").textContent=JOBS.length?"مفيش وظايف زي كده، جرّب تغيّر الفلتر أو دوّر على حاجة تانية":"مفيش وظايف متاحة دلوقتي، ارجع كمان شوية";
+  $("emt").textContent=JOBS.length?(area!=="الكل"?"مفيش وظايف "+cat+" دلوقتي في "+area+"، جرّب منطقة تانية":"مفيش وظايف "+cat+" دلوقتي، جرّب الفئة التانية"):"مفيش وظايف متاحة دلوقتي، ارجع كمان شوية";
   
   const NEG=/لا يوجد|مفيش|^لا$|غير متوفر/;
   const okv=v=>v&&!NEG.test(v.trim());
@@ -745,8 +806,10 @@ function setupApply(j,ph){
   };
 }
 
+function loadH2C(){return new Promise((ok,no)=>{if(window.html2canvas)return ok();const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
 async function saveJobAsImage(j, captureElem) {
   try {
+    await loadH2C();
     const actionsBar = captureElem.querySelector('.cta');
     if(actionsBar) actionsBar.style.display = 'none';
 
