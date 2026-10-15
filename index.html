@@ -783,10 +783,10 @@ function route(){
 function formHTML(j){return `<div class="ov" id="fo"><div class="sheet"><div class="grab"></div><div class="sb">
    <div class="sh"><h2 class="ttl" style="margin:.2rem 0 0">قدّم على ${esc(j["المصنع"])}</h2><button type="button" class="exit" id="fx"><span class="xr">✕</span>رجوع</button></div>
    <div class="tnote">⏰ التقديم واستلام الشغل في نفس اليوم</div>
-   ${isMulti(j)?`<div class="fl">🕒 اختار الوردية اللي تناسبك</div><div class="shp" id="f_s">${j.__sh.map((s,i)=>`<button type="button" data-i="${i}">${esc(hoursOnly(s.h))}</button>`).join("")}</div><div class="er" id="e_s"></div>`:""}
    <label class="fl">👤 الاسم ثلاثي<input id="f_n" autocomplete="name"></label><div class="er" id="e_n"></div>
    <label class="fl">🔢 السن<input id="f_a" inputmode="numeric" maxlength="2" autocomplete="off"></label><div class="er" id="e_a"></div>
    <label class="fl">📞 رقم التليفون<input id="f_t" type="tel" inputmode="tel" maxlength="15" autocomplete="tel" placeholder="01XXXXXXXXX"></label><div class="er" id="e_t"></div>
+   ${isMulti(j)?`<div class="fl">🕒 اختار الوردية اللي تناسبك</div><div class="shp" id="f_s">${j.__sh.map((s,i)=>`<button type="button" data-i="${i}">${esc(hoursOnly(s.h))}</button>`).join("")}</div><div class="er" id="e_s"></div>`:""}
    <div class="fgo"><button type="button" class="btn wa" id="fgo">دوس هنا وكمّل على الواتساب</button></div></div></div></div>`}
 
 let foOpen=false,foHide=null,ignoreFo=0;
@@ -809,12 +809,12 @@ function setupApply(j,ph){
     const dg=s=>s.replace(/[٠-٩]/g,x=>"٠١٢٣٤٥٦٧٨٩".indexOf(x));
     const n=en.value.trim().replace(/\s+/g," "),a=dg(ea.value.trim()),t=dg(et.value).replace(/[\s\-]/g,"");
     clearErr();
-    if(isMulti(j)&&selSh<0){es.textContent="اختار الوردية الأول";sp.scrollIntoView({block:"center",behavior:"smooth"});return}
     const fail=(el,m)=>{el.classList.add("bad");errs[el.id].textContent=m;el.focus();el.scrollIntoView({block:"center",behavior:"smooth"})};
     if((REQ.name||n)&&n.split(" ").filter(w=>w.length>=2).length<3)return fail(en,"الاسم ناقص، اكتب الاسم ثلاثي كامل");
     if((REQ.age||a)&&!/^\d{1,2}$/.test(a))return fail(ea,"اكتب السن بالأرقام");
     if(a&&(+a<AGE_MIN||+a>AGE_MAX))return fail(ea,"السن لازم يكون من "+AGE_MIN+" لـ "+AGE_MAX);
     if(t&&!/^\+?\d{10,14}$/.test(t))return fail(et,"رقم التليفون غلط، اكتبه بالأرقام (مثال 01012345678)");
+    if(isMulti(j)&&selSh<0){es.textContent="اختار الوردية الأول";sp.scrollIntoView({block:"center",behavior:"smooth"});return}
     try{localStorage.setItem(SAVE_KEY,JSON.stringify({n:n,a:a,t:t}))}catch(e){}
     const send=()=>{
     const L=[];
