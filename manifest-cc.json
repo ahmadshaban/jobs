@@ -1,0 +1,27 @@
+{
+ "name": "وظائف المصانع - كول سنتر",
+ "short_name": "وظائف CC",
+ "description": "وظايف مصانع - قدّم من الموبايل",
+ "lang": "ar",
+ "dir": "rtl",
+ "start_url": "./callcenter.html",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait",
+ "background_color": "#0A1428",
+ "theme_color": "#0A1428",
+ "icons": [
+  {
+   "src": "cc-icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any maskable"
+  },
+  {
+   "src": "cc-icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any maskable"
+  }
+ ]
+}
