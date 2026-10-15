@@ -403,8 +403,15 @@ header{padding:.9rem var(--px)}
 .dp .it.trn small{font-size:.72rem}
 .dp .it.trn b{font-size:.92rem}
 .dp .tnote{font-size:.8rem;padding:.4rem .6rem;margin-top:.45rem}
+/* header+filter v3 */
+header .lead{margin:.15rem 0 0}
+header .lead.free{color:#DCE4F5;font-weight:700;margin-top:.25rem}
+.fhint{display:block;text-align:center;font-size:.78rem;color:var(--mu);margin:.6rem 0 .1rem}
+.frow .seg button{font-size:.88rem;padding:.28rem 0;min-height:0;border-width:1.5px;border-radius:.7rem}
+.frow .ddb{padding:.38rem .85rem;min-height:0}
 /* header+filter v2 */
-header .trust a.wap{font-size:.9rem;padding:.4rem 1.1rem;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.fwap{justify-content:center;margin:1.5rem 0 .5rem}
+.fwap a.wap{font-size:.9rem;padding:.45rem 1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.3)}
 .frow{flex-wrap:wrap}
 .frow .seg{flex:1 1 100%}
 .frow .ddw{flex:1 1 100%}
@@ -416,11 +423,10 @@ header .trust a.wap{font-size:.9rem;padding:.4rem 1.1rem;box-shadow:0 2px 8px rg
 <main class="w" id="main">
   <header>
     <h1>عمال تعبئة وتغليف وفرز</h1>
-    <p class="sub lead">قدّم من الموبايل في دقايق · ✅ من غير أي رسوم مقدما</p>
-    <div class="trust">
-      <a id="fab" class="wap" target="_blank" rel="noopener">💬 اسأل على واتساب</a>
-    </div>
+    <p class="sub lead">قدّم من الموبايل في دقايق</p>
+    <p class="sub lead free">✅ التقديم من غير أي رسوم مقدما</p>
   </header>
+  <div class="fhint">👇 اختار شباب أو بنات، وبعدها المنطقة عشان تشوف الوظايف</div>
   <div class="bar">
     <div class="frow"><div id="seg" class="seg"></div><div id="area" class="ddw"></div></div>
   </div>
@@ -434,6 +440,7 @@ header .trust a.wap{font-size:.9rem;padding:.4rem 1.1rem;box-shadow:0 2px 8px rg
   </div>
   <div id="list"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
   <div id="empty" class="empty" role="status">😕 <span id="emt"></span></div>
+  <div class="trust fwap"><a id="fab" class="wap" target="_blank" rel="noopener">💬 اسأل على واتساب</a></div>
 </main>
 
 <div id="detail" style="display:none"></div>
