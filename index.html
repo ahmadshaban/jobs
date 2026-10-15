@@ -643,7 +643,7 @@ function draw(){
    <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="bd2">${tags(j)}</span></div>
    <div class="ttl">${esc(j["المصنع"])}</div>
    ${payBlock(j)}
-   ${j["تفاصيل المرتب"]&&!done(j)?`<div class="pnote"><span class="nl">ملاحظات</span><span class="nt">${esc(j["تفاصيل المرتب"])}</span></div>`:""}
+   ${j["تفاصيل المرتب"]&&!done(j)?`<div class="pnote"><span class="nl">تفاصيل المرتب</span><span class="nt">${esc(j["تفاصيل المرتب"])}</span></div>`:""}
    ${done(j)?'<span class="more">اكتمل العدد</span>':`<div class="cbar">اضغط لعرض التفاصيل الكاملة ◂</div>`}</button>`}).join("");
   $("list").querySelectorAll(".card").forEach(b=>b.onclick=()=>go(+b.dataset.i));
 }
@@ -884,7 +884,7 @@ function showDetail(j){
 
   const sec=(t,ks,pre)=>{const r=ks.filter(k=>j[k] || (k==="العنوان" && (j["العنوان"] || (j.__contacts && j.__contacts.length))));return (r.length||pre)?`<div class="sec"><h3>${t}</h3><div class="g2">${pre||""}${r.map(it).join("")}</div></div>`:""};
   const pp=pays(j);
-  const noteHTML=j["تفاصيل المرتب"]?`<div class="pnote"><span class="nl">ملاحظات</span><span class="nt">${esc(j["تفاصيل المرتب"])}</span></div>`:"";
+  const noteHTML=j["تفاصيل المرتب"]?`<div class="pnote"><span class="nl">تفاصيل المرتب</span><span class="nt">${esc(j["تفاصيل المرتب"])}</span></div>`:"";
   const cell=x=>x?esc(String(x).replace(/\s*في الشهر/,"")):"—";
   const tbl=isMulti(j)?`<div class="it pay2 full"><table class="sht"><tr><th>⏰ الوردية</th><th><span class="tag">30 يوم</span></th><th><span class="tag">26 يوم + 4 إجازة</span></th></tr>${j.__sh.map(s=>`<tr><td>${esc(s.h)}</td><td>${cell(s.p30)}</td><td>${cell(s.p26)}</td></tr>`).join("")}</table></div>`:"";
   const hrsPill=(!isMulti(j)&&j["الشفت"])?`<div class="hp"><span class="tag">وردية ${esc(hoursOnly(j["الشفت"]))}</span></div>`:"";
@@ -893,7 +893,7 @@ function showDetail(j){
   
   const plainSh=/^\s*\d{1,2}\s*(ساعة|ساعات)\s*$/.test(j["الشفت"]||"");
   
-  const fixedUsed = ["المنطقة","الفئة","المصنع","العنوان","أرقام التواصل","الشفت","السن","طبيعة العمل","المؤهل","الأجازة","نظام القبض","السلف","التأمينات","وجبة","السكن","المواصلات","المرتب","مرتب 30 يوم","مرتب 26 يوم","تفاصيل المرتب","الورديات","تثبيت","الترتيب","آخر تعديل","ظاهر؟","الحالة","تاريخ الإضافة"];
+  const fixedUsed = ["المنطقة","الفئة","المصنع","العنوان","أرقام التواصل","الشفت","السن","طبيعة العمل","المؤهل","الأجازة","نظام القبض","السلف","التأمينات","وجبة","السكن","المواصلات","المرتب","مرتب 30 يوم","مرتب 26 يوم","تفاصيل المرتب","الورديات","تثبيت","الترتيب","آخر تعديل","ظاهر؟","الحالة","تاريخ الإضافة","ملاحظات"];
   const otherKeys = Object.keys(j).filter(k=>!k.startsWith("__")&&!fixedUsed.includes(k)&&j[k]);
   
   const groups=[
@@ -906,7 +906,7 @@ function showDetail(j){
    <div class="tb"><button class="exit" id="ex"><span class="xr">✕</span>رجوع</button></div>
    <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="bd2">${tags(j)}<span class="badge ${kind(j["الفئة"]||"")}">${esc(j["الفئة"])}</span></span></div>
    <h2 class="ttl">${esc(j["المصنع"])}</h2>
-   ${groups.map(g=>sec(g[0],g[1],g[2])).join("")}
+   ${groups.map(g=>sec(g[0],g[1],g[2])).join("")}${j["ملاحظات"]?`<div class="sec"><h3>📝 ملاحظات</h3><div class="it full"><b>${esc(j["ملاحظات"])}</b></div></div>`:""}
    <div class="tnote">⏰ التقديم واستلام الشغل في نفس اليوم</div>
    <div class="cta${IS_CC?"":" wcta"}">
      ${IS_CC?`<button type="button" class="btn wa" id="apply">قدّم دلوقتي على الواتساب</button>`:`<div class="wnote">للتقديم على الوظيفة، ارجع للمسؤول اللي بعتلك اللينك ده وهو يكمّلك إجراءات التقديم.</div>`}
