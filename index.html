@@ -811,13 +811,34 @@ function setupApply(j,ph){
     if(a&&(+a<AGE_MIN||+a>AGE_MAX))return fail(ea,"السن لازم يكون من "+AGE_MIN+" لـ "+AGE_MAX);
     if(t&&!/^\+?\d{10,14}$/.test(t))return fail(et,"رقم التليفون غلط، اكتبه بالأرقام (مثال 01012345678)");
     try{localStorage.setItem(SAVE_KEY,JSON.stringify({n:n,a:a,t:t}))}catch(e){}
+    const send=()=>{
     const L=[];
     if(n)L.push("👤 *الاسم:* "+n);if(a)L.push("🔢 *السن:* "+a);if(t)L.push("📞 *رقم التليفون:* "+t);
     L.push("📍 *المكان:* "+j["المنطقة"],"🏭 *المصنع:* "+j["المصنع"]);
     if(SRC)L.push("المصدر: "+SRC);
     const u="https://wa.me/"+ph+"?text="+encodeURIComponent(L.join("\n"));
     close();window.open(u,"_blank")||(location.href=u);
+    };
+    confirmSend(j,send);
   };
+}
+
+function confirmSend(j,go){
+  const old=document.getElementById("cf");if(old)old.remove();
+  const rows=[["🏭",j["المصنع"]]];
+  const pay=payText(j);if(pay)rows.push(["💰",pay]);
+  const hrs=(!isMulti(j)&&j["الشفت"])?hoursOnly(j["الشفت"]):"";if(hrs)rows.push(["⏰",hrs]);
+  if(j["السكن"])rows.push(["🏠",j["السكن"]]);
+  if(j["المواصلات"])rows.push(["🚌",j["المواصلات"]]);
+  if(j["ملاحظات"])rows.push(["📝",j["ملاحظات"]]);
+  const el=document.createElement("div");el.className="ov show";el.id="cf";el.style.zIndex="30";el.style.alignItems="center";
+  el.innerHTML=`<div class="sheet" style="border-radius:1.2rem;width:calc(100% - 2rem);max-height:90%"><div class="sb" style="padding:1rem 1.1rem .4rem"><h2 class="ttl" style="margin:0 0 .5rem;font-size:1.05rem">تأكيد قبل الإرسال</h2>${rows.map(r=>`<div style="display:flex;gap:.5rem;margin:.45rem 0;font-size:.92rem;line-height:1.5"><span>${r[0]}</span><span>${esc(r[1])}</span></div>`).join("")}</div><div style="display:flex;gap:.6rem;padding:.6rem 1.1rem calc(.9rem + env(safe-area-inset-bottom,0px))"><button type="button" class="btn wa" id="cfok" style="min-height:2.7rem;font-size:.95rem">تمام، ابعت</button><button type="button" class="btn" id="cfno" style="min-height:2.7rem;font-size:.95rem">رجوع</button></div></div>`;
+  document.body.appendChild(el);
+  const x=()=>el.remove();
+  window.addEventListener("popstate",x,{once:true});
+  el.onclick=e=>{if(e.target===el)x()};
+  document.getElementById("cfno").onclick=x;
+  document.getElementById("cfok").onclick=()=>{x();go()};
 }
 
 function loadH2C(){return new Promise((ok,no)=>{if(window.html2canvas)return ok();const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
