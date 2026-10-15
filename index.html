@@ -403,19 +403,24 @@ header{padding:.9rem var(--px)}
 .dp .it.trn small{font-size:.72rem}
 .dp .it.trn b{font-size:.92rem}
 .dp .tnote{font-size:.8rem;padding:.4rem .6rem;margin-top:.45rem}
+/* header+filter v2 */
+header .trust a.wap{font-size:.9rem;padding:.4rem 1.1rem;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.frow{flex-wrap:wrap}
+.frow .seg{flex:1 1 100%}
+.frow .ddw{flex:1 1 100%}
+.meta{justify-content:flex-start}
+.meta #cnt{font-size:1rem;font-weight:800;color:#FFFFFF}
 </style>
 </head>
 <body>
 <main class="w" id="main">
   <header>
-    <p class="sub lead">قدّم من الموبايل في دقايق واختار الفرصة المناسبة ليك</p>
     <h1>عمال تعبئة وتغليف وفرز</h1>
+    <p class="sub lead">قدّم من الموبايل في دقايق · ✅ من غير أي رسوم مقدما</p>
     <div class="trust">
-      <span>✅ التقديم من غير أي رسوم مقدما</span>
       <a id="fab" class="wap" target="_blank" rel="noopener">💬 اسأل على واتساب</a>
     </div>
   </header>
-  <div class="fhint">👆 دوس على شباب / بنات أو على المنطقة عشان تفلتر الوظايف</div>
   <div class="bar">
     <div class="frow"><div id="seg" class="seg"></div><div id="area" class="ddw"></div></div>
   </div>
@@ -426,7 +431,6 @@ header{padding:.9rem var(--px)}
 
   <div class="meta">
     <span id="cnt" role="status" aria-live="polite"></span>
-    <button id="clr" style="display:none">امسح الفلاتر</button>
   </div>
   <div id="list"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
   <div id="empty" class="empty" role="status">😕 <span id="emt"></span></div>
@@ -563,7 +567,7 @@ const areaRank=a=>{const i=AREA_ORDER.findIndex(x=>sameArea(x,a));return i<0?999
 async function getText(u,ms){const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);
   try{const r=await fetch(u+"&_="+Date.now(),{signal:c.signal,cache:"no-store"});if(!r.ok)throw 0;return await r.text()}finally{clearTimeout(t)}}
 function showErr(){
-  $("cnt").textContent="";$("clr").style.display="none";$("empty").style.display="none";$("seg").innerHTML="";$("area").innerHTML="";
+  $("cnt").textContent="";$("empty").style.display="none";$("seg").innerHTML="";$("area").innerHTML="";
   $("list").innerHTML='<div class="empty" style="display:block">😕 فيه مشكلة في تحميل الوظايف دلوقتي 🙏<br><button type="button" class="retry" id="retry">دوس هنا وجرّب تاني</button></div>';
   $("retry").onclick=load;
 }
@@ -627,8 +631,7 @@ function draw(){
   $("areaList").querySelectorAll(".ai").forEach(b=>b.onclick=()=>{area=b.dataset.v;closeArea();draw()});
   
   const r=JOBS.filter(j=>matchCat(j)&&(area==="الكل"||j["المنطقة"]===area)).sort(byOrder);
-  $("cnt").textContent=r.length?`${r.length} وظيفة متاحة`:"";
-  $("clr").style.display=(area!=="الكل")?"block":"none";
+  $("cnt").textContent=r.length?`🔥 ${r.length} وظيفة متاحة`:"";
   
   const shareContainer = $("areaShareContainer");
   const btnShareArea = $("btnShareArea");
@@ -754,7 +757,6 @@ function closeSingleCopyModal() {
 $("closeSingleCopy").onclick = closeSingleCopyModal;
 $("singleCopyOv").onclick = e => { if(e.target === $("singleCopyOv")) closeSingleCopyModal(); };
 
-$("clr").onclick=()=>{area="الكل";draw()};
 let aOpen=false,ignoreA=false;
 function openArea(){$("aov").classList.add("show");if(!aOpen){aOpen=true;history.pushState({ar:1},"",location.href)}}
 function closeArea(){$("aov").classList.remove("show");if(aOpen){aOpen=false;ignoreA=true;history.back()}}
