@@ -142,6 +142,7 @@ header h1{color:#FFFFFF;font-size:1.4rem}header .lead,header .sub{color:var(--mu
 .card .top{display:flex}
 .card .ttl{font-size:clamp(1.05rem,4.2vw,1.2rem);margin:.15rem 0 .5rem}
 .card .pay{width:100%;text-align:center;background:var(--gold);color:var(--goldD);border:0;border-radius:.75rem;font-size:clamp(1.35rem,5.6vw,1.7rem);padding:.45rem .7rem;margin:0 0 .5rem;box-shadow:none}
+.card .trn{display:block;width:100%;text-align:center;background:#7CC4FF;color:#06223F;font-weight:800;border-radius:.75rem;padding:.4rem .7rem;margin:0 0 .5rem;font-size:clamp(.92rem,3.8vw,1.05rem);line-height:1.4}
 .sec{background:#172645;box-shadow:0 4px 12px rgba(0,0,0,.30)}.sec h3{color:var(--gold);font-size:.9rem}
 .it{background:#22355D;border:1px solid var(--bd);color:var(--tx)}.it small{color:var(--mu)}.it b{color:#FFFFFF;white-space:pre-line}
 .it.pay2{background:var(--gold);border:0;color:var(--goldD);align-items:center;text-align:center;padding:.55rem}
@@ -629,6 +630,7 @@ function draw(){
    <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="bd2">${tags(j)}</span></div>
    <div class="ttl">${esc(j["المصنع"])}</div>
    ${payBlock(j)}
+   ${(!done(j)&&okv(j["المواصلات"]))?`<div class="trn">🚌 مواصلات ${esc(j["المواصلات"])}</div>`:""}
    ${j["تفاصيل المرتب"]&&!done(j)?`<div class="pnote"><span class="nl">ملاحظات</span><span class="nt">${esc(j["تفاصيل المرتب"])}</span></div>`:""}
    ${done(j)?'<span class="more">اكتمل العدد</span>':`<div class="cbar">اضغط لعرض التفاصيل الكاملة ◂</div>`}</button>`}).join("");
   $("list").querySelectorAll(".card").forEach(b=>b.onclick=()=>go(+b.dataset.i));
