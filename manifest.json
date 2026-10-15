@@ -4,8 +4,8 @@
  "description": "وظايف مصانع - قدّم من الموبايل",
  "lang": "ar",
  "dir": "rtl",
- "start_url": "./",
- "scope": "./",
+ "start_url": "./index.html",
+ "scope": "./index.html",
  "display": "standalone",
  "orientation": "portrait",
  "background_color": "#FFFFFF",
@@ -23,5 +23,6 @@
    "type": "image/png",
    "purpose": "any"
   }
- ]
+ ],
+ "id": "./index.html"
 }

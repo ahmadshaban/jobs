@@ -5,7 +5,7 @@
  "lang": "ar",
  "dir": "rtl",
  "start_url": "./callcenter.html",
- "scope": "./",
+ "scope": "./callcenter.html",
  "display": "standalone",
  "orientation": "portrait",
  "background_color": "#FFFFFF",
@@ -23,5 +23,6 @@
    "type": "image/png",
    "purpose": "any"
   }
- ]
+ ],
+ "id": "./callcenter.html"
 }

@@ -13,5 +13,5 @@
 <style>body{margin:0;background:#0E1A33;color:#E8EEF9;font-family:Cairo,Tahoma,Arial,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh}</style>
 </head><body><p>جاري التحميل…</p>
 <script>
-fetch("index.html",{cache:"no-cache"}).then(function(r){if(!r.ok)throw 0;return r.text()}).then(function(h){document.open();document.write(h);document.close()}).catch(function(){document.body.innerHTML="<p>تعذّر التحميل، حدّث الصفحة.</p>"});
+fetch("index.html",{cache:"no-cache"}).then(function(r){if(!r.ok)throw 0;return r.text()}).then(function(h){h=h.replace('href="manifest.json"','href="manifest-cc.json"').replace('href="apple-touch-icon.png"','href="cc-apple-touch-icon.png"').replace('content="Job Gate Main"','content="Job Gate CC"');document.open();document.write(h);document.close()}).catch(function(){document.body.innerHTML="<p>تعذّر التحميل، حدّث الصفحة.</p>"});
 </script></body></html>
