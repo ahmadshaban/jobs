@@ -104,6 +104,50 @@ header h1{margin:0;font-size:18px;color:#fff}
 .shb{background:#0B2A4A;border:1px solid #3F7AB5;border-radius:12px;padding:10px;display:grid;gap:8px}
 .shh{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#FFE45C}.shh input{flex:1}
 .shg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* ===== polish v2: قراءة + لمس + مسافات + ديسكتوب ===== */
+body{font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+.btn{min-height:44px;padding:8px 14px;font-size:14px}
+.bar .btn{padding:8px 10px;font-size:13.5px}
+.acts{gap:8px}.acts .btn{min-height:44px;padding:6px 2px;font-size:13px}
+.mv .btn{min-height:40px;min-width:40px;padding:2px 10px;font-size:15px}
+.clr{min-height:36px;padding:4px 12px;font-size:13px}
+input,select{min-height:44px;font-size:16px}
+#list{padding:14px;gap:12px}
+.card{padding:12px;gap:8px;border-radius:14px}
+.card h2{font-size:16px;line-height:1.4}
+.meta{gap:8px}.meta span{font-size:13px;padding:3px 9px}
+.badge{font-size:12px;padding:2px 8px}
+.stats{font-size:13px}.oldhint,#colDlg small{font-size:13px}
+.sheet{padding:18px;gap:12px}.sheet label{font-size:14px}
+.sheet .row{gap:10px}
+header{padding:14px}
+#pinbar{padding:10px 14px}
+.empty{padding:36px 16px;font-size:16px;line-height:1.8}
+.card.dim{opacity:.72}
+/* أزرار خطرة بعيدة ومميزة */
+.btn.danger{color:#FFB4B4;border-color:#FF9B9B}
+.acts .btn[data-act="del"]{background:rgba(180,35,24,.28);border-color:#FF9B9B;color:#FFD1D1}
+/* خطأ جوه الحقل */
+input.bad,select.bad{border-color:#FF7777;box-shadow:0 0 0 2px rgba(255,119,119,.35)}
+.ferr{color:#FFB4B4;font-size:13px;font-weight:700}
+/* نافذة التأكيد */
+#askDlg{position:fixed;inset:0;background:rgba(0,20,50,.7);display:flex;align-items:center;justify-content:center;z-index:30;padding:16px}
+#askDlg .box{background:#0B2A4A;border:1px solid #3F7AB5;border-radius:16px;padding:18px;width:100%;max-width:340px;display:grid;gap:14px}
+#askDlg p{margin:0;font-size:16px;line-height:1.7;font-weight:700;color:#fff}
+#askDlg .row{display:flex;gap:10px}#askDlg .row .btn{flex:1}
+/* رسالة الحفظ/الخطأ فوق الزرار العايم */
+#toast{bottom:calc(86px + env(safe-area-inset-bottom,0px));font-size:15px;padding:12px 20px}
+.fab{bottom:calc(20px + env(safe-area-inset-bottom,0px))}
+/* شاشات كبيرة */
+@media(min-width:900px){
+  #list{max-width:1040px;grid-template-columns:1fr 1fr;align-items:start}
+  #list .empty{grid-column:1/-1}
+  #modal{align-items:center}
+  .sheet{border-radius:18px;max-height:88vh}
+  header,#pinbar{padding-inline:max(14px,calc((100% - 1040px)/2 + 14px))}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
@@ -292,6 +336,24 @@ function esc(s){
     ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c]));
 }
 
+
+// ===== نافذة تأكيد بتصميم اللوحة (بديل confirm) =====
+function ask(msg, okText){
+  return new Promise(res => {
+    const w = document.createElement('div');
+    w.id = 'askDlg'; w.setAttribute('role','alertdialog'); w.setAttribute('aria-modal','true');
+    w.innerHTML = '<div class="box"><p></p><div class="row"><button type="button" class="btn danger" data-k="1"></button><button type="button" class="btn ghost" data-k="0">إلغاء</button></div></div>';
+    w.querySelector('p').textContent = msg;
+    w.querySelector('[data-k="1"]').textContent = okText || 'تأكيد';
+    const done = v => { document.removeEventListener('keydown', onKey, true); w.remove(); res(v); };
+    const onKey = e => { if (e.key === 'Escape'){ e.stopPropagation(); done(false); } };
+    w.addEventListener('click', e => { if (e.target === w) return done(false); const b = e.target.closest('[data-k]'); if (b) done(b.dataset.k === '1'); });
+    document.addEventListener('keydown', onKey, true);
+    document.body.appendChild(w);
+    w.querySelector('[data-k="0"]').focus();
+  });
+}
+
 let toastTimer;
 function toast(msg, ok){
   const t = $('toast');
@@ -455,13 +517,13 @@ function renderShEditor(){
   });
   box.innerHTML = h;
   saveDraft();
-  box.querySelectorAll('.shp').forEach(b => b.onclick = () => {
+  box.querySelectorAll('.shp').forEach(b => b.onclick = async () => {
     const p = b.dataset.p, i = shState.findIndex(s => shNum(s.h) === shNum(p));
-    if (i >= 0){ const s0 = shState[i]; if ((s0.p30 || s0.p26) && !confirm('تمسح وردية ' + s0.h + ' ومرتباتها؟')) return; shState.splice(i, 1); } else { shState.push({h: p, p30: '', p26: ''}); shState.sort((x, y) => shNum(x.h) - shNum(y.h)); }
+    if (i >= 0){ const s0 = shState[i]; if ((s0.p30 || s0.p26) && !(await ask('تمسح وردية ' + s0.h + ' ومرتباتها؟'))) return; shState.splice(i, 1); } else { shState.push({h: p, p30: '', p26: ''}); shState.sort((x, y) => shNum(x.h) - shNum(y.h)); }
     renderShEditor();
   });
   $('shAdd').onclick = () => { shState.push({h: '', p30: '', p26: ''}); renderShEditor(); };
-  box.querySelectorAll('.shx').forEach(b => b.onclick = () => { const s0 = shState[+b.dataset.k]; if (!confirm('تمسح وردية ' + (s0.h || 'الجديدة') + (s0.p30 || s0.p26 ? ' ومرتباتها' : '') + '؟')) return; shState.splice(+b.dataset.k, 1); renderShEditor(); });
+  box.querySelectorAll('.shx').forEach(b => b.onclick = async () => { const s0 = shState[+b.dataset.k]; if (!(await ask('تمسح وردية ' + (s0.h || 'الجديدة') + (s0.p30 || s0.p26 ? ' ومرتباتها' : '') + '؟'))) return; shState.splice(+b.dataset.k, 1); renderShEditor(); });
   box.querySelectorAll('input[data-sh]').forEach(el => el.addEventListener('input', () => { shState[+el.dataset.k][el.dataset.sh] = el.value; }));
 }
 
@@ -662,12 +724,12 @@ $('list').addEventListener('click', async e => {
   if (act === 'view') return window.open(new URL('index.html', location.href).href + '?j=' + siteId(val(r, COL.factory)), '_blank');
   if (act === 'vis'){
     const hid = val(r, COL.visible).trim() === T.no;
-    if (!hid && !confirm('تخفي "' + val(r, COL.factory) + '" عن المتقدمين؟')) return;
+    if (!hid && !(await ask('تخفي "' + val(r, COL.factory) + '" عن المتقدمين؟'))) return;
     return run('update', {row, data:{[COL.visible]: hid ? T.yes : T.no}});
   }
   if (act === 'done'){
     const done = val(r, COL.status).trim() === T.doneValue;
-    if (!done && !confirm('تعلّم "' + val(r, COL.factory) + '" مكتمل؟')) return;
+    if (!done && !(await ask('تعلّم "' + val(r, COL.factory) + '" مكتمل؟'))) return;
     return run('update', {row, data:{[COL.status]: done ? '' : T.doneValue}});
   }
   if (act === 'urg'){
@@ -679,7 +741,7 @@ $('list').addEventListener('click', async e => {
     return run('update', {row, data: isPinned(r) ? {[COL.order]: '', [COL.pin]: ''} : {[COL.order]: String(Math.max(0, ...nums) + 1)}});
   }
   if (act === 'del'){
-    if (confirm(T.askDel)) run('delete', {row});
+    if ((await ask(T.askDel))) run('delete', {row});
   }
 });
 
@@ -815,11 +877,11 @@ function openForm(r, asCopy){
   renderContactsEditor();
   
   $('fCancel').onclick = closeForm;
-  $('sheet').querySelectorAll('.clr').forEach(b => b.onclick = e => {
+  $('sheet').querySelectorAll('.clr').forEach(b => b.onclick = async e => {
     e.preventDefault();
     const idx = b.dataset.clr, el = $('sheet').querySelector('[data-i="' + idx + '"]'), cu = $('sheet').querySelector('[data-custom-i="' + idx + '"]');
     if (!el || !(el.value && el.value !== '__custom__' || (cu && cu.value))) return;
-    if (!confirm('تمسح محتوى خانة "' + headers[+idx] + '"؟')) return;
+    if (!(await ask('تمسح محتوى خانة "' + headers[+idx] + '"؟'))) return;
     el.value = ''; if (cu){ cu.value = ''; cu.classList.add('hidden'); }
   });
   $('sheet').querySelectorAll('select[data-i]').forEach(el => {
@@ -865,6 +927,15 @@ function openForm(r, asCopy){
     
     if (!r && DATE_COL in data && !String(data[DATE_COL]).trim()) data[DATE_COL] = todayStr();
     if (headers.includes(COL.factory) && !String(data[COL.factory] || '').trim()) {
+      const fi = headers.indexOf(COL.factory), fel = $('sheet').querySelector('[data-i="' + fi + '"]');
+      if (fel){
+        fel.classList.add('bad');
+        let m = fel.parentElement.querySelector('.ferr');
+        if (!m){ m = document.createElement('div'); m.className = 'ferr'; fel.insertAdjacentElement('afterend', m); }
+        m.textContent = 'اكتب اسم المصنع الأول';
+        fel.focus();
+        fel.addEventListener('input', () => { fel.classList.remove('bad'); m.remove(); }, {once:true});
+      }
       toast('اكتب اسم المصنع الأول.', false);
       return;
     }
@@ -927,7 +998,7 @@ function init(){
   $('pw').addEventListener('keydown', e => { if (e.key === 'Enter') $('loginBtn').click(); });
   $('areaFilter').addEventListener('change', render);
   $('genderFilter').addEventListener('change', render);
-  $('q').addEventListener('input', render);
+  let qTimer; $('q').addEventListener('input', () => { clearTimeout(qTimer); qTimer = setTimeout(render, 180); });
   $('bSearch').onclick = () => { $('filters').classList.toggle('hidden'); render(); };
   $('fab').onclick = () => $('bNew').click();
   $('bNew').onclick = () => openForm(null);
@@ -944,7 +1015,7 @@ function init(){
   $('colGo').onclick = async () => {
     const name = $('colSel').value;
     if ($('colIn').value.trim() !== name) return;
-    if (!confirm('آخر تأكيد: مسح عمود "' + name + '" نهائيًا؟')) return;
+    if (!(await ask('آخر تأكيد: مسح عمود "' + name + '" نهائيًا؟'))) return;
     closeLayer($('colDlg'));
     await run('deleteColumn', {name});
   };
