@@ -529,15 +529,16 @@ header .lead.free{color:#DCE4F5;font-weight:700;margin-top:.25rem}
 /* مسافة تحت الشريط عشان ما يستخبّاش ورا زراير النظام */
 
 
-/* قايمة ☰ */
+/* قايمة ☰ جانبية */
 .topb{position:relative;display:flex;align-items:center;padding:.4rem 0 0}
-.hmb{font:inherit;font-size:1.35rem;line-height:1;background:var(--card);color:var(--gold,#F2C14E);border:1px solid var(--bd);border-radius:.8rem;min-width:2.75rem;min-height:2.75rem;cursor:pointer}
-#mbk{display:none;position:fixed;inset:0;z-index:9998;background:transparent}
-#mnu{display:none;position:absolute;top:3.4rem;right:0;z-index:9999;min-width:15.5rem;background:var(--card);border:1px solid var(--bd);border-radius:1rem;padding:.4rem;box-shadow:var(--sh);animation:mdrop .16s ease-out}
-#mbk.on,#mnu.on{display:block}
-@keyframes mdrop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
-#mnu .mi{display:block;font:inherit;font-weight:800;font-size:1rem;color:var(--tx);text-decoration:none;padding:.8rem .9rem;border-radius:.7rem;min-height:2.75rem}
-#mnu .mi+.mi{border-top:1px solid var(--bd)}
+.hmb{font:inherit;font-size:1.15rem;line-height:1;background:var(--card);color:var(--gold,#F2C14E);border:1px solid var(--bd);border-radius:.75rem;min-width:2.5rem;min-height:2.5rem;cursor:pointer}
+#mbk{position:fixed;inset:0;z-index:9998;background:rgba(5,10,24,.5);opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
+#mbk.on{opacity:1;visibility:visible}
+#mnu{position:fixed;top:0;bottom:0;right:0;z-index:9999;width:min(14.5rem,72vw);background:var(--card);border-left:1px solid var(--bd);box-shadow:-8px 0 24px rgba(0,0,0,.35);transform:translateX(105%);visibility:hidden;transition:transform .25s ease,visibility .25s;padding:calc(.6rem + env(safe-area-inset-top,0px)) .6rem .6rem;display:flex;flex-direction:column;gap:.2rem}
+#mnu.on{transform:none;visibility:visible}
+#mnu .mh{display:flex;align-items:center;justify-content:space-between;padding:.2rem .3rem .6rem;margin-bottom:.3rem;border-bottom:1px solid var(--bd);font-weight:800;font-size:.85rem;color:var(--gold,#F2C14E)}
+#mnu .mh button{font:inherit;width:2rem;height:2rem;border-radius:50%;border:1px solid var(--bd);background:transparent;color:var(--tx);cursor:pointer;font-size:.85rem}
+#mnu .mi{display:block;font:inherit;font-weight:700;font-size:.85rem;color:var(--tx);text-decoration:none;padding:.7rem .8rem;border-radius:.7rem}
 #mnu .mi:active{background:var(--acs);color:var(--gold,#F2C14E)}
 
 #xo{display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.55);align-items:center;justify-content:center;padding:1.2rem}
@@ -551,17 +552,17 @@ header .lead.free{color:#DCE4F5;font-weight:700;margin-top:.25rem}
 #cfno{border:2px solid #E5120F!important;font-weight:900!important}
 
 /* فورم العمال: صفحة كاملة بخط أصغر */
-#fo .sb .sh .ttl{font-size:.98rem!important}
-#fo .sb .fl{font-size:.8rem!important;margin-top:.75rem!important}
-#fo .sb .fl input{font-size:15px!important;padding:.55rem .8rem!important}
-#fo .yn button{font-size:.85rem!important;padding:.5rem 0!important}
-#fo .fgo .btn{font-size:.92rem!important}
-#fo .tnote,#fo .sb p,#fo .sb small{font-size:.76rem!important}
+#fo .sb .sh .ttl{font-size:.92rem!important}
+#fo .sb .fl{font-size:.76rem!important;margin-top:.7rem!important}
+#fo .sb .fl input{font-size:14px!important;padding:.5rem .8rem!important}
+#fo .yn button{font-size:.8rem!important;padding:.45rem 0!important}
+#fo .fgo .btn{font-size:.88rem!important}
+#fo .tnote,#fo .sb p,#fo .sb small{font-size:.72rem!important}
 </style>
 </head>
 <body>
 <main class="w" id="main">
-  <div class="topb"><button type="button" class="hmb" id="hmb" aria-label="القايمة">☰</button><div id="mbk"></div><div id="mnu"><a class="mi" id="mhome" href="./">🏠 الوظائف</a><a class="mi" href="marketing.html">📣 اشتغل أونلاين بعمولة</a></div></div>
+  <div class="topb"><button type="button" class="hmb" id="hmb" aria-label="القايمة">☰</button><div id="mbk"></div><nav id="mnu" aria-hidden="true"><div class="mh"><span>القايمة</span><button type="button" id="mcl" aria-label="قفل">✕</button></div><a class="mi" id="mhome" href="./">🏠 الوظائف</a><a class="mi" href="marketing.html">📣 اشتغل أونلاين بعمولة</a></nav></div>
   <header>
     <h1>عمال تعبئة وتغليف وفرز</h1>
     <p class="sub lead">قدّم من الموبايل في دقايق</p>
@@ -1137,11 +1138,13 @@ load();
 
 <div id="xo"><div class="xb"><p>لسه ما لقيتش حاجة مناسبة؟</p><div class="xr"><button type="button" id="xn">دوّر تاني</button><button type="button" id="xy">ما لقيتش حاجة مناسبة، اخرج</button></div></div></div>
 <script>
-(function(){var m=document.getElementById("mnu"),k=document.getElementById("mbk"),b=document.getElementById("hmb"),h=document.getElementById("mhome");if(!m||!b)return;
+(function(){var m=document.getElementById("mnu"),k=document.getElementById("mbk"),b=document.getElementById("hmb"),h=document.getElementById("mhome"),x=document.getElementById("mcl");if(!m||!b)return;
 if(/\/callcenter(\.html)?\/?$/.test(location.pathname))h.setAttribute("href","callcenter.html");
-function c(){m.classList.remove("on");k.classList.remove("on")}
-b.onclick=function(){if(m.classList.contains("on")){c()}else{m.classList.add("on");k.classList.add("on")}};
-k.onclick=c;
+function o(){m.classList.add("on");k.classList.add("on");m.setAttribute("aria-hidden","false")}
+function c(){m.classList.remove("on");k.classList.remove("on");m.setAttribute("aria-hidden","true")}
+b.onclick=function(){if(m.classList.contains("on")){c()}else{o()}};
+k.onclick=c;if(x)x.onclick=c;
+document.addEventListener("keydown",function(e){if(e.key==="Escape")c()});
 })();
 </script>
 <script>
