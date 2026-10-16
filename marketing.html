@@ -4,23 +4,38 @@
 <meta name="theme-color" content="#0E1A33">
 <title>اشتغل أونلاين بعمولة</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
-<style>*{box-sizing:border-box}body{margin:0;background:#0E1A33;color:#E8EEF9;font-family:Cairo,Tahoma,Arial,sans-serif;line-height:1.85}
-.w{max-width:32rem;margin:0 auto;padding:1rem 1rem 4rem}
-.top{display:flex;align-items:center;margin-bottom:.9rem}
-.back{font:inherit;font-weight:800;font-size:.95rem;background:#172645;color:#F2C14E;border:1px solid #2A3C66;border-radius:.8rem;padding:.5rem 1rem;cursor:pointer;min-height:2.75rem}
-.card{background:#172645;border:1px solid #2A3C66;border-radius:1.3rem;padding:1.4rem 1.3rem;margin-bottom:1.1rem;box-shadow:0 6px 16px rgba(0,0,0,.35)}
-.card h1{margin:0 0 .7rem;font-size:1.45rem;color:#F2C14E;line-height:1.5}
-.card p{margin:.4rem 0;font-size:1.08rem;color:#E8EEF9}
-.ok{margin:.8rem 0 0;padding:0;list-style:none}.ok li{margin:.4rem 0;font-weight:700;font-size:1.08rem}
-.com{background:#F2C14E;color:#2A1D00;border-radius:.95rem;padding:.8rem 1rem;font-weight:800;font-size:1.08rem;margin-top:1rem}
-.btn{display:block;width:100%;font:inherit;font-weight:800;font-size:1.08rem;border:0;border-radius:.95rem;padding:.85rem;min-height:3.1rem;cursor:pointer;background:#F2C14E;color:#2A1D00;text-align:center}
-.fm{display:none;background:#172645;border:1px solid #2A3C66;border-radius:1.3rem;padding:1.1rem;margin-top:.9rem}
-.fm.on{display:block}
-.fm label{display:block;font-weight:700;font-size:.95rem;margin:.6rem 0 .25rem}
-.fm input,.fm select{width:100%;font:inherit;font-size:1.02rem;padding:.65rem .85rem;border-radius:.75rem;border:1px solid #2A3C66;background:#0E1A33;color:#E8EEF9}
-.er{color:#F2C14E;font-size:.9rem;min-height:1.3rem;margin:.5rem 0 .7rem}
+<style>*{box-sizing:border-box}body{margin:0;background:#0E1A33;color:#E8EEF9;font-family:Cairo,Tahoma,Arial,sans-serif;line-height:1.8}
+.w{max-width:30rem;margin:0 auto;padding:1rem 1rem 4rem}
+.top{display:flex;align-items:center;margin-bottom:.8rem}
+.back{font:inherit;font-weight:800;font-size:.9rem;background:#172645;color:#F2C14E;border:1px solid #2A3C66;border-radius:.8rem;padding:.5rem .9rem;cursor:pointer;min-height:2.75rem}
+.card{background:#172645;border:1px solid #2A3C66;border-radius:1.2rem;padding:1.1rem 1.2rem;margin-bottom:1rem;box-shadow:0 6px 16px rgba(0,0,0,.35)}
+.card h1{margin:0 0 .5rem;font-size:1.25rem;color:#F2C14E}
+.card p{margin:.3rem 0;font-size:.95rem}
+.ok{margin:.6rem 0 0;padding:0;list-style:none}.ok li{margin:.25rem 0;font-weight:700;font-size:.95rem}
+.com{background:#F2C14E;color:#2A1D00;border-radius:.9rem;padding:.7rem .9rem;font-weight:800;margin-top:.8rem}
+.btn{display:block;width:100%;font:inherit;font-weight:800;font-size:1rem;border:0;border-radius:.9rem;padding:.8rem;min-height:2.9rem;cursor:pointer;background:#F2C14E;color:#2A1D00;text-align:center}
+.btn.bk{background:transparent;color:#fff;border:2px solid #E5120F;margin-top:.6rem}
+.ov{display:none;position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.55);align-items:flex-end;justify-content:center}
+.ov.on{display:flex}
+.sheet{background:#0E1A33;width:100%;max-width:34rem;max-height:100%;overflow-y:auto;border-radius:1.4rem 1.4rem 0 0;border:1px solid #2A3C66;padding:0 1.1rem 1.2rem;animation:up .22s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.sh{position:sticky;top:0;z-index:2;background:#0E1A33;display:flex;align-items:center;justify-content:space-between;padding:.9rem 0 .6rem}
+.sh h2{margin:0;font-size:1.1rem;color:#F2C14E}
+.x{flex:none;width:2.7rem;height:2.7rem;border-radius:50%;border:0;background:#E5120F;color:#fff;font-size:1.2rem;font-weight:900;cursor:pointer}
+.sheet label{display:block;font-weight:700;font-size:.9rem;margin:.6rem 0 .25rem}
+.sheet input,.sheet select{width:100%;font:inherit;font-size:1rem;padding:.65rem .85rem;border-radius:.75rem;border:1px solid #2A3C66;background:#172645;color:#E8EEF9}
+.er{color:#F2C14E;font-size:.88rem;min-height:1.3rem;margin:.5rem 0 .7rem}
+
+#xo{display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.6);align-items:center;justify-content:center;padding:1.2rem}
+#xo.on{display:flex}
+#xo .xb{background:#172645;color:#E8EEF9;border:1px solid #2A3C66;border-radius:1.2rem;padding:1.2rem;width:100%;max-width:20rem;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+#xo .xb p{margin:0 0 1rem;font-weight:800;font-size:1.05rem}
+#xo .xr{display:flex;gap:.6rem}
+#xo .xr button{flex:1;font:inherit;font-weight:800;font-size:.95rem;border:0;border-radius:.85rem;min-height:2.9rem;cursor:pointer}
+#xo #xy{background:#E5120F;color:#fff}
+#xo #xn{background:#F2C14E;color:#2A1D00}
 </style></head><body><div class="w">
-<div class="top"><button type="button" class="back" onclick="goBack()">⬅ رجوع</button></div>
+<div class="top"><button type="button" class="back" id="bk">⬅ رجوع</button></div>
 <div class="card">
 <h1>📢 مطلوب فريق توظيف أونلاين</h1>
 <p>شغل من الموبايل والسوشيال ميديا لتوظيف عمال المصانع، ومش محتاج خبرة — المهم تعرف تستخدم الموبايل، تنزل إعلانات في الجروبات وتعرف ترد على الناس.</p>
@@ -33,7 +48,9 @@
 <div class="com">💰 ملحوظة: الشغل بنظام العمولة</div>
 </div>
 <button type="button" class="btn" id="op">📲 قدّم على واتساب</button>
-<div class="fm" id="fm">
+</div>
+<div class="ov" id="ov"><div class="sheet">
+<div class="sh"><h2>📲 قدّم على واتساب</h2><button type="button" class="x" id="cx" aria-label="رجوع">✕</button></div>
 <label for="nm">الاسم</label><input id="nm" type="text" autocomplete="name">
 <label for="ag">السن</label><input id="ag" type="text" inputmode="numeric" maxlength="2">
 <label for="ph">رقم التليفون</label><input id="ph" type="tel" inputmode="tel" autocomplete="tel">
@@ -41,13 +58,19 @@
 <select id="ex"><option value="">— اختار —</option><option value="آه">آه</option><option value="لا">لا</option></select>
 <div class="er" id="er" role="alert"></div>
 <button type="button" class="btn" id="sd">إرسال على واتساب</button>
-</div>
-</div>
+<button type="button" class="btn bk" id="cb">⬅ رجوع</button>
+</div></div>
+<div id="xo"><div class="xb"><p>عايز تخرج من الموقع؟</p><div class="xr"><button type="button" id="xy">آه، اخرج</button><button type="button" id="xn">لأ، أكمل</button></div></div></div>
 <script>
-function goBack(){if(history.length>1){history.back()}else{location.href='./'}}
 (function(){
 var $=function(i){return document.getElementById(i)};
-$("op").onclick=function(){$("fm").classList.add("on");$("nm").focus()};
+var fo=false,ign=false;
+function hide(){$("ov").classList.remove("on");document.documentElement.style.overflow=""}
+function open(){$("er").textContent="";$("ov").classList.add("on");document.documentElement.style.overflow="hidden";if(!fo){fo=true;history.pushState({fm:1},"",location.href)}setTimeout(function(){$("nm").focus()},250)}
+function close(){hide();if(fo){fo=false;ign=true;history.back()}}
+$("op").onclick=open;$("cx").onclick=close;$("cb").onclick=close;
+$("bk").onclick=function(){if(document.referrer){history.back()}else{location.href="./"}};
+window.addEventListener("popstate",function(){if(ign){ign=false;return}if(fo){fo=false;hide()}});
 $("sd").onclick=function(){
   var n=$("nm").value.trim(),a=$("ag").value.trim(),p=$("ph").value.trim(),x=$("ex").value;
   if(!n){$("er").textContent="اكتب الاسم";return}
@@ -58,5 +81,12 @@ $("sd").onclick=function(){
   if(x)L.push("💼 *اشتغلت في المجال ده قبل كده:* "+x);
   location.href="https://wa.me/201095237207?text="+encodeURIComponent(L.join("\n"));
 };
+if(!document.referrer){
+var xo=document.getElementById("xo"),xy=document.getElementById("xy"),xn=document.getElementById("xn");
+if(!(history.state&&history.state.guard)){history.replaceState({base:1},"",location.href);history.pushState({guard:1},"",location.href)}
+window.addEventListener("popstate",function(e){if(e.state&&e.state.base&&xo)xo.classList.add("on")});
+if(xn)xn.onclick=function(){xo.classList.remove("on");history.pushState({guard:1},"",location.href)};
+if(xy)xy.onclick=function(){xo.classList.remove("on");history.back();setTimeout(function(){try{window.close()}catch(_){}},300)};
+}
 })();
 </script></body></html>
