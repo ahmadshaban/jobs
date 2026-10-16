@@ -26,17 +26,24 @@
 .sheet input,.sheet select{width:100%;font:inherit;font-size:1rem;padding:.65rem .85rem;border-radius:.75rem;border:1px solid #2A3C66;background:#172645;color:#E8EEF9}
 .er{color:#F2C14E;font-size:.88rem;min-height:1.3rem;margin:.5rem 0 .7rem}
 
-#xt{display:none;position:fixed;left:50%;bottom:1.6rem;transform:translateX(-50%);z-index:10000;background:#172645;color:#E8EEF9;border:1px solid #2A3C66;border-radius:999px;padding:.5rem 1rem;font-weight:800;font-size:.85rem;white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+#xo{display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.55);align-items:center;justify-content:center;padding:1.2rem}
+#xo.on{display:flex}
+#xo .xb{background:#172645;color:#E8EEF9;border:1px solid #2A3C66;border-radius:1rem;padding:1rem;width:100%;max-width:18rem;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+#xo .xb p{margin:0 0 .8rem;font-weight:800;font-size:.95rem;line-height:1.6}
+#xo .xr{display:flex;flex-direction:column;gap:.5rem}
+#xo .xr button{font:inherit;font-weight:800;font-size:.88rem;border:0;border-radius:.75rem;min-height:2.6rem;cursor:pointer}
+#xo #xn{background:#F2C14E;color:#2A1D00}
+#xo #xy{background:transparent;color:#E8EEF9;border:1.5px solid #E5120F}
 
-.ov{align-items:center!important;padding:.8rem}
-.sheet{max-width:24rem;border-radius:1.2rem;padding:0 .9rem .9rem;max-height:calc(100dvh - 1.6rem)}
-.sh{padding:.6rem 0 .4rem}.sh h2{font-size:1rem}
-.x{width:2.3rem;height:2.3rem;font-size:1rem}
-.sheet label{font-size:.85rem;margin:.45rem 0 .2rem}
-.sheet input,.sheet select{font-size:16px;padding:.5rem .75rem}
-.sheet .btn{min-height:2.6rem;padding:.6rem;font-size:.95rem}
-.sheet .btn.bk{margin-top:.45rem}
-.er{margin:.3rem 0 .5rem;min-height:1.1rem;font-size:.85rem}
+.ov{align-items:stretch!important;padding:0}
+.sheet{height:100dvh;max-width:34rem;max-height:none;border-radius:0;border:0;padding:0 1rem 1.2rem}
+.sh{padding:.7rem 0 .55rem;border-bottom:1px solid #2A3C66}.sh h2{font-size:.98rem}
+.x{width:2.4rem;height:2.4rem;font-size:1rem}
+.sheet label{font-size:.8rem;margin:.8rem 0 .25rem}
+.sheet input,.sheet select{font-size:15px;padding:.55rem .8rem}
+.sheet .btn{min-height:2.7rem;padding:.6rem;font-size:.92rem}
+.sheet .btn.bk{margin-top:.5rem}
+.er{margin:.4rem 0 .6rem;min-height:1.1rem;font-size:.82rem}
 </style></head><body><div class="w">
 <div class="top"><button type="button" class="back" id="bk">⬅ رجوع</button></div>
 <div class="card">
@@ -63,7 +70,7 @@
 <button type="button" class="btn" id="sd">إرسال على واتساب</button>
 <button type="button" class="btn bk" id="cb">⬅ رجوع</button>
 </div></div>
-<div id="xt">دوس رجوع تاني عشان تخرج من الموقع</div>
+<div id="xo"><div class="xb"><p>لسه ما لقيتش حاجة مناسبة؟</p><div class="xr"><button type="button" id="xn">دوّر تاني</button><button type="button" id="xy">ما لقيتش حاجة مناسبة، اخرج</button></div></div></div>
 <script>
 (function(){
 var $=function(i){return document.getElementById(i)};
@@ -85,10 +92,12 @@ $("sd").onclick=function(){
   location.href="https://wa.me/201095237207?text="+encodeURIComponent(L.join("\n"));
 };
 if(!document.referrer){
-var xt=document.getElementById("xt"),tm=0,gi=false;
+var xo=document.getElementById("xo"),xy=document.getElementById("xy"),xn=document.getElementById("xn"),gi=false;
 function gin(){if(gi)return;gi=true;if(!(history.state&&history.state.guard)){history.replaceState({base:1},"",location.href);history.pushState({guard:1},"",location.href)}}
 ["pointerdown","touchstart","keydown"].forEach(function(n){window.addEventListener(n,gin,{capture:true,once:true,passive:true})});
-window.addEventListener("popstate",function(e){if(e.state&&e.state.base&&xt){xt.style.display="block";clearTimeout(tm);tm=setTimeout(function(){xt.style.display="none";history.pushState({guard:1},"",location.href)},2500)}});
+window.addEventListener("popstate",function(e){if(e.state&&e.state.base&&xo)xo.classList.add("on")});
+if(xn)xn.onclick=function(){xo.classList.remove("on");history.pushState({guard:1},"",location.href)};
+if(xy)xy.onclick=function(){xo.classList.remove("on");history.back();setTimeout(function(){try{window.close()}catch(_){}},300)};
 }
 })();
 </script></body></html>
