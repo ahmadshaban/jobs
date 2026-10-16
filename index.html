@@ -520,6 +520,11 @@ header .lead.free{color:#DCE4F5;font-weight:700;margin-top:.25rem}
 .dcw .dbar{background:#0A1428;border:1px solid var(--bd);border-radius:.9rem;padding:.35rem}
 .dcw .dbtn{background:transparent;color:var(--gold);border-color:var(--gold)}
 .dcw .dbtn.wa{background:var(--wa);border-color:var(--wa);color:#fff}
+
+/* الاسم والقيمة الاتنين واضحين */
+.dc .rw{font-size:.82rem}
+.dc .rw span{color:#DCE6F8;opacity:1;font-weight:700}
+.dc .rw b{color:#fff;font-weight:800}
 </style>
 </head>
 <body>
@@ -910,6 +915,22 @@ function formHTML(j){return `<div class="ov" id="fo"><div class="sheet"><div cla
 let foOpen=false,foHide=null,ignoreFo=0;
 window.addEventListener("popstate",()=>{if(ignoreFo>0){ignoreFo--;return}if(foOpen){foOpen=false;if(foHide)foHide()}});
 
+function ageRange(txt){
+  const t=String(txt||"").replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d));
+  const n=(t.match(/\d{1,2}/g)||[]).map(Number);
+  if(!n.length)return null;
+  if(n.length>=2)return{min:Math.min(n[0],n[1]),max:Math.max(n[0],n[1])};
+  if(/لحد|حتى|لغاية|إلى|الى|أقل|اقل/.test(t))return{min:0,max:n[0]};
+  if(/فوق|أكتر|اكتر|أكثر|\+|من/.test(t))return{min:n[0],max:0};
+  return null;
+}
+function ageMsg(j,a){
+  const r=ageRange(j["السن"]);if(!r||!a)return "";
+  const rt=r.min&&r.max?"من "+r.min+" لـ "+r.max+" سنة":r.min?r.min+" سنة فأكتر":"لحد "+r.max+" سنة";
+  if(r.min&&a<r.min)return "سنك غير مسموح، السن المطلوب "+rt;
+  if(r.max&&a>r.max)return "سنك أكبر من المسموح، السن المطلوب "+rt;
+  return "";
+}
 function setupApply(j,ph){
   const fo=$("fo"),en=$("f_n"),ea=$("f_a"),et=$("f_t");
   const errs={f_n:$("e_n"),f_a:$("e_a"),f_t:$("e_t")};
@@ -917,6 +938,7 @@ function setupApply(j,ph){
   if(sp)sp.querySelectorAll("button").forEach(b=>b.onclick=()=>{selSh=+b.dataset.i;sp.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));es.textContent=""});
   const clearErr=()=>{[en,ea,et].forEach(x=>x.classList.remove("bad"));Object.values(errs).forEach(e=>e.textContent="");if(es)es.textContent=""};
   [en,ea,et].forEach(x=>x.addEventListener("input",()=>{x.classList.remove("bad");errs[x.id].textContent=""}));
+  ea.addEventListener("input",()=>{const v=ea.value.replace(/[٠-٩]/g,x=>"٠١٢٣٤٥٦٧٨٩".indexOf(x));if(/^\d{2}$/.test(v)){const m=ageMsg(j,+v);if(m){ea.classList.add("bad");errs.f_a.textContent=m}}});
   try{const s=JSON.parse(localStorage.getItem(SAVE_KEY)||"{}");en.value=s.n||"";ea.value=s.a||"";et.value=s.t||""}catch(e){}
   
   foOpen=false;foHide=()=>{fo.classList.remove("show");document.documentElement.classList.remove("fo-lock")};
@@ -930,6 +952,7 @@ function setupApply(j,ph){
     const fail=(el,m)=>{el.classList.add("bad");errs[el.id].textContent=m;el.focus();el.scrollIntoView({block:"center",behavior:"smooth"})};
     if((REQ.name||n)&&n.split(" ").filter(w=>w.length>=2).length<3)return fail(en,"الاسم ناقص، اكتب الاسم ثلاثي كامل");
     if((REQ.age||a)&&!/^\d{1,2}$/.test(a))return fail(ea,"اكتب السن بالأرقام");
+    {const am=ageMsg(j,+a);if(am)return fail(ea,am)}
     if(a&&(+a<AGE_MIN||+a>AGE_MAX))return fail(ea,"السن لازم يكون من "+AGE_MIN+" لـ "+AGE_MAX);
     if(t&&!/^\+?\d{10,14}$/.test(t))return fail(et,"رقم التليفون غلط، اكتبه بالأرقام (مثال 01012345678)");
     if(isMulti(j)&&selSh<0){es.textContent="اختار الوردية الأول";sp.scrollIntoView({block:"center",behavior:"smooth"});return}
