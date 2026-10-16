@@ -540,18 +540,23 @@ header .lead.free{color:#DCE4F5;font-weight:700;margin-top:.25rem}
 #mnu .mi+.mi{border-top:1px solid var(--bd)}
 #mnu .mi:active{background:var(--acs);color:var(--gold,#F2C14E)}
 
-#xt{display:none;position:fixed;left:50%;bottom:1.6rem;transform:translateX(-50%);z-index:10000;background:#172645;color:#E8EEF9;border:1px solid #2A3C66;border-radius:999px;padding:.5rem 1rem;font-weight:800;font-size:.85rem;white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+#xo{display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.55);align-items:center;justify-content:center;padding:1.2rem}
+#xo.on{display:flex}
+#xo .xb{background:#172645;color:#E8EEF9;border:1px solid #2A3C66;border-radius:1rem;padding:1rem;width:100%;max-width:18rem;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+#xo .xb p{margin:0 0 .8rem;font-weight:800;font-size:.95rem;line-height:1.6}
+#xo .xr{display:flex;flex-direction:column;gap:.5rem}
+#xo .xr button{font:inherit;font-weight:800;font-size:.88rem;border:0;border-radius:.75rem;min-height:2.6rem;cursor:pointer}
+#xo #xn{background:#F2C14E;color:#2A1D00}
+#xo #xy{background:transparent;color:#E8EEF9;border:1.5px solid #E5120F}
 #cfno{border:2px solid #E5120F!important;font-weight:900!important}
 
-/* فورم العمال: نافذة صغيرة مش صفحة كاملة */
-#fo{background:rgba(0,0,0,.55)!important;align-items:center!important;padding:.8rem}
-#fo .sheet{height:auto!important;max-height:calc(100dvh - 1.6rem)!important;max-width:26rem!important;width:100%;border-radius:1.2rem!important;border:1px solid var(--bd)}
-#fo .sb .sh{padding-top:.5rem!important;padding-bottom:.45rem!important}
-#fo .sb .sh .x{width:2.3rem!important;height:2.3rem!important}
-#fo .sb .fl{margin-top:.55rem!important;font-size:.88rem!important}
-#fo .sb .fl input{padding:.5rem .8rem!important}
-#fo .fgo{margin-top:.6rem!important}
-#fo .fgo .btn{min-height:2.6rem!important}
+/* فورم العمال: صفحة كاملة بخط أصغر */
+#fo .sb .sh .ttl{font-size:.98rem!important}
+#fo .sb .fl{font-size:.8rem!important;margin-top:.75rem!important}
+#fo .sb .fl input{font-size:15px!important;padding:.55rem .8rem!important}
+#fo .yn button{font-size:.85rem!important;padding:.5rem 0!important}
+#fo .fgo .btn{font-size:.92rem!important}
+#fo .tnote,#fo .sb p,#fo .sb small{font-size:.76rem!important}
 </style>
 </head>
 <body>
@@ -1130,7 +1135,7 @@ window.addEventListener("hashchange",route);
 load();
 </script>
 
-<div id="xt">دوس رجوع تاني عشان تخرج من الموقع</div>
+<div id="xo"><div class="xb"><p>لسه ما لقيتش حاجة مناسبة؟</p><div class="xr"><button type="button" id="xn">دوّر تاني</button><button type="button" id="xy">ما لقيتش حاجة مناسبة، اخرج</button></div></div></div>
 <script>
 (function(){var m=document.getElementById("mnu"),k=document.getElementById("mbk"),b=document.getElementById("hmb"),h=document.getElementById("mhome");if(!m||!b)return;
 if(/\/callcenter(\.html)?\/?$/.test(location.pathname))h.setAttribute("href","callcenter.html");
@@ -1141,10 +1146,12 @@ k.onclick=c;
 </script>
 <script>
 (function(){
-var xt=document.getElementById("xt"),tm=0,gi=false;
+var xo=document.getElementById("xo"),xy=document.getElementById("xy"),xn=document.getElementById("xn"),gi=false;
 function gin(){if(gi)return;gi=true;if(!(history.state&&history.state.guard)){history.replaceState({base:1},"",location.href);history.pushState({guard:1},"",location.href)}}
 ["pointerdown","touchstart","keydown"].forEach(function(n){window.addEventListener(n,gin,{capture:true,once:true,passive:true})});
-window.addEventListener("popstate",function(e){if(e.state&&e.state.base&&xt){xt.style.display="block";clearTimeout(tm);tm=setTimeout(function(){xt.style.display="none";history.pushState({guard:1},"",location.href)},2500)}});
+window.addEventListener("popstate",function(e){if(e.state&&e.state.base&&xo)xo.classList.add("on")});
+if(xn)xn.onclick=function(){xo.classList.remove("on");history.pushState({guard:1},"",location.href)};
+if(xy)xy.onclick=function(){xo.classList.remove("on");history.back();setTimeout(function(){try{window.close()}catch(_){}},300)};
 })();
 </script>
 </body>
