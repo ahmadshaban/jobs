@@ -559,10 +559,25 @@ header .lead.free{color:#DCE4F5;font-weight:700;margin-top:.25rem}
 #fo .fgo .btn{font-size:.88rem!important}
 #fo .tnote,#fo .sb p,#fo .sb small{font-size:.72rem!important}
 
-/* صفوف التفاصيل كجدول */
-.dc .rw{display:grid!important;grid-template-columns:7rem 1fr;gap:0!important;align-items:stretch!important;padding:0!important;border:0!important;border-bottom:1px solid var(--bd)!important;font-size:.8rem!important}
-.dc .rw span{display:flex;align-items:center;padding:.7rem .6rem;color:#A9B8D8;font-weight:700;border-inline-end:1px solid var(--bd);background:rgba(255,255,255,.04)}
-.dc .rw b{padding:.7rem .8rem;font-weight:700!important;text-align:start!important;line-height:1.7;color:#fff;white-space:normal!important;word-break:break-word;font-size:.82rem!important}
+/* صفوف التفاصيل كجدول (ريسبونسيف) */
+.dc{--cw:clamp(5.2rem,27vw,7.5rem);--fz:clamp(.76rem,3.3vw,.84rem);--pd:clamp(.55rem,2.4vw,.75rem)}
+.dc .dth{margin:.2rem .1rem .5rem!important}
+.dc .rw{display:grid!important;grid-template-columns:var(--cw) minmax(0,1fr);gap:0!important;align-items:stretch!important;padding:0!important;margin:0!important;border:1px solid var(--bd)!important;border-top:0!important;overflow:hidden;font-size:var(--fz)!important}
+.dc .dth+.rw{border-top:1px solid var(--bd)!important;border-radius:.7rem .7rem 0 0}
+.dc .rw:last-child{border-radius:0 0 .7rem .7rem}
+.dc .dth+.rw:last-child{border-radius:.7rem}
+.dc .rw span{display:flex;align-items:center;padding:var(--pd) .6rem;color:#A9B8D8;font-weight:700;border-inline-end:1px solid var(--bd);background:rgba(255,255,255,.04)}
+.dc .rw b{padding:var(--pd) .8rem;font-weight:700!important;text-align:start!important;line-height:1.7;color:#fff;white-space:normal!important;overflow-wrap:anywhere;font-size:var(--fz)!important}
+.dc .ctb{margin:.6rem 0 .2rem}
+.dc .cth{font-size:.8rem;font-weight:800;color:var(--gold);padding:.1rem .1rem .45rem}
+.dc .ct{display:grid!important;grid-template-columns:var(--cw) minmax(0,1fr) auto;gap:0!important;align-items:stretch;padding:0!important;border:1px solid var(--bd)!important;border-top:0!important;overflow:hidden;font-size:var(--fz)!important}
+.dc .cth+.ct{border-top:1px solid var(--bd)!important;border-radius:.7rem .7rem 0 0}
+.dc .ct:last-child{border-radius:0 0 .7rem .7rem}
+.dc .cth+.ct:last-child{border-radius:.7rem}
+.dc .ct span{display:flex;align-items:center;padding:var(--pd) .6rem;color:#A9B8D8;font-weight:700;border-inline-end:1px solid var(--bd);background:rgba(255,255,255,.04)}
+.dc .ct b{display:flex;align-items:center;justify-content:center;padding:var(--pd) .5rem}
+.dc .ct a{align-self:center;margin:.3rem .5rem;min-height:2.1rem}
+.dc .nt{border:1px solid var(--bd);border-radius:.7rem;padding:.8rem!important;font-size:clamp(.78rem,3.4vw,.86rem)!important;line-height:1.8!important}
 </style>
 </head>
 <body>
