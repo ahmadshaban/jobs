@@ -705,6 +705,15 @@ const AGE_MIN=16,AGE_MAX=60;
 const SAVE_KEY="jobform";
 const SRC=(()=>{let v="";try{v=(new URLSearchParams(location.search).get("src")||"").replace(/[\r\n]/g," ").trim().slice(0,30)}catch(e){}
   try{if(v)sessionStorage.setItem("jobsrc",v);else v=sessionStorage.getItem("jobsrc")||""}catch(e){}return v})();
+// ===== تتبع الإحصائيات =====
+const STATS_URL="PASTE_STATS_URL"; // <<< غيّر هنا: رابط سكريبت الإحصائيات
+const VID=(()=>{let v="";try{v=localStorage.getItem("vid")||"";if(!v){v=Date.now().toString(36)+Math.random().toString(36).slice(2,8);localStorage.setItem("vid",v)}}catch(e){}return v||"x"})();
+const __tv=new Set();
+function track(t,j){try{if(STATS_URL.indexOf("PASTE_")===0)return;
+if(t==="visit"){if(sessionStorage.getItem("tv"))return;sessionStorage.setItem("tv","1")}
+if(t==="view"&&j){const k=String(j["المصنع"]);if(__tv.has(k))return;__tv.add(k)}
+const q=new URLSearchParams({a:"log",t:t,f:j?(j["المصنع"]||""):"",r:j?(j["المنطقة"]||""):"",s:SRC||"",p:(location.pathname.split("/").pop()||"index.html"),v:VID});
+fetch(STATS_URL+"?"+q,{mode:"no-cors",keepalive:true})}catch(e){}}
 const hid=n=>{let h=5381;for(const c of String(n))h=((h<<5)+h+c.charCodeAt(0))>>>0;return h.toString(36)};
 
 const manual=j=>{const n=parseFloat(j["الترتيب"]);if(!isNaN(n))return n;return (j["تثبيت"]||"").trim()==="نعم"?0:null};
@@ -1016,7 +1025,7 @@ function setupApply(j,ph){
   
   foOpen=false;foHide=()=>{fo.classList.remove("show");document.documentElement.classList.remove("fo-lock")};
   const close=()=>{foHide();if(foOpen){foOpen=false;ignoreFo++;history.back()}};
-  $("apply").onclick=()=>{clearErr();live(1);fo.classList.add("show");document.documentElement.classList.add("fo-lock");if(!foOpen){foOpen=true;history.pushState({fo:1},"",location.href)};setTimeout(()=>{(en.value?ea:en).focus()},250)};
+  $("apply").onclick=()=>{track("apply",j);clearErr();live(1);fo.classList.add("show");document.documentElement.classList.add("fo-lock");if(!foOpen){foOpen=true;history.pushState({fo:1},"",location.href)};setTimeout(()=>{(en.value?ea:en).focus()},250)};
   $("fx").onclick=close;fo.onclick=e=>{if(e.target===fo)close()};
   $("fgo").onclick=()=>{
     const dg=s=>s.replace(/[٠-٩]/g,x=>"٠١٢٣٤٥٦٧٨٩".indexOf(x));
@@ -1031,6 +1040,7 @@ function setupApply(j,ph){
     if(isMulti(j)&&selSh<0){es.textContent="اختار الوردية الأول";sp.scrollIntoView({block:"center",behavior:"smooth"});return}
     try{localStorage.setItem(SAVE_KEY,JSON.stringify({n:n,a:a,t:t}))}catch(e){}
     const send=()=>{
+    track("send",j);
     const L=[];
     if(n)L.push("👤 *الاسم:* "+n);if(a)L.push("🔢 *السن:* "+a);if(t)L.push("📞 *رقم التليفون:* "+t);
     L.push("📍 *المكان:* "+j["المنطقة"],"🏭 *المصنع:* "+j["المصنع"]);
@@ -1121,6 +1131,7 @@ async function saveJobAsImage(j, captureElem) {
 }
 
 function showDetail(j){
+  track("view",j);
   const ph=PHONE.replace(/\D/g,"");
   const cell=x=>x?esc(String(x).replace(/\s*في الشهر/,"")):"—";
   const multi=isMulti(j);
@@ -1175,13 +1186,15 @@ function showDetail(j){
   const openT=i=>{cur=cur===i?-1:i;tb.forEach((b,x)=>b.classList.toggle("on",x===cur));tp.forEach((p,x)=>{p.hidden=x!==cur})};
   tb.forEach((b,i)=>b.onclick=()=>openT(i));
 
-  $("shareBtn").onclick=()=>{openSingleCopyModal(j);$("btnSaveSingleImg").onclick=()=>{closeSingleCopyModal();saveJobAsImage(j,$("captureArea"))}};
+  $("shareBtn").onclick=()=>{track("share",j);openSingleCopyModal(j);$("btnSaveSingleImg").onclick=()=>{closeSingleCopyModal();saveJobAsImage(j,$("captureArea"))}};
   const cb=$("callBtn");
-  if(cb)cb.onclick=()=>{cur=-1;openT(hi);const c=$("ctbox");if(c)c.scrollIntoView({block:"nearest"})};
+  if(cb)cb.onclick=()=>{track("call",j);cur=-1;openT(hi);const c=$("ctbox");if(c)c.scrollIntoView({block:"nearest"})};
+  document.querySelectorAll("#detail a[href^=\"tel:\"]").forEach(a=>a.addEventListener("click",()=>track("call",j)));
   if(IS_CC)setupApply(j,ph);
 }
 
 window.addEventListener("hashchange",route);
+track("visit");
 load();
 </script>
 
