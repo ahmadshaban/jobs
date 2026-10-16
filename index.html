@@ -558,6 +558,11 @@ header .lead.free{color:#DCE4F5;font-weight:700;margin-top:.25rem}
 #fo .yn button{font-size:.8rem!important;padding:.45rem 0!important}
 #fo .fgo .btn{font-size:.88rem!important}
 #fo .tnote,#fo .sb p,#fo .sb small{font-size:.72rem!important}
+
+/* صفوف التفاصيل كجدول */
+.dc .rw{display:grid!important;grid-template-columns:7rem 1fr;gap:0!important;align-items:stretch!important;padding:0!important;border:0!important;border-bottom:1px solid var(--bd)!important;font-size:.8rem!important}
+.dc .rw span{display:flex;align-items:center;padding:.7rem .6rem;color:#A9B8D8;font-weight:700;border-inline-end:1px solid var(--bd);background:rgba(255,255,255,.04)}
+.dc .rw b{padding:.7rem .8rem;font-weight:700!important;text-align:start!important;line-height:1.7;color:#fff;white-space:normal!important;word-break:break-word;font-size:.82rem!important}
 </style>
 </head>
 <body>
@@ -1084,7 +1089,7 @@ function showDetail(j){
   const otherKeys=Object.keys(j).filter(k=>!k.startsWith("__")&&!fixedUsed.includes(k)&&j[k]);
   const nc=IS_CC&&j.__contacts?j.__contacts.length:0;
   const ctHTML=nc?`<div id="ctbox" class="ctb"><div class="cth">📞 أرقام التواصل</div>${j.__contacts.map(c=>`<div class="ct"><span>${c.name?esc(c.name):"رقم"}</span><b>${esc(c.phone)}</b><a href="tel:${esc(c.phone)}">اتصال</a></div>`).join("")}</div>`:"";
-  const basics=[rw("السن"),plainSh?"":rw("الشفت"),rw("طبيعة العمل"),rw("الفئة"),rw("المنطقة"),rw("المؤهل"),rw("الأجازة")].join("");
+  const basics=[rw("المنطقة"),rw("الفئة"),rw("السن"),plainSh?"":rw("الشفت"),rw("طبيعة العمل"),rw("المؤهل"),rw("الأجازة")].join("");
   const payR=[rw("نظام القبض"),rw("الأساسي"),rw("حافز الانتظام"),rw("السلف","السلفة"),rw("وجبة","الأكل"),rw("التأمينات"),rw("تفاصيل المرتب")].join("");
   const hous=[rw("السكن"),rw("المواصلات"),rw("العنوان","العنوان",cleanAddr(j["العنوان"])),ctHTML,...otherKeys.map(k=>rw(k))].join("");
   const tabs=[["📋","الأساسيات",basics],["💰","الدفع والمميزات",payR],["🏠","السكن والمواصلات",hous],...(j["ملاحظات"]?[["📝","ملاحظات",`<div class="nt">${esc(j["ملاحظات"])}</div>`]]:[])].filter(t=>t[2]);
