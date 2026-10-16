@@ -448,6 +448,55 @@ header .lead.free{color:#DCE4F5;font-weight:700;margin-top:.25rem}
 .capmode .tabs,.capmode .thint{display:none}
 .capmode .tp[hidden]{display:block}
 .capmode .tph{display:block}
+
+/* ===== صفحة التفاصيل: كارت واحد أبيض بدون سكرول (كله محصور على .dc) ===== */
+.dcw{max-width:40rem;margin:auto;padding:.4rem .5rem;display:flex;flex-direction:column;gap:.4rem;height:100vh;height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
+.dc{flex:1 1 0;min-height:0;display:flex;flex-direction:column;background:#fff;color:#0F2747;border-radius:.9rem;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.dc .dh{flex:none;background:#0F2747;color:#fff;padding:.35rem .6rem .45rem}
+.dc .dr{display:flex;align-items:center;justify-content:space-between;gap:.5rem;font-size:.74rem;font-weight:700;color:#C9A227}
+.dc .dback{font:inherit;font-weight:800;font-size:.8rem;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.4);border-radius:.6rem;min-height:2.25rem;padding:0 .7rem;cursor:pointer}
+.dc .dn{margin:.1rem 0 0;font-size:1rem;font-weight:800;line-height:1.3;color:#fff}
+.dc .dg{flex:none;background:#C9A227;color:#0F2747;text-align:center;margin:.4rem .5rem 0;border-radius:.7rem;padding:.25rem .5rem}
+.dc .dg small{display:block;font-size:.7rem;font-weight:700;line-height:1.3}
+.dc .dg b{display:block;font-size:1.1rem;font-weight:800;line-height:1.3}
+.dc .dsb{flex:none;display:flex;gap:.35rem;margin:.4rem .5rem 0}
+.dc .dsb button{flex:1;min-height:2.75rem;font:inherit;font-weight:800;font-size:.85rem;border-radius:.6rem;border:1.5px solid #0F2747;background:#fff;color:#0F2747;cursor:pointer}
+.dc .dsb button.on{background:#0F2747;color:#fff}
+.dc .d2{flex:none;display:grid;grid-template-columns:1fr 1fr;gap:.35rem;margin:.4rem .5rem 0}
+.dc .d2>div{border:1px solid #0F2747;border-radius:.6rem;padding:.2rem .3rem;text-align:center}
+.dc .d2 small{display:block;font-size:.68rem;font-weight:700;line-height:1.3}
+.dc .d2 b{font-size:.88rem;font-weight:800;line-height:1.3}
+.dc .thint{flex:none;text-align:center;font-size:.7rem;font-weight:700;margin:.3rem .5rem 0;opacity:.75}
+.dc .dtabs{flex:none;display:grid;grid-template-columns:1fr 1fr;gap:.35rem;margin:.25rem .5rem 0}
+.dc .dtabs button{display:flex;align-items:center;gap:.4rem;min-height:2.75rem;font:inherit;font-weight:800;font-size:.82rem;color:#0F2747;background:#fff;border:1.5px solid #0F2747;border-radius:.6rem;padding:0 .55rem;cursor:pointer}
+.dc .dtabs button .tl{flex:1;text-align:start}
+.dc .dtabs button .ta{font-size:.8rem;transition:transform .2s}
+.dc .dtabs button.on{background:#0F2747;color:#fff}
+.dc .dtabs button.on .ta{transform:rotate(180deg)}
+.dc .dtabs button:last-child:nth-child(odd){grid-column:1/-1}
+.dc .dtp{flex:1 1 0;min-height:0;overflow-y:auto;margin:.3rem .5rem 0;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.dc .dtp[hidden]{display:none}
+.dc .dth{display:none}
+.dc .rw{display:flex;justify-content:space-between;align-items:flex-start;gap:.6rem;padding:.26rem .1rem;border-bottom:1px solid #E6EBF3;font-size:.78rem;line-height:1.35}
+.dc .rw span{flex:none;font-weight:600;opacity:.7}
+.dc .rw b{font-weight:700;text-align:end;white-space:pre-line;overflow-wrap:anywhere}
+.dc .nt{font-size:.78rem;font-weight:600;line-height:1.5;white-space:pre-line;padding:.2rem .1rem}
+.dc .ctb{padding-top:.2rem}
+.dc .cth{font-size:.76rem;font-weight:800;padding:.15rem .1rem}
+.dc .ct{display:flex;align-items:center;gap:.5rem;padding:.2rem .1rem;border-bottom:1px solid #E6EBF3;font-size:.78rem}
+.dc .ct span{flex:none;font-weight:600}
+.dc .ct b{flex:1;direction:ltr;text-align:center;font-weight:800}
+.dc .ct a{display:inline-flex;align-items:center;justify-content:center;min-height:2.25rem;padding:0 .8rem;border-radius:.55rem;background:#0F2747;color:#fff;font-weight:800;font-size:.76rem;text-decoration:none}
+.dc .dnote{flex:none;margin:auto .5rem .4rem;text-align:center;font-size:.72rem;font-weight:800;background:rgba(201,162,39,.2);border-radius:.5rem;padding:.2rem .4rem}
+.dcw .dbar{flex:none;display:flex;gap:.35rem;align-items:stretch}
+.dcw .dbtn{flex:1;display:flex;align-items:center;justify-content:center;min-height:2.75rem;font:inherit;font-weight:800;font-size:.85rem;border-radius:.65rem;border:1.5px solid #fff;background:#fff;color:#0F2747;text-decoration:none;cursor:pointer;padding:0 .4rem}
+.dcw .dbtn.wa{flex:2.2;background:#1FAF5A;border-color:#1FAF5A;color:#fff;font-size:.95rem}
+.dcw .dwn{flex:2.2;display:flex;align-items:center;font-size:.72rem;font-weight:800;line-height:1.4;color:#C9A227}
+.dc.capmode{height:auto;flex:none}
+.dc.capmode .dtabs,.dc.capmode .thint,.dc.capmode .dback{display:none}
+.dc.capmode .dtp{overflow:visible;flex:none}
+.dc.capmode .dtp[hidden]{display:block}
+.dc.capmode .dth{display:block;margin-top:.4rem;font-size:.8rem;font-weight:800;border-bottom:2px solid #C9A227}
 </style>
 </head>
 <body>
@@ -491,6 +540,7 @@ header .lead.free{color:#DCE4F5;font-weight:700;margin-top:.25rem}
   <div class="sh"><h3 class="ttl" style="margin:.2rem 0 0">خيارات مشاركة الوظيفة</h3><button type="button" class="x" id="closeSingleCopy" aria-label="إغلاق">✕</button></div>
   <button type="button" class="menu-btn" id="btnCopySingleText">📋 نسخ التفاصيل كاملة كنص</button>
   <button type="button" class="menu-btn" id="btnCopySingleLink">🔗 نسخ الرابط المباشر للوظيفة</button>
+  <button type="button" class="menu-btn" id="btnSaveSingleImg">🖼️ حفظ كصورة</button>
 </div></div></div>
 
 <script>
@@ -936,78 +986,65 @@ async function saveJobAsImage(j, captureElem) {
     const actionsBar = captureElem.querySelector('.cta');
     if(actionsBar) actionsBar.style.display = 'flex';
     captureElem.classList.remove('capmode');
-    alert("حدث خطأ أثناء حفظ الصورة، يمكنك استخدام زر '📋 نسخ' بدلاً من ذلك.");
+    alert("حدث خطأ أثناء حفظ الصورة، جرّب 'نسخ كنص' من زرار شارك.");
   }
 }
 
 function showDetail(j){
   const ph=PHONE.replace(/\D/g,"");
-  
-  let addressHTML = `<b>${esc(cleanAddr(j["العنوان"])||"غير محدد")}</b>`;
-  if(j.__contacts && j.__contacts.length) {
-    addressHTML += `<div class="contacts-box">
-      <span class="contacts-title">📞 أرقام التواصل عند الوصول:</span>
-      ${j.__contacts.map(c=>`
-        <div class="contact-item">
-          <div class="contact-info">
-            ${c.name?`<span class="contact-name">👤 ${esc(c.name)}:</span>`:""}
-            <span class="contact-num">📱 ${esc(c.phone)}</span>
-          </div>
-          <a href="tel:${esc(c.phone)}" class="call-btn">📞 اتصال</a>
-        </div>
-      `).join("")}
-    </div>`;
-  }
-  
-  const it=k=> {
-    if(k==="العنوان") {
-      return `<div class="it full"><small>${IS_CC?"📍 العنوان وأرقام التواصل":"📍 العنوان"}</small>${addressHTML}</div>`;
-    }
-    const trHi=k==="المواصلات"&&!/لا يوجد|مفيش|^لا$|غير متوفر/.test(String(j[k]).trim());
-    return `<div class="it ${(k==="طبيعة العمل"||trHi||String(j[k]).length>26)?"full":""}${trHi?" trn":""}"><small>${ICONS[k]||"•"} ${esc(k)}</small><b>${esc(j[k])}</b></div>`;
-  };
-
-  const sec=(t,ks,pre)=>{const r=ks.filter(k=>j[k] || (k==="العنوان" && (j["العنوان"] || (j.__contacts && j.__contacts.length))));return (r.length||pre)?`<div class="sec"><h3>${t}</h3><div class="g2">${pre||""}${r.map(it).join("")}</div></div>`:""};
-  const pp=pays(j);
-  const noteHTML=j["تفاصيل المرتب"]?`<div class="pnote"><span class="nl">تفاصيل المرتب</span><span class="nt">${esc(j["تفاصيل المرتب"])}</span></div>`:"";
   const cell=x=>x?esc(String(x).replace(/\s*في الشهر/,"")):"—";
-  const tbl=isMulti(j)?`<div class="it pay2 full"><table class="sht"><tr><th>⏰ الوردية</th><th><span class="tag">30 يوم</span></th><th><span class="tag">26 يوم + 4 إجازة</span></th></tr>${j.__sh.map(s=>`<tr><td>${esc(s.h)}</td><td>${cell(s.p30)}</td><td>${cell(s.p26)}</td></tr>`).join("")}</table></div>`:"";
-  const hrsPill=(!isMulti(j)&&j["الشفت"])?`<div class="hp"><span class="tag">وردية ${esc(hoursOnly(j["الشفت"]))}</span></div>`:"";
-  const payTile0=`<div class="it pay2 full">${hrsPill}${pp.length?pp.map(x=>`<div class="pt"><small class="tag">${esc(x[0])}</small><b>${esc(x[1])}</b></div>`).join(""):`<small>💰 المرتب</small><b>${esc(j["المرتب"]||"")}</b>`}</div>`;
-  const payTile=(isMulti(j)?tbl:payTile0)+noteHTML;
-  
+  const multi=isMulti(j);
+  const pay=i=>multi?j.__sh[i]:{h:j["الشفت"]||"",p30:j[P30]||"",p26:j[P26]||""};
+  const hasTiles=multi||!!(j[P30]||j[P26]);
+  const hasPay=hasTiles||!!j["المرتب"];
+  const rw=(k,l,v)=>{v=v===undefined?j[k]:v;return v?`<div class="rw"><span>${esc(l||k)}</span><b>${esc(v)}</b></div>`:""};
   const plainSh=/^\s*\d{1,2}\s*(ساعة|ساعات)\s*$/.test(j["الشفت"]||"");
-  
-  const fixedUsed = ["المنطقة","الفئة","المصنع","العنوان","أرقام التواصل","الشفت","السن","طبيعة العمل","المؤهل","الأجازة","نظام القبض","السلف","التأمينات","وجبة","السكن","المواصلات","المرتب","مرتب 30 يوم","مرتب 26 يوم","تفاصيل المرتب","الورديات","تثبيت","الترتيب","آخر تعديل","ظاهر؟","الحالة","تاريخ الإضافة","ملاحظات"];
-  const otherKeys = Object.keys(j).filter(k=>!k.startsWith("__")&&!fixedUsed.includes(k)&&j[k]);
-  
-  const body=ks=>ks.filter(k=>j[k] || (k==="العنوان" && (j["العنوان"] || (j.__contacts && j.__contacts.length)))).map(it).join("");
-  const tabsDef=[
-    ["📋","الأساسيات",body(["السن", ...(plainSh?[]:["الشفت"]), "طبيعة العمل", "المؤهل", "الأجازة"])],
-    ["💰","الدفع والمميزات",body(["نظام القبض", "السلف", "التأمينات", "وجبة"])],
-    ["🏠","السكن والمواصلات",body(["السكن", "المواصلات", ...otherKeys, "العنوان"])],
-    ...(j["ملاحظات"]?[["📝","ملاحظات",`<div class="it full"><b>${esc(j["ملاحظات"])}</b></div>`]]:[])
-  ].filter(t=>t[2]);
-  const payTop=`<div class="sec"><h3>💰 المرتب</h3><div class="g2">${payTile}</div></div>`;
-  const tabsHTML=tabsDef.length?`<div class="thint">👆 دوس على أي زرار تشوف تفاصيله</div><div class="tabs">${tabsDef.map((t,i)=>`<button type="button" class="tabb${i===0?" on":""}" data-t="${i}"><span>${t[0]}</span><span class="tl">${t[1]}</span><span class="ta">▾</span></button>`).join("")}</div>${tabsDef.map((t,i)=>`<div class="sec tp" data-p="${i}"${i===0?"":" hidden"}><h3 class="tph">${t[0]} ${t[1]}</h3><div class="g2">${t[2]}</div></div>`).join("")}`:"";
-  
-  $("detail").innerHTML=`<div class="w dp${IS_CC?"":" wk"}" id="captureArea">
-   <div class="tb"><button class="exit" id="ex"><span class="xr">✕</span>رجوع</button></div>
-   <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="bd2">${tags(j)}<span class="badge ${kind(j["الفئة"]||"")}">${esc(j["الفئة"])}</span></span></div>
-   <h2 class="ttl">${esc(j["المصنع"])}</h2>
-   ${payTop}${tabsHTML}
-   <div class="tnote">⏰ التقديم واستلام الشغل في نفس اليوم</div>
-   <div class="cta${IS_CC?"":" wcta"}">
-     ${IS_CC?`<button type="button" class="btn wa" id="apply">قدّم دلوقتي على الواتساب</button>`:`<div class="wnote">للتقديم على الوظيفة، ارجع للمسؤول اللي بعتلك اللينك ده وهو يكمّلك إجراءات التقديم.</div>`}
-     <button type="button" class="btn sh2" id="shareImgBtn">🖼️ نسخ كصورة</button>
-     <button type="button" class="btn sh2" id="copyTxtBtn">📋 نسخ</button>
-   </div></div>${IS_CC?formHTML(j):""}`;
-   
+  const fixedUsed=["المنطقة","الفئة","المصنع","العنوان","أرقام التواصل","الشفت","السن","طبيعة العمل","المؤهل","الأجازة","نظام القبض","السلف","التأمينات","وجبة","السكن","المواصلات","المرتب","مرتب 30 يوم","مرتب 26 يوم","تفاصيل المرتب","الورديات","تثبيت","الترتيب","آخر تعديل","ظاهر؟","الحالة","تاريخ الإضافة","ملاحظات","الأساسي","حافز الانتظام"];
+  const otherKeys=Object.keys(j).filter(k=>!k.startsWith("__")&&!fixedUsed.includes(k)&&j[k]);
+  const nc=IS_CC&&j.__contacts?j.__contacts.length:0;
+  const ctHTML=nc?`<div id="ctbox" class="ctb"><div class="cth">📞 أرقام التواصل</div>${j.__contacts.map(c=>`<div class="ct"><span>${c.name?esc(c.name):"رقم"}</span><b>${esc(c.phone)}</b><a href="tel:${esc(c.phone)}">اتصال</a></div>`).join("")}</div>`:"";
+  const basics=[rw("السن"),plainSh?"":rw("الشفت"),rw("طبيعة العمل"),rw("الفئة"),rw("المنطقة"),rw("المؤهل"),rw("الأجازة")].join("");
+  const payR=[rw("نظام القبض"),rw("الأساسي"),rw("حافز الانتظام"),rw("السلف","السلفة"),rw("وجبة","الأكل"),rw("التأمينات"),rw("تفاصيل المرتب")].join("");
+  const hous=[rw("السكن"),rw("المواصلات"),rw("العنوان","العنوان",cleanAddr(j["العنوان"])),ctHTML,...otherKeys.map(k=>rw(k))].join("");
+  const tabs=[["📋","الأساسيات",basics],["💰","الدفع والمميزات",payR],["🏠","السكن والمواصلات",hous],...(j["ملاحظات"]?[["📝","ملاحظات",`<div class="nt">${esc(j["ملاحظات"])}</div>`]]:[])].filter(t=>t[2]);
+  const hi=tabs.findIndex(t=>t[1]==="السكن والمواصلات");
+  const shBtns=multi?`<div class="dsb">${j.__sh.map((s,i)=>`<button type="button" data-i="${i}" class="${i?"":"on"}">${esc(hoursOnly(s.h))}</button>`).join("")}</div>`:"";
+  const call=nc===1?`<a class="dbtn" href="tel:${esc(j.__contacts[0].phone)}">📞 اتصل</a>`:nc>1?`<button type="button" class="dbtn" id="callBtn">📞 اتصل</button>`:"";
+  const bar=IS_CC?`<button type="button" class="dbtn wa" id="apply">💬 قدّم دلوقتي</button>${call}<button type="button" class="dbtn" id="shareBtn">📤 شارك</button>`:`<div class="dwn">للتقديم ارجع للمسؤول اللي بعتلك اللينك ده وهو يكمّلك إجراءات التقديم.</div><button type="button" class="dbtn" id="shareBtn">📤 شارك</button>`;
+  $("detail").innerHTML=`<div class="dcw"><div class="dc" id="captureArea">
+   <div class="dh"><div class="dr"><button type="button" class="dback" id="ex">→ رجوع</button><span>📍 ${esc(j["المنطقة"])}${j["الفئة"]?" · "+esc(j["الفئة"]):""}</span></div><h2 class="dn">${esc(j["المصنع"])}</h2></div>
+   ${hasPay?`<div class="dg"><small>المرتب الشهري</small><b id="dgv"></b><small id="dgs"></small></div>`:""}
+   ${shBtns}
+   ${hasTiles?`<div class="d2"><div><small>30 يوم عمل</small><b id="d30"></b></div><div><small>26 يوم + 4 أجازة</small><b id="d26"></b></div></div>`:""}
+   ${tabs.length?`<div class="thint">👆 دوس على أي زرار تشوف تفاصيله</div><div class="dtabs">${tabs.map((t,i)=>`<button type="button" class="${i?"":"on"}"><span>${t[0]}</span><span class="tl">${t[1]}</span><span class="ta">▾</span></button>`).join("")}</div>${tabs.map((t,i)=>`<div class="dtp"${i?" hidden":""}><div class="dth">${t[0]} ${t[1]}</div>${t[2]}</div>`).join("")}`:""}
+   <div class="dnote">⏰ التقديم واستلام الشغل في نفس اليوم</div>
+  </div><div class="dbar">${bar}</div></div>${IS_CC?formHTML(j):""}`;
+
   $("main").style.display="none";$("detail").style.display="block";window.scrollTo(0,0);
   $("ex").onclick=exitDetail;
-  document.querySelectorAll("#detail .tabb").forEach(b=>b.onclick=()=>{const t=b.dataset.t;document.querySelectorAll("#detail .tabb").forEach(x=>x.classList.toggle("on",x.dataset.t===t));document.querySelectorAll("#detail .tp").forEach(p=>{p.hidden=p.dataset.p!==t})});
-  $("shareImgBtn").onclick=()=>saveJobAsImage(j, $("captureArea"));
-  $("copyTxtBtn").onclick=()=>openSingleCopyModal(j);
+
+  let si=0;
+  const shb=[...document.querySelectorAll("#detail .dsb button")];
+  const upd=()=>{
+    if(!hasPay)return;
+    const p=pay(si),m=p.p30||p.p26||(multi?"":j["المرتب"]||"");
+    const mode=p.p30?"30 يوم عمل":p.p26?"26 يوم عمل + 4 أجازة":"";
+    $("dgv").innerHTML=cell(m);
+    $("dgs").textContent=[p.h?"وردية "+hoursOnly(p.h):"",mode].filter(Boolean).join(" · ");
+    if(hasTiles){$("d30").innerHTML=cell(p.p30);$("d26").innerHTML=cell(p.p26)}
+    shb.forEach(b=>b.classList.toggle("on",+b.dataset.i===si));
+  };
+  shb.forEach(b=>b.onclick=()=>{si=+b.dataset.i;upd()});
+  upd();
+
+  let cur=0;
+  const tb=[...document.querySelectorAll("#detail .dtabs button")],tp=[...document.querySelectorAll("#detail .dtp")];
+  const openT=i=>{cur=cur===i?-1:i;tb.forEach((b,x)=>b.classList.toggle("on",x===cur));tp.forEach((p,x)=>{p.hidden=x!==cur})};
+  tb.forEach((b,i)=>b.onclick=()=>openT(i));
+
+  $("shareBtn").onclick=()=>{openSingleCopyModal(j);$("btnSaveSingleImg").onclick=()=>{closeSingleCopyModal();saveJobAsImage(j,$("captureArea"))}};
+  const cb=$("callBtn");
+  if(cb)cb.onclick=()=>{cur=-1;openT(hi);const c=$("ctbox");if(c)c.scrollIntoView({block:"nearest"})};
   if(IS_CC)setupApply(j,ph);
 }
 
