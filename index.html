@@ -522,7 +522,7 @@ header .lead.free{color:#DCE4F5;font-weight:700;margin-top:.25rem}
 .dcw .dbtn.wa{background:var(--wa);border-color:var(--wa);color:#fff}
 
 /* الاسم والقيمة الاتنين واضحين */
-.dc .rw{font-size:.82rem}
+.dc .rw{font-size:0.88rem}
 .dc .rw span{color:#DCE6F8;opacity:1;font-weight:700}
 .dc .rw b{color:#fff;font-weight:800}
 
@@ -539,6 +539,16 @@ header .lead.free{color:#DCE4F5;font-weight:700;margin-top:.25rem}
 #mnu .mi{display:block;font:inherit;font-weight:800;font-size:1rem;color:var(--tx);text-decoration:none;padding:.8rem .9rem;border-radius:.7rem;min-height:2.75rem}
 #mnu .mi+.mi{border-top:1px solid var(--bd)}
 #mnu .mi:active{background:var(--acs);color:var(--gold,#F2C14E)}
+
+#xo{display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.6);align-items:center;justify-content:center;padding:1.2rem}
+#xo.on{display:flex}
+#xo .xb{background:#172645;color:#E8EEF9;border:1px solid #2A3C66;border-radius:1.2rem;padding:1.2rem;width:100%;max-width:20rem;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+#xo .xb p{margin:0 0 1rem;font-weight:800;font-size:1.05rem}
+#xo .xr{display:flex;gap:.6rem}
+#xo .xr button{flex:1;font:inherit;font-weight:800;font-size:.95rem;border:0;border-radius:.85rem;min-height:2.9rem;cursor:pointer}
+#xo #xy{background:#E5120F;color:#fff}
+#xo #xn{background:#F2C14E;color:#2A1D00}
+#cfno{border:2px solid #E5120F!important;font-weight:900!important}
 </style>
 </head>
 <body>
@@ -722,7 +732,7 @@ function afterApply(){
     const urlParams=new URLSearchParams(location.search);
     const jq=urlParams.get("j"),areaParam=urlParams.get("area");
     if(areaParam)area=areaParam;
-    if(jq){const k=JOBS.findIndex(x=>hid(x["المصنع"])===jq);history.replaceState(null,"",location.pathname+(IS_CC&&!CC_PAGE?"?cc="+encodeURIComponent(CC_ID):"")+(k>-1?"#job"+k:""))}
+    if(jq){const k=JOBS.findIndex(x=>hid(x["المصنع"])===jq);history.replaceState(history.state,"",location.pathname+(IS_CC&&!CC_PAGE?"?cc="+encodeURIComponent(CC_ID):"")+(k>-1?"#job"+k:""))}
   }
   draw();
   if(FIRST){route();FIRST=false}
@@ -1117,12 +1127,22 @@ window.addEventListener("hashchange",route);
 load();
 </script>
 
+<div id="xo"><div class="xb"><p>عايز تخرج من الموقع؟</p><div class="xr"><button type="button" id="xy">آه، اخرج</button><button type="button" id="xn">لأ، أكمل</button></div></div></div>
 <script>
 (function(){var m=document.getElementById("mnu"),k=document.getElementById("mbk"),b=document.getElementById("hmb"),h=document.getElementById("mhome");if(!m||!b)return;
 if(/\/callcenter(\.html)?\/?$/.test(location.pathname))h.setAttribute("href","callcenter.html");
 function c(){m.classList.remove("on");k.classList.remove("on")}
 b.onclick=function(){if(m.classList.contains("on")){c()}else{m.classList.add("on");k.classList.add("on")}};
 k.onclick=c;
+})();
+</script>
+<script>
+(function(){
+var xo=document.getElementById("xo"),xy=document.getElementById("xy"),xn=document.getElementById("xn");
+if(!(history.state&&history.state.guard)){history.replaceState({base:1},"",location.href);history.pushState({guard:1},"",location.href)}
+window.addEventListener("popstate",function(e){if(e.state&&e.state.base&&xo)xo.classList.add("on")});
+if(xn)xn.onclick=function(){xo.classList.remove("on");history.pushState({guard:1},"",location.href)};
+if(xy)xy.onclick=function(){xo.classList.remove("on");history.back();setTimeout(function(){try{window.close()}catch(_){}},300)};
 })();
 </script>
 </body>
