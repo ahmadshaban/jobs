@@ -16,6 +16,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="theme-color" content="#0B2A4A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Job Gate Admin">
+<link rel="apple-touch-icon" href="admin-apple-touch-icon.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Crect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%230B2A4A%27/%3E%3Ctext x=%2750%27 y=%2770%27 font-size=%2760%27 text-anchor=%27middle%27%3E%E2%9A%99%EF%B8%8F%3C/text%3E%3C/svg%3E">
 <title>لوحة الوظايف</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -756,22 +762,21 @@ function formHasUnsavedChanges(){
   return !!formInitialSnapshot && currentFormSnapshot() !== formInitialSnapshot;
 }
 
-// ترتيب حقول النموذج: المصنع في البداية، وفي النهاية خالص (العنوان وأرقام التواصل تحتها)
+// ترتيب حقول النموذج (النموذج بس، مش الكروت): تعريف ← شروط ← ورديات ← مزايا ← تفاصيل ← إدارة
 function formOrder(){
-  const a = headers.indexOf(COL.salary30), b = headers.indexOf(COL.salary26);
-  const sIdx = headers.indexOf(COL.shifts);
-  const cIdx = headers.indexOf(COL.contacts);
-  
-  // استبعاد الحقول الخاصة بالمرتبات والورديات والتواصل لإعادة ترتيبها
-  const rest = headers.map((_, i) => i).filter(i => i !== a && i !== b && i !== sIdx && i !== cIdx);
-  
-  // وضع أرقام التواصل في النهاية خالص (بحيث تكون تحت خانة العنوان/المصنع)
-  rest.push(cIdx);
-  
-  let shiftAt = headers.indexOf(COL.shift); if (shiftAt < 0) shiftAt = headers.indexOf(COL.factory);
-  const shiftPos = shiftAt < 0 ? rest.length : rest.indexOf(shiftAt) + 1;
-  rest.splice(shiftPos, 0, ...[sIdx, a, b].filter(i => i >= 0 && !rest.includes(i)));
-  return rest;
+  const want = [
+    COL.factory, COL.area, COL.gender, 'العنوان', COL.contacts,
+    'السن', 'المؤهل',
+    COL.shifts, COL.shift, COL.salary30, COL.salary26, COL.salary,
+    'نظام القبض', 'السكن', 'السلف', 'المواصلات', 'وجبة', 'الأجازة', 'التأمينات',
+    'طبيعة العمل', 'تفاصيل المرتب', 'ملاحظات',
+    COL.status, COL.visible, DATE_COL
+  ];
+  const norm = s => String(s == null ? '' : s).trim();
+  const out = [];
+  want.forEach(n => { const i = headers.findIndex(h => norm(h) === norm(n)); if (i >= 0 && !out.includes(i)) out.push(i); });
+  headers.forEach((_, i) => { if (!out.includes(i)) out.push(i); });
+  return out;
 }
 
 let draftKeyNow = 'gp_draft:new';
