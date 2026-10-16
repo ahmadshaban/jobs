@@ -26,14 +26,7 @@
 .sheet input,.sheet select{width:100%;font:inherit;font-size:1rem;padding:.65rem .85rem;border-radius:.75rem;border:1px solid #2A3C66;background:#172645;color:#E8EEF9}
 .er{color:#F2C14E;font-size:.88rem;min-height:1.3rem;margin:.5rem 0 .7rem}
 
-#xo{display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.6);align-items:center;justify-content:center;padding:1.2rem}
-#xo.on{display:flex}
-#xo .xb{background:#172645;color:#E8EEF9;border:1px solid #2A3C66;border-radius:1.2rem;padding:1.2rem;width:100%;max-width:20rem;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.45)}
-#xo .xb p{margin:0 0 1rem;font-weight:800;font-size:1.05rem}
-#xo .xr{display:flex;gap:.6rem}
-#xo .xr button{flex:1;font:inherit;font-weight:800;font-size:.95rem;border:0;border-radius:.85rem;min-height:2.9rem;cursor:pointer}
-#xo #xy{background:#E5120F;color:#fff}
-#xo #xn{background:#F2C14E;color:#2A1D00}
+#xt{display:none;position:fixed;left:50%;bottom:1.6rem;transform:translateX(-50%);z-index:10000;background:#172645;color:#E8EEF9;border:1px solid #2A3C66;border-radius:999px;padding:.5rem 1rem;font-weight:800;font-size:.85rem;white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,.4)}
 
 .ov{align-items:center!important;padding:.8rem}
 .sheet{max-width:24rem;border-radius:1.2rem;padding:0 .9rem .9rem;max-height:calc(100dvh - 1.6rem)}
@@ -70,7 +63,7 @@
 <button type="button" class="btn" id="sd">إرسال على واتساب</button>
 <button type="button" class="btn bk" id="cb">⬅ رجوع</button>
 </div></div>
-<div id="xo"><div class="xb"><p>عايز تخرج من الموقع؟</p><div class="xr"><button type="button" id="xy">آه، اخرج</button><button type="button" id="xn">لأ، أكمل</button></div></div></div>
+<div id="xt">دوس رجوع تاني عشان تخرج من الموقع</div>
 <script>
 (function(){
 var $=function(i){return document.getElementById(i)};
@@ -92,11 +85,10 @@ $("sd").onclick=function(){
   location.href="https://wa.me/201095237207?text="+encodeURIComponent(L.join("\n"));
 };
 if(!document.referrer){
-var xo=document.getElementById("xo"),xy=document.getElementById("xy"),xn=document.getElementById("xn");
-if(!(history.state&&history.state.guard)){history.replaceState({base:1},"",location.href);history.pushState({guard:1},"",location.href)}
-window.addEventListener("popstate",function(e){if(e.state&&e.state.base&&xo)xo.classList.add("on")});
-if(xn)xn.onclick=function(){xo.classList.remove("on");history.pushState({guard:1},"",location.href)};
-if(xy)xy.onclick=function(){xo.classList.remove("on");history.back();setTimeout(function(){try{window.close()}catch(_){}},300)};
+var xt=document.getElementById("xt"),tm=0,gi=false;
+function gin(){if(gi)return;gi=true;if(!(history.state&&history.state.guard)){history.replaceState({base:1},"",location.href);history.pushState({guard:1},"",location.href)}}
+["pointerdown","touchstart","keydown"].forEach(function(n){window.addEventListener(n,gin,{capture:true,once:true,passive:true})});
+window.addEventListener("popstate",function(e){if(e.state&&e.state.base&&xt){xt.style.display="block";clearTimeout(tm);tm=setTimeout(function(){xt.style.display="none";history.pushState({guard:1},"",location.href)},2500)}});
 }
 })();
 </script></body></html>
