@@ -434,6 +434,20 @@ header .lead.free{color:#DCE4F5;font-weight:700;margin-top:.25rem}
 /* touch targets >=44px */
 .x{width:44px;height:44px}
 .btn,.seg button,.ddb,.ai,.retry{min-height:44px}
+/* تبويبات صفحة المصنع */
+.thint{margin:.65rem 0 .35rem;color:var(--mu);font-size:.74rem;text-align:center}
+.tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.4rem}
+.tabb{display:flex;align-items:center;gap:.35rem;min-height:2.75rem;padding:.2rem .6rem;font:inherit;font-size:.82rem;font-weight:800;color:var(--gold);background:#172645;border:1px solid var(--gold);border-radius:.7rem;cursor:pointer}
+.tabb .tl{flex:1;text-align:right}
+.tabb .ta{transition:transform .15s}
+.tabb.on{background:var(--gold);color:var(--goldD)}
+.tabb.on .ta{transform:rotate(180deg)}
+.tabb:last-child:nth-child(odd){grid-column:1/-1}
+.tph{display:none;margin:0 0 .35rem;font-size:.8rem;font-weight:800;color:var(--gold)}
+.tp[hidden]{display:none}
+.capmode .tabs,.capmode .thint{display:none}
+.capmode .tp[hidden]{display:block}
+.capmode .tph{display:block}
 </style>
 </head>
 <body>
@@ -894,6 +908,7 @@ async function saveJobAsImage(j, captureElem) {
     await loadH2C();
     const actionsBar = captureElem.querySelector('.cta');
     if(actionsBar) actionsBar.style.display = 'none';
+    captureElem.classList.add('capmode');
 
     const canvas = await html2canvas(captureElem, {
       scale: 2,
@@ -903,6 +918,7 @@ async function saveJobAsImage(j, captureElem) {
     });
     
     if(actionsBar) actionsBar.style.display = 'flex';
+    captureElem.classList.remove('capmode');
 
     canvas.toBlob((blob) => {
       if (!blob) return;
@@ -919,6 +935,7 @@ async function saveJobAsImage(j, captureElem) {
   } catch (e) {
     const actionsBar = captureElem.querySelector('.cta');
     if(actionsBar) actionsBar.style.display = 'flex';
+    captureElem.classList.remove('capmode');
     alert("حدث خطأ أثناء حفظ الصورة، يمكنك استخدام زر '📋 نسخ' بدلاً من ذلك.");
   }
 }
@@ -964,17 +981,21 @@ function showDetail(j){
   const fixedUsed = ["المنطقة","الفئة","المصنع","العنوان","أرقام التواصل","الشفت","السن","طبيعة العمل","المؤهل","الأجازة","نظام القبض","السلف","التأمينات","وجبة","السكن","المواصلات","المرتب","مرتب 30 يوم","مرتب 26 يوم","تفاصيل المرتب","الورديات","تثبيت","الترتيب","آخر تعديل","ظاهر؟","الحالة","تاريخ الإضافة","ملاحظات"];
   const otherKeys = Object.keys(j).filter(k=>!k.startsWith("__")&&!fixedUsed.includes(k)&&j[k]);
   
-  const groups=[
-    ["الأساسيات", ["السن", ...(plainSh?[]:["الشفت"]), "طبيعة العمل", "المؤهل", "الأجازة"], payTile],
-    ["المرتب والمميزات", ["نظام القبض", "السلف", "التأمينات", "وجبة"]],
-    ["السكن والمواصلات والأقسام الإضافية", ["السكن", "المواصلات", ...otherKeys, "العنوان"]]
-  ];
+  const body=ks=>ks.filter(k=>j[k] || (k==="العنوان" && (j["العنوان"] || (j.__contacts && j.__contacts.length)))).map(it).join("");
+  const tabsDef=[
+    ["📋","الأساسيات",body(["السن", ...(plainSh?[]:["الشفت"]), "طبيعة العمل", "المؤهل", "الأجازة"])],
+    ["💰","الدفع والمميزات",body(["نظام القبض", "السلف", "التأمينات", "وجبة"])],
+    ["🏠","السكن والمواصلات",body(["السكن", "المواصلات", ...otherKeys, "العنوان"])],
+    ...(j["ملاحظات"]?[["📝","ملاحظات",`<div class="it full"><b>${esc(j["ملاحظات"])}</b></div>`]]:[])
+  ].filter(t=>t[2]);
+  const payTop=`<div class="sec"><h3>💰 المرتب</h3><div class="g2">${payTile}</div></div>`;
+  const tabsHTML=tabsDef.length?`<div class="thint">👆 دوس على أي زرار تشوف تفاصيله</div><div class="tabs">${tabsDef.map((t,i)=>`<button type="button" class="tabb${i===0?" on":""}" data-t="${i}"><span>${t[0]}</span><span class="tl">${t[1]}</span><span class="ta">▾</span></button>`).join("")}</div>${tabsDef.map((t,i)=>`<div class="sec tp" data-p="${i}"${i===0?"":" hidden"}><h3 class="tph">${t[0]} ${t[1]}</h3><div class="g2">${t[2]}</div></div>`).join("")}`:"";
   
   $("detail").innerHTML=`<div class="w dp${IS_CC?"":" wk"}" id="captureArea">
    <div class="tb"><button class="exit" id="ex"><span class="xr">✕</span>رجوع</button></div>
    <div class="top"><span class="loc">📍 ${esc(j["المنطقة"])}</span><span class="bd2">${tags(j)}<span class="badge ${kind(j["الفئة"]||"")}">${esc(j["الفئة"])}</span></span></div>
    <h2 class="ttl">${esc(j["المصنع"])}</h2>
-   ${groups.map(g=>sec(g[0],g[1],g[2])).join("")}${j["ملاحظات"]?`<div class="sec"><h3>📝 ملاحظات</h3><div class="it full"><b>${esc(j["ملاحظات"])}</b></div></div>`:""}
+   ${payTop}${tabsHTML}
    <div class="tnote">⏰ التقديم واستلام الشغل في نفس اليوم</div>
    <div class="cta${IS_CC?"":" wcta"}">
      ${IS_CC?`<button type="button" class="btn wa" id="apply">قدّم دلوقتي على الواتساب</button>`:`<div class="wnote">للتقديم على الوظيفة، ارجع للمسؤول اللي بعتلك اللينك ده وهو يكمّلك إجراءات التقديم.</div>`}
@@ -984,6 +1005,7 @@ function showDetail(j){
    
   $("main").style.display="none";$("detail").style.display="block";window.scrollTo(0,0);
   $("ex").onclick=exitDetail;
+  document.querySelectorAll("#detail .tabb").forEach(b=>b.onclick=()=>{const t=b.dataset.t;document.querySelectorAll("#detail .tabb").forEach(x=>x.classList.toggle("on",x.dataset.t===t));document.querySelectorAll("#detail .tp").forEach(p=>{p.hidden=p.dataset.p!==t})});
   $("shareImgBtn").onclick=()=>saveJobAsImage(j, $("captureArea"));
   $("copyTxtBtn").onclick=()=>openSingleCopyModal(j);
   if(IS_CC)setupApply(j,ph);
