@@ -528,10 +528,20 @@ header .lead.free{color:#DCE4F5;font-weight:700;margin-top:.25rem}
 
 /* مسافة تحت الشريط عشان ما يستخبّاش ورا زراير النظام */
 
+
+/* قايمة ☰ */
+.topb{display:flex;align-items:center;padding:.4rem 0 0}
+.hmb{font:inherit;font-size:1.35rem;line-height:1;background:#172645;color:#E8EEF9;border:1px solid var(--bd,#2A3D66);border-radius:.8rem;min-width:2.75rem;min-height:2.75rem;cursor:pointer}
+#mnu{display:none;position:fixed;inset:0;z-index:9999;background:rgba(5,10,24,.55)}
+#mnu.on{display:block}
+#mnu .mp{position:absolute;top:.6rem;right:.6rem;left:.6rem;max-width:18rem;margin-right:auto;margin-left:0;background:#fff;color:#0A1428;border-radius:1.1rem;padding:.5rem;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+#mnu .mi{display:block;font:inherit;font-weight:800;font-size:1rem;color:#0A1428;text-decoration:none;padding:.85rem .9rem;border-radius:.8rem;min-height:2.75rem}
+#mnu .mi:active{background:#FFF6C7}
 </style>
 </head>
 <body>
 <main class="w" id="main">
+  <div class="topb"><button type="button" class="hmb" id="hmb" aria-label="القايمة">☰</button></div>
   <header>
     <h1>عمال تعبئة وتغليف وفرز</h1>
     <p class="sub lead">قدّم من الموبايل في دقايق</p>
@@ -1103,6 +1113,16 @@ function showDetail(j){
 
 window.addEventListener("hashchange",route);
 load();
+</script>
+
+<div id="mnu"><div class="mp"><a class="mi" id="mhome" href="./">🏠 الوظائف</a><a class="mi" href="marketing.html">📣 اشتغل أونلاين بعمولة</a></div></div>
+<script>
+(function(){var m=document.getElementById("mnu"),b=document.getElementById("hmb");if(!m||!b)return;
+var h=document.getElementById("mhome");if(/\/callcenter(\.html)?\/?$/.test(location.pathname))h.setAttribute("href","callcenter.html");
+b.onclick=function(){m.classList.add("on")};
+m.onclick=function(e){if(e.target===m)m.classList.remove("on")};
+h.onclick=function(e){m.classList.remove("on");e.preventDefault();location.href=h.getAttribute("href")};
+})();
 </script>
 </body>
 </html>
