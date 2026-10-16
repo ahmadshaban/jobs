@@ -1,24 +1,24 @@
 <!doctype html>
 <html lang="ar" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0A1428">
+<meta name="theme-color" content="#0E1A33">
 <title>اشتغل أونلاين بعمولة</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
-<style>*{box-sizing:border-box}body{margin:0;background:#0A1428;color:#E8EEF9;font-family:Cairo,Tahoma,Arial,sans-serif;line-height:1.8}
-.w{max-width:30rem;margin:0 auto;padding:1rem 1rem 4rem}
-.top{display:flex;align-items:center;margin-bottom:.8rem}
-.back{font:inherit;font-weight:700;font-size:.9rem;background:#172645;color:#E8EEF9;border:1px solid #2A3D66;border-radius:.8rem;padding:.5rem .9rem;cursor:pointer;min-height:2.75rem}
-.card{background:#fff;color:#0A1428;border-radius:1.2rem;padding:1.1rem 1.2rem;margin-bottom:1rem}
-.card h1{margin:0 0 .5rem;font-size:1.25rem;color:#1F3F7A}
-.card p{margin:.3rem 0;font-size:.95rem}
-.ok{margin:.6rem 0 0;padding:0;list-style:none}.ok li{margin:.25rem 0;font-weight:700;font-size:.95rem}
-.com{background:#FFF6C7;color:#0A1428;border-radius:.9rem;padding:.7rem .9rem;font-weight:800;margin-top:.8rem}
-.btn{display:block;width:100%;font:inherit;font-weight:800;font-size:1rem;border:0;border-radius:.9rem;padding:.8rem;min-height:2.9rem;cursor:pointer;background:#FFF6C7;color:#0A1428;text-align:center;text-decoration:none}
-.fm{display:none;background:#172645;border:1px solid #2A3D66;border-radius:1.2rem;padding:1rem;margin-top:.8rem}
+<style>*{box-sizing:border-box}body{margin:0;background:#0E1A33;color:#E8EEF9;font-family:Cairo,Tahoma,Arial,sans-serif;line-height:1.85}
+.w{max-width:32rem;margin:0 auto;padding:1rem 1rem 4rem}
+.top{display:flex;align-items:center;margin-bottom:.9rem}
+.back{font:inherit;font-weight:800;font-size:.95rem;background:#172645;color:#F2C14E;border:1px solid #2A3C66;border-radius:.8rem;padding:.5rem 1rem;cursor:pointer;min-height:2.75rem}
+.card{background:#172645;border:1px solid #2A3C66;border-radius:1.3rem;padding:1.4rem 1.3rem;margin-bottom:1.1rem;box-shadow:0 6px 16px rgba(0,0,0,.35)}
+.card h1{margin:0 0 .7rem;font-size:1.45rem;color:#F2C14E;line-height:1.5}
+.card p{margin:.4rem 0;font-size:1.08rem;color:#E8EEF9}
+.ok{margin:.8rem 0 0;padding:0;list-style:none}.ok li{margin:.4rem 0;font-weight:700;font-size:1.08rem}
+.com{background:#F2C14E;color:#2A1D00;border-radius:.95rem;padding:.8rem 1rem;font-weight:800;font-size:1.08rem;margin-top:1rem}
+.btn{display:block;width:100%;font:inherit;font-weight:800;font-size:1.08rem;border:0;border-radius:.95rem;padding:.85rem;min-height:3.1rem;cursor:pointer;background:#F2C14E;color:#2A1D00;text-align:center}
+.fm{display:none;background:#172645;border:1px solid #2A3C66;border-radius:1.3rem;padding:1.1rem;margin-top:.9rem}
 .fm.on{display:block}
-.fm label{display:block;font-weight:700;font-size:.88rem;margin:.5rem 0 .2rem}
-.fm input{width:100%;font:inherit;font-size:1rem;padding:.6rem .8rem;border-radius:.7rem;border:1px solid #2A3D66;background:#0A1428;color:#E8EEF9}
-.er{color:#FFF6C7;font-size:.85rem;min-height:1.2rem;margin:.4rem 0 .6rem}
+.fm label{display:block;font-weight:700;font-size:.95rem;margin:.6rem 0 .25rem}
+.fm input,.fm select{width:100%;font:inherit;font-size:1.02rem;padding:.65rem .85rem;border-radius:.75rem;border:1px solid #2A3C66;background:#0E1A33;color:#E8EEF9}
+.er{color:#F2C14E;font-size:.9rem;min-height:1.3rem;margin:.5rem 0 .7rem}
 </style></head><body><div class="w">
 <div class="top"><button type="button" class="back" onclick="goBack()">⬅ رجوع</button></div>
 <div class="card">
@@ -31,13 +31,14 @@
 <li>✅ مفيش رسوم للتقديم أو الشغل</li>
 </ul>
 <div class="com">💰 ملحوظة: الشغل بنظام العمولة</div>
-<p style="margin-top:.8rem">📲 للتفاصيل والتقديم: 01095237207</p>
 </div>
 <button type="button" class="btn" id="op">📲 قدّم على واتساب</button>
 <div class="fm" id="fm">
 <label for="nm">الاسم</label><input id="nm" type="text" autocomplete="name">
-<label for="ag">السن</label><input id="ag" type="number" inputmode="numeric" min="16" max="70">
+<label for="ag">السن</label><input id="ag" type="text" inputmode="numeric" maxlength="2">
 <label for="ph">رقم التليفون</label><input id="ph" type="tel" inputmode="tel" autocomplete="tel">
+<label for="ex">اشتغلت في المجال ده قبل كده؟ (اختياري)</label>
+<select id="ex"><option value="">— اختار —</option><option value="آه">آه</option><option value="لا">لا</option></select>
 <div class="er" id="er" role="alert"></div>
 <button type="button" class="btn" id="sd">إرسال على واتساب</button>
 </div>
@@ -48,11 +49,14 @@ function goBack(){if(history.length>1){history.back()}else{location.href='./'}}
 var $=function(i){return document.getElementById(i)};
 $("op").onclick=function(){$("fm").classList.add("on");$("nm").focus()};
 $("sd").onclick=function(){
-  var n=$("nm").value.trim(),a=$("ag").value.trim(),p=$("ph").value.trim();
-  if(!n||!a||!p){$("er").textContent="اكتب الاسم والسن ورقم التليفون";return}
+  var n=$("nm").value.trim(),a=$("ag").value.trim(),p=$("ph").value.trim(),x=$("ex").value;
+  if(!n){$("er").textContent="اكتب الاسم";return}
+  if(!/^\d{1,2}$/.test(a)){$("er").textContent="اكتب السن بالأرقام";return}
+  if(!/^\+?\d{10,14}$/.test(p)){$("er").textContent="رقم التليفون غلط، اكتبه بالأرقام (مثال 01012345678)";return}
   $("er").textContent="";
-  var t="السلام عليكم، أنا "+n+"، سني "+a+"، ورقمي "+p+".\nمحتاج التفاصيل عن وظيفة مسوق بالعمولة (فريق التوظيف أونلاين).";
-  location.href="https://wa.me/201095237207?text="+encodeURIComponent(t);
+  var L=["السلام عليكم، محتاج التفاصيل عن وظيفة مسوق بالعمولة (فريق التوظيف أونلاين)","","👤 *الاسم:* "+n,"🔢 *السن:* "+a,"📞 *رقم التليفون:* "+p];
+  if(x)L.push("💼 *اشتغلت في المجال ده قبل كده:* "+x);
+  location.href="https://wa.me/201095237207?text="+encodeURIComponent(L.join("\n"));
 };
 })();
 </script></body></html>
