@@ -977,7 +977,7 @@ function payBlock(j){
 
 let came=false,sy=0;
 function go(i){came=true;sy=window.scrollY;location.hash="job"+i}
-function exitDetail(){if(came){came=false;history.back()}else{location.hash=""}}
+function exitDetail(){if(came){came=false;history.back()}else{history.replaceState(history.state,"",location.pathname+location.search);route()}}
 function route(){
   let j=null;const m=location.hash.match(/^#job(\d+)$/),f=location.hash.match(/^#f=(.+)$/);
   if(m)j=JOBS[+m[1]];else if(f){try{const n=decodeURIComponent(f[1]);j=JOBS.find(x=>x["المصنع"]===n)}catch(e){}}
@@ -1214,7 +1214,12 @@ document.addEventListener("keydown",function(e){if(e.key==="Escape")c()});
 var xo=document.getElementById("xo"),xy=document.getElementById("xy"),xn=document.getElementById("xn"),gi=false;
 function gin(){if(gi)return;gi=true;if(!(history.state&&history.state.guard)){history.replaceState({base:1},"",location.href);history.pushState({guard:1},"",location.href)}}
 ["pointerdown","touchstart","keydown"].forEach(function(n){window.addEventListener(n,gin,{capture:true,once:true,passive:true})});
-window.addEventListener("popstate",function(e){if(e.state&&e.state.base&&xo)xo.classList.add("on")});
+window.addEventListener("popstate",function(e){
+if(!(e.state&&e.state.base))return;
+var P=location.pathname+location.search,d=document.getElementById("detail"),onDetail=!!d&&getComputedStyle(d).display!=="none";
+if(location.hash)history.replaceState({base:1},"",P);
+if(onDetail){try{route()}catch(_){}history.pushState({guard:1},"",P);return}
+if(xo)xo.classList.add("on")});
 if(xn)xn.onclick=function(){xo.classList.remove("on");history.pushState({guard:1},"",location.href)};
 if(xy)xy.onclick=function(){xo.classList.remove("on");history.back();setTimeout(function(){try{window.close()}catch(_){}},300)};
 })();
