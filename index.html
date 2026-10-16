@@ -1042,7 +1042,7 @@ function confirmSend(j,go,sh){
   }
   add("🏠","السكن",j["السكن"]);
   const trv=String(j["المواصلات"]||"").trim(),nt=String(j["ملاحظات"]||"").trim();
-  const noTr=trv&&NEG.test(trv);
+  const noTr=trv&&/لا يوجد|مفيش|^لا$|غير متوفر/.test(trv);
   if(!noTr)add("🚌","المواصلات",j["المواصلات"]);
   const COND=/شرط|شروط|يشترط|مشترط|لازم|يلزم|ضروري|إلزامي|ممنوع|مينفعش|مطلوب|فقط|إلا|الا |تجنيد|فيش|صحيفة|شهادة|كشف|غير مقبول|مش مقبول|مقبول/;
   const parts=nt?nt.split(/\n|\||؛|(?<=\.)\s/).map(x=>x.trim()).filter(Boolean):[];
