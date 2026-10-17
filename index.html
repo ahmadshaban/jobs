@@ -447,6 +447,9 @@ header .lead.free{color:#DCE4F5;font-weight:700;margin-top:.25rem}
 .btn,.seg button,.ddb,.ai,.retry{min-height:44px}
 /* تبويبات صفحة المصنع */
 .thint{margin:.65rem 0 .35rem;color:var(--mu);font-size:.74rem;text-align:center}
+.thint .ar{display:inline-block;animation:thintBob 1.4s ease-in-out infinite}
+@keyframes thintBob{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
+@media (prefers-reduced-motion:reduce){.thint .ar{animation:none}}
 .tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.4rem}
 .tabb{display:flex;align-items:center;gap:.35rem;min-height:2.75rem;padding:.2rem .6rem;font:inherit;font-size:.82rem;font-weight:800;color:var(--gold);background:#172645;border:1px solid var(--gold);border-radius:.7rem;cursor:pointer}
 .tabb .tl{flex:1;text-align:right}
@@ -1165,7 +1168,7 @@ function showDetail(j){
    ${hasPay?`<div class="dg"><small>${daily(j)?"اليومية":"المرتب الشهري"}</small><b id="dgv"></b><small id="dgs"></small></div>`:""}
    ${shBtns}
    ${hasTiles?`<div class="d2"><div><small>30 يوم عمل</small><b id="d30"></b></div><div><small>26 يوم + 4 أجازة</small><b id="d26"></b></div></div>`:""}
-   ${tabs.length?`<div class="thint">👆 دوس على أي زرار تشوف تفاصيله</div><div class="dtabs">${tabs.map((t,i)=>`<button type="button" class="${i?"":"on"}"><span>${t[0]}</span><span class="tl">${t[1]}</span><span class="ta">▾</span></button>`).join("")}</div>${tabs.map((t,i)=>`<div class="dtp"${i?" hidden":""}><div class="dth">${t[0]} ${t[1]}</div>${t[2]}</div>`).join("")}`:""}
+   ${tabs.length?`<div class="thint"><span class="ar">👇</span> دوس على أي زرار تشوف تفاصيله</div><div class="dtabs">${tabs.map((t,i)=>`<button type="button" class="${i?"":"on"}"><span>${t[0]}</span><span class="tl">${t[1]}</span><span class="ta">▾</span></button>`).join("")}</div>${tabs.map((t,i)=>`<div class="dtp"${i?" hidden":""}><div class="dth">${t[0]} ${t[1]}</div>${t[2]}</div>`).join("")}`:""}
    <div class="dnote">⏰ التقديم واستلام الشغل في نفس اليوم</div>
   </div><div class="dbar">${bar}</div></div>${IS_CC?formHTML(j):""}`;
 
