@@ -589,6 +589,12 @@ header .lead.free{color:#DCE4F5;font-weight:700;margin-top:.25rem}
 .dc .ct b{display:flex;align-items:center;justify-content:center;padding:var(--pd) .5rem}
 .dc .ct a{align-self:center;margin:.3rem .5rem;min-height:2.1rem}
 .dc .nt{border:1px solid var(--bd);border-radius:.7rem;padding:.8rem!important;font-size:clamp(.78rem,3.4vw,.86rem)!important;line-height:1.8!important}
+/* تبويبات أصغر + فلتر أكبر قبل الاختيار */
+.dc .dtabs{gap:.3rem;margin:.2rem .5rem 0}
+.dc .dtabs button{min-height:2.3rem;font-size:.8rem;padding:0 .5rem;gap:.3rem;border-radius:.55rem}
+.dc .dtabs button .ta{font-size:.75rem}
+.prefilter .frow .seg button{font-size:1.05rem;padding:.7rem 0;min-height:3.4rem;border-radius:.9rem}
+.prefilter .frow .ddb{font-size:1.05rem;padding:.8rem 1rem;min-height:3.4rem;border-radius:.9rem}
 </style>
 </head>
 <body>
@@ -822,7 +828,7 @@ function draw(){
   $("areaList").innerHTML=`<p class="at">اختار المنطقة</p>`+areas.map(a=>`<button type="button" class="ai ${a===area?"on":""}" data-v="${esc(a)}"><span>${a==="الكل"?"كل المناطق":esc(a)}</span><span class="n">${cntOf(a)}</span></button>`).join("");
   $("areaList").querySelectorAll(".ai").forEach(b=>b.onclick=()=>{area=b.dataset.v;picked=true;closeArea();draw()});
   
-  const ready=!!cat&&picked;
+  const ready=!!cat&&picked;document.body.classList.toggle("prefilter",!ready);
   const r=ready?JOBS.filter(j=>matchCat(j)&&(area==="الكل"||j["المنطقة"]===area)).sort(byOrder):[];
   $("cnt").textContent=r.length?`🔥 ${r.length} وظيفة متاحة`:"";
   
