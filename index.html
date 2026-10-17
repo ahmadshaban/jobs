@@ -589,6 +589,15 @@ header .lead.free{color:#DCE4F5;font-weight:700;margin-top:.25rem}
 .dc .ct b{display:flex;align-items:center;justify-content:center;padding:var(--pd) .5rem}
 .dc .ct a{align-self:center;margin:.3rem .5rem;min-height:2.1rem}
 .dc .nt{border:1px solid var(--bd);border-radius:.7rem;padding:.8rem!important;font-size:clamp(.78rem,3.4vw,.86rem)!important;line-height:1.8!important}
+/* تبويبات التفاصيل: شريط كحلي بيتسحب */
+.dc .dtw{flex:none;position:relative;margin:.35rem .5rem 0;background:#0A1428;border-radius:.7rem;padding:0 .2rem}
+.dc .dtabs{display:flex;gap:0;margin:0;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.dc .dtabs::-webkit-scrollbar{display:none}
+.dc .dtabs button{flex:0 0 auto;scroll-snap-align:start;display:flex;align-items:center;gap:.35rem;min-height:2.75rem;padding:0 .85rem;background:transparent;border:0;border-bottom:3px solid transparent;border-radius:0;color:rgba(255,255,255,.72);font-size:.86rem}
+.dc .dtabs button.on{background:transparent;color:#fff;border-bottom-color:var(--gold)}
+.dc .dtabs button .tl{flex:none}
+.dc .dtar{position:absolute;left:.2rem;top:50%;transform:translateY(-50%);width:2.4rem;height:2.4rem;border-radius:50%;border:0;background:var(--gold);color:var(--goldD);font:inherit;font-weight:800;font-size:1.2rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.dc.capmode .dtw{display:none}
 </style>
 </head>
 <body>
@@ -1159,7 +1168,7 @@ function showDetail(j){
    ${hasPay?`<div class="dg"><small>${daily(j)?"اليومية":"المرتب الشهري"}</small><b id="dgv"></b><small id="dgs"></small></div>`:""}
    ${shBtns}
    ${hasTiles?`<div class="d2"><div><small>30 يوم عمل</small><b id="d30"></b></div><div><small>26 يوم + 4 أجازة</small><b id="d26"></b></div></div>`:""}
-   ${tabs.length?`<div class="thint">👆 دوس على أي زرار تشوف تفاصيله</div><div class="dtabs">${tabs.map((t,i)=>`<button type="button" class="${i?"":"on"}"><span>${t[0]}</span><span class="tl">${t[1]}</span><span class="ta">▾</span></button>`).join("")}</div>${tabs.map((t,i)=>`<div class="dtp"${i?" hidden":""}><div class="dth">${t[0]} ${t[1]}</div>${t[2]}</div>`).join("")}`:""}
+   ${tabs.length?`<div class="thint" id="thint">👈 اسحب الأزرار عشان تشوف الباقي</div><div class="dtw"><div class="dtabs">${tabs.map((t,i)=>`<button type="button" class="${i?"":"on"}"><span>${t[0]}</span><span class="tl">${t[1]}</span></button>`).join("")}</div><button type="button" class="dtar" id="dtar" aria-label="باقي الأزرار">‹</button></div>${tabs.map((t,i)=>`<div class="dtp"${i?" hidden":""}><div class="dth">${t[0]} ${t[1]}</div>${t[2]}</div>`).join("")}`:""}
    <div class="dnote">⏰ التقديم واستلام الشغل في نفس اليوم</div>
   </div><div class="dbar">${bar}</div></div>${IS_CC?formHTML(j):""}`;
 
@@ -1185,8 +1194,14 @@ function showDetail(j){
 
   let cur=0;
   const tb=[...document.querySelectorAll("#detail .dtabs button")],tp=[...document.querySelectorAll("#detail .dtp")];
-  const openT=i=>{cur=cur===i?-1:i;tb.forEach((b,x)=>b.classList.toggle("on",x===cur));tp.forEach((p,x)=>{p.hidden=x!==cur})};
+  const openT=i=>{cur=i;tb.forEach((b,x)=>b.classList.toggle("on",x===cur));tp.forEach((p,x)=>{p.hidden=x!==cur});if(tb[i])tb[i].scrollIntoView({inline:"center",block:"nearest",behavior:"smooth"})};
   tb.forEach((b,i)=>b.onclick=()=>openT(i));
+  const strip=document.querySelector("#detail .dtabs"),arw=$("dtar"),hnt=$("thint");
+  if(strip&&arw){
+   const chk=()=>{const over=strip.scrollWidth>strip.clientWidth+4,end=Math.abs(strip.scrollLeft)+strip.clientWidth>=strip.scrollWidth-4;arw.style.display=over&&!end?"flex":"none";if(hnt)hnt.style.display=over&&Math.abs(strip.scrollLeft)<10?"":"none"};
+   strip.addEventListener("scroll",chk);arw.onclick=()=>strip.scrollBy({left:-140,behavior:"smooth"});
+   chk();setTimeout(chk,300);setTimeout(chk,1000);window.addEventListener("resize",chk);
+  }
 
   $("shareBtn").onclick=()=>{track("share",j);openSingleCopyModal(j);$("btnSaveSingleImg").onclick=()=>{closeSingleCopyModal();saveJobAsImage(j,$("captureArea"))}};
   const cb=$("callBtn");
