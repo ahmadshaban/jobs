@@ -154,7 +154,7 @@ header h1{color:#FFFFFF;font-size:1.4rem}header .lead,header .sub{color:var(--mu
 .chip.on{background:var(--gold);border-color:var(--gold);color:var(--goldD)}
 .yn button.on{background:var(--gold);border-color:var(--gold);color:var(--goldD)}
 .badge{background:#22355D;color:#DCE4F5}.badge.g{background:#4A2340;color:#FFC2E0}.badge.m{background:#17407A;color:#BFD8FF}
-.badge.ur{background:var(--gold);color:#3A2A00}.badge.nw{background:#1E5A3A;color:#B8F2D2}.badge.dn{background:#B3202F;color:#FFFFFF}
+.badge.ur{background:var(--gold);color:#3A2A00}.badge.nw{background:#1E5A3A;color:#B8F2D2}.badge.dn{background:#B3202F;color:#FFFFFF}.badge.dy{background:#16A34A;color:#FFFFFF;font-weight:800}
 .loc{color:var(--mu)}.ttl{color:#FFFFFF}
 .er{color:#FF8A8A}.fl input.bad{border-color:#FF8A8A}
 .card{background:#172645;color:var(--tx);border:1px solid var(--bd);border-radius:1rem;padding:.8rem .9rem;margin-bottom:1rem;box-shadow:0 6px 16px rgba(0,0,0,.35)}
@@ -727,7 +727,8 @@ function isNew(j){const t=(j["تاريخ الإضافة"]||"").match(/(\d{1,4})[
  let y,m,d;if(t[1].length===4){y=+t[1];m=+t[2];d=+t[3]}else{d=+t[1];m=+t[2];y=+t[3];if(y<100)y+=2000}
  const days=(Date.now()-new Date(y,m-1,d))/864e5;return days>=-1&&days<=NEW_DAYS}
 
-const tags=j=>(done(j)?'<span class="badge dn">مكتمل</span>':'')+(urgent(j)?'<span class="badge ur">🔥 الأكثر تقديمًا</span>':'')+(isNew(j)?'<span class="badge nw">جديد</span>':'');
+const daily=j=>(j["قبض يومي"]||"").trim()==="نعم";
+const tags=j=>(done(j)?'<span class="badge dn">مكتمل</span>':'')+(daily(j)?'<span class="badge dy">💵 قبض يومي</span>':'')+(urgent(j)?'<span class="badge ur">🔥 الأكثر تقديمًا</span>':'')+(isNew(j)?'<span class="badge nw">جديد</span>':'');
 const ICONS={"العنوان":"📍","السن":"🎂","طبيعة العمل":"👷","الشفت":"⏰","المؤهل":"🎓","نظام القبض":"💰","السكن":"🏠","السلف":"💵","المواصلات":"🚌","وجبة":"🍽️","التأمينات":"🛡️","الأجازة":"📅"};
 
 {const ph=PHONE.replace(/\D/g,"");const tp=document.getElementById("tph"),fb=document.getElementById("fab");
@@ -864,11 +865,12 @@ function buildJobText(j) {
 
   // الحقول الأساسية التي كان النسخ يتجاوزها سابقًا.
   const fields = ["الفئة", "السن", "طبيعة العمل", "المؤهل", "الأجازة", "نظام القبض", "السلف", "التأمينات", "وجبة", "السكن", "المواصلات"];
-  const added = new Set(["المصنع", "المنطقة", "الشفت", "المرتب", "مرتب 30 يوم", "مرتب 26 يوم", "الورديات", "العنوان", "أرقام التواصل", "__sh", "__contacts", "الفئة", "السن", "طبيعة العمل", "المؤهل", "الأجازة", "نظام القبض", "السلف", "التأمينات", "وجبة", "السكن", "المواصلات", "تفاصيل المرتب", "ملاحظات", "تثبيت", "الترتيب", "آخر تعديل", "ظاهر؟", "الحالة", "تاريخ الإضافة"]);
+  const added = new Set(["المصنع", "المنطقة", "الشفت", "المرتب", "مرتب 30 يوم", "مرتب 26 يوم", "الورديات", "العنوان", "أرقام التواصل", "__sh", "__contacts", "الفئة", "السن", "طبيعة العمل", "المؤهل", "الأجازة", "نظام القبض", "السلف", "التأمينات", "وجبة", "السكن", "المواصلات", "تفاصيل المرتب", "ملاحظات", "تثبيت", "الترتيب", "آخر تعديل", "ظاهر؟", "الحالة", "تاريخ الإضافة", "قبض يومي"]);
   for (const k of fields) {
     if (!j[k]) continue;
     msg += `${ICONS[k] || "•"} ${k}: ${j[k]}\n`;
   }
+  if(daily(j)) msg += `💵 قبض يومي: بتقبض يوميتك بعد ما تخلّص الشغل\n`;
   if(j["تفاصيل المرتب"]) msg += `📝 تفاصيل المرتب: ${j["تفاصيل المرتب"]}\n`;
   if(j["ملاحظات"]) msg += `📝 ملاحظات: ${j["ملاحظات"]}\n`;
 
@@ -1140,12 +1142,12 @@ function showDetail(j){
   const hasPay=hasTiles||!!j["المرتب"];
   const rw=(k,l,v)=>{v=v===undefined?j[k]:v;return v?`<div class="rw"><span>${esc(l||k)}</span><b>${esc(v)}</b></div>`:""};
   const plainSh=/^\s*\d{1,2}\s*(ساعة|ساعات)\s*$/.test(j["الشفت"]||"");
-  const fixedUsed=["المنطقة","الفئة","المصنع","العنوان","أرقام التواصل","الشفت","السن","طبيعة العمل","المؤهل","الأجازة","نظام القبض","السلف","التأمينات","وجبة","السكن","المواصلات","المرتب","مرتب 30 يوم","مرتب 26 يوم","تفاصيل المرتب","الورديات","تثبيت","الترتيب","آخر تعديل","ظاهر؟","الحالة","تاريخ الإضافة","ملاحظات","الأساسي","حافز الانتظام"];
+  const fixedUsed=["المنطقة","الفئة","المصنع","العنوان","أرقام التواصل","الشفت","السن","طبيعة العمل","المؤهل","الأجازة","نظام القبض","السلف","التأمينات","وجبة","السكن","المواصلات","المرتب","مرتب 30 يوم","مرتب 26 يوم","تفاصيل المرتب","الورديات","تثبيت","الترتيب","آخر تعديل","ظاهر؟","الحالة","تاريخ الإضافة","ملاحظات","الأساسي","حافز الانتظام","قبض يومي"];
   const otherKeys=Object.keys(j).filter(k=>!k.startsWith("__")&&!fixedUsed.includes(k)&&j[k]);
   const nc=IS_CC&&j.__contacts?j.__contacts.length:0;
   const ctHTML=nc?`<div id="ctbox" class="ctb"><div class="cth">📞 أرقام التواصل</div>${j.__contacts.map(c=>`<div class="ct"><span>${c.name?esc(c.name):"رقم"}</span><b>${esc(c.phone)}</b><a href="tel:${esc(c.phone)}">اتصال</a></div>`).join("")}</div>`:"";
   const basics=[rw("المنطقة"),rw("الفئة"),rw("السن"),plainSh?"":rw("الشفت"),rw("طبيعة العمل"),rw("المؤهل"),rw("الأجازة")].join("");
-  const payR=[rw("نظام القبض"),rw("الأساسي"),rw("حافز الانتظام"),rw("السلف","السلفة"),rw("وجبة","الأكل"),rw("التأمينات"),rw("تفاصيل المرتب")].join("");
+  const payR=[rw("قبض يومي","💵 قبض يومي",daily(j)?"بتقبض يوميتك بعد ما تخلّص الشغل":""),rw("نظام القبض"),rw("الأساسي"),rw("حافز الانتظام"),rw("السلف","السلفة"),rw("وجبة","الأكل"),rw("التأمينات"),rw("تفاصيل المرتب")].join("");
   const hous=[rw("السكن"),rw("المواصلات"),rw("العنوان","العنوان",cleanAddr(j["العنوان"])),ctHTML,...otherKeys.map(k=>rw(k))].join("");
   const tabs=[["📋","الأساسيات",basics],["💰","الدفع والمميزات",payR],["🏠","السكن والمواصلات",hous],...(j["ملاحظات"]?[["📝","ملاحظات",`<div class="nt">${esc(j["ملاحظات"])}</div>`]]:[])].filter(t=>t[2]);
   const hi=tabs.findIndex(t=>t[1]==="السكن والمواصلات");
@@ -1154,7 +1156,7 @@ function showDetail(j){
   const bar=IS_CC?`<button type="button" class="dbtn wa" id="apply">💬 قدّم دلوقتي</button>${call}<button type="button" class="dbtn" id="shareBtn">📤 شارك</button>`:`<div class="dwn">للتقديم ارجع للمسؤول اللي بعتلك اللينك ده وهو يكمّلك إجراءات التقديم.</div><button type="button" class="dbtn" id="shareBtn">📤 شارك</button>`;
   $("detail").innerHTML=`<div class="dcw"><div class="dc" id="captureArea">
    <div class="dh"><div class="dr"><button type="button" class="dback" id="ex">→ رجوع</button><span>📍 ${esc(j["المنطقة"])}${j["الفئة"]?" · "+esc(j["الفئة"]):""}</span></div><h2 class="dn">${esc(j["المصنع"])}</h2></div>
-   ${hasPay?`<div class="dg"><small>المرتب الشهري</small><b id="dgv"></b><small id="dgs"></small></div>`:""}
+   ${hasPay?`<div class="dg"><small>${daily(j)?"اليومية":"المرتب الشهري"}</small><b id="dgv"></b><small id="dgs"></small></div>`:""}
    ${shBtns}
    ${hasTiles?`<div class="d2"><div><small>30 يوم عمل</small><b id="d30"></b></div><div><small>26 يوم + 4 أجازة</small><b id="d26"></b></div></div>`:""}
    ${tabs.length?`<div class="thint">👆 دوس على أي زرار تشوف تفاصيله</div><div class="dtabs">${tabs.map((t,i)=>`<button type="button" class="${i?"":"on"}"><span>${t[0]}</span><span class="tl">${t[1]}</span><span class="ta">▾</span></button>`).join("")}</div>${tabs.map((t,i)=>`<div class="dtp"${i?" hidden":""}><div class="dth">${t[0]} ${t[1]}</div>${t[2]}</div>`).join("")}`:""}
