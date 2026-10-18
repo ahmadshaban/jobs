@@ -313,7 +313,7 @@ const $ = id => document.getElementById(id);
 
 const AUTH_KEY = 'first_service_admin_pw';
 const ACTIVITY_KEY = 'first_service_admin_last_activity';
-const SESSION_IDLE_MS = 30 * 60 * 1000;
+const SESSION_IDLE_MS = 12 * 60 * 60 * 1000;
 let sessionCheckTimer = null;
 function savedPassword(){ return localStorage.getItem(AUTH_KEY) || ''; }
 function touchSession(){
@@ -463,7 +463,7 @@ async function ensureRequiredCols(){
 }
 
 // ===== [5] شاشة الدخول =====
-async function login(pw){
+async function login(pw, auto){
   const previousPw = savedPassword();
   if (!pw) { $('loginErr').textContent = T.pwHint; return; }
   localStorage.setItem(AUTH_KEY, pw);
@@ -474,6 +474,13 @@ async function login(pw){
   if (!r.ok){
     if (String(r.error || '').trim() === 'كلمة السر غلط') clearLogin();
     else if (!previousPw) clearLogin();
+    if (auto && previousPw && String(r.error || '').trim() !== 'كلمة السر غلط') {
+      startSessionChecks();
+      $('login').classList.add('hidden'); $('app').classList.remove('hidden');
+      render();
+      toast('الاتصال بالشيت بطيء دلوقتي. دوس تحديث وجرّب تاني.', false);
+      return;
+    }
     $('loginErr').textContent = (r.error === 'كلمة السر غلط') ? T.wrongPw : r.error;
     return;
   }
@@ -1077,7 +1084,7 @@ function init(){
   if (saved && sessionIsValid()) {
     touchSession();
     startSessionChecks();
-    login(saved);
+    login(saved, true);
   } else {
     clearLogin();
   }
