@@ -92,7 +92,7 @@ header h1{margin:0;font-size:18px;color:#fff}
 .meta span.sal{background:#FFE45C;color:#0E3560;font-weight:700;cursor:pointer}
 .meta span.sal.empty{background:transparent;color:#FFE45C;border:1px dashed #FFE45C;font-weight:400}
 .hd{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.mv{display:flex;gap:6px;flex:none}.mv .btn{padding:2px 9px;font-size:13px;line-height:1.3}.mv .btn:disabled{opacity:.3}
+.mv{display:flex;gap:6px;flex:none}.mv .btn{padding:2px 9px;font-size:13px;line-height:1.3}.mv .btn:disabled{opacity:.3}.mv input{width:58px;text-align:center;padding:6px 4px;font-weight:700}
 .oldhint{color:#fff;opacity:.85;font-size:12px;font-weight:400}
 #salDlg,#colDlg{position:fixed;inset:0;background:rgba(0,20,50,.65);display:flex;align-items:center;justify-content:center;z-index:15;padding:16px}
 #salDlg .box,#colDlg .box{background:#0B2A4A;border:1px solid #3F7AB5;border-radius:16px;padding:16px;width:100%;max-width:340px;display:grid;gap:10px}
@@ -602,8 +602,8 @@ function cardHTML(r, i, arr){
     (val(r, c) ? esc(lbl + ': ' + val(r, c)) : '+ ' + esc(lbl)) + '</span>';
   const shChips = shl.map(s => '<span class="sal">' + esc(s.h + (s.p30 ? ' · 30: ' + s.p30.replace(/\s*في الشهر/, '') : '') + (s.p26 ? ' · 26: ' + s.p26.replace(/\s*في الشهر/, '') : '')) + '</span>').join('');
   const meta = plain + (shl.length ? shChips : salChip(COL.salary30, '30 يوم') + salChip(COL.salary26, '26 يوم'));
-  const mv = '<div class="mv"><button class="btn ghost" data-act="up" data-row="' + r.row + '" aria-label="فوق"' + (i === 0 ? ' disabled' : '') + '>▲</button>' +
-    '<button class="btn ghost" data-act="down" data-row="' + r.row + '" aria-label="تحت"' + (i >= n - 1 ? ' disabled' : '') + '>▼</button></div>';
+  const mv = '<div class="mv"><input type="number" inputmode="numeric" min="1" max="' + n + '" value="' + (i + 1) + '" data-pos="' + r.row + '" aria-label="رقم الترتيب">' +
+    '<button class="btn ghost" data-act="pos" data-row="' + r.row + '">تم</button></div>';
   return '<div class="card' + (hid ? ' dim' : '') + '">' +
     '<div class="hd"><h2>' + esc(val(r, COL.factory)) +
       (done ? '<span class="badge done">' + esc(T.doneBadge) + '</span>' : '') +
@@ -681,12 +681,15 @@ $('salOld').onclick = () => { $('salIn').value = $('salOld').dataset.v || ''; $(
 $('salIn').addEventListener('keydown', e => { if (e.key === 'Enter') saveSal(); if (e.key === 'Escape') closeSal(); });
 $('salDlg').addEventListener('click', e => { if (e.target.id === 'salDlg') closeSal(); });
 
-async function moveRow(r, dir){
+async function moveRow(r, pos){
   if (requestBusy) { toast('فيه طلب شغال بالفعل، استنى لحد ما يخلص.', false); return; }
   const L = shownList.slice();
-  const k = L.findIndex(x => x.row === r.row), k2 = k + dir;
-  if (k < 0 || k2 < 0 || k2 >= L.length) return;
-  [L[k], L[k2]] = [L[k2], L[k]];
+  const k = L.findIndex(x => x.row === r.row);
+  if (k < 0) return;
+  if (!isFinite(pos)) { toast('اكتب رقم الترتيب الأول.', false); return; }
+  const k2 = Math.min(Math.max(Math.round(pos), 1), L.length) - 1;
+  if (k2 === k) { toast('المصنع ده أصلاً في الترتيب ده.', true); return; }
+  const [it] = L.splice(k, 1); L.splice(k2, 0, it);
   let last = Math.max(k, k2);
   L.forEach((x, i) => { if (isPinned(x) && i > last) last = i; });
   const changes = [];
@@ -710,6 +713,9 @@ async function moveRow(r, dir){
 }
 
 // ===== [7] أزرار الكارت =====
+$('list').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.matches('input[data-pos]')){ e.preventDefault(); const b = e.target.parentElement.querySelector('button[data-act="pos"]'); if (b) b.click(); }
+});
 $('list').addEventListener('click', async e => {
   const sal = e.target.closest('[data-sal]');
   if (sal) return openSal(Number(sal.dataset.row), sal.dataset.sal);
@@ -719,8 +725,7 @@ $('list').addEventListener('click', async e => {
   const r = rows.find(x => x.row === row);
   if (!r) return;
   const act = b.dataset.act;
-  if (act === 'up') return moveRow(r, -1);
-  if (act === 'down') return moveRow(r, 1);
+  if (act === 'pos'){ const inp = b.parentElement.querySelector('input'); return moveRow(r, parseInt(inp.value, 10)); }
   if (act === 'edit') return openForm(r);
   if (act === 'copy') return openForm(r, true);
   if (act === 'view') return window.open(new URL('index.html', location.href).href + '?j=' + siteId(val(r, COL.factory)), '_blank');
