@@ -100,6 +100,18 @@ header h1{margin:0;font-size:18px;color:#fff}
 #salOld{font-size:13px;color:#fff;background:#1A4A7A;border-radius:8px;padding:6px 10px;cursor:pointer}
 #salDlg .row,#colDlg .row{display:flex;gap:8px}#salDlg .row .btn,#colDlg .row .btn{flex:1}
 .clr{padding:2px 10px;font-size:12px;justify-self:start}
+#ordDlg{position:fixed;inset:0;background:rgba(0,20,50,.65);display:flex;align-items:center;justify-content:center;z-index:15;padding:16px}
+#ordDlg .box{background:#0B2A4A;border:1px solid #3F7AB5;border-radius:16px;padding:16px;width:100%;max-width:420px;max-height:88vh;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto auto;gap:10px;color:#fff}
+#ordDlg h3{margin:0;color:#FFE45C;font-size:16px}
+#ordDlg small{opacity:.85}
+#ordList{overflow-y:auto;display:grid;gap:6px;align-content:start}
+.oi{display:flex;align-items:center;gap:10px;background:#133B63;border:1px solid #3F7AB5;border-radius:10px;padding:6px 10px;user-select:none;-webkit-user-select:none}
+.oi.drag{background:#1A4A7A;border-color:#FFE45C;box-shadow:0 4px 14px rgba(0,0,0,.45)}
+.oi .hd2{font-size:24px;line-height:1;padding:8px 10px;cursor:grab;touch-action:none;color:#FFE45C}
+.oi .on{background:#FFE45C;color:#0E3560;border-radius:7px;min-width:28px;text-align:center;font-weight:700;font-size:13px;padding:1px 6px}
+.oi .nm{flex:1;font-weight:600;font-size:14px}
+#ordProg{background:#1A4A7A;border-radius:8px;padding:8px 10px;font-size:13px;color:#FFE45C;font-weight:700}
+#ordDlg .row{display:flex;gap:8px}#ordDlg .row .btn{flex:1}
 #colDlg small{color:#fff;font-size:12px}
 #toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);padding:10px 18px;border-radius:12px;color:#fff;font-weight:700;z-index:20;max-width:90%;box-shadow:0 4px 18px rgba(0,0,0,.18)}
 #toast.ok{background:#16803d}
@@ -176,6 +188,7 @@ input.bad,select.bad{border-color:#FF7777;box-shadow:0 0 0 2px rgba(255,119,119,
       <button class="btn ghost" id="bCol"></button>
       <button class="btn danger" id="bDelCol">مسح عمود</button>
       <button class="btn ghost" id="bRef"></button>
+      <button class="btn ghost" id="bMove">↕ نقل</button>
       <a class="btn ghost" id="bStats" href="stats.html" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center">📊 إحصائيات</a>
       <button class="btn danger" id="bOut"></button>
     </div>
@@ -209,6 +222,13 @@ input.bad,select.bad{border-color:#FF7777;box-shadow:0 0 0 2px rgba(255,119,119,
   <select id="colSel"></select>
   <input id="colIn" type="text" autocomplete="off" placeholder="اكتب اسم العمود للتأكيد">
   <div class="row"><button class="btn danger" id="colGo" disabled>امسح العمود</button><button class="btn ghost" id="colCancel">إلغاء</button></div>
+</div></div>
+<div id="ordDlg" class="hidden"><div class="box">
+  <h3>ترتيب المصانع</h3>
+  <small>اسحب ☰ لفوق أو تحت، وبعدين دوس تم.</small>
+  <div id="ordList"></div>
+  <div id="ordProg" class="hidden"></div>
+  <div class="row"><button class="btn" id="ordSave">تم</button><button class="btn ghost" id="ordCancel">إلغاء</button></div>
 </div></div>
 <div id="toast" class="hidden"></div>
 
@@ -602,8 +622,7 @@ function cardHTML(r, i, arr){
     (val(r, c) ? esc(lbl + ': ' + val(r, c)) : '+ ' + esc(lbl)) + '</span>';
   const shChips = shl.map(s => '<span class="sal">' + esc(s.h + (s.p30 ? ' · 30: ' + s.p30.replace(/\s*في الشهر/, '') : '') + (s.p26 ? ' · 26: ' + s.p26.replace(/\s*في الشهر/, '') : '')) + '</span>').join('');
   const meta = plain + (shl.length ? shChips : salChip(COL.salary30, '30 يوم') + salChip(COL.salary26, '26 يوم'));
-  const mv = '<div class="mv"><input type="number" inputmode="numeric" min="1" max="' + n + '" value="' + (i + 1) + '" data-pos="' + r.row + '" aria-label="رقم الترتيب">' +
-    '<button class="btn ghost" data-act="pos" data-row="' + r.row + '">تم</button></div>';
+  const mv = '';
   return '<div class="card' + (hid ? ' dim' : '') + '">' +
     '<div class="hd"><h2>' + esc(val(r, COL.factory)) +
       (done ? '<span class="badge done">' + esc(T.doneBadge) + '</span>' : '') +
@@ -681,41 +700,71 @@ $('salOld').onclick = () => { $('salIn').value = $('salOld').dataset.v || ''; $(
 $('salIn').addEventListener('keydown', e => { if (e.key === 'Enter') saveSal(); if (e.key === 'Escape') closeSal(); });
 $('salDlg').addEventListener('click', e => { if (e.target.id === 'salDlg') closeSal(); });
 
-async function moveRow(r, pos){
+// ===== نقل المصانع (ترتيب بالسحب) =====
+let ordBusy = false, ordDrag = null;
+function ordRenumber(){ [...$('ordList').children].forEach((el, i) => { el.querySelector('.on').textContent = i + 1; }); }
+function openOrd(){
+  if (!shownList.length) { toast('اختار المنطقة الأول.', false); return; }
   if (requestBusy) { toast('فيه طلب شغال بالفعل، استنى لحد ما يخلص.', false); return; }
-  const L = shownList.slice();
-  const k = L.findIndex(x => x.row === r.row);
-  if (k < 0) return;
-  if (!isFinite(pos)) { toast('اكتب رقم الترتيب الأول.', false); return; }
-  const k2 = Math.min(Math.max(Math.round(pos), 1), L.length) - 1;
-  if (k2 === k) { toast('المصنع ده أصلاً في الترتيب ده.', true); return; }
-  const [it] = L.splice(k, 1); L.splice(k2, 0, it);
-  let last = Math.max(k, k2);
-  L.forEach((x, i) => { if (isPinned(x) && i > last) last = i; });
+  $('ordList').innerHTML = shownList.map((r, i) => '<div class="oi" data-row="' + r.row + '"><span class="hd2">☰</span><span class="on">' + (i + 1) + '</span><span class="nm">' + esc(val(r, COL.factory)) + '</span></div>').join('');
+  $('ordProg').classList.add('hidden');
+  $('ordSave').disabled = false; $('ordCancel').disabled = false;
+  openLayer($('ordDlg'));
+}
+$('ordList').addEventListener('pointerdown', e => {
+  const h = e.target.closest('.hd2'); if (!h || ordBusy) return;
+  ordDrag = h.parentElement; ordDrag.classList.add('drag');
+  $('ordList').setPointerCapture(e.pointerId); e.preventDefault();
+});
+$('ordList').addEventListener('pointermove', e => {
+  if (!ordDrag) return;
+  const L = $('ordList'); let before = null;
+  for (const it of [...L.children]) { if (it === ordDrag) continue; const r = it.getBoundingClientRect(); if (e.clientY < r.top + r.height / 2) { before = it; break; } }
+  if (before !== ordDrag.nextElementSibling) { L.insertBefore(ordDrag, before); ordRenumber(); }
+  const lr = L.getBoundingClientRect();
+  if (e.clientY < lr.top + 36) L.scrollTop -= 12; else if (e.clientY > lr.bottom - 36) L.scrollTop += 12;
+});
+function ordEnd(){ if (ordDrag) { ordDrag.classList.remove('drag'); ordDrag = null; ordRenumber(); } }
+$('ordList').addEventListener('pointerup', ordEnd);
+$('ordList').addEventListener('pointercancel', ordEnd);
+async function saveOrd(){
+  if (ordBusy || requestBusy) return;
+  const rowsNew = [...$('ordList').children].map(el => rows.find(x => x.row === Number(el.dataset.row))).filter(Boolean);
+  const old = shownList;
+  let last = -1;
+  rowsNew.forEach((x, i) => { if (!old[i] || old[i].row !== x.row) last = i; });
+  if (last < 0) { toast('مفيش تغيير في الترتيب.', true); closeLayer($('ordDlg')); return; }
+  rowsNew.forEach((x, i) => { if (isPinned(x) && i > last) last = i; });
   const changes = [];
   for (let i = 0; i <= last; i++){
     const want = String(i + 1);
-    if (val(L[i], COL.order).trim() !== want) changes.push([L[i].row, want]);
+    if (val(rowsNew[i], COL.order).trim() !== want) changes.push([rowsNew[i].row, want]);
   }
-  requestBusy = true; setBusyUI(true);
+  ordBusy = true; requestBusy = true; setBusyUI(true);
+  $('ordSave').disabled = true; $('ordCancel').disabled = true;
+  const pg = $('ordProg'); pg.classList.remove('hidden');
+  let ok = true;
   try {
-    for (const [row, want] of changes){
-      const a = await api('update', {row, data: {[COL.order]: want}});
-      if (!a.ok) { toast(T.errMsg + a.error + ' (اضغط تحديث وراجع الترتيب)', false); return; }
+    for (let i = 0; i < changes.length; i++){
+      pg.textContent = 'بيحفظ ' + (i + 1) + ' من ' + changes.length + ' — استنى ولا تقفل الصفحة';
+      const a = await api('update', {row: changes[i][0], data: {[COL.order]: changes[i][1]}});
+      if (!a.ok) { ok = false; toast(T.errMsg + a.error + ' (اضغط تحديث وراجع الترتيب)', false); break; }
     }
-    toast(T.okMsg, true);
+    if (ok) toast(T.okMsg, true);
   } catch (e) {
-    toast('حصل خطأ غير متوقع. اضغط تحديث وراجع الترتيب.', false);
+    ok = false; toast('حصل خطأ غير متوقع. اضغط تحديث وراجع الترتيب.', false);
   } finally {
-    requestBusy = false; setBusyUI(false);
+    ordBusy = false; requestBusy = false; setBusyUI(false);
+    closeLayer($('ordDlg'));
     await load();
   }
 }
+$('bMove').onclick = openOrd;
+$('ordSave').onclick = saveOrd;
+$('ordCancel').onclick = () => { if (!ordBusy) closeLayer($('ordDlg')); };
+$('ordDlg').addEventListener('click', e => { if (e.target.id === 'ordDlg' && !ordBusy) closeLayer($('ordDlg')); });
 
 // ===== [7] أزرار الكارت =====
-$('list').addEventListener('keydown', e => {
-  if (e.key === 'Enter' && e.target.matches('input[data-pos]')){ e.preventDefault(); const b = e.target.parentElement.querySelector('button[data-act="pos"]'); if (b) b.click(); }
-});
 $('list').addEventListener('click', async e => {
   const sal = e.target.closest('[data-sal]');
   if (sal) return openSal(Number(sal.dataset.row), sal.dataset.sal);
@@ -725,7 +774,6 @@ $('list').addEventListener('click', async e => {
   const r = rows.find(x => x.row === row);
   if (!r) return;
   const act = b.dataset.act;
-  if (act === 'pos'){ const inp = b.parentElement.querySelector('input'); return moveRow(r, parseInt(inp.value, 10)); }
   if (act === 'edit') return openForm(r);
   if (act === 'copy') return openForm(r, true);
   if (act === 'view') return window.open(new URL('index.html', location.href).href + '?j=' + siteId(val(r, COL.factory)), '_blank');
