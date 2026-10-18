@@ -69,6 +69,10 @@ h1{font-size:1.55rem;font-weight:800;margin:0;line-height:1.3}.sub{color:var(--m
 .demo{background:#fef3c7;color:#92400e;border:1px solid #fcd34d;border-radius:.8rem;padding:.4rem .7rem;margin:.7rem 0 0;font-size:.82rem;font-weight:700;text-align:center}
 .seg:empty,.chips:empty{display:none}
 .empty{text-align:center;color:var(--mu);padding:3rem 1rem;display:none}
+@keyframes cin{from{opacity:0;transform:translateY(6px)}}
+#list .card{animation:cin .3s ease backwards}
+.btn{transition:transform .12s ease}
+.btn:active{transform:scale(.97)}
 .pickhint{text-align:center;padding:2.6rem 1rem 2rem;color:var(--tx);grid-column:1/-1}
 .pickhint p{font-size:1.02rem;font-weight:800;line-height:1.9;margin:.3rem 0 0}
 #seg,#area{position:relative}
@@ -1004,7 +1008,7 @@ function formHTML(j){return `<div class="ov" id="fo"><div class="sheet"><div cla
    <div class="tnote">⏰ التقديم واستلام الشغل في نفس اليوم</div>
    <label class="fl">👤 الاسم ثلاثي<input id="f_n" autocomplete="name"></label><div class="er" id="e_n"></div>
    <label class="fl">🔢 السن<input id="f_a" inputmode="numeric" maxlength="2" autocomplete="off"></label><div class="er" id="e_a"></div>
-   <label class="fl">📞 رقم التليفون<input id="f_t" type="tel" inputmode="tel" maxlength="15" autocomplete="tel" placeholder="01XXXXXXXXX"></label><div class="er" id="e_t"></div>
+   <label class="fl">📲 رقم الواتساب (لازم يكون عليه واتساب)<input id="f_t" type="tel" inputmode="tel" maxlength="15" autocomplete="tel" placeholder="01XXXXXXXXX"></label><div class="er" id="e_t"></div>
    ${isMulti(j)?`<div class="fl">🕒 اختار الوردية اللي تناسبك</div><div class="shp" id="f_s">${j.__sh.map((s,i)=>`<button type="button" data-i="${i}">${esc(hoursOnly(s.h))}</button>`).join("")}</div><div class="er" id="e_s"></div>`:""}
    <div class="fgo"><button type="button" class="btn wa" id="fgo">دوس هنا وكمّل على الواتساب</button></div></div></div></div>`}
 
@@ -1036,6 +1040,9 @@ function setupApply(j,ph){
   [en,ea,et].forEach(x=>x.addEventListener("input",()=>{x.classList.remove("bad");errs[x.id].textContent=""}));
   const live=fin=>{const v=ea.value.replace(/[٠-٩]/g,x=>"٠١٢٣٤٥٦٧٨٩".indexOf(x)).replace(/\s+/g,"");if(fin?/^\d{1,2}$/.test(v):/^\d{2}$/.test(v)){const m=ageMsg(j,+v);ea.classList.toggle("bad",!!m);errs.f_a.textContent=m}};
   ea.addEventListener("input",()=>live(0));ea.addEventListener("blur",()=>live(1));
+  const EG=/^(?:\+?20|0)1[0125]\d{8}$/,EGM="اكتب رقم واتساب صحيح (مثال 01012345678)";
+  const livePh=fin=>{const v=et.value.replace(/[٠-٩]/g,x=>"٠١٢٣٤٥٦٧٨٩".indexOf(x)).replace(/[\s\-]/g,"");if(!v){et.classList.remove("bad");errs.f_t.textContent="";return}const bad=!/^\+?\d*$/.test(v)||((fin||v.length>=11)&&!EG.test(v));et.classList.toggle("bad",bad);errs.f_t.textContent=bad?EGM:""};
+  et.addEventListener("input",()=>livePh(0));et.addEventListener("blur",()=>livePh(1));
   try{const s=JSON.parse(localStorage.getItem(SAVE_KEY)||"{}");en.value=s.n||"";ea.value=s.a||"";et.value=s.t||""}catch(e){}
   
   foOpen=false;foHide=()=>{fo.classList.remove("show");document.documentElement.classList.remove("fo-lock")};
@@ -1051,13 +1058,13 @@ function setupApply(j,ph){
     if((REQ.age||a)&&!/^\d{1,2}$/.test(a))return fail(ea,"اكتب السن بالأرقام");
     {const am=ageMsg(j,+a);if(am)return fail(ea,am)}
     if(a&&(+a<AGE_MIN||+a>AGE_MAX))return fail(ea,"السن لازم يكون من "+AGE_MIN+" لـ "+AGE_MAX);
-    if(t&&!/^\+?\d{10,14}$/.test(t))return fail(et,"رقم التليفون غلط، اكتبه بالأرقام (مثال 01012345678)");
+    if(!EG.test(t))return fail(et,EGM);
     if(isMulti(j)&&selSh<0){es.textContent="اختار الوردية الأول";sp.scrollIntoView({block:"center",behavior:"smooth"});return}
     try{localStorage.setItem(SAVE_KEY,JSON.stringify({n:n,a:a,t:t}))}catch(e){}
     const send=()=>{
     track("send",j);
     const L=[];
-    if(n)L.push("👤 *الاسم:* "+n);if(a)L.push("🔢 *السن:* "+a);if(t)L.push("📞 *رقم التليفون:* "+t);
+    if(n)L.push("👤 *الاسم:* "+n);if(a)L.push("🔢 *السن:* "+a);if(t)L.push("📲 *رقم الواتساب:* "+t.replace(/^\+?20(?=1)/,"0"));
     L.push("📍 *المكان:* "+j["المنطقة"],"🏭 *المصنع:* "+j["المصنع"]);
     if(isMulti(j))L.push("⏰ *الوردية:* "+hoursOnly(j.__sh[selSh].h));
     if(SRC)L.push("المصدر: "+SRC);
