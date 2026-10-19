@@ -78,6 +78,9 @@ header h1{margin:0;font-size:18px;color:#fff}
 .badge.hid{background:transparent;color:#FFE45C;border:1px solid #FFE45C}
 .acts{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
 .acts .btn{padding:6px 2px;font-size:11.5px;line-height:1.3}
+.acts2{grid-template-columns:repeat(3,1fr)}
+#pinbar .selrow{gap:6px}#pinbar .selrow select{flex:1;min-width:0;padding:8px 6px;font-size:13px}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:6px}.more .btn{text-align:center;padding:9px 8px;font-size:13px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
 .empty{text-align:center;color:#fff;padding:30px}
 #title{color:#fff}
 #modal{position:fixed;inset:0;background:rgba(0,20,50,.65);display:flex;align-items:flex-end;justify-content:center;z-index:10}
@@ -184,25 +187,37 @@ input.bad,select.bad{border-color:#FF7777;box-shadow:0 0 0 2px rgba(255,119,119,
   <header>
     <h1 id="title"></h1>
     <div class="bar">
-      <button class="btn" id="bNew"></button>
-      <button class="btn ghost" id="bCol"></button>
-      <button class="btn danger" id="bDelCol">مسح عمود</button>
       <button class="btn ghost" id="bRef"></button>
-      <button class="btn ghost" id="bMove">↕ نقل</button>
-      <a class="btn ghost" id="bStats" href="stats.html" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center">📊 إحصائيات</a>
+      <button class="btn" id="bMenu">⋯ المزيد</button>
+    </div>
+    <div class="more hidden" id="moreMenu">
+      <button class="btn" id="bNew"></button>
+      <button class="btn" id="bCol"></button>
+      <button class="btn" id="bMove">↕ ترتيب الكروت</button>
+      <a class="btn" id="bStats" href="stats.html">📊 إحصائيات</a>
+      <button class="btn danger" id="bDelCol">مسح عمود</button>
       <button class="btn danger" id="bOut"></button>
     </div>
     <div id="stats" class="stats"></div>
   </header>
   <div id="pinbar"><div class="selrow">
-      <select id="areaFilter" aria-label="اختيار المكان" required>
-        <option value="">اختار المكان أولًا</option>
+      <select id="areaFilter" aria-label="اختيار المكان">
+        <option value="">كل الأماكن</option>
       </select>
       <select id="genderFilter" aria-label="اختيار الفئة">
-        <option value="">الكل</option>
+        <option value="">كل الفئات</option>
         <option value="m">شباب</option>
         <option value="f">بنات</option>
         <option value="b">شباب وبنات</option>
+      </select>
+      <select id="statusFilter" aria-label="الحالة">
+        <option value="">كل الحالات</option>
+        <option value="open">شغال وظاهر</option>
+        <option value="done">مكتمل</option>
+        <option value="part">فيه وردية مقفولة</option>
+        <option value="hid">مخفي</option>
+        <option value="urg">الأكثر تقديمًا</option>
+        <option value="pin">مثبّت</option>
       </select>
   </div></div>
   <div id="list"></div>
@@ -610,13 +625,17 @@ function payScoreRow(r){
   const c = [val(r, COL.salary30), val(r, COL.salary26), val(r, COL.salary), ...parseShifts(val(r, COL.shifts)).flatMap(s => [s.p30, s.p26])];
   let m = 0; c.forEach(x => { let n = shNum(x); if (n && /اليوم|يومي|يومية/.test(String(x))) n *= 26; if (n > m) m = n; }); return m;
 }
-const rankOf = r => val(r, COL.status).trim() === T.doneValue ? 2 : (isPinned(r) ? 0 : 1);
+const allShDone = r => { const a = parseShifts(val(r, COL.shifts)); return a.length > 0 && a.every(s => s.done); };
+const partShDone = r => { const a = parseShifts(val(r, COL.shifts)); return a.some(s => s.done) && !a.every(s => s.done); };
+const isDoneRow = r => val(r, COL.status).trim() === T.doneValue || allShDone(r);
+const isHidRow = r => val(r, COL.visible).trim() === T.no;
+const rankOf = r => isDoneRow(r) ? 2 : (isPinned(r) ? 0 : 1);
 const siteOrder = (x, y) => rankOf(x) - rankOf(y) || (rankOf(x) === 0 ? manualOf(x) - manualOf(y) : (rankOf(x) === 1 ? payScoreRow(y) - payScoreRow(x) : 0));
 
 function cardHTML(r, i, arr){
   const n = arr ? arr.length : 0;
   const hid = val(r, COL.visible).trim() === T.no;
-  const done = val(r, COL.status).trim() === T.doneValue;
+  const done = isDoneRow(r), doneS = val(r, COL.status).trim() === T.doneValue;
   const urg = isUrgVal(val(r, COL.status));
   const pin = isPinned(r);
   const hasNew = val(r, COL.salary30) || val(r, COL.salary26);
@@ -642,9 +661,12 @@ function cardHTML(r, i, arr){
     '<div class="meta">' + meta + '</div>' +
     '<div class="acts">' +
       '<button class="btn ghost" data-act="edit" data-row="' + r.row + '">✏️ ' + esc(T.edit) + '</button>' +
-      '<button class="btn ghost" data-act="copy" data-row="' + r.row + '">' + esc(T.copy) + '</button>' +
+      '<button class="btn ghost" data-act="done" data-row="' + r.row + '">' + esc(doneS ? T.reopen : T.complete) + '</button>' +
       '<button class="btn ghost" data-act="vis" data-row="' + r.row + '">' + esc(hid ? T.show : T.hide) + '</button>' +
-      '<button class="btn ghost" data-act="done" data-row="' + r.row + '">' + esc(done ? T.reopen : T.complete) + '</button>' +
+      '<button class="btn" data-act="more" data-row="' + r.row + '">⋯ المزيد</button>' +
+    '</div>' +
+    '<div class="acts acts2 hidden">' +
+      '<button class="btn ghost" data-act="copy" data-row="' + r.row + '">' + esc(T.copy) + '</button>' +
       '<button class="btn ghost" data-act="urg" data-row="' + r.row + '">' + esc(urg ? T.unurgent : T.urgent) + '</button>' +
       '<button class="btn ghost" data-act="pin" data-row="' + r.row + '">' + (pin ? 'إلغاء التثبيت' : '📌 تثبيت') + '</button>' +
       '<button class="btn ghost" data-act="view" data-row="' + r.row + '">👁️ عرض</button>' +
@@ -657,27 +679,23 @@ function updateAreaFilter(){
   const selected = filter.value;
   const areas = [...new Set(rows.map(r => val(r, COL.area).trim()).filter(Boolean))]
     .sort((a, b) => a.localeCompare(b, 'ar'));
-  filter.innerHTML = '<option value="">اختار المكان أولًا</option>' +
+  filter.innerHTML = '<option value="">كل الأماكن</option>' +
     areas.map(area => '<option value="' + esc(area) + '">' + esc(area) + '</option>').join('');
   if (areas.includes(selected)) filter.value = selected;
 }
 
 function render(){
   updateAreaFilter();
-  { const hidN = rows.filter(r => val(r, COL.visible).trim() === T.no).length, doneN = rows.filter(r => val(r, COL.status).trim() === T.doneValue).length, pinN = rows.filter(isPinned).length;
+  { const hidN = rows.filter(isHidRow).length, doneN = rows.filter(isDoneRow).length, pinN = rows.filter(isPinned).length;
     $('stats').textContent = (rows.length - hidN - doneN) + ' ظاهر · ' + hidN + ' مخفي · ' + doneN + ' مكتمل' + (pinN ? ' · ' + pinN + ' مثبّت' : ''); }
-  const area = $('areaFilter').value;
-  const g = $('genderFilter').value;
+  const area = $('areaFilter').value, g = $('genderFilter').value, st = $('statusFilter').value;
   const kindOf = r => { const t = val(r, COL.gender); const m = /شباب/.test(t), f = /بنات/.test(t); return (m && f) ? 'b' : m ? 'm' : f ? 'f' : ''; };
-  const q = '';
-  const list = (area || q) ? rows.filter(r => (!area || val(r, COL.area).trim() === area) &&
-    (!q || val(r, COL.factory).toLocaleLowerCase('ar').includes(q)) && (!g || kindOf(r) === g)) : [];
+  const stOk = r => !st || (st === 'open' ? (!isDoneRow(r) && !isHidRow(r)) : st === 'done' ? isDoneRow(r) : st === 'part' ? partShDone(r) : st === 'hid' ? isHidRow(r) : st === 'urg' ? isUrgVal(val(r, COL.status)) : st === 'pin' ? isPinned(r) : true);
+  const list = rows.filter(r => (!area || val(r, COL.area).trim() === area) && (!g || kindOf(r) === g) && stOk(r));
   list.sort(siteOrder);
   shownList = list;
-  $('title').textContent = T.title + ((area || q) ? ' (' + list.length + ')' : '');
-  $('list').innerHTML = (area || q)
-    ? (list.length ? list.map(cardHTML).join('') : '<div class="empty">' + esc(T.empty) + '</div>')
-    : '<div class="empty">اختار المكان من القائمة.</div>';
+  $('title').textContent = T.title + ' (' + list.length + ')';
+  $('list').innerHTML = list.length ? list.map(cardHTML).join('') : '<div class="empty">' + esc(T.empty) + '</div>';
 }
 
 let shownList = [];
@@ -713,6 +731,7 @@ $('salDlg').addEventListener('click', e => { if (e.target.id === 'salDlg') close
 let ordBusy = false, ordDrag = null;
 function ordRenumber(){ [...$('ordList').children].forEach((el, i) => { el.querySelector('.on').textContent = i + 1; }); }
 function openOrd(){
+  if (!$('areaFilter').value || $('statusFilter').value) { toast('للترتيب: اختار المكان وخلي الحالة "كل الحالات".', false); return; }
   if (!shownList.length) { toast('اختار المنطقة الأول.', false); return; }
   if (requestBusy) { toast('فيه طلب شغال بالفعل، استنى لحد ما يخلص.', false); return; }
   $('ordList').innerHTML = shownList.map((r, i) => '<div class="oi" data-row="' + r.row + '"><span class="hd2">☰</span><span class="on">' + (i + 1) + '</span><span class="nm">' + esc(val(r, COL.factory)) + '</span></div>').join('');
@@ -783,6 +802,7 @@ $('list').addEventListener('click', async e => {
   const r = rows.find(x => x.row === row);
   if (!r) return;
   const act = b.dataset.act;
+  if (act === 'more'){ b.closest('.card').querySelector('.acts2').classList.toggle('hidden'); return; }
   if (act === 'edit') return openForm(r);
   if (act === 'copy') return openForm(r, true);
   if (act === 'view') return window.open(new URL('index.html', location.href).href + '?j=' + siteId(val(r, COL.factory)), '_blank');
@@ -1061,6 +1081,9 @@ function init(){
   $('pw').addEventListener('keydown', e => { if (e.key === 'Enter') $('loginBtn').click(); });
   $('areaFilter').addEventListener('change', render);
   $('genderFilter').addEventListener('change', render);
+  $('statusFilter').addEventListener('change', render);
+  $('bMenu').onclick = () => $('moreMenu').classList.toggle('hidden');
+  $('moreMenu').addEventListener('click', e => { if (e.target.closest('button,a')) $('moreMenu').classList.add('hidden'); });
   $('fab').onclick = () => $('bNew').click();
   $('bNew').onclick = () => openForm(null);
   $('bRef').onclick = load;
