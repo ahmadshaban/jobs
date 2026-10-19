@@ -73,6 +73,8 @@ h1{font-size:1.55rem;font-weight:800;margin:0;line-height:1.3}.sub{color:var(--m
 #list .card{animation:cin .3s ease backwards}
 .btn{transition:transform .12s ease}
 .btn:active{transform:scale(.97)}
+.shp button.shcl{opacity:.5;cursor:not-allowed}
+.dc .dsb button.shcl{opacity:.55}
 .pickhint{text-align:center;padding:2.6rem 1rem 2rem;color:var(--tx);grid-column:1/-1}
 .pickhint p{font-size:1.02rem;font-weight:800;line-height:1.9;margin:.3rem 0 0}
 #seg,#area{position:relative}
@@ -707,9 +709,8 @@ function parseContacts(j){
 const cleanAddr=a=>{a=String(a||"");if(IS_CC)return a;return a.replace(/\s*(?:و?كلّ?مني|و?(?:ت|ا)تصل)(?:\s+(?:ع|على))?(?:\s+(?:الرقم|رقم))?\s*[:：\-–_]*\s*$/,"").trim()};
 function topShift(a){let b={v:"",h:""},m=0;a.forEach(s=>[s.p30,s.p26].forEach(x=>{const n=numOf(x);if(n>m){m=n;b={v:x,h:s.h}}}));return b}
 function prep(j){
-  const all=parseShifts(j["الورديات"]),open=all.filter(s=>!s.done);
-  j.__allClosed=all.length>0&&!open.length;
-  const a=j.__allClosed?all:open;
+  const a=parseShifts(j["الورديات"]);
+  j.__allClosed=a.length>0&&a.every(s=>s.done);
   j.__sh=a;
   j.__contacts=IS_CC?parseContacts(j):[];
   if(a.length===1){j["الشفت"]=a[0].h;j[P30]=a[0].p30;j[P26]=a[0].p26}else if(a.length>1){j["الشفت"]="";j[P30]="";j[P26]="";j["المرتب"]=""}
@@ -988,8 +989,8 @@ window.addEventListener("popstate",()=>{
 
 function payBlock(j){
   if(isMulti(j)){
-    const t=topShift(j.__sh),ns=j.__sh.map(s=>numOf(s.h)),all=ns.every(n=>n>0);
-    const lst=all?ns.join(" و")+" ساعة":j.__sh.map(s=>s.h).join(" و");
+    const op=j.__sh.filter(s=>!s.done),t=topShift(op.length?op:j.__sh),ns=j.__sh.map(s=>numOf(s.h)),all=ns.every(n=>n>0);
+    const lst=j.__sh.map((s,i)=>(all?ns[i]:s.h)+(s.done?" (مكتملة)":"")).join(" و")+(all?" ساعة":"");
     return `<div class="pay"><small>أعلى مرتب${t.h?" · وردية "+esc(hoursOnly(t.h)):""}</small>${esc(t.v)}</div><div class="more2">${j.__sh.length} ورديات: ${esc(lst)}، دوس لباقي التفاصيل ←</div>`}
   const hrs=j["الشفت"]?hoursOnly(j["الشفت"]):"",pa=pays(j),old=j["المرتب"];
   if(!hrs&&!pa.length&&!old)return "";
@@ -1011,7 +1012,7 @@ function formHTML(j){return `<div class="ov" id="fo"><div class="sheet"><div cla
    <label class="fl">👤 الاسم ثلاثي<input id="f_n" autocomplete="name"></label><div class="er" id="e_n"></div>
    <label class="fl">🔢 السن<input id="f_a" inputmode="numeric" maxlength="2" autocomplete="off"></label><div class="er" id="e_a"></div>
    <label class="fl">📲 رقم الواتساب (لازم يكون عليه واتساب)<input id="f_t" type="tel" inputmode="tel" maxlength="15" autocomplete="tel" placeholder="01XXXXXXXXX"></label><div class="er" id="e_t"></div>
-   ${isMulti(j)?`<div class="fl">🕒 اختار الوردية اللي تناسبك</div><div class="shp" id="f_s">${j.__sh.map((s,i)=>`<button type="button" data-i="${i}">${esc(hoursOnly(s.h))}</button>`).join("")}</div><div class="er" id="e_s"></div>`:""}
+   ${isMulti(j)?`<div class="fl">🕒 اختار الوردية اللي تناسبك</div><div class="shp" id="f_s">${j.__sh.map((s,i)=>`<button type="button" data-i="${i}"${s.done?' disabled class="shcl"':''}>${esc(hoursOnly(s.h))}${s.done?' (مكتملة)':''}</button>`).join("")}</div><div class="er" id="e_s"></div>`:""}
    <div class="fgo"><button type="button" class="btn wa" id="fgo">دوس هنا وكمّل على الواتساب</button></div></div></div></div>`}
 
 let foOpen=false,foHide=null,ignoreFo=0;
@@ -1038,6 +1039,7 @@ function setupApply(j,ph){
   const errs={f_n:$("e_n"),f_a:$("e_a"),f_t:$("e_t")};
   const sp=$("f_s"),es=$("e_s");let selSh=-1;
   if(sp)sp.querySelectorAll("button").forEach(b=>b.onclick=()=>{selSh=+b.dataset.i;sp.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));es.textContent=""});
+  {const o1=j.__sh?j.__sh.map((s,i)=>s.done?-1:i).filter(i=>i>=0):[];if(sp&&o1.length===1){selSh=o1[0];sp.querySelectorAll("button")[selSh].classList.add("on")}}
   const clearErr=()=>{[en,ea,et].forEach(x=>x.classList.remove("bad"));Object.values(errs).forEach(e=>e.textContent="");if(es)es.textContent=""};
   [en,ea,et].forEach(x=>x.addEventListener("input",()=>{x.classList.remove("bad");errs[x.id].textContent=""}));
   const live=fin=>{const v=ea.value.replace(/[٠-٩]/g,x=>"٠١٢٣٤٥٦٧٨٩".indexOf(x)).replace(/\s+/g,"");if(fin?/^\d{1,2}$/.test(v):/^\d{2}$/.test(v)){const m=ageMsg(j,+v);ea.classList.toggle("bad",!!m);errs.f_a.textContent=m}};
@@ -1087,7 +1089,7 @@ function confirmSend(j,go,sh){
     add("⏰","الوردية وعدد الساعات",hoursOnly(sh.h));
     add("💰","المرتب","",`<div style="margin-top:.2rem;line-height:1.9;font-weight:800">${sh.p30?`<div><span class="tag">30 يوم</span> ${cell(sh.p30)}</div>`:""}${sh.p26?`<div><span class="tag">26 يوم + 4 إجازة</span> ${cell(sh.p26)}</div>`:""}</div>`);
   }else if(isMulti(j)){
-    add("⏰","الورديات والمرتب","",`<table class="sht" style="margin-top:.3rem"><tr><th>⏰ الوردية</th><th><span class="tag">30 يوم</span></th><th><span class="tag">26 يوم + 4 إجازة</span></th></tr>${j.__sh.map(s=>`<tr><td>${esc(s.h)}</td><td>${cell(s.p30)}</td><td>${cell(s.p26)}</td></tr>`).join("")}</table>`);
+    add("⏰","الورديات والمرتب","",`<table class="sht" style="margin-top:.3rem"><tr><th>⏰ الوردية</th><th><span class="tag">30 يوم</span></th><th><span class="tag">26 يوم + 4 إجازة</span></th></tr>${j.__sh.map(s=>`<tr${s.done?' style="opacity:.5"':''}><td>${esc(s.h)}${s.done?' <span class="tag">مكتملة</span>':''}</td><td>${cell(s.p30)}</td><td>${cell(s.p26)}</td></tr>`).join("")}</table>`);
   }else{
     if(j["الشفت"])add("⏰","الوردية وعدد الساعات",hoursOnly(j["الشفت"]));
     add("💰","المرتب",payText(j).split(" | ").join("\n"));
@@ -1173,7 +1175,7 @@ function showDetail(j){
   const hous=[rw("السكن"),rw("المواصلات"),rw("العنوان","العنوان",cleanAddr(j["العنوان"])),ctHTML,...otherKeys.map(k=>rw(k))].join("");
   const tabs=[["📋","الأساسيات",basics],["💰","الدفع والمميزات",payR],["🏠","السكن والمواصلات",hous],...(j["ملاحظات"]?[["📝","ملاحظات",`<div class="nt">${esc(j["ملاحظات"])}</div>`]]:[])].filter(t=>t[2]);
   const hi=tabs.findIndex(t=>t[1]==="السكن والمواصلات");
-  const shBtns=multi?`<div class="dsb">${j.__sh.map((s,i)=>`<button type="button" data-i="${i}" class="${i?"":"on"}">${esc(hoursOnly(s.h))}</button>`).join("")}</div>`:"";
+  const shBtns=multi?`<div class="dsb">${j.__sh.map((s,i)=>`<button type="button" data-i="${i}" class="${i?"":"on"}${s.done?" shcl":""}">${esc(hoursOnly(s.h))}${s.done?" (مكتملة)":""}</button>`).join("")}</div>`:"";
   const call=nc===1?`<a class="dbtn" href="tel:${esc(j.__contacts[0].phone)}">📞 اتصل</a>`:nc>1?`<button type="button" class="dbtn" id="callBtn">📞 اتصل</button>`:"";
   const bar=IS_CC?`<button type="button" class="dbtn wa" id="apply">💬 قدّم دلوقتي</button>${call}<button type="button" class="dbtn" id="shareBtn">📤 شارك</button>`:`<div class="dwn">للتقديم ارجع للمسؤول اللي بعتلك اللينك ده وهو يكمّلك إجراءات التقديم.</div><button type="button" class="dbtn" id="shareBtn">📤 شارك</button>`;
   $("detail").innerHTML=`<div class="dcw"><div class="dc" id="captureArea">
@@ -1191,7 +1193,7 @@ function showDetail(j){
   window.__dcFn=fit;fit();requestAnimationFrame(fit);setTimeout(fit,300);setTimeout(fit,1000);
   if(!window.__dcFit){window.__dcFit=1;const f=()=>window.__dcFn&&window.__dcFn();window.addEventListener("resize",f);if(window.visualViewport)visualViewport.addEventListener("resize",f);window.addEventListener("orientationchange",()=>setTimeout(f,200))}
 
-  let si=0;
+  let si=multi?Math.max(0,j.__sh.findIndex(s=>!s.done)):0;
   const shb=[...document.querySelectorAll("#detail .dsb button")];
   const upd=()=>{
     if(!hasPay)return;
