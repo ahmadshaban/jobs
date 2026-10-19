@@ -80,6 +80,13 @@ header h1{margin:0;font-size:18px;color:#fff}
 .acts .btn{padding:6px 2px;font-size:11.5px;line-height:1.3}
 .acts2{grid-template-columns:repeat(3,1fr)}
 #pinbar .selrow{gap:6px}#pinbar .selrow select{flex:1;min-width:0;padding:8px 6px;font-size:13px}
+#optDlg{position:fixed;inset:0;background:rgba(0,20,50,.65);display:flex;align-items:center;justify-content:center;z-index:15;padding:16px}
+#optDlg .box{background:#0B2A4A;border:1px solid #3F7AB5;border-radius:16px;padding:16px;width:100%;max-width:340px;max-height:85vh;display:grid;gap:10px;color:#fff;grid-template-rows:auto auto minmax(0,1fr) auto}
+#optDlg h3{margin:0;color:#FFE45C;font-size:16px}#optDlg small{opacity:.85;font-size:12px}
+#optDlg .row{display:flex;gap:8px}#optDlg .row .btn{flex:1}
+#optList{display:grid;gap:6px;overflow-y:auto;align-content:start}
+.oi2{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#133B63;border:1px solid #3F7AB5;border-radius:10px;padding:6px 10px;font-size:14px}.oi2 .btn{padding:2px 12px;font-size:15px}
+.optb{padding:2px 10px;font-size:12px;justify-self:start}
 .more{display:grid;grid-template-columns:1fr 1fr;gap:6px}.more .btn{text-align:center;padding:9px 8px;font-size:13px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
 .empty{text-align:center;color:#fff;padding:30px}
 #title{color:#fff}
@@ -237,6 +244,12 @@ input.bad,select.bad{border-color:#FF7777;box-shadow:0 0 0 2px rgba(255,119,119,
   <select id="colSel"></select>
   <input id="colIn" type="text" autocomplete="off" placeholder="اكتب اسم العمود للتأكيد">
   <div class="row"><button class="btn danger" id="colGo" disabled>امسح العمود</button><button class="btn ghost" id="colCancel">إلغاء</button></div>
+</div></div>
+<div id="optDlg" class="hidden"><div class="box">
+  <h3 id="optT"></h3>
+  <small>دوس ✕ على القيمة عشان تتشال من الاختيارات. الوظايف المسجلة مش بتتأثر.</small>
+  <div id="optList"></div>
+  <div class="row"><button class="btn ghost hidden" id="optRestore"></button><button class="btn" id="optClose">تمام</button></div>
 </div></div>
 <div id="ordDlg" class="hidden"><div class="box">
   <h3>ترتيب المصانع</h3>
@@ -830,9 +843,54 @@ $('list').addEventListener('click', async e => {
 });
 
 // ===== [8] نموذج الإضافة والتعديل =====
-function presetOptions(header){
-  return [...new Set(rows.map(row => String(val(row, header) ?? '').trim()).filter(Boolean))];
+function presetOptions(header, area){
+  const src = (area && header !== COL.area) ? rows.filter(r => val(r, COL.area).trim() === area) : rows;
+  return [...new Set(src.map(row => String(val(row, header) ?? '').trim()).filter(Boolean))];
 }
+const HK = 'gp_hidden_opts';
+const hiddenOpts = () => { try{ return JSON.parse(localStorage.getItem(HK) || '{}') || {}; }catch(e){ return {}; } };
+const saveHidden = o => { try{ localStorage.setItem(HK, JSON.stringify(o)); }catch(e){} };
+function curAreaVal(){
+  const ai = headers.indexOf(COL.area);
+  const el = $('sheet').querySelector('[data-i="' + ai + '"]'), cu = $('sheet').querySelector('[data-custom-i="' + ai + '"]');
+  if (!el) return '';
+  return String((el.value === '__custom__' && cu) ? cu.value : el.value).trim();
+}
+function presetOptsHtml(h, area, cur){
+  const hid = hiddenOpts()[h] || [];
+  const known = presetOptions(h, area).filter(o => !hid.includes(o));
+  const opts = [...new Set([...known, ...((cur && cur !== '__custom__') ? [cur] : [])].filter(Boolean))];
+  return '<option value=""' + (cur === '' ? ' selected' : '') + '>— اختر —</option>' +
+    opts.map(o => '<option value="' + esc(o) + '"' + (o === cur ? ' selected' : '') + '>' + esc(o) + '</option>').join('') +
+    '<option value="__custom__"' + (cur === '__custom__' ? ' selected' : '') + '>إدخال قيمة جديدة...</option>';
+}
+function refreshPresets(){
+  const a = curAreaVal();
+  $('sheet').querySelectorAll('select[data-ph]').forEach(el => {
+    if (el.dataset.ph === COL.area) return;
+    const cur = el.value;
+    el.innerHTML = presetOptsHtml(el.dataset.ph, a, cur);
+    el.value = cur;
+  });
+}
+let optHeader = '';
+function renderOpt(){
+  const hid = hiddenOpts()[optHeader] || [], a = curAreaVal();
+  const list = presetOptions(optHeader, a).filter(o => !hid.includes(o));
+  $('optT').textContent = optHeader + ((a && optHeader !== COL.area) ? ' — ' + a : '');
+  $('optList').innerHTML = list.length ? list.map(o => '<div class="oi2"><span>' + esc(o) + '</span><button type="button" class="btn danger" data-hv="' + esc(o) + '">✕</button></div>').join('') : '<small>مفيش قيم.</small>';
+  $('optRestore').classList.toggle('hidden', !hid.length);
+  $('optRestore').textContent = 'رجّع المخفي (' + hid.length + ')';
+}
+function openOpt(i){ optHeader = headers[i]; renderOpt(); openLayer($('optDlg')); }
+$('optList').addEventListener('click', e => {
+  const b = e.target.closest('button[data-hv]'); if (!b) return;
+  const o = hiddenOpts(); (o[optHeader] = o[optHeader] || []).push(b.dataset.hv); saveHidden(o);
+  renderOpt(); refreshPresets();
+});
+$('optRestore').onclick = () => { const o = hiddenOpts(); delete o[optHeader]; saveHidden(o); renderOpt(); refreshPresets(); };
+$('optClose').onclick = () => closeLayer($('optDlg'));
+$('optDlg').addEventListener('click', e => { if (e.target.id === 'optDlg') closeLayer($('optDlg')); });
 
 function currentFormSnapshot(){
   return JSON.stringify([...$('sheet').querySelectorAll('[data-i]')].map(el => {
@@ -926,10 +984,8 @@ function openForm(r, asCopy){
       const known = presetOptions(h);
       const opts = [...new Set([...known, ...(v ? [v] : [])].filter(Boolean))];
       if (opts.length) {
-        input = '<select data-i="' + i + '">' +
-          '<option value=""' + (v === '' ? ' selected' : '') + '>— اختر —</option>' +
-          opts.map(o => '<option value="' + esc(o) + '"' + (o === v ? ' selected' : '') + '>' + esc(o) + '</option>').join('') +
-          '<option value="__custom__">إدخال قيمة جديدة...</option></select>' +
+        const area0 = src ? String(src.values[headers.indexOf(COL.area)] ?? '').trim() : '';
+        input = '<select data-i="' + i + '" data-ph="' + esc(h) + '">' + presetOptsHtml(h, area0, v) + '</select>' +
           '<input class="custom-field hidden" data-custom-i="' + i + '" placeholder="اكتب قيمة جديدة" value="">';
       } else {
         input = '<input data-i="' + i + '" value="' + esc(v) + '">';
@@ -943,7 +999,7 @@ function openForm(r, asCopy){
       const was = src ? (String(src.values[i] ?? '').trim() || String(src.values[headers.indexOf(COL.salary)] ?? '').trim()) : '';
       if (was) hint = '<small class="oldhint">المرتب القديم: ' + esc(was) + '</small>';
     }
-    const clr = (h === COL.factory || h === COL.visible) ? '' : '<button type="button" class="btn danger clr" data-clr="' + i + '">مسح</button>';
+    const clr = (h === COL.factory || h === COL.visible) ? '' : '<button type="button" class="btn danger clr" data-clr="' + i + '">مسح</button>' + (input.indexOf('data-ph=') >= 0 ? '<button type="button" class="btn ghost optb" data-opt="' + i + '">✕ تنضيف الاختيارات</button>' : '');
     return '<label>' + esc(h) + input + hint + clr + '</label>';
   }).join('');
   
@@ -967,6 +1023,9 @@ function openForm(r, asCopy){
     if (!(await ask('تمسح محتوى خانة "' + headers[+idx] + '"؟'))) return;
     el.value = ''; if (cu){ cu.value = ''; cu.classList.add('hidden'); }
   });
+  $('sheet').querySelectorAll('.optb').forEach(b => b.onclick = e => { e.preventDefault(); openOpt(+b.dataset.opt); });
+  { const ai = headers.indexOf(COL.area), ael = $('sheet').querySelector('[data-i="' + ai + '"]'), acu = $('sheet').querySelector('[data-custom-i="' + ai + '"]');
+    if (ael) ael.addEventListener('change', refreshPresets); if (acu) acu.addEventListener('input', refreshPresets); }
   $('sheet').querySelectorAll('select[data-i]').forEach(el => {
     el.addEventListener('change', () => {
       const custom = $('sheet').querySelector('[data-custom-i="' + el.dataset.i + '"]');
