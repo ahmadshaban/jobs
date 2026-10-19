@@ -666,7 +666,7 @@ const PHONE = "201095237207";
 function setSrc(){IS_CC=!!CC_ID;GV="https://docs.google.com/spreadsheets/d/"+(IS_CC?CC_ID:WORKER_SHEET_ID)+"/gviz/tq?tqx=out:csv&headers=1&sheet=";AREAS_CSV_URL=GV+encodeURIComponent("المناطق");SHEET_CSV_URL=GV+encodeURIComponent("الوظائف")}
 setSrc();
 const CORE=["المنطقة","الفئة","المصنع","المؤهل","الشفت","السن","طبيعة العمل","المرتب","مرتب 30 يوم","مرتب 26 يوم","تفاصيل المرتب","الورديات","أرقام التواصل","تثبيت","الترتيب","آخر تعديل","ظاهر؟","الحالة","تاريخ الإضافة"];
-const done=j=>(j["الحالة"]||"").includes("مكتمل");
+const done=j=>(j["الحالة"]||"").includes("مكتمل")||!!j.__allClosed;
 const urgent=j=>/عاجل|الأكثر تقديم/.test(j["الحالة"]||"");
 const NEW_DAYS=3;
 const TODAY=new Date().toISOString().slice(0,10);
@@ -675,7 +675,7 @@ const P30="مرتب 30 يوم", P26="مرتب 26 يوم", OFF26="26 يوم عم�
 function pays(j){const a=[];if(j[P30])a.push(["30 يوم عمل",j[P30]]);if(j[P26])a.push([OFF26,j[P26]]);return a}
 const numOf=s=>{const t=String(s||"").replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/,/g,"");const m=t.match(/\d+(\.\d+)?/);return m?+m[0]:0};
 
-function parseShifts(txt){return String(txt||"").split(/\n/).map(l=>l.trim()).filter(Boolean).map(l=>{const p=l.split("|").map(x=>x.trim());const s={h:p[0]||"",p30:"",p26:""};p.slice(1).forEach(x=>{const m=x.match(/^(30|26)\s*يوم\s*:\s*(.*)$/);if(m)s["p"+m[1]]=m[2].trim()});return s}).filter(s=>s.h||s.p30||s.p26)}
+function parseShifts(txt){return String(txt||"").split(/\n/).map(l=>l.trim()).filter(Boolean).map(l=>{const p=l.split("|").map(x=>x.trim());const s={h:p[0]||"",p30:"",p26:""};p.slice(1).forEach(x=>{if(x==="مكتمل"){s.done=true;return}const m=x.match(/^(30|26)\s*يوم\s*:\s*(.*)$/);if(m)s["p"+m[1]]=m[2].trim()});return s}).filter(s=>s.h||s.p30||s.p26)}
 
 /* تحليل أرقام التواصل المنظمة، مع الاستخراج التلقائي من خانة العنوان لو خانة أرقام التواصل فاضية */
 function parseContacts(j){
@@ -707,7 +707,9 @@ function parseContacts(j){
 const cleanAddr=a=>{a=String(a||"");if(IS_CC)return a;return a.replace(/\s*(?:و?كلّ?مني|و?(?:ت|ا)تصل)(?:\s+(?:ع|على))?(?:\s+(?:الرقم|رقم))?\s*[:：\-–_]*\s*$/,"").trim()};
 function topShift(a){let b={v:"",h:""},m=0;a.forEach(s=>[s.p30,s.p26].forEach(x=>{const n=numOf(x);if(n>m){m=n;b={v:x,h:s.h}}}));return b}
 function prep(j){
-  const a=parseShifts(j["الورديات"]);
+  const all=parseShifts(j["الورديات"]),open=all.filter(s=>!s.done);
+  j.__allClosed=all.length>0&&!open.length;
+  const a=j.__allClosed?all:open;
   j.__sh=a;
   j.__contacts=IS_CC?parseContacts(j):[];
   if(a.length===1){j["الشفت"]=a[0].h;j[P30]=a[0].p30;j[P26]=a[0].p26}else if(a.length>1){j["الشفت"]="";j[P30]="";j[P26]="";j["المرتب"]=""}
