@@ -503,7 +503,7 @@ function shNum(s){ const m = String(s || '').replace(/[٠-٩]/g, d => '٠١٢٣�
 function parseShifts(txt){
   return String(txt || '').split(/\n/).map(l => l.trim()).filter(Boolean).map(l => {
     const p = l.split('|').map(x => x.trim()), s = {h: p[0] || '', p30: '', p26: ''};
-    p.slice(1).forEach(x => { const m = x.match(/^(30|26)\s*يوم\s*:\s*(.*)$/); if (m) s['p' + m[1]] = m[2].trim(); });
+    p.slice(1).forEach(x => { if (x === 'مكتمل'){ s.done = true; return; } const m = x.match(/^(30|26)\s*يوم\s*:\s*(.*)$/); if (m) s['p' + m[1]] = m[2].trim(); });
     return s;
   }).filter(s => s.h || s.p30 || s.p26);
 }
@@ -516,6 +516,7 @@ function serializeShifts(){
     const p26 = clean(s.p26) ? normSalary(clean(s.p26), COL.salary26) : '';
     if (p30) parts.push('30 يوم: ' + p30);
     if (p26) parts.push('26 يوم: ' + p26);
+    if (s.done) parts.push('مكتمل');
     return parts.join(' | ');
   }).join('\n');
 }
@@ -540,8 +541,8 @@ function renderShEditor(){
     '<button type="button" class="btn ghost" id="shAdd">+ وردية تانية</button></div>';
   shState.forEach((s, k) => {
     const preset = SH_PRESETS.some(p => shNum(p) === shNum(s.h));
-    h += '<div class="shb"><div class="shh">' + (preset ? '<b>' + esc(s.h) + '</b>' : '<input data-sh="h" data-k="' + k + '" placeholder="عدد الساعات (مثلًا 10 ساعة)" value="' + esc(s.h) + '">') +
-      '<button type="button" class="btn danger shx" data-k="' + k + '">مسح</button></div>' +
+    h += '<div class="shb"' + (s.done ? ' style="opacity:.55"' : '') + '><div class="shh">' + (preset ? '<b>' + esc(s.h) + '</b>' : '<input data-sh="h" data-k="' + k + '" placeholder="عدد الساعات (مثلًا 10 ساعة)" value="' + esc(s.h) + '">') +
+      '<button type="button" class="btn ghost shd" data-k="' + k + '">' + (s.done ? 'فتح الوردية' : 'قفل الوردية') + '</button><button type="button" class="btn danger shx" data-k="' + k + '">مسح</button></div>' +
       '<div class="shg"><label>نظام 30 يوم<input data-sh="p30" data-k="' + k + '" inputmode="numeric" placeholder="مثلًا 9000" value="' + esc(s.p30) + '"></label>' +
       '<label>نظام 26 يوم + 4 إجازة<input data-sh="p26" data-k="' + k + '" inputmode="numeric" placeholder="مثلًا 8000" value="' + esc(s.p26) + '"></label></div></div>';
   });
@@ -552,6 +553,7 @@ function renderShEditor(){
     if (i >= 0){ const s0 = shState[i]; if ((s0.p30 || s0.p26) && !(await ask('تمسح وردية ' + s0.h + ' ومرتباتها؟'))) return; shState.splice(i, 1); } else { shState.push({h: p, p30: '', p26: ''}); shState.sort((x, y) => shNum(x.h) - shNum(y.h)); }
     renderShEditor();
   });
+  box.querySelectorAll('.shd').forEach(b => b.onclick = () => { const s0 = shState[+b.dataset.k]; s0.done = !s0.done; renderShEditor(); });
   $('shAdd').onclick = () => { shState.push({h: '', p30: '', p26: ''}); renderShEditor(); };
   box.querySelectorAll('.shx').forEach(b => b.onclick = async () => { const s0 = shState[+b.dataset.k]; if (!(await ask('تمسح وردية ' + (s0.h || 'الجديدة') + (s0.p30 || s0.p26 ? ' ومرتباتها' : '') + '؟'))) return; shState.splice(+b.dataset.k, 1); renderShEditor(); });
   box.querySelectorAll('input[data-sh]').forEach(el => el.addEventListener('input', () => { shState[+el.dataset.k][el.dataset.sh] = el.value; }));
@@ -627,7 +629,7 @@ function cardHTML(r, i, arr){
     .map(c => val(r, c)).filter(Boolean).map(v => '<span>' + esc(v) + '</span>').join('');
   const salChip = (c, lbl) => '<span class="sal' + (val(r, c) ? '' : ' empty') + '" data-sal="' + esc(c) + '" data-row="' + r.row + '">' +
     (val(r, c) ? esc(lbl + ': ' + val(r, c)) : '+ ' + esc(lbl)) + '</span>';
-  const shChips = shl.map(s => '<span class="sal">' + esc(s.h + (s.p30 ? ' · 30: ' + s.p30.replace(/\s*في الشهر/, '') : '') + (s.p26 ? ' · 26: ' + s.p26.replace(/\s*في الشهر/, '') : '')) + '</span>').join('');
+  const shChips = shl.map(s => '<span class="sal">' + esc(s.h + (s.done ? ' · مكتملة' : '') + (s.p30 ? ' · 30: ' + s.p30.replace(/\s*في الشهر/, '') : '') + (s.p26 ? ' · 26: ' + s.p26.replace(/\s*في الشهر/, '') : '')) + '</span>').join('');
   const meta = plain + (shl.length ? shChips : salChip(COL.salary30, '30 يوم') + salChip(COL.salary26, '26 يوم'));
   const mv = '';
   return '<div class="card' + (hid ? ' dim' : '') + '">' +
