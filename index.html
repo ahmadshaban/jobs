@@ -554,12 +554,15 @@ header .lead.free{color:#D5E2F2;font-weight:700;margin-top:.25rem}
 .hmb{font:inherit;font-size:1.15rem;line-height:1;background:var(--card);color:var(--gold,#6FA8E6);border:1px solid var(--bd);border-radius:.75rem;min-width:2.5rem;min-height:2.5rem;cursor:pointer}
 #mbk{position:fixed;inset:0;z-index:9998;background:rgba(5,10,24,.5);opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
 #mbk.on{opacity:1;visibility:visible}
-#mnu{position:fixed;top:0;bottom:0;right:0;z-index:9999;width:min(14.5rem,72vw);background:var(--card);border-left:1px solid var(--bd);box-shadow:-8px 0 24px rgba(0,0,0,.35);transform:translateX(105%);visibility:hidden;transition:transform .25s ease,visibility .25s;padding:calc(.6rem + env(safe-area-inset-top,0px)) .6rem .6rem;display:flex;flex-direction:column;gap:.2rem}
-#mnu.on{transform:none;visibility:visible}
-#mnu .mh{display:flex;align-items:center;justify-content:space-between;padding:.2rem .3rem .6rem;margin-bottom:.3rem;border-bottom:1px solid var(--bd);font-weight:800;font-size:.85rem;color:var(--gold,#6FA8E6)}
-#mnu .mh button{font:inherit;width:2rem;height:2rem;border-radius:50%;border:1px solid var(--bd);background:transparent;color:var(--tx);cursor:pointer;font-size:.85rem}
-#mnu .mi{display:block;font:inherit;font-weight:700;font-size:.85rem;color:var(--tx);text-decoration:none;padding:.7rem .8rem;border-radius:.7rem}
+#mnu{position:fixed;top:3.6rem;left:.6rem;right:.6rem;max-width:26rem;margin:0 auto;z-index:9999;background:var(--card);border:1px solid var(--bd);border-radius:1rem;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,.4);opacity:0;visibility:hidden;transform:translateY(-.6rem);transition:opacity .22s,transform .22s,visibility .22s}
+#mnu.on{opacity:1;visibility:visible;transform:none}
+.hmb.on{position:relative;z-index:9999}
+#mnu .mi{display:flex;align-items:center;gap:.6rem;font:inherit;font-weight:700;font-size:.9rem;color:var(--tx);text-decoration:none;padding:.8rem 1rem;min-height:2.75rem;box-sizing:border-box;border-bottom:1px solid var(--bd)}
+#mnu .mi .ch{margin-right:auto;opacity:.5}
 #mnu .mi:active{background:var(--acs);color:var(--gold,#6FA8E6)}
+#mnu .mr{display:flex;background:rgba(0,0,0,.18)}
+#mnu .mr .mi{flex:1;justify-content:center;border-bottom:0;font-size:.8rem;gap:.35rem}
+#mnu .mr .mi+.mi{border-right:1px solid var(--bd)}
 
 #xo{display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.55);align-items:center;justify-content:center;padding:1.2rem}
 #xo.on{display:flex}
@@ -612,7 +615,7 @@ header .lead.free{color:#D5E2F2;font-weight:700;margin-top:.25rem}
 </head>
 <body>
 <main class="w" id="main">
-  <div class="topb"><button type="button" class="hmb" id="hmb" aria-label="القايمة">☰</button><div id="mbk"></div><nav id="mnu" aria-hidden="true"><div class="mh"><span>القايمة</span><button type="button" id="mcl" aria-label="قفل">✕</button></div><a class="mi" id="mhome" href="./">🏠 الوظائف</a><a class="mi" href="marketing.html">📣 اشتغل أونلاين بعمولة</a><a class="mi" id="fab" target="_blank" rel="noopener">💬 اسأل على واتساب</a></nav></div>
+  <div class="topb"><button type="button" class="hmb" id="hmb" aria-label="القايمة">☰</button><div id="mbk"></div><nav id="mnu" aria-hidden="true"><a class="mi" id="mhome" href="./">🏠 الوظائف<span class="ch">‹</span></a><a class="mi" href="marketing.html">📣 اشتغل أونلاين بعمولة<span class="ch">‹</span></a><a class="mi" id="fab" target="_blank" rel="noopener">💬 اسأل على واتساب<span class="ch">‹</span></a><div class="mr"><a class="mi" href="stats.html">📊 الإحصائيات 🔒</a><a class="mi" href="admin.html">⚙️ الإدارة 🔒</a></div></nav></div>
   <header>
     <h1>عمال تعبئة وتغليف وفرز</h1>
     <p class="sub lead">قدّم من الموبايل في دقايق</p>
@@ -1228,8 +1231,12 @@ load();
 <script>
 (function(){var m=document.getElementById("mnu"),k=document.getElementById("mbk"),b=document.getElementById("hmb"),h=document.getElementById("mhome"),x=document.getElementById("mcl");if(!m||!b)return;
 if(/\/callcenter(\.html)?\/?$/.test(location.pathname))h.setAttribute("href","callcenter.html");
-function o(){m.classList.add("on");k.classList.add("on");m.setAttribute("aria-hidden","false")}
-function c(){m.classList.remove("on");k.classList.remove("on");m.setAttribute("aria-hidden","true")}
+var mo=false,ig=0;
+function vis(){m.classList.remove("on");k.classList.remove("on");b.classList.remove("on");b.textContent="☰";m.setAttribute("aria-hidden","true")}
+function o(){m.style.top=Math.round(b.getBoundingClientRect().bottom+6)+"px";m.classList.add("on");k.classList.add("on");b.classList.add("on");b.textContent="✕";m.setAttribute("aria-hidden","false");if(!mo){mo=true;history.pushState({mn:1},"",location.href)}}
+function c(){vis();if(mo){mo=false;ig++;history.back()}}
+window.addEventListener("popstate",function(){if(ig>0){ig--;return}if(mo){mo=false;vis()}});
+Array.prototype.forEach.call(m.querySelectorAll("a"),function(a){a.addEventListener("click",function(){if(a.target==="_blank"){c()}else{mo=false;vis()}})});
 b.onclick=function(){if(m.classList.contains("on")){c()}else{o()}};
 k.onclick=c;if(x)x.onclick=c;
 document.addEventListener("keydown",function(e){if(e.key==="Escape")c()});
