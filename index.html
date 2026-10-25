@@ -550,13 +550,14 @@ header .lead.free{color:#D5E2F2;font-weight:700;margin-top:.25rem}
 
 
 /* قايمة ☰ جانبية */
-.topb{position:relative;display:flex;align-items:center;padding:.4rem 0 0}
-.hmb{font:inherit;font-size:1.15rem;line-height:1;background:var(--card);color:var(--gold,#6FA8E6);border:1px solid var(--bd);border-radius:.75rem;min-width:2.5rem;min-height:2.5rem;cursor:pointer}
+.topb{position:relative;height:0;padding:0;z-index:3}
+.hmb{font:inherit;font-size:1.15rem;line-height:1;background:var(--card);color:var(--gold,#6FA8E6);border:1px solid var(--bd);border-radius:.7rem;min-width:2.25rem;min-height:2.25rem;cursor:pointer;position:absolute;top:.55rem;inset-inline-start:0}
+header{padding-inline:calc(var(--px) + 2.3rem)}
 #mbk{position:fixed;inset:0;z-index:9998;background:rgba(5,10,24,.5);opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
 #mbk.on{opacity:1;visibility:visible}
 #main{display:flex;flex-direction:column;min-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
 .ft{display:flex;justify-content:center;align-items:center;gap:1rem;margin:auto 0 1rem;padding-top:1.2rem}
-.sc{display:flex;align-items:center;justify-content:center;width:2rem;height:2rem;flex:none;border-radius:50%;text-decoration:none;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.sc{display:flex;align-items:center;justify-content:center;width:2rem;height:2rem;flex:none;border-radius:50%;text-decoration:none;overflow:hidden;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.25)}
 .sc.wa{background:#25D366}.sc.wa .ic{width:1rem;height:1rem}
 .sc.fbk{background:#fff}.sc.fbk .ic{width:100%;height:100%}
 #mnu{position:fixed;top:0;bottom:0;right:0;z-index:9999;width:min(15rem,74vw);background:var(--card);border-left:1px solid var(--bd);box-shadow:-8px 0 24px rgba(0,0,0,.35);transform:translateX(105%);visibility:hidden;transition:transform .25s ease,visibility .25s;padding:calc(.6rem + env(safe-area-inset-top,0px)) .6rem .6rem;display:flex;flex-direction:column;gap:.2rem;overflow-y:auto}
