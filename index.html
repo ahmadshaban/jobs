@@ -633,6 +633,13 @@ header .sub.lead.free{color:#FFD35A;font-weight:800}
 @media (prefers-reduced-motion:reduce){#scrollHint i{animation:none}}
 
 .badge{display:inline-flex;align-items:center;justify-content:center;text-align:center;line-height:1.35}
+.hrs{display:none;margin-top:.4rem}.hrs.show{display:block}
+.hrs .hr{display:flex;align-items:center;gap:.4rem}
+.hrs .hl{color:var(--mu);font-size:.8rem;font-weight:700;flex:none}
+.hrs .hbn{flex:1;font:inherit;font-weight:800;font-size:.8rem;min-height:2.3rem;padding:0 .3rem;border:1.5px solid var(--bd);background:var(--card);color:var(--mu);border-radius:99px;cursor:pointer}
+.hrs .hbn.on{background:var(--gold);border-color:var(--gold);color:var(--goldD)}
+.hrs .hn{margin-top:.4rem;display:flex;justify-content:space-between;align-items:center;gap:.5rem;background:#FFF4D6;color:#5A4300;border:1px solid #E8B730;border-radius:.6rem;padding:.3rem .55rem;font-size:.8rem;font-weight:800}
+.hrs .hn button{font:inherit;font-size:.78rem;font-weight:800;background:#0F1C2E;color:#fff;border:0;border-radius:.45rem;min-height:2rem;padding:0 .7rem;cursor:pointer;white-space:nowrap}
 </style>
 <meta name="build" content="2026-10-25.3">
 </head>
@@ -647,6 +654,7 @@ header .sub.lead.free{color:#FFD35A;font-weight:800}
   <div class="fhint">👇 اختار شباب أو بنات، وبعدها المنطقة عشان تشوف الوظايف</div>
   <div class="bar">
     <div class="frow"><div id="seg" class="seg"></div><div id="area" class="ddw"></div></div>
+    <div id="hrs" class="hrs"></div>
   </div>
   
   <div id="areaShareContainer" class="area-share-box" style="display:none">
@@ -783,7 +791,7 @@ const ICONS={"العنوان":"📍","السن":"🎂","طبيعة العمل":"
  if(tp)tp.textContent="📞 واتساب: 0"+ph.replace(/^20/,"");
  const wl="https://wa.me/"+ph+"?text="+encodeURIComponent("السلام عليكم، عندي استفسار بخصوص الوظايف");if(fb)fb.href=wl;const fw=document.getElementById("fwa");if(fw)fw.href=wl;}
 
-let JOBS=[],cat="",area="الكل",picked=false;
+let JOBS=[],cat="",area="الكل",picked=false,hf=null;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
@@ -871,7 +879,14 @@ function draw(){
   $("areaList").querySelectorAll(".ai").forEach(b=>b.onclick=()=>{area=b.dataset.v;picked=true;closeArea();draw()});
   
   const ready=!!cat&&picked;document.body.classList.toggle("prefilter",!ready);
-  const r=ready?JOBS.filter(j=>matchCat(j)&&(area==="الكل"||j["المنطقة"]===area)).sort(byOrder):[];
+  const rAll=ready?JOBS.filter(j=>matchCat(j)&&(area==="الكل"||j["المنطقة"]===area)).sort(byOrder):[];
+  const hb=n=>n===8?8:n===12?12:n>=15?16:0;
+  const hrsOf=j=>{const a=(j.__sh&&j.__sh.length?j.__sh.map(x=>x.h):[j["الشفت"]]);return a.map(t=>{const m=String(t||"").match(/(\d{1,2})/);return m?hb(+m[1]):0})};
+  const r=hf?rAll.filter(j=>hrsOf(j).includes(hf)):rAll;
+  {const he=$("hrs");if(he){he.classList.toggle("show",ready&&rAll.length>0);
+   he.innerHTML=ready&&rAll.length>0?`<div class="hr"><span class="hl">⏱ الساعات</span>${[8,12,16].map(h=>`<button type="button" class="hbn ${hf===h?"on":""}" data-h="${h}">${h} ${h===8?"ساعات":"ساعة"}${hf===h?" ✕":""}</button>`).join("")}</div>${hf?`<div class="hn"><span>معروض ${hf} ساعة بس (${r.length} من ${rAll.length} وظيفة)</span><button type="button" id="hall">عرض الكل</button></div>`:""}`:"";
+   he.querySelectorAll(".hbn").forEach(b=>b.onclick=()=>{const h=+b.dataset.h;hf=hf===h?null:h;draw()});
+   const ha=$("hall");if(ha)ha.onclick=()=>{hf=null;draw()}}}
   $("cnt").textContent=r.length?`🔥 ${r.length} وظيفة متاحة`:"";
   
   const shareContainer = $("areaShareContainer");
@@ -886,6 +901,7 @@ function draw(){
 
   $("empty").style.display=(r.length||!ready)?"none":"block";
   $("emt").textContent=JOBS.length?(area!=="الكل"?"مفيش وظايف "+cat+" دلوقتي في "+area+"، جرّب منطقة تانية":"مفيش وظايف "+cat+" دلوقتي، جرّب الفئة التانية"):"مفيش وظايف متاحة دلوقتي، ارجع كمان شوية";
+  if(hf&&rAll.length&&!r.length){$("emt").innerHTML="مفيش وظايف "+hf+" ساعة دلوقتي<br><button type=\"button\" class=\"retry\" id=\"hclr\">عرض كل الساعات</button>";$("hclr").onclick=()=>{hf=null;draw()}}
   
   const NEG=/لا يوجد|مفيش|^لا$|غير متوفر/;
   const okv=v=>v&&!NEG.test(v.trim());
