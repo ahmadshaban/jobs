@@ -1098,7 +1098,8 @@ function setupApply(j,ph){
     const L=[];
     if(n)L.push("👤 *الاسم:* "+n);if(a)L.push("🔢 *السن:* "+a);if(t)L.push("📲 *رقم الواتساب:* "+t.replace(/^\+?20(?=1)/,"0"));
     L.push("📍 *المكان:* "+j["المنطقة"],"🏭 *المصنع:* "+j["المصنع"]);
-    if(isMulti(j))L.push("⏰ *الوردية:* "+hoursOnly(j.__sh[selSh].h));
+    if(isMulti(j)){const sh=j.__sh[selSh];L.push("⏰ *الوردية:* "+hoursOnly(sh.h));const pp=[sh.p30&&"30 يوم: "+sh.p30,sh.p26&&"26 يوم: "+sh.p26].filter(Boolean).join(" | ").replace(/\s*في الشهر/g,"");if(pp)L.push("💰 *المرتب:* "+pp)}
+    else{const pt=String(payText(j)||"").replace(/\s*في الشهر/g,"").trim();if(pt)L.push("💰 *المرتب:* "+pt)}
     if(SRC)L.push("المصدر: "+SRC);
     const u="https://wa.me/"+ph+"?text="+encodeURIComponent(L.join("\n"));
     close();window.open(u,"_blank")||(location.href=u);
