@@ -1059,7 +1059,7 @@ function formHTML(j){return `<div class="ov" id="fo"><div class="sheet"><div cla
    <label class="fl">🔢 السن<input id="f_a" inputmode="numeric" maxlength="2" autocomplete="off"></label><div class="er" id="e_a"></div>
    <label class="fl">📲 رقم الواتساب (لازم يكون عليه واتساب)<input id="f_t" type="tel" inputmode="tel" maxlength="15" autocomplete="tel" placeholder="01XXXXXXXXX"></label><div class="er" id="e_t"></div>
    ${isMulti(j)?`<div class="fl">🕒 اختار الوردية اللي تناسبك</div><div class="shp" id="f_s">${j.__sh.map((s,i)=>`<button type="button" data-i="${i}"${s.done?' disabled class="shcl"':''}>${esc(hoursOnly(s.h))}${s.done?' (مكتملة)':''}</button>`).join("")}</div><div class="er" id="e_s"></div>`:""}
-   ${okv(j["المواصلات"])?`<div class="trn">⚠️ لو مكانك خارج ${esc(cityName(j))}، المواصلات لحد نقطة التجمع جوه ${esc(cityName(j))} على حسابك الشخصي. ومن نقطة التجمع عربيات المصنع بتاخدك.</div>`:""}
+   <div class="trn">⚠️ لو مكانك خارج ${esc(cityName(j))}، المواصلات لحد نقطة التجمع جوه ${esc(cityName(j))} على حسابك الشخصي. ومن نقطة التجمع عربيات المصنع بتاخدك.</div>
    <div class="fgo"><button type="button" class="btn wa" id="fgo">دوس هنا وكمّل على الواتساب</button></div></div></div></div>`}
 
 let foOpen=false,foHide=null,ignoreFo=0;
