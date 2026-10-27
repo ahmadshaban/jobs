@@ -346,6 +346,7 @@ html.fo-lock,html.fo-lock body{overflow:hidden}
 .frow .ddb .cn{font-weight:600;font-size:.8rem;opacity:.75;margin-inline-start:.3rem}
 .tnote{background:var(--gold);color:var(--goldD);font-weight:800;font-size:.92rem;text-align:center;border-radius:.8rem;padding:.55rem .7rem;margin-top:.6rem}
 #fo .tnote{margin-top:.5rem}
+.trn{background:#FFF8D6;border:2px solid #F5C518;color:#5B4A00;font-weight:800;font-size:.9rem;line-height:1.7;text-align:center;border-radius:.8rem;padding:.65rem .75rem;margin-top:.9rem}
 /* compact header+filter */
 header{padding:.65rem var(--px)}
 header h1{font-size:clamp(1.2rem,5vw,1.35rem);line-height:1.35}
@@ -1050,6 +1051,7 @@ function route(){
   if(j&&!done(j)){showDetail(j)}else{came=false;$("detail").style.display="none";$("main").style.display="";window.scrollTo(0,sy)}
 }
 
+function cityName(j){return String(j["المنطقة"]||"").replace(/\s*\(.*?\)\s*/g," ").trim()}
 function formHTML(j){return `<div class="ov" id="fo"><div class="sheet"><div class="grab"></div><div class="sb">
    <div class="sh"><h2 class="ttl" style="margin:.2rem 0 0">قدّم على ${esc(j["المصنع"])}</h2><button type="button" class="exit" id="fx"><span class="xr">✕</span>رجوع</button></div>
    <div class="tnote">⏰ التقديم واستلام الشغل في نفس اليوم</div>
@@ -1057,6 +1059,7 @@ function formHTML(j){return `<div class="ov" id="fo"><div class="sheet"><div cla
    <label class="fl">🔢 السن<input id="f_a" inputmode="numeric" maxlength="2" autocomplete="off"></label><div class="er" id="e_a"></div>
    <label class="fl">📲 رقم الواتساب (لازم يكون عليه واتساب)<input id="f_t" type="tel" inputmode="tel" maxlength="15" autocomplete="tel" placeholder="01XXXXXXXXX"></label><div class="er" id="e_t"></div>
    ${isMulti(j)?`<div class="fl">🕒 اختار الوردية اللي تناسبك</div><div class="shp" id="f_s">${j.__sh.map((s,i)=>`<button type="button" data-i="${i}"${s.done?' disabled class="shcl"':''}>${esc(hoursOnly(s.h))}${s.done?' (مكتملة)':''}</button>`).join("")}</div><div class="er" id="e_s"></div>`:""}
+   ${okv(j["المواصلات"])?`<div class="trn">⚠️ لو مكانك خارج ${esc(cityName(j))}، المواصلات لحد نقطة التجمع جوه ${esc(cityName(j))} على حسابك الشخصي. ومن نقطة التجمع عربيات المصنع بتاخدك.</div>`:""}
    <div class="fgo"><button type="button" class="btn wa" id="fgo">دوس هنا وكمّل على الواتساب</button></div></div></div></div>`}
 
 let foOpen=false,foHide=null,ignoreFo=0;
