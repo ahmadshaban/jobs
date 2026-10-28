@@ -524,9 +524,11 @@ header .sub.lead.free{color:#FFD35A;font-weight:800}
 .onl .em{position:absolute;top:-.9rem;left:50%;transform:translateX(-50%);background:var(--bg);padding:0 .5rem;font-size:1.1rem;letter-spacing:.2rem;white-space:nowrap}
 .onl b{display:block;color:#8DBBEA;font-size:.98rem;font-weight:800;margin-bottom:.35rem}
 .onl .t{display:block;font-size:.82rem;line-height:1.8;color:var(--tx);margin-bottom:.3rem}
-.onl .go{display:block;margin-top:.7rem;background:#6FA8E6;color:#0F2236;font-weight:800;font-size:.92rem;padding:.55rem 0;border-radius:.8rem}
+.onl .go{display:flex;align-items:center;justify-content:center;gap:.4rem;margin-top:.8rem;background:#6FA8E6;color:#0F2236;font-weight:800;font-size:.98rem;min-height:2.9rem;padding:.55rem 0;border:2px solid #FFFFFF;border-radius:.8rem;box-shadow:0 4px 0 #3F78C4,0 6px 10px rgba(10,25,55,.25);cursor:pointer;transition:transform .1s,box-shadow .1s}
+.onl .go::after{content:"←";font-size:1.1rem;line-height:1}
+.onl:active .go{transform:translateY(3px);box-shadow:0 1px 0 #3F78C4,0 2px 4px rgba(10,25,55,.25)}
 </style>
-<meta name="build" content="2026-10-28.6">
+<meta name="build" content="2026-10-28.7">
 </head>
 <body class="prefilter">
 <main class="w" id="main">
