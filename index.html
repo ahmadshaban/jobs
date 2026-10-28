@@ -526,7 +526,7 @@ header .sub.lead.free{color:#FFD35A;font-weight:800}
 .onl .t{display:block;font-size:.82rem;line-height:1.8;color:var(--tx);margin-bottom:.3rem}
 .onl .go{display:block;margin-top:.7rem;background:#6FA8E6;color:#0F2236;font-weight:800;font-size:.92rem;padding:.55rem 0;border-radius:.8rem}
 </style>
-<meta name="build" content="2026-10-28.4">
+<meta name="build" content="2026-10-28.5">
 </head>
 <body class="prefilter">
 <main class="w" id="main">
@@ -1177,6 +1177,8 @@ document.addEventListener("keydown",function(e){if(e.key==="Escape")c()});
 var xo=document.getElementById("xo"),xy=document.getElementById("xy"),xn=document.getElementById("xn"),gi=false;
 function gin(){if(gi)return;gi=true;if(!(history.state&&history.state.guard)){history.replaceState({base:1},"",location.href);history.pushState({guard:1},"",location.href)}}
 ["click","keydown"].forEach(function(n){window.addEventListener(n,gin,{capture:true,once:true,passive:true})});
+function rg(){var s=history.state;if(location.hash||(xo&&xo.classList.contains("on")))return;if(s&&(s.guard||s.ar||s.fo||s.mn))return;history.replaceState({base:1},"",location.href);history.pushState({guard:1},"",location.href)}
+["click","touchend","keydown"].forEach(function(n){window.addEventListener(n,rg,{capture:true,passive:true})});
 window.addEventListener("popstate",function(e){
 if(!(e.state&&e.state.base))return;
 var P=location.pathname+location.search,d=document.getElementById("detail"),onDetail=!!d&&getComputedStyle(d).display!=="none";
