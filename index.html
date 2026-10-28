@@ -656,9 +656,9 @@ header .sub.lead.free{color:#FFD35A;font-weight:800}
 .onl .t{display:block;font-size:.82rem;line-height:1.8;color:var(--tx);margin-bottom:.3rem}
 .onl .go{display:block;margin-top:.7rem;background:#6FA8E6;color:#0F2236;font-weight:800;font-size:.92rem;padding:.55rem 0;border-radius:.8rem}
 </style>
-<meta name="build" content="2026-10-25.3">
+<meta name="build" content="2026-10-28.1">
 </head>
-<body>
+<body class="prefilter">
 <main class="w" id="main">
   <div class="topb"><button type="button" class="hmb" id="hmb" aria-label="القايمة">☰</button><div id="mbk"></div><nav id="mnu" aria-hidden="true"><div class="mh"><span>القايمة</span><button type="button" id="mcl" aria-label="قفل">✕</button></div><a class="mi" id="mhome" href="./">🏠 الوظائف</a><a class="mi" href="marketing.html">📣 اشتغل أونلاين بعمولة</a><div class="ms">الإدارة</div><a class="mi" href="stats.html">📊 الإحصائيات<span class="lk">🔒</span></a><a class="mi" href="admin.html">⚙️ لوحة الإدارة<span class="lk">🔒</span></a><div class="mfx"><a class="sc wa" id="fab" target="_blank" rel="noopener" aria-label="واتساب"><svg class="ic" viewBox="0 0 24 24" role="img" aria-label="واتساب" focusable="false" fill="#fff" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></a><a class="sc fbk" href="https://www.facebook.com/share/1Kba7Asbx9/" target="_blank" rel="noopener" aria-label="فيسبوك"><svg class="ic" viewBox="0 0 24 24" role="img" aria-label="فيسبوك" focusable="false" fill="#1877F2" xmlns="http://www.w3.org/2000/svg"><path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg></a></div></nav></div>
   <header>
@@ -668,7 +668,7 @@ header .sub.lead.free{color:#FFD35A;font-weight:800}
   </header>
   <div class="fhint">👇 اختار شباب أو بنات، وبعدها المنطقة عشان تشوف الوظايف</div>
   <div class="bar">
-    <div class="frow"><div id="seg" class="seg"></div><div id="area" class="ddw"></div></div>
+    <div class="frow"><div id="seg" class="seg"><button class="" data-v="شباب">👨 شباب</button><button class="" data-v="بنات">👩 بنات</button></div><div id="area" class="ddw gl"><button type="button" id="areaBtn" class="ddb "><span>📍 اختار المنطقة<span class="cn"></span></span><span class="car">▾</span></button><div class="gtag"><span><b class="pharr" aria-hidden="true">⬆️</b> اختار المنطقة من هنا</span></div></div></div>
     <div id="hrs" class="hrs"></div>
   </div>
   
@@ -679,7 +679,7 @@ header .sub.lead.free{color:#FFD35A;font-weight:800}
   <div class="meta">
     <span id="cnt" role="status" aria-live="polite"></span>
   </div>
-  <div id="list"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
+  <div id="list"><div class="pickhint"><div class="pharr big" aria-hidden="true">⬆️</div><p>اختار فوق المكان المناسب ليك، واختار شباب أو بنات عشان تظهرلك المصانع</p></div><a class="onl" href="marketing.html"><span class="em" aria-hidden="true">🎧💻📞💰🏠</span><b>فرصة شغل أونلاين من البيت للبنات</b><span class="t">كول سنتر تسويق الوظائف المتاحة للمصانع</span><span class="t">الشغل بنظام العمولة، بدون تارجت، وبدون أي مصاريف أو رسوم تحت أي مسمى</span><span class="go">للتفاصيل دوس هنا</span></a></div>
   <div id="empty" class="empty" role="status">😕 <span id="emt"></span></div>
   <div class="ft"><a class="sc wa" id="fwa" target="_blank" rel="noopener" aria-label="واتساب"><svg class="ic" viewBox="0 0 24 24" role="img" aria-label="واتساب" focusable="false" fill="#fff" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></a><a class="sc fbk" href="https://www.facebook.com/share/1Kba7Asbx9/" target="_blank" rel="noopener" aria-label="فيسبوك"><svg class="ic" viewBox="0 0 24 24" role="img" aria-label="فيسبوك" focusable="false" fill="#1877F2" xmlns="http://www.w3.org/2000/svg"><path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg></a></div>
 </main>
@@ -863,7 +863,6 @@ async function load(){
   const ck=readCache();
   let shown=false;
   if(ck&&jobsOK(ck.j)){applyData(ck.j,ck.a);shown=true;afterApply()}
-  else $("list").innerHTML='<div class="sk"></div><div class="sk"></div><div class="sk"></div>';
   const [jr,ar]=await Promise.allSettled([getRetry(SHEET_CSV_URL,8000),getText(AREAS_CSV_URL,3000)]);
   const jt=jr.status==="fulfilled"?jr.value:null,at=ar.status==="fulfilled"?ar.value:"";
   if(jt===null||!jobsOK(jt)){
@@ -1307,7 +1306,7 @@ document.addEventListener("keydown",function(e){if(e.key==="Escape")c()});
 (function(){
 var xo=document.getElementById("xo"),xy=document.getElementById("xy"),xn=document.getElementById("xn"),gi=false;
 function gin(){if(gi)return;gi=true;if(!(history.state&&history.state.guard)){history.replaceState({base:1},"",location.href);history.pushState({guard:1},"",location.href)}}
-["pointerdown","touchstart","keydown"].forEach(function(n){window.addEventListener(n,gin,{capture:true,once:true,passive:true})});
+["click","keydown"].forEach(function(n){window.addEventListener(n,gin,{capture:true,once:true,passive:true})});
 window.addEventListener("popstate",function(e){
 if(!(e.state&&e.state.base))return;
 var P=location.pathname+location.search,d=document.getElementById("detail"),onDetail=!!d&&getComputedStyle(d).display!=="none";
