@@ -526,7 +526,7 @@ header .sub.lead.free{color:#FFD35A;font-weight:800}
 .onl .t{display:block;font-size:.82rem;line-height:1.8;color:var(--tx);margin-bottom:.3rem}
 .onl .go{display:block;margin-top:.7rem;background:#6FA8E6;color:#0F2236;font-weight:800;font-size:.92rem;padding:.55rem 0;border-radius:.8rem}
 </style>
-<meta name="build" content="2026-10-28.3">
+<meta name="build" content="2026-10-28.4">
 </head>
 <body class="prefilter">
 <main class="w" id="main">
@@ -1182,6 +1182,7 @@ if(!(e.state&&e.state.base))return;
 var P=location.pathname+location.search,d=document.getElementById("detail"),onDetail=!!d&&getComputedStyle(d).display!=="none";
 if(location.hash)history.replaceState({base:1},"",P);
 if(onDetail||Date.now()-(window.__dt||0)<1500){try{route()}catch(_){}history.pushState({guard:1},"",P);return}
+if(typeof picked!=="undefined"&&picked&&cat){cat="";area="الكل";picked=false;hf=null;try{sessionStorage.removeItem("jsel")}catch(_){}try{draw()}catch(_){}try{window.scrollTo(0,0)}catch(_){}history.pushState({guard:1},"",P);return}
 if(xo)xo.classList.add("on")});
 if(xn)xn.onclick=function(){xo.classList.remove("on");history.pushState({guard:1},"",location.href)};
 if(xy)xy.onclick=function(){xo.classList.remove("on");history.back();setTimeout(function(){try{window.close()}catch(_){}},300)};
