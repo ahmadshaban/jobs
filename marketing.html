@@ -63,9 +63,10 @@
 <div class="sh"><h2>📲 قدّم على واتساب</h2><button type="button" class="x" id="cx" aria-label="رجوع">✕</button></div>
 <label for="nm">الاسم</label><input id="nm" type="text" autocomplete="name">
 <label for="ag">السن</label><input id="ag" type="text" inputmode="numeric" maxlength="2">
-<label for="ph">رقم التليفون</label><input id="ph" type="tel" inputmode="tel" autocomplete="tel">
-<label for="ex">اشتغلت في المجال ده قبل كده؟ (اختياري)</label>
+<label for="ph">رقم الواتساب اللي هتشتغلي بيه</label><input id="ph" type="tel" inputmode="tel" autocomplete="tel">
+<label for="ex">اشتغلتي الشغل ده قبل كده؟</label>
 <select id="ex"><option value="">— اختار —</option><option value="آه">آه</option><option value="لا">لا</option></select>
+<div id="cw" hidden><label for="cn">اسم الشركة اللي كنتي شغالة فيها</label><input id="cn" type="text"></div>
 <div class="er" id="er" role="alert"></div>
 <button type="button" class="btn" id="sd">إرسال على واتساب</button>
 <button type="button" class="btn bk" id="cb">⬅ رجوع</button>
@@ -81,14 +82,17 @@ function close(){hide();if(fo){fo=false;ign=true;history.back()}}
 $("op").onclick=open;$("cx").onclick=close;$("cb").onclick=close;
 $("bk").onclick=function(){if(document.referrer){history.back()}else{location.href="./"}};
 window.addEventListener("popstate",function(){if(ign){ign=false;return}if(fo){fo=false;hide()}});
+$("ex").onchange=function(){$("cw").hidden=this.value!=="آه"};
 $("sd").onclick=function(){
-  var n=$("nm").value.trim(),a=$("ag").value.trim(),p=$("ph").value.trim(),x=$("ex").value;
+  var n=$("nm").value.trim(),a=$("ag").value.trim(),p=$("ph").value.trim(),x=$("ex").value,c=$("cn").value.trim();
   if(!n){$("er").textContent="اكتب الاسم";return}
   if(!/^\d{1,2}$/.test(a)){$("er").textContent="اكتب السن بالأرقام";return}
   if(!/^\+?\d{10,14}$/.test(p)){$("er").textContent="رقم التليفون غلط، اكتبه بالأرقام (مثال 01012345678)";return}
+  if(!x){$("er").textContent="اختار آه أو لا";return}
+  if(x==="آه"&&!c){$("er").textContent="اكتب اسم الشركة";return}
   $("er").textContent="";
-  var L=["السلام عليكم، محتاج التفاصيل عن وظيفة مسوق بالعمولة (فريق التوظيف أونلاين)","","👤 *الاسم:* "+n,"🔢 *السن:* "+a,"📞 *رقم التليفون:* "+p];
-  if(x)L.push("💼 *اشتغلت في المجال ده قبل كده:* "+x);
+  var L=["السلام عليكم، محتاج التفاصيل عن وظيفة مسوق بالعمولة (فريق التوظيف أونلاين)","","👤 *الاسم:* "+n,"🔢 *السن:* "+a,"📞 *رقم الواتساب:* "+p];
+  L.push("💼 *اشتغلت الشغل ده قبل كده:* "+x);if(x==="آه")L.push("🏢 *اسم الشركة:* "+c);
   location.href="https://wa.me/201095237207?text="+encodeURIComponent(L.join("\n"));
 };
 if(!document.referrer){
