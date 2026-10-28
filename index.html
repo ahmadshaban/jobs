@@ -645,13 +645,16 @@ header .sub.lead.free{color:#FFD35A;font-weight:800}
 .frow{gap:.85rem}
 .frow .seg{gap:.85rem}
 .bar{padding-bottom:.4rem}
-.pickhint{padding:1.8rem 1rem 1.2rem}
-.pickhint p{font-size:.88rem;line-height:2;margin:.6rem 0 0}
-.onl{display:block;position:relative;margin:2.4rem .2rem 1.6rem;padding:1.7rem 1rem 1.1rem;border:3px dashed #8DBBEA;border-radius:1.1rem;background:var(--card);color:var(--tx);text-align:center;text-decoration:none}
-.onl .em{position:absolute;top:-1.15rem;left:50%;transform:translateX(-50%);background:var(--bg);padding:0 .6rem;font-size:1.3rem;letter-spacing:.25rem;white-space:nowrap}
-.onl b{display:block;color:#8DBBEA;font-size:1.05rem;font-weight:800;margin-bottom:.5rem}
-.onl .t{display:block;font-size:.88rem;line-height:1.9;color:var(--tx);margin-bottom:.5rem}
-.onl .go{display:block;margin-top:1rem;background:#6FA8E6;color:#0F2236;font-weight:800;font-size:1rem;padding:.75rem 0;border-radius:.85rem}
+.pickhint{padding:.8rem 1rem .4rem}
+.pickhint .pharr.big{font-size:1.5rem}
+.pickhint p{font-size:.84rem;line-height:1.9;margin:.35rem 0 0}
+.prefilter .frow .seg button{font-size:.95rem;padding:.5rem 0;min-height:2.6rem;border-radius:.85rem}
+.prefilter .frow .ddb{font-size:.95rem;padding:.5rem 1rem;min-height:2.7rem;border-radius:.85rem}
+.onl{display:block;position:relative;margin:1.7rem .2rem 1rem;padding:1.3rem .9rem .85rem;border:3px dashed #8DBBEA;border-radius:1rem;background:var(--card);color:var(--tx);text-align:center;text-decoration:none}
+.onl .em{position:absolute;top:-.9rem;left:50%;transform:translateX(-50%);background:var(--bg);padding:0 .5rem;font-size:1.1rem;letter-spacing:.2rem;white-space:nowrap}
+.onl b{display:block;color:#8DBBEA;font-size:.98rem;font-weight:800;margin-bottom:.35rem}
+.onl .t{display:block;font-size:.82rem;line-height:1.8;color:var(--tx);margin-bottom:.3rem}
+.onl .go{display:block;margin-top:.7rem;background:#6FA8E6;color:#0F2236;font-weight:800;font-size:.92rem;padding:.55rem 0;border-radius:.8rem}
 </style>
 <meta name="build" content="2026-10-25.3">
 </head>
@@ -804,6 +807,7 @@ const ICONS={"العنوان":"📍","السن":"🎂","طبيعة العمل":"
  const wl="https://wa.me/"+ph+"?text="+encodeURIComponent("السلام عليكم، عندي استفسار بخصوص الوظايف");if(fb)fb.href=wl;const fw=document.getElementById("fwa");if(fw)fw.href=wl;}
 
 let JOBS=[],cat="",area="الكل",picked=false,hf=null;
+try{const sv=JSON.parse(sessionStorage.getItem("jsel")||"null");if(sv&&(sv.cat==="شباب"||sv.cat==="بنات")&&typeof sv.area==="string"&&sv.picked){cat=sv.cat;area=sv.area;picked=true}}catch(e){}
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
@@ -890,7 +894,7 @@ function draw(){
   $("areaList").innerHTML=`<p class="at">اختار المنطقة</p>`+areas.map(a=>`<button type="button" class="ai ${a===area?"on":""}" data-v="${esc(a)}"><span>${a==="الكل"?"كل المناطق":esc(a)}</span><span class="n">${cntOf(a)}</span></button>`).join("");
   $("areaList").querySelectorAll(".ai").forEach(b=>b.onclick=()=>{area=b.dataset.v;picked=true;closeArea();draw()});
   
-  const ready=!!cat&&picked;document.body.classList.toggle("prefilter",!ready);
+  const ready=!!cat&&picked;document.body.classList.toggle("prefilter",!ready);try{if(ready)sessionStorage.setItem("jsel",JSON.stringify({cat,area,picked}))}catch(e){}
   const rAll=ready?JOBS.filter(j=>matchCat(j)&&(area==="الكل"||j["المنطقة"]===area)).sort(byOrder):[];
   const hb=n=>n===8?8:n===12?12:n>=15?16:0;
   const hrsOf=j=>{const a=(j.__sh&&j.__sh.length?j.__sh.map(x=>x.h):[j["الشفت"]]);return a.map(t=>{const m=String(t||"").match(/(\d{1,2})/);return m?hb(+m[1]):0})};
@@ -1317,7 +1321,7 @@ if(xy)xy.onclick=function(){xo.classList.remove("on");history.back();setTimeout(
 <script>
 (function(){var h=document.getElementById('scrollHint'),l=document.getElementById('list'),d=document.getElementById('detail');if(!h||!l)return;
 function sy(){return window.pageYOffset||document.documentElement.scrollTop||0}
-function upd(){try{var has=l.querySelector('.sk')?false:l.children.length>0;var more=document.documentElement.scrollHeight>window.innerHeight+60;var det=d&&d.style.display!=='none'&&d.innerHTML!=='';
+function upd(){try{var has=!!l.querySelector('.card');var more=document.documentElement.scrollHeight>window.innerHeight+60;var det=d&&d.style.display!=='none'&&d.innerHTML!=='';
 h.classList.toggle('on',has&&more&&!det&&sy()<30)}catch(e){}}
 window.addEventListener('scroll',function(){if(sy()>=30)h.classList.remove('on');else upd()},{passive:true});
 window.addEventListener('resize',upd);
