@@ -529,6 +529,20 @@ header .sub.lead.free{color:#FFD35A;font-weight:800}
 .onl:active .go{transform:translateY(3px);box-shadow:0 1px 0 #148A55,0 2px 4px rgba(10,25,55,.25)}
 .frow .seg button{min-height:2.8rem;font-size:.98rem;padding:.4rem 0;line-height:1.4}
 .frow .ddb{min-height:2.8rem;font-size:.98rem;padding:.4rem .9rem;line-height:1.4}
+
+/* كروت أصغر */
+.card{padding:.5rem .6rem;margin-bottom:.55rem;border-radius:.8rem}
+.card .ttl{font-size:clamp(.92rem,3.7vw,1.02rem);margin:.1rem 0 .3rem}
+.card .top,.card .tg span,.card .badge{font-size:.72rem}
+.card .pbox,.card .pay{margin:.3rem 0;padding:.25rem .45rem}
+.card .pc b{font-size:clamp(.95rem,3.9vw,1.05rem)}
+.card .pay{font-size:clamp(.98rem,4vw,1.1rem)}
+.card .pnote{margin:.25rem 0 .3rem;padding:.25rem .45rem}
+.card .pnote .nt{font-size:.78rem}
+.card .more2{margin:.3rem 0;font-size:.78rem;padding:.25rem .5rem}
+.card .tg{margin-top:.3rem}
+.card .cbar{margin-top:.4rem;padding:.35rem .5rem;font-size:.8rem}
+#list{gap:.7rem}
 </style>
 <meta name="build" content="2026-10-28.10">
 </head>
@@ -797,6 +811,7 @@ function draw(){
   if(!ready){
     const m=!cat&&!picked?"اختار فوق المكان المناسب ليك، واختار شباب أو بنات عشان تظهرلك المصانع":(!cat?"اختار شباب أو بنات من فوق عشان تظهرلك المصانع":"اختار المكان المناسب ليك من فوق عشان تظهرلك المصانع");
     $("list").innerHTML=`<div class="pickhint"><div class="pharr big" aria-hidden="true">⬆️</div><p>${m}</p></div><a class="onl" href="marketing.html"><span class="em" aria-hidden="true">🎧💻📞💰🏠</span><b>فرصة شغل أونلاين من البيت للبنات</b><span class="t">كول سنتر تسويق الوظائف المتاحة للمصانع</span><span class="t">الشغل بنظام العمولة، بدون تارجت، وبدون أي مصاريف أو رسوم تحت أي مسمى</span><span class="go">للتفاصيل دوس هنا</span></a>`;
+    try{if(window.__scK===undefined)window.__scK="";}catch(e){}
     return;
   }
   $("list").innerHTML=r.map(j=>{
@@ -808,6 +823,7 @@ function draw(){
    ${j["تفاصيل المرتب"]&&!done(j)?`<div class="pnote"><span class="nl">تفاصيل المرتب</span><span class="nt">${esc(j["تفاصيل المرتب"])}</span></div>`:""}
    ${done(j)?'<span class="more">اكتمل العدد</span>':`<div class="cbar">اضغط لعرض التفاصيل الكاملة ◂</div>`}</button>`}).join("");
   $("list").querySelectorAll(".card").forEach(b=>b.onclick=()=>go(+b.dataset.i));
+  try{const k=cat+"|"+area;if(window.__scK!==undefined&&window.__scK!==k&&!(typeof FIRST!=="undefined"&&FIRST)&&r.length&&(window.scrollY||0)<5){setTimeout(()=>{try{if(document.documentElement.scrollHeight>window.innerHeight+120&&(window.scrollY||0)<5)window.scrollBy({top:90,behavior:"smooth"})}catch(e){}},350)}window.__scK=k}catch(e){}
 }
 
 function buildJobText(j) {
