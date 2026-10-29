@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#14091F">
+<meta name="theme-color" content="#0F1B2D">
 <link rel="manifest" href="manifest.json" id="mf">
 <link rel="apple-touch-icon" href="apple-touch-icon.png" id="ati">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -26,7 +26,7 @@
 <meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Cairo:wght@400;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
 --bg:#2859A8;--card:#F0F3F7;--tx:#202938;--mu:#566579;--bd:#D6DFEB;--ac:#2859A8;--acs:#D5E3FA;--sh:0 3px 10px rgba(10,25,55,.12)}
@@ -635,7 +635,55 @@ header .feat b{font-size:.74rem;font-weight:600;color:#C9D5E6}
 #xo .xb{background:var(--card);color:var(--tx);border-color:var(--bd)}#xo #xn{background:var(--cy);color:#05080F}#xo #xy{color:var(--tx)}
 
 </style>
-<meta name="build" content="v4-neon">
+<style id="v3">
+:root{--bg:#0F1B2D;--card:#17263D;--tx:#F3F6FB;--mu:#8FA0BC;--bd:#25385A;--ac:#E8B65B;--acs:rgba(232,182,91,.1);--gold:#E8B65B;--goldD:#0F1B2D;--cy:#E8B65B;--vi:#4C7DBF;--lime:#E8B65B;--ln:#25385A}
+body{font-family:"Tajawal","IBM Plex Sans Arabic",Cairo,Tahoma,sans-serif}
+body header{background:none;padding:1.2rem var(--px) 1rem}
+header .brand svg{background:#E8B65B;box-shadow:none;stroke:#0F1B2D}
+header .brand small{color:#E8B65B}
+header h1{font-size:1.75rem;font-weight:800}
+header .sub.lead{color:#8FA0BC}
+header .sub.lead.free{color:#E8B65B}
+header .feat{margin-top:1rem}
+header .feat span{background:#17263D;border:1px solid #25385A;border-radius:.8rem;backdrop-filter:none}
+header .feat b{color:#B8C4D9}
+.hmb{background:#17263D;border-color:#25385A}
+.bar{background:#0F1B2D;box-shadow:none;border-bottom:1px solid #25385A}
+.ddb,.frow .ddb{background:#17263D;border:1px solid #25385A;border-radius:.8rem}
+.ddb.on,.frow .ddb.on{border-color:#E8B65B;color:#E8B65B;box-shadow:none}
+.gl .ddb,.ddb.gl{border-color:#E8B65B;box-shadow:0 0 0 1px rgba(232,182,91,.45)}
+.hrs .hbn.on{background:#E8B65B;border-color:#E8B65B;color:#0F1B2D;font-weight:800}
+#list .card,.card{background:#17263D;border:1px solid #25385A;border-radius:1rem;box-shadow:none}
+.card:active{border-color:#E8B65B}
+.card .cimg{height:7.5rem}
+.card .cimg::after{background:linear-gradient(180deg,rgba(15,27,45,0) 45%,#17263D)}
+.card .cb{padding:0 1rem 1rem;margin-top:-1.2rem}
+.card .ttl{font-size:1.15rem;font-weight:800}
+.card .top{margin:-.3rem 0 0}
+.badge{background:#E8B65B;color:#0F1B2D;font-weight:800}
+.badge.m{background:#1F3A63;color:#E8B65B}
+.card .pbox,.card .pay{background:none;border:0;border-top:1px solid #25385A;border-radius:0;padding:.7rem 0 0;color:#E8B65B}
+.card .pbox .tag.hrs{background:#1F3A63;color:#C9D8F0;border:0}
+.card .pc+.pc{border-inline-start:1px solid #25385A}
+.card .pc b,.card .pay{color:#E8B65B;font-size:1.3rem;font-weight:800;text-shadow:none}
+.card .tg span{background:#1F3A63;border:0;color:#C9D8F0}
+.card .pnote{background:#1F3A63;border:0}
+.card .pnote .nt{color:#E3EAF6}
+.card .pnote .nl{background:#E8B65B;color:#0F1B2D}
+.card .more2{background:#1F3A63;color:#C9D8F0;border:0}
+.card .cbar{background:#E8B65B;box-shadow:none;color:#0F1B2D;font-weight:800;border-radius:.7rem}
+.onl{border-color:#E8B65B}
+.onl .go{background:#E8B65B;box-shadow:none}
+.pgh{background:#17263D;color:#fff}
+.ai.on{background:rgba(232,182,91,.08);border-color:#E8B65B;box-shadow:none}
+.pgf button{background:#E8B65B;box-shadow:none}
+.dc .dg{background:none;border:1px solid #25385A;color:#E8B65B}
+.dc .dg b{text-shadow:none}
+.dc .dnote{background:#1F3A63;color:#E3EAF6}
+.dc .dtabs button.on{background:#E8B65B;border-color:#E8B65B;color:#0F1B2D}
+.dcw .dbtn.wa{box-shadow:none}
+</style>
+<meta name="build" content="v5-navy">
 </head>
 <body class="prefilter">
 <main class="w" id="main">
@@ -1263,7 +1311,10 @@ function showDetail(j){
   if(IS_CC)setupApply(j,ph);
 }
 
-function fimg(j){let h=0;for(const ch of String(j["المصنع"]||""))h=(h*31+ch.charCodeAt(0))>>>0;return "new-img/f"+(h%6+1)+".jpg"}
+function fimg(j){const n=String(j["المصنع"]||""),a=String(j["المنطقة"]||""),q=/قبض/.test(a),sd=/السادات/.test(a);
+const R=[[/ألوميتال/,"cookware2"],[/زيت(?!ون)|سمن/,"filling"],[/كرتون/,q?"cardboard2":sd?"cartons":"cardboard"],[/مكرونة.*تعبئة/,"grains"],[/مكرونة/,q?"pasta2":"pasta"],[/بقوليات/,"grains"],[/شيبسي/,sd?"chips":"chips2"],[/مقرمشات/,"chips"],[/صلصة/,q?"sauce2":"sauce"],[/هارفست|معلبات/,"cans"],[/عصير/,"drinks"],[/زيتون/,"olives"],[/مطبعة/,"printing"],[/هاير|تكييف/,"ac"],[/لحوم/,"frozen"],[/حفلات/,"events"],[/بلاستيك/,"plastic"],[/أكواب|الأكواب/,"cups"],[/أواني/,"cookware"],[/كريمات/,"creams"],[/تجميل/,"cosmetics"],[/مخزن\s*ادوية/,"pharmacy"],[/مخزن\s*الأدوية/,"pharmacy2"],[/مستلزمات|الأدوات الطبية/,"medical"],[/أدوية/,"pharma"],[/الحي/,"cookies"],[/بسكوت/,/بنات/.test(n)?"cookies":"biscuits"],[/مخبوزات|المخبوزات/,"biscuits"],[/فراولة|سكر|ايجيك/,"packaged"],[/جبنة|دومتي/,"foods"]];
+for(const [r,f] of R)if(r.test(n))return "new-img/"+f+".jpg";
+let h=0;for(const ch of n)h=(h*31+ch.charCodeAt(0))>>>0;return "new-img/"+["foods","packaged"][h%2]+".jpg"}
 function openType(){$("tov").classList.add("show")}
 let pt=null,pa=null;
 document.querySelector("#tov .pgb").onclick=()=>$("tov").classList.remove("show");
