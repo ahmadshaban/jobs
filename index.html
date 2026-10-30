@@ -570,6 +570,19 @@ header .sub.lead.free{color:#FFD35A;font-weight:800}
 @keyframes glo{0%,100%{box-shadow:0 0 0 1.5px rgba(212,178,92,.55),0 0 6px rgba(212,178,92,.2)}50%{box-shadow:0 0 0 2px #D4B25C,0 0 14px rgba(212,178,92,.55)}}
 #seg.gl,#area.gl .ddb{animation:glo 1.6s ease-in-out infinite}
 .bar .frow .ddb{min-height:2.6rem;font-size:.95rem;padding:.3rem .95rem}
+/* الفلتر المتثبت يصغر مع السكرول + شيل نص الشرح اللي في النص */
+.bar,.bar .frow,.bar .frow .seg button,.bar .frow .ddb{transition:padding .18s,font-size .18s,gap .18s}
+.bar.sm{padding-top:.1rem;padding-bottom:.15rem}
+.bar.sm .frow{gap:.25rem}
+.bar.sm .frow .seg{gap:.35rem}
+.bar.sm .frow .seg button{min-height:0;padding:.22rem 0;font-size:.8rem;border-width:1px}
+.bar.sm .frow .ddb{min-height:0;padding:.22rem .8rem;font-size:.8rem;border-width:1px}
+.pickhint{display:none!important}
+.onl{padding:.85rem .6rem .5rem;border-width:2px}
+.onl .em{font-size:.78rem}
+.onl b{font-size:.78rem;margin-bottom:.15rem}
+.onl .t{font-size:.66rem;line-height:1.55;margin-bottom:.2rem}
+.onl .go{font-size:.78rem;min-height:2rem;margin-top:.4rem;padding:.25rem 0}
 </style>
 <meta name="build" content="2026-10-30.7">
 </head>
@@ -1263,5 +1276,8 @@ function step(ts){if(stop)return;if(t0===null)t0=ts;var p=Math.min(1,(ts-t0)/D);
 requestAnimationFrame(step)}catch(e){}};
 })();
 </script>
+<script>(function(){var b=document.querySelector('.bar');if(!b)return;var on=false,t=false;function y(){return window.pageYOffset||document.documentElement.scrollTop||0}
+function u(){t=false;var v=y();if(!on&&v>70){on=true;b.classList.add('sm')}else if(on&&v<15){on=false;b.classList.remove('sm')}}
+window.addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u)}},{passive:true})})();</script>
 </body>
 </html>
