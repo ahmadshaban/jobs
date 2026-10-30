@@ -568,10 +568,9 @@ header .sub.lead.free{color:#FFD35A;font-weight:800}
 .bar .frow{gap:.7rem}
 .gl .ddb,.gl button:not(.on){animation:none}
 @keyframes glo{0%,100%{box-shadow:0 0 0 1.5px rgba(212,178,92,.55),0 0 6px rgba(212,178,92,.2)}50%{box-shadow:0 0 0 2px #D4B25C,0 0 14px rgba(212,178,92,.55)}}
-#seg.gl,#area.gl .ddb{animation:glo 1.6s ease-in-out infinite}
+#seg.gl,#area.gl .ddb{animation:none;box-shadow:0 0 0 1.5px rgba(212,178,92,.6),0 0 8px rgba(212,178,92,.3)}
 .bar .frow .ddb{min-height:2.6rem;font-size:.95rem;padding:.3rem .95rem}
 /* الفلتر المتثبت يصغر مع السكرول + شيل نص الشرح اللي في النص */
-.bar,.bar .frow,.bar .frow .seg button,.bar .frow .ddb{transition:padding .18s,font-size .18s,gap .18s}
 .bar.sm{padding-top:.1rem;padding-bottom:.15rem}
 .bar.sm .frow{gap:.25rem}
 .bar.sm .frow .seg{gap:.35rem}
@@ -583,6 +582,11 @@ header .sub.lead.free{color:#FFD35A;font-weight:800}
 .onl b{font-size:.78rem;margin-bottom:.15rem}
 .onl .t{font-size:.66rem;line-height:1.55;margin-bottom:.2rem}
 .onl .go{font-size:.78rem;min-height:2rem;margin-top:.4rem;padding:.25rem 0}
+/* الهيدر: صورة أكبر والمنيو والبراند جواها فوق الصورة */
+#main{position:relative}
+.topb{position:absolute;top:0;left:0;right:0;z-index:3;margin:0;padding:.55rem var(--px);background:transparent;pointer-events:none}
+.topb>*{pointer-events:auto}
+header{min-height:clamp(13rem,58vw,18rem);padding-top:3.4rem}
 </style>
 <meta name="build" content="2026-10-30.7">
 </head>
@@ -1265,7 +1269,7 @@ setTimeout(upd,600);
 <script>
 /* v5: سكرول تلميحي أطول وناعم */
 (function(){
-window.__nudge=function(){try{
+window.__nudge=function(){return;try{
 if(window.matchMedia&&matchMedia("(prefers-reduced-motion:reduce)").matches)return;
 var de=document.documentElement,max=de.scrollHeight-window.innerHeight,d=Math.min(170,max-20);if(d<60)return;
 var y0=window.pageYOffset||de.scrollTop||0,t0=null,D=950,stop=false;
