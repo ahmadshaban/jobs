@@ -546,21 +546,20 @@ header .sub.lead.free{color:#FFD35A;font-weight:800}
 #list:has(.pickhint){display:flex;flex-direction:column;flex:1 0 auto;padding-bottom:.3rem}
 #list:has(.pickhint) .onl{margin-top:auto;margin-bottom:.5rem}
 /* v5: هيدر بالبراند + فلتر بيصغر مع السكرول */
-.brand{position:absolute;top:.55rem;inset-inline-start:2.9rem;min-height:2.25rem;z-index:3;display:flex;align-items:center;gap:.45rem;pointer-events:none}
+.topb{height:auto;display:flex;align-items:center;gap:.6rem;padding:.4rem var(--px);margin-inline:calc(var(--px)*-1);background:#0B1626}
+.topb .hmb{position:static;flex:none}
+.brand{display:flex;align-items:center;gap:.45rem}
 .brand .bi{width:1.55rem;height:1.55rem;flex:none;filter:drop-shadow(0 1px 4px rgba(0,0,0,.7))}
 .brand .bt{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15}
 .brand .bn{font-weight:800;font-size:1.02rem;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.8)}
 .brand .be{font-style:normal;font-weight:800;font-size:.6rem;letter-spacing:.08em;color:var(--gold);direction:ltr;text-shadow:0 1px 4px rgba(0,0,0,.8)}
-.bar{transition:padding .25s ease,box-shadow .25s ease}
-.bar .frow,.bar .frow .seg{transition:gap .25s ease}
-.bar .frow .seg,.bar .frow .seg button,.bar .frow .ddb{transition:min-height .25s ease,font-size .25s ease,padding .25s ease}
-.bar.sm{padding-top:.15rem;padding-bottom:.25rem}
-.bar.sm .frow,.bar.sm .frow .seg{gap:.4rem}
-.bar.sm .frow .seg{padding:.15rem}
-.bar.sm .frow .seg button{min-height:2.05rem;font-size:.86rem;padding:.15rem 0}
-.bar.sm .frow .ddb{min-height:2.05rem;font-size:.86rem;padding:.15rem .8rem}
+.bar{padding-top:.15rem;padding-bottom:.25rem}
+.bar .frow,.bar .frow .seg{gap:.4rem}
+.bar .frow .seg{padding:.15rem}
+.bar .frow .seg button{min-height:2.05rem;font-size:.86rem;padding:.15rem 0}
+.bar .frow .ddb{min-height:2.05rem;font-size:.86rem;padding:.15rem .8rem}
 </style>
-<meta name="build" content="2026-10-30.1">
+<meta name="build" content="2026-10-30.2">
 </head>
 <body class="prefilter">
 <main class="w" id="main">
@@ -1239,7 +1238,7 @@ setTimeout(upd,600);
 })();
 </script>
 <script>
-/* v5: سكرول تلميحي أطول وناعم + تصغير الفلتر */
+/* v5: سكرول تلميحي أطول وناعم */
 (function(){
 window.__nudge=function(){try{
 if(window.matchMedia&&matchMedia("(prefers-reduced-motion:reduce)").matches)return;
@@ -1250,12 +1249,6 @@ function cancel(){stop=true}
 function ease(p){return p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2}
 function step(ts){if(stop)return;if(t0===null)t0=ts;var p=Math.min(1,(ts-t0)/D);window.scrollTo({top:y0+d*ease(p),behavior:"instant"});if(p<1)requestAnimationFrame(step)}
 requestAnimationFrame(step)}catch(e){}};
-var b=document.querySelector(".bar");if(!b)return;var on=false,q=false;
-function u(){q=false;var de=document.documentElement,y=window.pageYOffset||de.scrollTop||0;
-if(!on&&y>48&&de.scrollHeight-window.innerHeight>150){on=true;b.classList.add("sm")}
-else if(on&&y<12){on=false;b.classList.remove("sm")}}
-window.addEventListener("scroll",function(){if(!q){q=true;requestAnimationFrame(u)}},{passive:true});
-u();
 })();
 </script>
 </body>
