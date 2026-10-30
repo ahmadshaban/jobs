@@ -565,16 +565,12 @@ header .sub.lead.free{color:#FFD35A;font-weight:800}
 .pharr.sm{font-size:1rem;line-height:1;color:var(--gold);font-weight:800;animation:phs 1s ease-in-out infinite}
 .pickhint{margin:.7rem .15rem 0;padding:.7rem .8rem;border:1px dashed var(--bd);border-radius:.8rem}
 .pickhint p{font-size:.84rem;font-weight:700;color:var(--mu);margin:.25rem 0 0;line-height:1.8}
-.subs{display:flex;gap:.4rem;margin-top:.45rem;padding:.3rem;border:1px solid var(--bd);border-radius:.8rem}
-.subs button{flex:1;font:inherit;font-weight:700;font-size:.8rem;min-height:1.9rem;padding:.1rem .3rem;border-radius:.6rem;border:0;background:transparent;color:var(--mu);cursor:pointer;line-height:1.3}
-.subs button.on{background:var(--gold);color:var(--goldD)}
 .bar .frow{gap:.7rem}
 .gl .ddb,.gl button:not(.on){animation:none}
 @keyframes glo{0%,100%{box-shadow:0 0 0 1.5px rgba(212,178,92,.55),0 0 6px rgba(212,178,92,.2)}50%{box-shadow:0 0 0 2px #D4B25C,0 0 14px rgba(212,178,92,.55)}}
 #seg.gl,#area.gl .ddb{animation:glo 1.6s ease-in-out infinite}
-.subs{margin-top:.55rem}
 </style>
-<meta name="build" content="2026-10-30.5">
+<meta name="build" content="2026-10-30.6">
 </head>
 <body class="prefilter">
 <main class="w" id="main">
@@ -804,21 +800,12 @@ function draw(){
   if(!areas.includes(area))area="الكل";
   const cntOf=a=>JOBS.filter(j=>matchCat(j)&&!done(j)&&(a==="الكل"||j["المنطقة"]===a)).length;
   
-  const gb=a=>a.replace(/\s*\([^)]*\)\s*$/,""),grp=[],gm={};
-  areas.forEach(a=>{if(a==="الكل"){grp.push({base:"الكل",items:["الكل"]});return}const b=gb(a);if(!gm[b]){gm[b]={base:b,items:[]};grp.push(gm[b])}gm[b].items.push(a)});
-  grp.forEach(g=>g.items.sort((x,y)=>(/\(/.test(x)?1:0)-(/\(/.test(y)?1:0)));
-  const gLab=g=>g.base==="الكل"?"كل المناطق":(g.items.length===1?g.items[0]:g.base);
-  const curG=grp.find(g=>g.items.includes(area));
-  const subLab=a=>/\(/.test(a)?a.replace(/^[^(]*\(\s*|\s*\)\s*$/g,""):"قبض شهري بسكن";
-  const subs=picked&&curG&&curG.items.length>1?`<div class="subs" id="subs">${curG.items.map(a=>`<button type="button" class="${a===area?"on":""}" data-s="${esc(a)}">${esc(subLab(a))}</button>`).join("")}</div>`:"";
-  const aLab=area==="الكل"?"اختار المنطقة":esc(curG&&curG.items.length>1?curG.base:area);
-  $("area").innerHTML=`<button type="button" id="areaBtn" class="ddb ${area!=="الكل"?"on":""}"><span>📍 ${aLab}<span class="cn">${cntOf(area)} وظيفة</span></span><span class="car">▾</span></button>${subs}`;
+  $("area").innerHTML=`<button type="button" id="areaBtn" class="ddb ${area!=="الكل"?"on":""}"><span>📍 ${area==="الكل"?"اختار المنطقة":esc(area)}<span class="cn">${cntOf(area)} وظيفة</span></span><span class="car">▾</span></button>`;
   $("areaBtn").onclick=openArea;
-  $("area").querySelectorAll("button[data-s]").forEach(b=>b.onclick=()=>{area=b.dataset.s;picked=true;draw()});
   document.querySelectorAll(".frow>.gtag").forEach(x=>x.remove());$("seg").classList.remove("gl");$("area").classList.remove("gl");
   if(!(cat&&picked)){const gt=!cat?"seg":"area";const ge=$(gt);ge.classList.add("gl");ge.insertAdjacentHTML("afterend",`<div class="gtag"><span><b class="pharr" aria-hidden="true">↑</b> ${gt==="area"?"اختار المنطقة من هنا":"اختار شباب أو بنات من هنا"}</span></div>`)}
-  $("areaList").innerHTML=`<p class="at">اختار المنطقة</p>`+grp.map((g,i)=>`<button type="button" class="ai ${g.items.includes(area)?"on":""}" data-g="${i}"><span>${esc(gLab(g))}</span><span class="n">${g.items.reduce((t,x)=>t+cntOf(x),0)}</span></button>`).join("");
-  $("areaList").querySelectorAll(".ai").forEach(b=>b.onclick=()=>{const g=grp[+b.dataset.g];area=picked&&g.items.includes(area)?area:g.items[0];picked=true;closeArea();draw()});
+  $("areaList").innerHTML=`<p class="at">اختار المنطقة</p>`+areas.map(a=>`<button type="button" class="ai ${a===area?"on":""}" data-v="${esc(a)}"><span>${a==="الكل"?"كل المناطق":esc(a)}</span><span class="n">${cntOf(a)}</span></button>`).join("");
+  $("areaList").querySelectorAll(".ai").forEach(b=>b.onclick=()=>{area=b.dataset.v;picked=true;closeArea();draw()});
   
   const ready=!!cat&&picked;document.body.classList.toggle("prefilter",!ready);try{if(ready)sessionStorage.setItem("jsel",JSON.stringify({cat,area,picked}))}catch(e){}
   const rAll=ready?JOBS.filter(j=>matchCat(j)&&(area==="الكل"||j["المنطقة"]===area)).sort(byOrder):[];
