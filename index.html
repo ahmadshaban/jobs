@@ -871,7 +871,7 @@ function draw(){
   try{const k=cat+"|"+area;if(window.__scK!==undefined&&window.__scK!==k&&!(typeof FIRST!=="undefined"&&FIRST)&&r.length&&(window.scrollY||0)<5){setTimeout(()=>{try{if(document.documentElement.scrollHeight>window.innerHeight+120&&(window.scrollY||0)<5)window.__nudge()}catch(e){}},350)}window.__scK=k}catch(e){}
 }
 
-function buildJobText(j) {
+function buildJobText(j, multi) {
   // نص المشاركة يبدأ دائمًا باسم المصنع والمنطقة، ثم المرتب والوردية.
   let msg = `📍 المصنع: ${j["المصنع"] || "غير محدد"}\n📌 المنطقة: ${j["المنطقة"] || "غير محددة"}\n`;
   if(!isMulti(j) && j["الشفت"]) msg += `⏰ الشفت: ${hoursOnly(j["الشفت"])}\n`;
@@ -894,8 +894,8 @@ function buildJobText(j) {
     msg += `${ICONS[k] || "•"} ${k}: ${j[k]}\n`;
   });
 
-  if(cleanAddr(j["العنوان"])) msg += `📍 العنوان: ${cleanAddr(j["العنوان"])}\n`;
-  if(j.__contacts && j.__contacts.length) {
+  if(!multi && cleanAddr(j["العنوان"])) msg += `📍 العنوان: ${cleanAddr(j["العنوان"])}\n`;
+  if(!multi && j.__contacts && j.__contacts.length) {
     msg += `📞 أرقام التواصل عند الوصول:\n`;
     j.__contacts.forEach(c => { msg += `  • ${c.name ? c.name + ": " : ""}${c.phone}\n`; });
   }
@@ -915,8 +915,8 @@ function openAreaCopyModal(areaName, jobsList) {
     if(!activeJobs.length) return;
     let msg = `📍 وظايف تعبئة وتغليف وفرز المتاحة في (${areaName}):\n\n`;
     activeJobs.forEach((j, index) => {
-      msg += `━━━━━━━━━━━━━━━━━━━━\n`;
-      msg += `${index + 1}️⃣ ` + buildJobText(j) + `\n`;
+      msg += `━━━━━━━━━━━━━━━━━━━━\n\n`;
+      msg += `${index + 1}️⃣ ` + buildJobText(j, true) + `\n\n`;
     });
     msg += `━━━━━━━━━━━━━━━━━━━━`;
 
