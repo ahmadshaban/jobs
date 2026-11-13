@@ -227,6 +227,9 @@ header h1{color:#F2F6FB;font-size:1.4rem}header .lead,header .sub{color:var(--mu
   gap: .5rem;
 }
 .menu-btn:active{ background: var(--acs); border-color: var(--ac); }
+.aibar{display:flex;gap:.5rem;margin:.4rem 0}.aibar .menu-btn{margin:0;flex:1}
+.aimsg{font-size:.85rem;min-height:1.1rem;margin:.2rem 0 .4rem;opacity:.85}
+#aiOut canvas{display:block;width:100%;border-radius:.7rem;margin:0 0 .7rem}
 
 /* apply form: full screen,responsive */
 #fo .sh .x{background:#E5120F;border-color:#E5120F;color:#fff;font-weight:900}
@@ -628,6 +631,15 @@ header{min-height:clamp(13rem,58vw,18rem);padding-top:3.4rem}
   <div class="sh"><h3 class="ttl" style="margin:.2rem 0 0" id="areaCopyTitle">خيارات المشاركة</h3><button type="button" class="x" id="closeAreaCopy" aria-label="إغلاق">✕</button></div>
   <button type="button" class="menu-btn" id="btnCopyAreaText">📋 نسخ جميع المصانع كنص (واتساب)</button>
   <button type="button" class="menu-btn" id="btnCopyAreaLink">🔗 نسخ رابط المنطقة المفلتر</button>
+  <button type="button" class="menu-btn" id="btnAreaImgs">🖼️ إعلان المنطقة كصور (شارك / حمّل)</button>
+</div></div></div>
+
+<!-- شيت صور إعلان المنطقة -->
+<div class="ov" id="areaImgOv"><div class="sheet"><div class="grab"></div><div class="sb">
+  <div class="sh"><h3 class="ttl" style="margin:.2rem 0 0" id="areaImgTitle">إعلان المنطقة</h3><button type="button" class="x" id="closeAreaImg" aria-label="إغلاق">✕</button></div>
+  <div class="aibar"><button type="button" class="menu-btn" id="aiShare">📤 شارك الصور</button><button type="button" class="menu-btn" id="aiDl">⬇️ حمّل الصور</button></div>
+  <div class="aimsg" id="aiMsg"></div>
+  <div id="aiOut"></div>
 </div></div></div>
 
 <!-- شيت الخيارات المنبثقة لنسخ الوظيفة الواحدة -->
@@ -635,6 +647,7 @@ header{min-height:clamp(13rem,58vw,18rem);padding-top:3.4rem}
   <div class="sh"><h3 class="ttl" style="margin:.2rem 0 0">خيارات مشاركة الوظيفة</h3><button type="button" class="x" id="closeSingleCopy" aria-label="إغلاق">✕</button></div>
   <button type="button" class="menu-btn" id="btnCopySingleText">📋 نسخ التفاصيل كاملة كنص</button>
   <button type="button" class="menu-btn" id="btnCopySingleLink">🔗 نسخ الرابط المباشر للوظيفة</button>
+  <button type="button" class="menu-btn" id="btnShareSingleImg">📤 مشاركة كصورة</button>
   <button type="button" class="menu-btn" id="btnSaveSingleImg">🖼️ حفظ كصورة</button>
 </div></div></div>
 
@@ -926,6 +939,8 @@ function openAreaCopyModal(areaName, jobsList) {
     }).catch(() => prompt("نسخ النص يدوياً:", msg));
   };
 
+  $("btnAreaImgs").onclick = () => { closeAreaCopyModal(); openAreaImages(areaName, jobsList); };
+
   $("btnCopyAreaLink").onclick = () => {
     const link = SITE_BASE + "?area=" + encodeURIComponent(areaName);
     navigator.clipboard.writeText(link).then(() => {
@@ -934,6 +949,66 @@ function openAreaCopyModal(areaName, jobsList) {
     }).catch(() => prompt("نسخ الرابط يدوياً:", link));
   };
 }
+
+/* إعلان المنطقة كصور: بيترسم وقت الفتح من بيانات الشيت (مفيش حاجة متخزنة) */
+const AI_PER=4;
+function aiRR(x,a,b,w,h,r){x.beginPath();if(x.roundRect)x.roundRect(a,b,w,h,r);else x.rect(a,b,w,h);x.fill()}
+function aiFit(x,t,mw){t=String(t||"");if(x.measureText(t).width<=mw)return t;while(t.length>1&&x.measureText(t+"…").width>mw)t=t.slice(0,-1);return t+"…"}
+function drawAreaAd(rows,i,n,areaName){
+  const W=1080,PAD=30,IN=32,HH=200,RH=230,FH=190,H=HH+rows.length*RH+FH;
+  const c=document.createElement("canvas");c.width=W;c.height=H;
+  const x=c.getContext("2d");x.direction="rtl";x.textAlign="right";
+  const FF="Tahoma,Arial,sans-serif",COL={"شباب":"#1d6fd1","بنات":"#d1428a"};
+  x.fillStyle="#f3efe6";x.fillRect(0,0,W,H);
+  x.fillStyle="#0f5132";x.fillRect(0,0,W,HH);
+  x.fillStyle="#fff";x.font="bold 62px "+FF;x.fillText(aiFit(x,"وظايف مصانع - "+areaName,W-100),W-50,100);
+  x.font="34px "+FF;x.fillStyle="#cfe8d8";x.fillText("صفحة "+(i+1)+" من "+n+" • "+rows.length+" مصانع",W-50,155);
+  rows.forEach((j,k)=>{
+    const y=HH+14+k*RH,rx=W-PAD-IN,mw=W-2*PAD-2*IN;
+    x.fillStyle="#fff";aiRR(x,PAD,y,W-2*PAD,RH-18,22);
+    x.textAlign="right";x.fillStyle="#1d1d1b";x.font="bold 42px "+FF;x.fillText(aiFit(x,j["المصنع"]||"",mw-230),rx,y+58);
+    const g=j["الفئة"]||"";if(g){x.fillStyle=COL[g]||"#2f8f4e";aiRR(x,PAD+IN,y+18,190,54,27);x.fillStyle="#fff";x.font="bold 27px "+FF;x.textAlign="center";x.fillText(aiFit(x,g,170),PAD+IN+95,y+55);x.textAlign="right"}
+    x.fillStyle="#0f5132";x.font="bold 40px "+FF;x.fillText(aiFit(x,"💰 "+(payText(j)||"يراجع التفاصيل"),mw),rx,y+116);
+    const sh=isMulti(j)?j.__sh.map(s=>hoursOnly(s.h)).join(" / "):hoursOnly(j["الشفت"]);
+    x.fillStyle="#444";x.font="29px "+FF;
+    x.fillText(aiFit(x,"⏰ "+sh,mw),rx,y+155);
+    x.fillText(aiFit(x,"🏠 "+(j["السكن"]||"—")+"   🚌 "+(j["المواصلات"]||"—"),mw),rx,y+192);
+  });
+  const fy=HH+rows.length*RH;
+  x.fillStyle="#25d366";aiRR(x,PAD,fy+14,W-2*PAD,100,22);
+  x.fillStyle="#fff";x.font="bold 40px "+FF;x.textAlign="center";
+  x.fillText(IS_CC?"للتقديم كلّم واتساب: 0"+PHONE.replace(/\D/g,"").replace(/^20/,""):"للتقديم ارجع للمسؤول اللي بعتلك الإعلان",W/2,fy+80);
+  x.fillStyle="#777";x.font="26px "+FF;x.fillText("تاريخ الإعلان: "+new Date().toLocaleDateString("en-GB"),W/2,fy+155);
+  return c;
+}
+let aiFiles=[],aiOpen=false;
+function openAreaImages(areaName,jobsList){
+  const act=jobsList.filter(j=>!done(j));
+  if(!act.length)return;
+  const out=$("aiOut"),msg=$("aiMsg");out.innerHTML="";msg.textContent="جاري تجهيز الصور...";aiFiles=[];
+  $("areaImgTitle").textContent="إعلان "+areaName;
+  $("areaImgOv").classList.add("show");aiOpen=true;
+  const n=Math.ceil(act.length/AI_PER),pend=[];
+  for(let i=0;i<n;i++){
+    const c=drawAreaAd(act.slice(i*AI_PER,(i+1)*AI_PER),i,n,areaName);out.appendChild(c);
+    pend.push(new Promise(ok=>c.toBlob(b=>ok(b?new File([b],"wazayef-"+(i+1)+".png",{type:"image/png"}):null),"image/png")));
+  }
+  Promise.all(pend).then(f=>{aiFiles=f.filter(Boolean);msg.textContent=aiFiles.length+" صورة جاهزة"});
+  $("aiShare").onclick=()=>{
+    if(!aiFiles.length)return;
+    if(navigator.canShare&&navigator.canShare({files:aiFiles})){
+      navigator.share({files:aiFiles,text:"وظايف مصانع - "+areaName}).catch(e=>{if(!e||e.name!=="AbortError")msg.textContent="المشاركة فشلت، استخدم زرار التحميل."});
+    }else msg.textContent="المشاركة مش مدعومة على جهازك، استخدم زرار التحميل.";
+  };
+  $("aiDl").onclick=()=>{
+    if(!aiFiles.length)return;
+    aiFiles.forEach((f,k)=>setTimeout(()=>{const u=URL.createObjectURL(f),a=document.createElement("a");a.href=u;a.download=f.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)},k*500));
+    msg.textContent="جاري التحميل ("+aiFiles.length+" صور)، هتلاقيهم في معرض الصور.";
+  };
+}
+function closeAreaImages(){$("areaImgOv").classList.remove("show");aiOpen=false;aiFiles=[];$("aiOut").innerHTML=""}
+$("closeAreaImg").onclick=closeAreaImages;
+$("areaImgOv").onclick=e=>{if(e.target===$("areaImgOv"))closeAreaImages()};
 function closeAreaCopyModal() {
   $("areaCopyOv").classList.remove("show");
   areaCopyOvOpen = false;
@@ -1116,7 +1191,7 @@ function confirmSend(j,go,sh){
 }
 
 function loadH2C(){return new Promise((ok,no)=>{if(window.html2canvas)return ok();const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
-async function saveJobAsImage(j, captureElem) {
+async function saveJobAsImage(j, captureElem, share) {
   try {
     await loadH2C();
     const actionsBar = captureElem.querySelector('.cta');
@@ -1135,6 +1210,13 @@ async function saveJobAsImage(j, captureElem) {
 
     canvas.toBlob((blob) => {
       if (!blob) return;
+      if (share && navigator.canShare) {
+        const f = new File([blob], `${j["المصنع"]} - ${j["المنطقة"]}.png`, {type: "image/png"});
+        if (navigator.canShare({files: [f]})) {
+          navigator.share({files: [f], text: `${j["المصنع"]} - ${j["المنطقة"]}`}).catch(e => { if (!e || e.name !== "AbortError") alert("المشاركة فشلت، استخدم 'حفظ كصورة'."); });
+          return;
+        }
+      }
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -1210,7 +1292,7 @@ function showDetail(j){
   const openT=i=>{cur=cur===i?-1:i;tb.forEach((b,x)=>b.classList.toggle("on",x===cur));tp.forEach((p,x)=>{p.hidden=x!==cur})};
   tb.forEach((b,i)=>b.onclick=()=>openT(i));
 
-  $("shareBtn").onclick=()=>{track("share",j);openSingleCopyModal(j);$("btnSaveSingleImg").onclick=()=>{closeSingleCopyModal();saveJobAsImage(j,$("captureArea"))}};
+  $("shareBtn").onclick=()=>{track("share",j);openSingleCopyModal(j);$("btnSaveSingleImg").onclick=()=>{closeSingleCopyModal();saveJobAsImage(j,$("captureArea"))};$("btnShareSingleImg").onclick=()=>{closeSingleCopyModal();saveJobAsImage(j,$("captureArea"),true)}};
   const cb=$("callBtn");
   if(cb)cb.onclick=()=>{track("call",j);cur=-1;openT(hi);const c=$("ctbox");if(c)c.scrollIntoView({block:"nearest"})};
   document.querySelectorAll("#detail a[href^=\"tel:\"]").forEach(a=>a.addEventListener("click",()=>track("call",j)));
