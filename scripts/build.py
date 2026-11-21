@@ -106,7 +106,7 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 </head>
 <body class="{page_cls}" data-variant="{variant}" data-prefix="{prefix}">
 {body}
-<script src="{prefix}app.js?v=20261121h" defer></script>
+<script src="{prefix}app.js?v=20261121i" defer></script>
 <script src="{prefix}sharing.js?v=20261121f" defer></script>
 <script src="{prefix}legacy.js" defer></script>
 <script src="{prefix}pwa.js?v=20261121b" defer></script>
@@ -539,7 +539,7 @@ function reviewScreen(form,rows,transport,url){
  next.addEventListener("click",async function(e){
   if(saved)return;e.preventDefault();if(saving)return;saving=true;next.setAttribute("aria-disabled","true");next.textContent="جاري الحفظ...";result.textContent="استنى لحظة، بنحفظ بياناتك في السجل الخاص";bypass.style.display="none";
   var controller=new AbortController(),timer=setTimeout(function(){controller.abort()},25000);
-  try{var response=await fetch(APPLICANTS_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"registerApplicant",data:payload}),signal:controller.signal});if(!response.ok)throw Error("network");var data=await response.json();if(!data.ok)throw Error("save");saved=true;result.textContent="اتحفظت بياناتك. واتساب هيفتح دلوقتي، دوس إرسال هناك. تسجيل البيانات مش تأكيد لإرسال الرسالة.";next.textContent="افتح واتساب";location.assign(url)}
+  try{var response=await fetch(APPLICANTS_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"registerApplicant",data:payload}),signal:controller.signal});if(!response.ok)throw Error("network");var data=await response.json();if(!data.ok)throw Error("save");saved=true;if(!screen.isConnected)return;result.textContent="اتحفظت بياناتك. واتساب هيفتح دلوقتي، دوس إرسال هناك. تسجيل البيانات مش تأكيد لإرسال الرسالة.";next.textContent="افتح واتساب";location.assign(url)}
   catch(err){result.textContent="تعذر تأكيد حفظ بياناتك. جرّب الحفظ تاني، أو افتح واتساب من غير حفظ. رسالة واتساب لسه ما اتبعتتش.";next.textContent="جرّب الحفظ تاني";bypass.style.display=""}
   finally{clearTimeout(timer);saving=false;next.removeAttribute("aria-disabled")}
  });
