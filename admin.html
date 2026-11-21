@@ -192,6 +192,15 @@ body{background:#F2F5F8;color:#10253A}
 .drawer .d-link:active{background:#F2F5F8}
 .drawer .d-sep{height:1px;background:#E3E9EF;margin:6px 0}
 #menuBtn{position:fixed;top:10px;inset-inline-start:10px;z-index:80;width:42px;height:42px;border-radius:12px;border:0;background:#0E5A40;color:#fff;font-size:19px;cursor:pointer;box-shadow:0 4px 12px rgba(16,37,58,.25)}
+
+/* Clear close controls and a compact, accessible navigation sheet. */
+.form-close{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border:1px solid #D7E0E8;border-radius:14px;background:#fff;color:#10253A;font:700 22px Cairo,sans-serif;cursor:pointer;margin:0 0 12px auto;box-shadow:0 2px 8px #10253a0a;text-decoration:none;flex:none}
+.confirm-screen .panel,.apply-panel{position:relative}.confirm-screen .form-close{float:left;margin:0 0 12px 12px}.confirm-screen h2{min-height:44px;display:flex;align-items:center}
+.drawer{box-sizing:border-box;width:min(340px,90vw);max-width:90vw;padding:22px 18px max(24px,env(safe-area-inset-bottom));inset-inline-start:-370px;visibility:hidden;overflow-y:auto;border-radius:24px 0 0 24px;transition:inset-inline-start .22s ease,visibility .22s;background:#fff}
+.drawer.open{visibility:visible;inset-inline-start:0}.drawer .d-head{padding-bottom:20px;border-bottom:1px solid #E3E9EF;margin-bottom:16px;font-size:17px}.drawer .d-head button{width:44px;height:44px;font-size:20px;border:1px solid #E3E9EF;border-radius:14px;flex:none}.drawer .d-link{min-height:52px;padding:12px 14px;font-size:15px;margin:3px 0;border:1px solid transparent;line-height:1.7}.drawer .d-link:hover,.drawer .d-link:focus-visible{background:#E3F3EC;border-color:#C9E5D8}.scrim.open{backdrop-filter:blur(3px);background:#10253a66}body.menu-open{overflow:hidden}.drawer button:focus-visible,.drawer a:focus-visible,.form-close:focus-visible{outline:3px solid #36A675;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.drawer,.scrim,.confirm-transport{transition:none;animation:none}}
+
+.layer-close{float:left;margin:0 0 10px 10px}
 </style>
 </head>
 <body>
@@ -199,7 +208,7 @@ body{background:#F2F5F8;color:#10253A}
 <div class="scrim" id="scrim"></div>
 <nav class="drawer" id="drawer" aria-label="القايمة">
 <div class="d-head"><span>🏭 بوابة الوظائف</span><button type="button" id="drawerClose" aria-label="قفل">✕</button></div>
-<a class="d-link" href="index.html">🏠 الرئيسية</a><a class="d-link" href="cc-jobs/">📢 وظايف كول سنتر للبنات</a><a class="d-link" href="cc/">📞 نسخة الكول سنتر</a><a class="d-link" href="admin.html" style="background:#E3F3EC">🔒 الأدمن</a><a class="d-link" href="stats.html">📊 الإحصائيات</a>
+<a class="d-link" href="index.html">🏠 الرئيسية</a><a class="d-link" href="cc-jobs/">📢 وظايف كول سنتر للبنات</a><a class="d-link" href="admin.html" style="background:#E3F3EC">🔒 الأدمن</a><a class="d-link" href="stats.html">📊 الإحصائيات</a>
 </nav>
 <script>(function(){var mb=document.getElementById("menuBtn"),dr=document.getElementById("drawer"),sc=document.getElementById("scrim"),dc=document.getElementById("drawerClose");
 function s(o){dr.classList.toggle("open",o);sc.classList.toggle("open",o)}
@@ -1200,5 +1209,5 @@ function init(){
 }
 init();
 </script>
-</body>
+<script>(function(){function addClose(){var pairs={modal:'fCancel',salDlg:'salCancel',colDlg:'colCancel',optDlg:'optClose',ordDlg:'ordCancel',askDlg:'askNo'};Object.keys(pairs).forEach(function(id){var layer=document.getElementById(id);if(!layer||layer.querySelector('.layer-close'))return;var target=document.getElementById(pairs[id]);if(!target)return;var x=document.createElement('button');x.type='button';x.className='form-close layer-close';x.setAttribute('aria-label','قفل والرجوع');x.textContent='✕';x.onclick=function(){target.click()};(layer.querySelector('.sheet,.box')||layer).prepend(x)})}new MutationObserver(addClose).observe(document.body,{childList:true,subtree:true});addClose()})();</script></body>
 </html>

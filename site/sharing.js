@@ -8,7 +8,7 @@ function copy(txt){
  if(navigator.clipboard&&navigator.clipboard.writeText)return navigator.clipboard.writeText(txt).then(function(){message('اتنسخ ✅')},function(){manual(txt)});
  manual(txt);
 }
-function manual(txt){var d=document.createElement('dialog');d.className='cfov';var b=document.createElement('div');b.className='cfsheet';var p=document.createElement('p');p.textContent='اضغط مطوّل على النص وحدد الكل وانسخ';var ta=document.createElement('textarea');ta.value=txt;ta.style.cssText='width:100%;min-height:220px;font:inherit';var x=document.createElement('button');x.className='btn btn-ghost2';x.textContent='قفل';x.onclick=function(){d.remove()};b.append(p,ta,x);d.appendChild(b);document.body.appendChild(d);d.showModal()}
+function manual(txt){var d=document.createElement('dialog');d.className='cfov';var b=document.createElement('div');b.className='cfsheet';var p=document.createElement('p');p.textContent='اضغط مطوّل على النص وحدد الكل وانسخ';var ta=document.createElement('textarea');ta.value=txt;ta.style.cssText='width:100%;min-height:220px;font:inherit';var x=document.createElement('button');x.className='btn btn-ghost2';x.textContent='✕ قفل';x.setAttribute('aria-label','قفل');function shut(){d.remove();window.removeEventListener('popstate',shut)}x.onclick=function(){history.back()};history.pushState({jgShare:true},'',location.href);window.addEventListener('popstate',shut);b.append(p,ta,x);d.appendChild(b);document.body.appendChild(d);d.showModal()}
 function pageLink(){return controls.getAttribute("data-link")||location.origin+location.pathname+location.search}
 function text(){return records.map(function(r){return r.text}).join('\n\n────────────────\n\n')}
 async function canvasFor(r){

@@ -122,7 +122,7 @@ def header(prefix, variant):
 <a class="d-link" href="{prefix}admin.html">🔒 الأدمن</a>
 <a class="d-link" href="{prefix}stats.html">📊 الإحصائيات</a>
 <a class="d-link" href="{prefix}cc-jobs/">📢 وظايف كول سنتر للبنات</a>
-<a class="d-link" href="{prefix}cc/">📞 نسخة الكول سنتر</a>"""
+"""
     return f"""<header class="top"><div class="wrap">
 <div class="logo">🏭</div>
 <h1 class="brand"><a href="{home}">{esc(name)}</a></h1>
@@ -342,7 +342,7 @@ def build_apply_page(j, root, prefix_depth="../../"):
     ar3 = age_range(j)
     age_hint2 = f"السن المطلوب في الوظيفة دي: من {ar3[0]} لـ {ar3[1]} سنة" if ar3 else "اكتب سنك بالأرقام"
     body = header(prefix, "main")
-    body += f'<div class="wrap"><a class="bc2" href="../">→ رجوع للوظيفة</a></div>'
+    body += f'<div class="wrap"><a class="form-close" href="../" aria-label="قفل التقديم والرجوع للوظيفة">✕</a><a class="bc2" href="../">→ رجوع للوظيفة</a></div>'
     body += f'<div class="wrap"><div class="hero-plain"><h1>💬 قدّم على {esc(j.get("المصنع"))}</h1><div class="sub2">{esc(city)} — املى بياناتك وأكّد مرة واحدة</div></div></div>'
     body += f'<div class="form-transport"><b>المواصلات قبل ما تقدم</b><span>لو جاي من خارج {esc(city)}، الطريق لحد نقطة التجمع على حسابك.</span><span>{esc(j.get("المواصلات") or "راجع مسؤول التواصل عن مواصلات المصنع")}</span></div>'
     if multi:
@@ -522,10 +522,10 @@ function reviewScreen(form,rows,transport,url){
  var back=document.createElement("button");back.type="button";back.className="btn btn-ghost";back.textContent="ارجع عدّل";
  var next=document.createElement("a");next.href=url;next.target="_blank";next.rel="noopener";next.className="btn btn-wa";next.textContent="كمل على واتساب";
  var hint=document.createElement("p");hint.className="hint";hint.textContent="واتساب هيفتح برسالتك جاهزة. دوس إرسال هناك عشان طلبك يوصل.";
- card.append(back,next,hint);screen.appendChild(card);form.closest(".wrap").after(screen);
+ var close=document.createElement("button");close.type="button";close.className="form-close";close.setAttribute("aria-label","قفل التأكيد والرجوع للتعديل");close.textContent="✕";card.prepend(close);card.append(back,next,hint);screen.appendChild(card);form.closest(".wrap").after(screen);
  var hidden=[];Array.from(document.querySelectorAll(".jg>.wrap,body>.wrap,.form-transport")).forEach(function(e){if(e!==screen){hidden.push([e,e.style.display]);e.style.display="none"}});
  if(!hidden.some(function(x){return x[0]===form.closest(".wrap")})){hidden.push([form.closest(".wrap"),form.closest(".wrap").style.display]);form.closest(".wrap").style.display="none"}
- back.onclick=function(){document.body.classList.remove("confirming");hidden.forEach(function(x){x[0].style.display=x[1]});screen.remove();form.scrollIntoView({block:"start"})};screen.scrollIntoView({block:"start"});
+ function restore(){document.body.classList.remove("confirming");hidden.forEach(function(x){x[0].style.display=x[1]});screen.remove();window.removeEventListener("popstate",onBack);form.scrollIntoView({block:"start"})}function onBack(){restore()}history.pushState(Object.assign({},history.state,{jgConfirm:true}),"",location.href);window.addEventListener("popstate",onBack);back.onclick=close.onclick=function(){if(history.state&&history.state.jgConfirm)history.back();else restore()};screen.scrollIntoView({block:"start"});
 }
 window.jgNameMismatch=nameMismatch;window.jgReviewScreen=reviewScreen;
 /* اختيار وردية */
@@ -606,10 +606,14 @@ if(cad){cad.addEventListener("click",function(){
 (function(){
  var mb=document.getElementById("menuBtn"),dr=document.getElementById("drawer"),
      sc=document.getElementById("scrim"),dc=document.getElementById("drawerClose");
- function setD(o){if(dr){dr.classList.toggle("open",o);sc.classList.toggle("open",o);}}
- if(mb)mb.addEventListener("click",function(){setD(true);});
- if(dc)dc.addEventListener("click",function(){setD(false);});
- if(sc)sc.addEventListener("click",function(){setD(false);});
+ function setD(o){if(!dr)return;dr.classList.toggle("open",o);sc.classList.toggle("open",o);document.body.classList.toggle("menu-open",o);mb.setAttribute("aria-expanded",o?"true":"false");dr.setAttribute("aria-hidden",o?"false":"true");if(o)dc.focus();else mb.focus()}
+ function openD(){if(dr.classList.contains("open"))return;history.pushState(Object.assign({},history.state,{jgMenu:true}),"",location.href);setD(true)}
+ function closeD(){if(!dr.classList.contains("open"))return;if(history.state&&history.state.jgMenu)history.back();else setD(false)}
+ if(mb){mb.setAttribute("aria-expanded","false");mb.addEventListener("click",openD)}
+ if(dc)dc.addEventListener("click",closeD);
+ if(sc)sc.addEventListener("click",closeD);
+ window.addEventListener("popstate",function(){if(dr&&dr.classList.contains("open"))setD(false)});
+ document.addEventListener("keydown",function(e){if(e.key==="Escape")closeD()});
 })();
 """
     app_js += """
@@ -645,7 +649,8 @@ def write_cc_jobs_page():
     body += r"""<div class="wrap"><a class="bc2" href="../index.html">→ رجوع للرئيسية</a></div>
 <div class="wrap"><div class="hero-plain"><h1>📢 اشتغلي أونلاين بعمولة</h1>
 <div class="sub2">وظيفة مسوّقة بالعمولة في فريق التوظيف أونلاين — شغل من الموبايل</div></div></div>
-<div class="wrap"><div class="apply-panel" id="ccApply">
+<div class="wrap"><section class="panel recruitment-details"><h2>تفاصيل شغل فريق التوظيف</h2><img src="../recruitment-ad.webp" width="800" height="885" alt="مطلوب فريق توظيف أونلاين بالعمولة، نشر الإعلانات والتواصل مع العمال وتقديم الوظيفة المناسبة" style="display:block;width:100%;height:auto;border-radius:14px" loading="lazy"></section></div>
+<div class="wrap"><div class="apply-panel" id="ccApply"><a class="form-close" href="../" aria-label="قفل التقديم والرجوع للرئيسية">✕</a>
 <h2>📲 قدّمي على واتساب</h2>
 <div class="field"><label for="c_n">👤 الاسم<em class="req">*</em></label><input id="c_n" autocomplete="name" placeholder="اكتبي اسمك"><small class="hint">اكتبي اسمك الحقيقي</small></div>
 <div class="field"><label for="c_a">🔢 السن<em class="req">*</em></label><input id="c_a" inputmode="numeric" maxlength="2" placeholder="مثال: 22"><small class="hint">اكتبي سنك بالأرقام</small></div>
@@ -728,6 +733,7 @@ def main():
     print("rows:", len(jobs), "visible:", len(visible_jobs(jobs)), "open:", len(open_jobs))
     os.makedirs(OUT, exist_ok=True)
     write_static_files()
+    shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","site","recruitment-ad.webp"),os.path.join(OUT,"recruitment-ad.webp"))
     write_cc_jobs_page()
     for old, target in [("callcenter.html","cc/"),("marketing.html","cc-jobs/")]:
         with open(os.path.join(OUT,old),"w",encoding="utf-8") as f:
