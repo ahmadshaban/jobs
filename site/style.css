@@ -345,3 +345,9 @@ body.pg-apply #handoffNote{font-size:11px;margin-top:7px}
 }
 
 .same-day-note{margin:10px 0;padding:8px 10px;border:1px solid #c5d2e4;border-inline-start:3px solid #3766ad;border-radius:9px;background:#e9f0fb;color:#17376a;font:700 12px/1.65 Tajawal,Arial,sans-serif}
+
+/* Exterior cards: hours are a primary fact, salary lines wrap without clipping. */
+body .job .card-hours{display:table;margin:5px 0;padding:3px 9px;border:1px solid #c5d2e4;border-radius:7px;background:#e8eff9;color:#17376a;font-size:12px;font-weight:900;line-height:1.6;max-width:100%;box-sizing:border-box}
+body .job .sal{flex-wrap:wrap;row-gap:2px!important}
+body .job .sal small{line-height:1.6}
+body .job:focus-visible{outline:3px solid #245a9f;outline-offset:3px}

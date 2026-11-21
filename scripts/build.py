@@ -148,18 +148,18 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 <meta name="theme-color" content="#e9eef7">
 <link rel="manifest" href="{prefix}manifest.json">
 {font_link}
-<link rel="stylesheet" href="{prefix}style.css?v=20261121salary">
-<link rel="stylesheet" href="{prefix}menu.css?v=20261121salary">
+<link rel="stylesheet" href="{prefix}style.css?v=20261121hours">
+<link rel="stylesheet" href="{prefix}menu.css?v=20261121hours">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏭</text></svg>">
 {ld}
 </head>
 <body class="{page_cls}" data-variant="{variant}" data-prefix="{prefix}">
 {configured(body)}
 <script>window.JG_CONFIG={json.dumps(({k:v for k,v in DASH_CONFIG.items() if k not in ['whatsapp','followup_template','consent_text','save_failure']} if variant=='cc' else {k:v for k,v in DASH_CONFIG.items() if k not in ['consent_text','save_failure']}),ensure_ascii=False).replace(chr(60),chr(92)+'u003c')};</script>
-<script src="{prefix}app.js?v=20261121salary" defer></script>
+<script src="{prefix}app.js?v=20261121hours" defer></script>
 {share_script}
 {legacy_script}
-<script src="{prefix}pwa.js?v=20261121salary" defer></script>
+<script src="{prefix}pwa.js?v=20261121hours" defer></script>
 </body>
 </html>"""
 
@@ -198,6 +198,19 @@ def steps_strip():
 <div class="step"><span class="n">3</span>دوس<b>قدّم 💬</b></div>
 </div></div>"""
 
+def card_hours_label(j):
+    """Use the same available shifts as the salary summary, not a stale legacy label."""
+    shifts = parse_shifts(j.get("الورديات") or "")
+    available = [sh for sh in shifts if not sh["done"]] or shifts
+    labels = []
+    for raw in ([sh["h"] for sh in available] if available else [j.get("الشفت") or ""]):
+        raw = str(raw).strip()
+        match = re.match(r"^([0-9٠-٩]{1,2})\s*ساع(?:ة|ه|ات)", raw)
+        label = (match.group(1) + (" ساعات" if 3 <= int(match.group(1)) <= 10 else " ساعة")) if match else raw
+        if label and label not in labels:
+            labels.append(label)
+    return " أو ".join(labels)
+
 def card_salary_html(j):
     """Shift-only records are valid salary sources, including just one shift."""
     shifts = parse_shifts(j.get("الورديات") or "")
@@ -227,11 +240,13 @@ def card_salary_html(j):
 
 def job_card(j, prefix):
     sal_html = card_salary_html(j)
+    hours = card_hours_label(j)
     url = f"{prefix}jobs/{j.get('__jid') or job_id(j)}/"
     cat = "b" if ("بنات" in j.get("الفئة","") and "شباب" in j.get("الفئة","")) else ("g" if "بنات" in j.get("الفئة","") else "m")
     return f"""<a class="job" data-cat="{cat}" href="{url}">
 <div class="ttl"><h3>{esc(j.get('المصنع'))}</h3></div>
-<div class="meta"><span>📍 {esc(city_base(j))}</span><span>👥 {esc(j.get('الفئة'))}</span>{f"<span>⏰ {esc(hours_only(j.get('الشفت')))}</span>" if j.get('الشفت') else ""}</div>
+<div class="meta"><span>📍 {esc(city_base(j))}</span><span>👥 {esc(j.get('الفئة'))}</span></div>
+{f'<div class="card-hours">الوردية: {esc(hours)}</div>' if hours else ''}
 {sal_html}
 {tags_html(j)}
 <div class="apply-hint">💬 دوس هنا تشوف التفاصيل وتقدّم <span class="chev">‹</span></div>
