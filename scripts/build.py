@@ -148,18 +148,18 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 <meta name="theme-color" content="#e9eef7">
 <link rel="manifest" href="{prefix}manifest.json">
 {font_link}
-<link rel="stylesheet" href="{prefix}style.css?v=20261121note">
-<link rel="stylesheet" href="{prefix}menu.css?v=20261121note">
+<link rel="stylesheet" href="{prefix}style.css?v=20261121salary">
+<link rel="stylesheet" href="{prefix}menu.css?v=20261121salary">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏭</text></svg>">
 {ld}
 </head>
 <body class="{page_cls}" data-variant="{variant}" data-prefix="{prefix}">
 {configured(body)}
 <script>window.JG_CONFIG={json.dumps(({k:v for k,v in DASH_CONFIG.items() if k not in ['whatsapp','followup_template','consent_text','save_failure']} if variant=='cc' else {k:v for k,v in DASH_CONFIG.items() if k not in ['consent_text','save_failure']}),ensure_ascii=False).replace(chr(60),chr(92)+'u003c')};</script>
-<script src="{prefix}app.js?v=20261121note" defer></script>
+<script src="{prefix}app.js?v=20261121salary" defer></script>
 {share_script}
 {legacy_script}
-<script src="{prefix}pwa.js?v=20261121note" defer></script>
+<script src="{prefix}pwa.js?v=20261121salary" defer></script>
 </body>
 </html>"""
 
@@ -198,24 +198,35 @@ def steps_strip():
 <div class="step"><span class="n">3</span>دوس<b>قدّم 💬</b></div>
 </div></div>"""
 
-def job_card(j, prefix):
-    sal = salary_line(j).replace(" في الشهر", "")
-    main_sal = (pays(j)[0][1] if pays(j) else (j.get("المرتب") or "")).replace(" في الشهر", "")
-    alt_sal = (pays(j)[1][1] if len(pays(j)) > 1 else "").replace(" في الشهر", "")
-    sal_html = ""
-    if main_sal:
-        sal_html = f'<div class="sal"><b>{esc(main_sal)}</b>'
-        if alt_sal: sal_html += f'<small>أو {esc(alt_sal)} (26 يوم + 4 إجازة)</small>'
-        elif "يوم" in (j.get("المرتب") or "") or is_daily(j): sal_html += '<small>اليومية</small>'
-        else: sal_html += '<small>في الشهر</small>'
-        sal_html += '</div>'
-    # Multi-shift cards show one approved summary, with the full breakdown inside.
+def card_salary_html(j):
+    """Shift-only records are valid salary sources, including just one shift."""
     shifts = parse_shifts(j.get("الورديات") or "")
+    available = [sh for sh in shifts if not sh["done"]] or shifts
     if len(shifts) > 1:
-        available = [sh for sh in shifts if not sh["done"]] or shifts
-        amounts = [num_of(re.sub(r"(?<=\d)[.,](?=\d{3}(?:\D|$))", "", sh[field])) for sh in available for field in ["p30","p26"] if num_of(sh[field])]
+        amounts = [num_of(re.sub(r"(?<=\d)[.,](?=\d{3}(?:\D|$))", "", sh[field]))
+                   for sh in available for field in ["p30", "p26"] if num_of(sh[field])]
         if amounts:
-            sal_html = '<div class="sal"><b>لحد '+f'{max(amounts):,.0f}'+' ج في الشهر</b></div>'
+            return '<div class="sal"><b>لحد '+f'{max(amounts):,.0f}'+' ج في الشهر</b></div>'
+    p = pays(j)
+    main = p[0][1] if p else (j.get("المرتب") or "")
+    alt = p[1][1] if len(p) > 1 else ""
+    label = "اليومية" if is_daily(j) else "في الشهر"
+    # Fill the missing exterior amount from the structured shift, not a made-up value.
+    if not main and len(available) == 1:
+        sh = available[0]
+        main = sh["p30"] or sh["p26"]
+        alt = sh["p26"] if sh["p30"] else ""
+        label = "30 يوم عمل" if sh["p30"] else "26 يوم عمل"
+    if not main:
+        return ""
+    result = '<div class="sal"><b>'+esc(main.replace(" في الشهر", ""))+'</b>'
+    result += '<small>'+esc(label)+'</small>'
+    if alt:
+        result += '<small>أو '+esc(alt.replace(" في الشهر", ""))+' (26 يوم + 4 إجازة)</small>'
+    return result+'</div>'
+
+def job_card(j, prefix):
+    sal_html = card_salary_html(j)
     url = f"{prefix}jobs/{j.get('__jid') or job_id(j)}/"
     cat = "b" if ("بنات" in j.get("الفئة","") and "شباب" in j.get("الفئة","")) else ("g" if "بنات" in j.get("الفئة","") else "m")
     return f"""<a class="job" data-cat="{cat}" href="{url}">
