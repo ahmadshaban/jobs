@@ -11,22 +11,8 @@
   document.body.prepend(box);
  }
  status();window.addEventListener('offline',status);window.addEventListener('online',status);
- // Keep the old home-exit confirmation without changing normal back navigation inside the site.
- if(!document.body.classList.contains('pg-home'))return;
- var armed=false,dialog=null;
- function arm(){if(armed)return;armed=true;history.replaceState({jobgateBase:true},'',location.href);history.pushState({jobgateGuard:true},'',location.href)}
- window.addEventListener('pointerdown',arm,{once:true});
- window.addEventListener('keydown',arm,{once:true});
- window.addEventListener('popstate',function(e){
-  if(!e.state||!e.state.jobgateBase||dialog)return;
-  dialog=document.createElement('dialog');dialog.className='cfov';
-  dialog.innerHTML='<div class="cfsheet"><h3>عايز تخرج من الموقع؟</h3><button type="button" class="btn btn-wa" id="stayHere">أكمّل في الموقع</button><button type="button" class="btn btn-ghost2" id="leaveSite">خروج</button></div>';
-  document.body.appendChild(dialog);dialog.showModal();
-  function stay(){dialog.remove();dialog=null;history.pushState({jobgateGuard:true},'',location.href)}
-  document.getElementById('stayHere').onclick=stay;
-  dialog.addEventListener('cancel',function(e){e.preventDefault();stay()});
-  document.getElementById('leaveSite').onclick=function(){dialog.remove();dialog=null;history.back()};
- });
+ // Native browser history exits only after the actual first page. No artificial home trap.
+
 })();
 
 /* Each app has its own manifest identity. Standalone display is not proof this app is installed. */
@@ -63,4 +49,18 @@
  document.addEventListener('click',function(e){var b=e.target.closest('[data-install-app]');if(!b)return;e.preventDefault();if(isAdmin)adminChoices();else installCurrent()});
  if(isAdmin&&new URLSearchParams(location.search).get('install')==='1'){var showAfterAuth=function(){if(!document.getElementById('app').classList.contains('hidden')){adminChoices();return true}return false};if(!showAfterAuth()){var watch=new MutationObserver(function(){if(showAfterAuth())watch.disconnect()});watch.observe(document.getElementById('app'),{attributes:true,attributeFilter:['class']})}}
  var target=document.querySelector('.drawer');if(target&&!document.getElementById('adminInstallButton')){var btn=document.createElement('button');btn.type='button';btn.className='d-link';btn.dataset.installApp='';btn.textContent='تثبيت التطبيق على الموبايل';btn.style.cssText='font:inherit;text-align:right;border:1px solid #c5d3dd;background:#edf2f6;cursor:pointer';target.appendChild(btn)}
+})();
+
+/* Browser back closes the current native in-page dialog before leaving its view. */
+(function(){
+ if(!window.HTMLDialogElement)return;
+ var show=HTMLDialogElement.prototype.showModal,skip=new WeakSet(),serial=0;
+ HTMLDialogElement.prototype.showModal=function(){
+  if(this.open)return;
+  if(!this.id)this.id='jgDialog'+(++serial);
+  show.call(this);var dialog=this;
+  if(!dialog.dataset.historyReady){dialog.dataset.historyReady='1';dialog.addEventListener('close',function(){if(skip.has(dialog)){skip.delete(dialog);return}if(history.state&&history.state.jgDialog===dialog.id)history.back()})}
+  history.pushState(Object.assign({},history.state,{jgDialog:dialog.id}),'',location.href);
+ };
+ window.addEventListener('popstate',function(e){var wanted=e.state&&e.state.jgDialog;document.querySelectorAll('dialog[open][data-history-ready]').forEach(function(d){if(d.id!==wanted){skip.add(d);d.close()}});var d=wanted&&document.getElementById(wanted);if(d&&d instanceof HTMLDialogElement&&!d.open)show.call(d)});
 })();

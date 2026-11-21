@@ -148,17 +148,18 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 <meta name="theme-color" content="#e9eef7">
 <link rel="manifest" href="{prefix}manifest.json">
 {font_link}
-<link rel="stylesheet" href="{prefix}style.css?v=20261121cardrevert">
+<link rel="stylesheet" href="{prefix}style.css?v=20261121nav-final">
+<link rel="stylesheet" href="{prefix}menu.css?v=20261121nav-final">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏭</text></svg>">
 {ld}
 </head>
 <body class="{page_cls}" data-variant="{variant}" data-prefix="{prefix}">
 {configured(body)}
 <script>window.JG_CONFIG={json.dumps(({k:v for k,v in DASH_CONFIG.items() if k not in ['whatsapp','followup_template','consent_text','save_failure']} if variant=='cc' else {k:v for k,v in DASH_CONFIG.items() if k not in ['consent_text','save_failure']}),ensure_ascii=False).replace(chr(60),chr(92)+'u003c')};</script>
-<script src="{prefix}app.js?v=20261121cardrevert" defer></script>
+<script src="{prefix}app.js?v=20261121nav-final" defer></script>
 {share_script}
 {legacy_script}
-<script src="{prefix}pwa.js?v=20261121cardrevert" defer></script>
+<script src="{prefix}pwa.js?v=20261121nav-final" defer></script>
 </body>
 </html>"""
 
@@ -209,6 +210,13 @@ def job_card(j, prefix):
         elif "يوم" in (j.get("المرتب") or "") or is_daily(j): sal_html += '<small>اليومية</small>'
         else: sal_html += '<small>في الشهر</small>'
         sal_html += '</div>'
+    # Multi-shift cards show one approved summary, with the full breakdown inside.
+    shifts = parse_shifts(j.get("الورديات") or "")
+    if len(shifts) > 1:
+        available = [sh for sh in shifts if not sh["done"]] or shifts
+        amounts = [num_of(re.sub(r"(?<=\d)[.,](?=\d{3}(?:\D|$))", "", sh[field])) for sh in available for field in ["p30","p26"] if num_of(sh[field])]
+        if amounts:
+            sal_html = '<div class="sal"><b>لحد '+f'{max(amounts):,.0f}'+' ج في الشهر</b></div>'
     url = f"{prefix}jobs/{j.get('__jid') or job_id(j)}/"
     cat = "b" if ("بنات" in j.get("الفئة","") and "شباب" in j.get("الفئة","")) else ("g" if "بنات" in j.get("الفئة","") else "m")
     return f"""<a class="job" data-cat="{cat}" href="{url}">
@@ -272,6 +280,7 @@ def build_variant(jobs_open, variant):
     src_css = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "site", "style.css")
     if os.path.abspath(root)!=os.path.abspath(OUT):shutil.copy(os.path.join(OUT,"style.css"),os.path.join(root,"style.css"))
     if root != OUT: shutil.copy(os.path.join(OUT, "app.js"), os.path.join(root, "app.js"))
+    if root != OUT: shutil.copy(os.path.join(OUT,"menu.css"),os.path.join(root,"menu.css"))
     shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","site","sharing.js"),os.path.join(root,"sharing.js"))
     shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","site","fonts"),os.path.join(root,"fonts"),dirs_exist_ok=True)
     for asset in ["pwa.js","sw.js","icon-192.png","icon-512.png"]:
@@ -538,6 +547,7 @@ def build_job_page(j, root, variant, noindex):
 def write_static_files():
     src_css = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "site", "style.css")
     shutil.copy(src_css, os.path.join(OUT, "style.css"))
+    shutil.copy(os.path.join(os.path.dirname(src_css),"menu.css"),os.path.join(OUT,"menu.css"))
     with open(os.path.join(OUT,"style.css"),"a",encoding="utf-8") as f:
         f.write("\n:root{--brand:"+DASH_CONFIG.get('brand_color','#0E5A40')+"}body{font-family:'"+DASH_CONFIG.get('font_family','Tajawal')+"',sans-serif;font-size:"+DASH_CONFIG.get('font_size','14')+"px}\n")
     app_js = r"""
@@ -610,8 +620,10 @@ function reviewScreen(form,rows,transport,url){
 }
 window.jgNameMismatch=nameMismatch;window.jgReviewScreen=reviewScreen;
 var applyLayer=null,applyReturn=null;
-function closeApply(){if(!applyLayer)return;applyLayer.remove();applyLayer=null;document.documentElement.classList.remove("apply-lock");window.removeEventListener("popstate",closeApply);if(applyReturn)applyReturn.focus()}
-document.addEventListener("click",function(e){var link=e.target.closest('a[href]');if(!link)return;var u=new URL(link.href,location.href);if(u.origin===location.origin&&/\/jobs\/[^/]+\/apply\/$/.test(u.pathname)&&!document.body.classList.contains("pg-apply")){e.preventDefault();var jm=document.getElementById("jobMeta");track("apply",jm?jm.getAttribute("data-factory"):"",jm?jm.getAttribute("data-area"):"");if(pickedShift&&jm)u.searchParams.set("shift",pickedShift.h);applyReturn=link;applyLayer=document.createElement("div");applyLayer.className="apply-layer";applyLayer.setAttribute("role","dialog");applyLayer.setAttribute("aria-modal","true");applyLayer.setAttribute("aria-label","التقديم على الوظيفة");var frame=document.createElement("iframe");frame.title="فورم التقديم";frame.src=u.href;applyLayer.appendChild(frame);document.body.appendChild(applyLayer);document.documentElement.classList.add("apply-lock");history.pushState({jgApply:true},"",location.href);window.addEventListener("popstate",closeApply);frame.focus()}else if(document.body.classList.contains("pg-apply")&&link.matches(".form-close,.bc2")&&parent!==window){e.preventDefault();parent.postMessage({jobgate:"close-apply"},location.origin)}});
+function closeApply(){if(!applyLayer)return;applyLayer.remove();applyLayer=null;document.documentElement.classList.remove("apply-lock");if(applyReturn&&applyReturn.isConnected)applyReturn.focus()}
+function renderApply(url){if(applyLayer)return;applyLayer=document.createElement("div");applyLayer.className="apply-layer";applyLayer.setAttribute("role","dialog");applyLayer.setAttribute("aria-modal","true");applyLayer.setAttribute("aria-label","التقديم على الوظيفة");var frame=document.createElement("iframe");frame.title="فورم التقديم";frame.src=url;applyLayer.appendChild(frame);document.body.appendChild(applyLayer);document.documentElement.classList.add("apply-lock");frame.focus()}
+window.addEventListener("popstate",function(e){if(e.state&&e.state.jgApply&&e.state.jgApplyUrl){var u=new URL(e.state.jgApplyUrl,location.href);if(u.origin===location.origin&&/\/jobs\/[^/]+\/apply\/$/.test(u.pathname))renderApply(u.href)}else closeApply()});
+document.addEventListener("click",function(e){var link=e.target.closest('a[href]');if(!link)return;var u=new URL(link.href,location.href);if(u.origin===location.origin&&/\/jobs\/[^/]+\/apply\/$/.test(u.pathname)&&!document.body.classList.contains("pg-apply")){e.preventDefault();var jm=document.getElementById("jobMeta");track("apply",jm?jm.getAttribute("data-factory"):"",jm?jm.getAttribute("data-area"):"");if(pickedShift&&jm)u.searchParams.set("shift",pickedShift.h);applyReturn=link;history.pushState(Object.assign({},history.state,{jgApply:true,jgApplyUrl:u.href}),"",location.href);renderApply(u.href)}else if(document.body.classList.contains("pg-apply")&&link.matches(".form-close,.bc2")&&parent!==window){e.preventDefault();parent.postMessage({jobgate:"close-apply"},location.origin)}});
 document.addEventListener("keydown",function(e){if(e.key==="Escape"&&parent!==window&&!document.getElementById("confirmScreen")){parent.postMessage({jobgate:"close-apply"},location.origin)}});
 window.addEventListener("message",function(e){if(e.origin===location.origin&&applyLayer&&e.source===applyLayer.querySelector("iframe").contentWindow&&e.data&&e.data.jobgate==="close-apply")history.back()});
 
@@ -700,7 +712,8 @@ if(cad){cad.addEventListener("click",function(){
  if(mb){mb.setAttribute("aria-expanded","false");mb.addEventListener("click",openD)}
  if(dc)dc.addEventListener("click",closeD);
  if(sc)sc.addEventListener("click",closeD);
- window.addEventListener("popstate",function(){if(dr&&dr.classList.contains("open"))setD(false)});
+ window.addEventListener("popstate",function(e){setD(!!(e.state&&e.state.jgMenu))});
+ window.addEventListener("pageshow",function(){setD(!!(history.state&&history.state.jgMenu))});
  document.addEventListener("keydown",function(e){if(e.key==="Escape")closeD()});
 })();
 """
@@ -732,9 +745,9 @@ document.addEventListener("click",function(e){
     legacy_cc={"id":"/jobs/apps/cc","name":"Job Gate CC","short_name":"Job Gate CC","start_url":"./cc/index.html?app=cc","scope":"./cc/","display":"standalone","icons":[{"src":"cc/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"cc/icon-512.png","sizes":"512x512","type":"image/png"}]}
     with open(os.path.join(OUT,"manifest-cc.json"),"w",encoding="utf-8") as f:json.dump(legacy_cc,f,ensure_ascii=False)
     # Network-first caching replaces the old worker and labels offline copies.
-    sw = r"""const CACHE='jobgate-v13-'+new URL(self.registration.scope).pathname;
+    sw = r"""const CACHE='jobgate-v15-'+new URL(self.registration.scope).pathname;
 self.addEventListener('install',()=>self.skipWaiting());
-self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE&& !k.startsWith('jobgate-v13-'))await caches.delete(k);await self.clients.claim()})()));
+self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE&& !k.startsWith('jobgate-v15-'))await caches.delete(k);await self.clients.claim()})()));
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET'||new URL(e.request.url).origin!==self.location.origin)return;
 e.respondWith((async()=>{const c=await caches.open(CACHE);const asset=/\.(?:woff2|png|webp|css|js)$/.test(new URL(e.request.url).pathname);if(asset){const cached=await c.match(e.request);if(cached)return cached}try{const r=await fetch(e.request,{cache:"no-cache"});if(r.ok){await c.put(e.request,r.clone())}return r}catch(_){const saved=await c.match(e.request);if(saved)return saved;return new Response('<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>الاتصال بالإنترنت</title><body style="font:20px Tahoma;padding:32px;background:#F2F5F8;color:#0E5A40"><h1>أنت مش متصل بالنت</h1><p>الصفحة دي مش محفوظة. اتصل بالنت وحدّث الصفحة.</p></body></html>',{headers:{'Content-Type':'text/html;charset=utf-8'}})}})())});"""
     with open(os.path.join(OUT, "sw.js"), "w", encoding="utf-8") as f:f.write(sw)
