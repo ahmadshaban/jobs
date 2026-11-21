@@ -21,6 +21,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Job Gate Admin">
 <link rel="manifest" href="admin-manifest.json">
+<script>(function(){var kind=new URLSearchParams(location.search).get('app');if(kind==='stats'||kind==='applicants'){document.querySelector('link[rel="manifest"]').href='admin-'+kind+'-manifest.json';document.title=kind==='stats'?'إحصائيات Job Gate':'متقدمي Job Gate'}})();</script>
 <link rel="apple-touch-icon" href="admin-apple-touch-icon.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Crect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%230B2A4A%27/%3E%3Ctext x=%2750%27 y=%2770%27 font-size=%2760%27 text-anchor=%27middle%27%3E%E2%9A%99%EF%B8%8F%3C/text%3E%3C/svg%3E">
 <title>لوحة الوظايف</title>
@@ -1318,6 +1319,6 @@ function init(){
 }
 init();
 </script>
-<script>(function(){function addClose(){var pairs={modal:'fCancel',salDlg:'salCancel',colDlg:'colCancel',optDlg:'optClose',ordDlg:'ordCancel',askDlg:'askNo'};Object.keys(pairs).forEach(function(id){var layer=document.getElementById(id);if(!layer||layer.querySelector('.layer-close'))return;var target=document.getElementById(pairs[id]);if(!target)return;var x=document.createElement('button');x.type='button';x.className='form-close layer-close';x.setAttribute('aria-label','قفل والرجوع');x.textContent='✕';x.onclick=function(){target.click()};(layer.querySelector('.sheet,.box')||layer).prepend(x)})}new MutationObserver(addClose).observe(document.body,{childList:true,subtree:true});addClose()})();</script><script src="applicants-admin.js?v=20261121dashboard"></script><script src="dashboard-admin.js?v=20261121compact"></script><script src="pwa.js?v=20261121install-private" defer></script>
+<script>(function(){function addClose(){var pairs={modal:'fCancel',salDlg:'salCancel',colDlg:'colCancel',optDlg:'optClose',ordDlg:'ordCancel',askDlg:'askNo'};Object.keys(pairs).forEach(function(id){var layer=document.getElementById(id);if(!layer||layer.querySelector('.layer-close'))return;var target=document.getElementById(pairs[id]);if(!target)return;var x=document.createElement('button');x.type='button';x.className='form-close layer-close';x.setAttribute('aria-label','قفل والرجوع');x.textContent='✕';x.onclick=function(){target.click()};(layer.querySelector('.sheet,.box')||layer).prepend(x)})}new MutationObserver(addClose).observe(document.body,{childList:true,subtree:true});addClose()})();</script><script src="applicants-admin.js?v=20261121dashboard"></script><script src="dashboard-admin.js?v=20261121install-choices"></script><script src="pwa.js?v=20261121install-choices" defer></script>
 </body>
 </html>

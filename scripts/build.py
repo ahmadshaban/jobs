@@ -131,7 +131,7 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 <script src="{prefix}app.js?v=20261121compact" defer></script>
 <script src="{prefix}sharing.js?v=20261121f" defer></script>
 <script src="{prefix}legacy.js" defer></script>
-<script src="{prefix}pwa.js?v=20261121install" defer></script>
+<script src="{prefix}pwa.js?v=20261121install-choices" defer></script>
 </body>
 </html>"""
 
@@ -686,6 +686,10 @@ document.addEventListener("click",function(e){
         f.write(app_js)
     admin_manifest={"id":"./admin.html","name":"Job Gate Admin","short_name":"الإدارة","start_url":"./admin.html","scope":"./","display":"standalone","lang":"ar","dir":"rtl","background_color":"#0a1428","theme_color":"#0a1428","icons":[{"src":"admin-icon-192.png","sizes":"192x192","type":"image/png"},{"src":"admin-icon-512.png","sizes":"512x512","type":"image/png"}]}
     with open(os.path.join(OUT,"admin-manifest.json"),"w",encoding="utf-8") as f:json.dump(admin_manifest,f,ensure_ascii=False)
+    for app_key,app_label,app_hash in [('stats','الإحصائيات','analytics'),('applicants','المتقدمين','applicants')]:
+        section_manifest=dict(admin_manifest)
+        section_manifest.update(id='./admin.html?app='+app_key,name='Job Gate '+app_label,short_name=app_label,start_url='./admin.html?app='+app_key+'#'+app_hash)
+        with open(os.path.join(OUT,'admin-'+app_key+'-manifest.json'),'w',encoding='utf-8') as f:json.dump(section_manifest,f,ensure_ascii=False)
     for size in [192,512]:shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","site",f"admin-icon-{size}.png"),os.path.join(OUT,f"admin-icon-{size}.png"))
     with open(os.path.join(OUT,"callcenter.html"),"w",encoding="utf-8") as f:f.write('<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0;url=cc/"><title>Job Gate CC</title><script>location.replace("cc/")</script><a href="cc/">افتح نسخة CC</a></html>')
     legacy_cc={"id":"./callcenter.html","name":"Job Gate CC","short_name":"Job Gate CC","start_url":"./cc/index.html","scope":"./cc/","display":"standalone","icons":[{"src":"cc/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"cc/icon-512.png","sizes":"512x512","type":"image/png"}]}
