@@ -343,3 +343,5 @@ body.pg-apply .transport-before-submit p{font-size:12px;line-height:1.55}
 body.pg-apply #applyBtn{min-height:50px;padding:11px 13px;font-size:16px}
 body.pg-apply #handoffNote{font-size:11px;margin-top:7px}
 }
+
+.same-day-note{margin:10px 0;padding:8px 10px;border:1px solid #c5d2e4;border-inline-start:3px solid #3766ad;border-radius:9px;background:#e9f0fb;color:#17376a;font:700 12px/1.65 Tajawal,Arial,sans-serif}

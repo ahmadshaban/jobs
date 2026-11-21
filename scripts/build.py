@@ -148,18 +148,18 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 <meta name="theme-color" content="#e9eef7">
 <link rel="manifest" href="{prefix}manifest.json">
 {font_link}
-<link rel="stylesheet" href="{prefix}style.css?v=20261121hint">
-<link rel="stylesheet" href="{prefix}menu.css?v=20261121hint">
+<link rel="stylesheet" href="{prefix}style.css?v=20261121sameday">
+<link rel="stylesheet" href="{prefix}menu.css?v=20261121sameday">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏭</text></svg>">
 {ld}
 </head>
 <body class="{page_cls}" data-variant="{variant}" data-prefix="{prefix}">
 {configured(body)}
 <script>window.JG_CONFIG={json.dumps(({k:v for k,v in DASH_CONFIG.items() if k not in ['whatsapp','followup_template','consent_text','save_failure']} if variant=='cc' else {k:v for k,v in DASH_CONFIG.items() if k not in ['consent_text','save_failure']}),ensure_ascii=False).replace(chr(60),chr(92)+'u003c')};</script>
-<script src="{prefix}app.js?v=20261121hint" defer></script>
+<script src="{prefix}app.js?v=20261121sameday" defer></script>
 {share_script}
 {legacy_script}
-<script src="{prefix}pwa.js?v=20261121hint" defer></script>
+<script src="{prefix}pwa.js?v=20261121sameday" defer></script>
 </body>
 </html>"""
 
@@ -312,7 +312,7 @@ def build_variant(jobs_open, variant):
 <div class="wrap"><div class="areas">{areas_html}</div></div>"""
     body += footer()
     body += bottom_bar("", variant)
-    desc = f"وظايف مصانع تعبئة وتغليف للشباب والبنات في {' و'.join(order)}. مرتبات تبدأ من {min([best_salary_num(x) for x in jobs_open if best_salary_num(x)] or [0]):,} جنيه. قدّم واتساب واستلم الشغل في نفس اليوم."
+    desc = f"وظايف مصانع تعبئة وتغليف للشباب والبنات في {' و'.join(order)}. تفاصيل المرتب والورديات جوه كل وظيفة. قدّم واتساب واستلم الشغل في نفس اليوم."
     html_doc = layout(f"وظايف مصانع تعبئة وتغليف - شباب وبنات | {SITE_NAME}", desc, body, "", variant, SITE_BASE, noindex=noindex, page_cls="pg-home")
     with open(os.path.join(root, "index.html"), "w", encoding="utf-8") as f:
         f.write(html_doc)
@@ -423,6 +423,7 @@ def build_apply_page(j, root, prefix_depth="../../"):
 <div class="field"><label for="f_a">🔢 سنك<em class="req">*</em></label><div class="err" id="e_a"></div><input id="f_a" inputmode="numeric" maxlength="2" placeholder="مثال: 25"><small class="hint">{age_hint2}</small></div>
 <div class="field"><label for="f_t">📲 رقم الواتساب بتاعك<em class="req">*</em></label><div class="err" id="e_t"></div><input id="f_t" type="tel" inputmode="tel" maxlength="15" placeholder="01XXXXXXXXX"><small class="hint">اكتب رقم فيه واتساب</small></div>
 
+<p class="same-day-note">ملاحظة: استلام المقابلة واستلام الشغل في نفس اليوم، مش مضطر تروح وترجع تاني.</p>
 {transport_form_notice(j)}
 <a class="btn btn-wa" id="applyBtn" href="{esc(wa_direct)}" rel="nofollow"
  data-gender="{esc(j.get("الفئة"))}" data-phone="{PHONE}" data-area="{esc(j.get('المنطقة'))}" data-factory="{esc(j.get('المصنع'))}" data-sal="{esc(salary_line(j))}" data-multi="{1 if multi else 0}"{age_attrs}>
@@ -744,9 +745,9 @@ document.addEventListener("click",function(e){
     legacy_cc={"id":"/jobs/apps/cc","name":"Job Gate CC","short_name":"Job Gate CC","start_url":"./cc/index.html?app=cc","scope":"./cc/","display":"standalone","icons":[{"src":"cc/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"cc/icon-512.png","sizes":"512x512","type":"image/png"}]}
     with open(os.path.join(OUT,"manifest-cc.json"),"w",encoding="utf-8") as f:json.dump(legacy_cc,f,ensure_ascii=False)
     # Network-first caching replaces the old worker and labels offline copies.
-    sw = r"""const CACHE='jobgate-v20-'+new URL(self.registration.scope).pathname;
+    sw = r"""const CACHE='jobgate-v21-'+new URL(self.registration.scope).pathname;
 self.addEventListener('install',()=>self.skipWaiting());
-self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE&& !k.startsWith('jobgate-v20-'))await caches.delete(k);await self.clients.claim()})()));
+self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE&& !k.startsWith('jobgate-v21-'))await caches.delete(k);await self.clients.claim()})()));
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET'||new URL(e.request.url).origin!==self.location.origin)return;
 e.respondWith((async()=>{const c=await caches.open(CACHE);const asset=/\.(?:woff2|png|webp|css|js)$/.test(new URL(e.request.url).pathname);if(asset){const cached=await c.match(e.request);if(cached)return cached}try{const r=await fetch(e.request,{cache:"no-cache"});if(r.ok){await c.put(e.request,r.clone())}return r}catch(_){const saved=await c.match(e.request);if(saved)return saved;return new Response('<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>الاتصال بالإنترنت</title><body style="font:20px Tahoma;padding:32px;background:#F2F5F8;color:#0E5A40"><h1>أنت مش متصل بالنت</h1><p>الصفحة دي مش محفوظة. اتصل بالنت وحدّث الصفحة.</p></body></html>',{headers:{'Content-Type':'text/html;charset=utf-8'}})}})())});"""
     with open(os.path.join(OUT, "sw.js"), "w", encoding="utf-8") as f:f.write(sw)
