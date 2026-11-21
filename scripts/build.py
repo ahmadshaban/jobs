@@ -141,7 +141,7 @@ def header(prefix, variant):
     drawer_links = ""
     if variant != "cc":
         import urllib.parse
-        question = urllib.parse.quote(DASH_CONFIG.get("question_template","السلام عليكم، عندي استفسار بخصوص الوظايف"))
+        question = urllib.parse.quote(DASH_CONFIG.get("question_template","السلام عليكم، عندي استفسار بخصوص الوظايف").replace("{company}",DASH_CONFIG.get("company_name","")))
         drawer_links = f"""<a class="d-link d-whatsapp" href="https://wa.me/{PHONE}?text={question}" rel="nofollow">💬 اسأل على الواتساب</a><div class="d-sep"></div>
 <a class="d-link" href="{prefix}admin.html">🔒 الأدمن</a>
 <a class="d-link" href="{prefix}stats.html">📊 الإحصائيات</a>
@@ -719,20 +719,20 @@ var dg=function(s){return String(s||'').replace(/[٠-٩]/g,function(ch){return '
 
 function fieldError(id,msg){var f=$(id),e=$(id+'_error');if(!e){e=document.createElement('div');e.id=id+'_error';e.className='err';f.before(e)}e.textContent=msg;f.classList.toggle('bad',!!msg);f.setAttribute('aria-invalid',msg?'true':'false')}
 function fail(id,msg){fieldError(id,msg);$(id).focus();$(id).scrollIntoView({block:'center',behavior:'smooth'})}
-function ccNameError(){var n=$('c_n').value.trim();return n.split(/\s+/).filter(function(w){return w.length>=2}).length<3?'لازم تكتب اسمك ثلاثي':window.jgNameMismatch(n,'بنات','الشغل ده')}
+function ccNameError(){var n=$('c_n').value.trim();return n.split(/\s+/).filter(function(w){return w.length>=2}).length<3?window.jgConfig('name_invalid','لازم تكتب اسمك ثلاثي'):window.jgNameMismatch(n,'بنات','الشغل ده')}
 $('c_n').addEventListener('input',function(){fieldError('c_n',ccNameError())});
-$('c_t').addEventListener('input',function(){fieldError('c_t',/^(?:\+?20|0)1[0125]\d{8}$/.test(dg(this.value).replace(/[\s-]/g,''))?'':'الرقم ناقص، اكتبي رقم واتساب مصري صحيح')});
+$('c_t').addEventListener('input',function(){fieldError('c_t',/^(?:\+?20|0)1[0125]\d{8}$/.test(dg(this.value).replace(/[\s-]/g,''))?'':window.jgConfig('phone_invalid','الرقم ناقص، اكتب رقم واتساب مصري صحيح'))});
 $('c_x').onchange=function(){$('c_cw').hidden=this.value!=='آه';fieldError('c_x','')};
 $('ccSend').onclick=function(){
  if(window.JG_CONFIG&&JG_CONFIG.maintenance==='true'){fieldError('c_n',JG_CONFIG.maintenance_text);return}
  var n=$('c_n').value.trim().replace(/\s+/g,' '),a=dg($('c_a').value.trim()),p=dg($('c_t').value.replace(/[\s-]/g,'')),x=$('c_x').value,c=$('c_c').value.trim();
  if(ccNameError())return fail('c_n',ccNameError());
- if(!/^\d{1,2}$/.test(a)||+a<1)return fail('c_a','اكتبي السن بالأرقام');
- if(!/^(?:\+?20|0)1[0125]\d{8}$/.test(p))return fail('c_t','الرقم ناقص، اكتبي رقم واتساب مصري صحيح');
+ if(!/^\d{1,2}$/.test(a)||+a<1)return fail('c_a',window.jgConfig('age_invalid','اكتب السن بالأرقام'));
+ if(!/^(?:\+?20|0)1[0125]\d{8}$/.test(p))return fail('c_t',window.jgConfig('phone_invalid','الرقم ناقص، اكتب رقم واتساب مصري صحيح'));
  if(!x)return fail('c_x','اختاري آه أو لا');if(x==='آه'&&!c)return fail('c_c','اكتبي اسم الشركة');
  ['c_n','c_a','c_t','c_x','c_c'].forEach(function(id){fieldError(id,'')});
  var L=['السلام عليكم، محتاج التفاصيل عن وظيفة مسوق بالعمولة (فريق التوظيف أونلاين)','الاسم: '+n,'السن: '+a,'رقم الواتساب: '+p,'اشتغلت الشغل ده قبل كده: '+x];if(x==='آه')L.push('الشركة: '+c);
- window.jgReviewScreen($('ccApply'),[['الاسم',n],['السن',a],['رقم الواتساب',p],['الوظيفة',JG_CONFIG.cc_job_title||'مسوّقة في فريق التوظيف'],['نظام الشغل','أونلاين من الموبايل'],['المقابل','بالعمولة'],['اشتغلتي قبل كده؟',x]],'الشغل ده أونلاين من الموبايل، مفيش انتقال لمصنع ولا مواصلات.', 'https://wa.me/'+(JG_CONFIG.whatsapp||'__PHONE__')+'?text='+encodeURIComponent(window.jgTemplate(JG_CONFIG.cc_application_template||L.join('\n'),{name:n,age:a,phone:p,job:JG_CONFIG.cc_job_title||'مسوّقة في فريق التوظيف',experience:x,previous_company:c})));
+ window.jgReviewScreen($('ccApply'),[['الاسم',n],['السن',a],['رقم الواتساب',p],['الوظيفة',JG_CONFIG.cc_job_title||'مسوّقة في فريق التوظيف'],['نظام الشغل','أونلاين من الموبايل'],['المقابل','بالعمولة'],['اشتغلتي قبل كده؟',x]],'الشغل ده أونلاين من الموبايل، مفيش انتقال لمصنع ولا مواصلات.', 'https://wa.me/'+(JG_CONFIG.whatsapp||'__PHONE__')+'?text='+encodeURIComponent(window.jgTemplate(JG_CONFIG.cc_application_template||L.join('\n'),{name:n,age:a,phone:p,job:JG_CONFIG.cc_job_title||'مسوّقة في فريق التوظيف',experience:x,previous_company:c,company:JG_CONFIG.company_name||''})));
 };
 
 })();
