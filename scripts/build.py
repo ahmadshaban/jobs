@@ -128,10 +128,19 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
     share_script = f'<script src="{prefix}sharing.js?v=20261121f" defer></script>' if 'data-share-tools' in body else ''
     legacy_script = f'<script src="{prefix}legacy.js" defer></script>' if page_cls=='pg-home' else ''
     robots = '<meta name="robots" content="noindex,nofollow">' if noindex else ""
+    preview_image = ""
     share_title, share_desc = og_title or title, desc
     if variant == "main" and page_cls == "pg-home":
         share_title = "بوابة الوظائف"
         share_desc = "شوف الوظايف المتاحة وقدّم من الموقع"
+        image_url = SITE_BASE + "jobs-preview-worker-compact-20261121.jpg"
+        preview_image = f'''
+<meta property="og:image" content="{esc(image_url)}">
+<meta property="og:image:secure_url" content="{esc(image_url)}">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="280">
+<meta property="og:image:height" content="280">
+<meta property="og:image:alt" content="عمال على خط تعبئة برطمانات، من صورة الإعلان">'''
     ld = f'<script type="application/ld+json">{json.dumps(json_ld, ensure_ascii=False)}</script>' if json_ld else ""
     return f"""<!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -148,7 +157,7 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 <meta property="og:type" content="website">
 <meta property="og:url" content="{esc(canonical)}">
 <meta property="og:locale" content="ar_EG">
-<meta property="og:site_name" content="{esc(name)}">
+<meta property="og:site_name" content="{esc(name)}">{preview_image}
 <meta name="theme-color" content="#e9eef7">
 <link rel="manifest" href="{prefix}manifest.json">
 {font_link}
@@ -867,20 +876,11 @@ def assign_ids(jobs):
 def write_compact_preview_trial():
     """Isolated WhatsApp thumbnail experiment; never changes the real homepage."""
     trial_url = SITE_BASE + "preview-compact-20261121.html"
-    image_url = SITE_BASE + "jobs-preview-worker-compact-20261121.jpg"
     with open(os.path.join(OUT, "index.html"), encoding="utf-8") as f:
         trial = f.read()
     trial = trial.replace('<link rel="canonical" href="' + SITE_BASE + '">', '<link rel="canonical" href="' + trial_url + '">', 1)
     trial = trial.replace('<meta property="og:url" content="' + SITE_BASE + '">', '<meta property="og:url" content="' + trial_url + '">', 1)
-    tags = f'''<meta name="robots" content="noindex,nofollow">
-<meta property="og:image" content="{esc(image_url)}">
-<meta property="og:image:secure_url" content="{esc(image_url)}">
-<meta property="og:image:type" content="image/jpeg">
-<meta property="og:image:width" content="280">
-<meta property="og:image:height" content="280">
-<meta property="og:image:alt" content="عمال على خط تعبئة برطمانات، من صورة الإعلان">
-'''
-    trial = trial.replace('</head>', tags + '</head>', 1)
+    trial = trial.replace('</head>', '<meta name="robots" content="noindex,nofollow">\n</head>', 1)
     with open(os.path.join(OUT, "preview-compact-20261121.html"), "w", encoding="utf-8") as f:
         f.write(trial)
     shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "site", "jobs-preview-worker-compact-20261121.jpg"), os.path.join(OUT, "jobs-preview-worker-compact-20261121.jpg"))
