@@ -487,6 +487,13 @@ let bypassDirtyWarning = false;
 const $ = id => document.getElementById(id);
 
 const AUTH_KEY = 'first_service_admin_pw';
+const DEVICE_KEY='jobgate_admin_device_id';
+function adminDeviceId(){
+ let id=localStorage.getItem(DEVICE_KEY)||'';
+ if(!/^[A-Za-z0-9_-]{20,80}$/.test(id)){id=crypto.randomUUID().replace(/-/g,'');localStorage.setItem(DEVICE_KEY,id);}
+ return id;
+}
+
 const ACTIVITY_KEY = 'first_service_admin_last_activity';
 const SESSION_IDLE_MS = 12 * 60 * 60 * 1000;
 let sessionCheckTimer = null;
@@ -570,7 +577,7 @@ async function api(action, extra){
     const r = await fetch(API, {
       method:'POST',
       headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body:JSON.stringify(Object.assign({password:savedPassword(), action}, extra||{})),
+      body:JSON.stringify(Object.assign({password:savedPassword(), device_id:adminDeviceId(), action}, extra||{})),
       signal:controller.signal
     });
     if (!r.ok) return {ok:false, error:'السيرفر رجّع خطأ (' + r.status + ')'};
@@ -648,9 +655,9 @@ async function login(pw, auto){
   const r = await api('list');
   $('loginBtn').disabled = false;
   if (!r.ok){
-    if (String(r.error || '').trim() === 'كلمة السر غلط') clearLogin();
+    if (r.code === 'ADMIN_LOCKED' || String(r.error || '').trim() === 'كلمة السر غلط') clearLogin();
     else if (!previousPw) clearLogin();
-    if (auto && previousPw && String(r.error || '').trim() !== 'كلمة السر غلط') {
+    if (auto && previousPw && r.code !== 'ADMIN_LOCKED' && String(r.error || '').trim() !== 'كلمة السر غلط') {
       startSessionChecks();
       $('login').classList.add('hidden'); $('app').classList.remove('hidden');
       render();
