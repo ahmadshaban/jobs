@@ -9,12 +9,12 @@
 <title>إحصائيات الموقع</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ===== [1] الألوان والستايل ===== */
 :root{--bg:#F2F5F8;--card:#FFFFFF;--bd:#E3E9EF;--tx:#10253A;--mut:#43576B;--ac:#0E5A40;--ac2:#B7791F;--ok:#178A42;--bad:#C0392B}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:var(--bg);color:var(--tx);font-family:Cairo,system-ui,sans-serif}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:Tajawal,system-ui,sans-serif}
 body{padding:calc(.8rem + env(safe-area-inset-top)) .8rem calc(2rem + env(safe-area-inset-bottom));max-width:48rem;margin:auto}
 h1{font-size:1.15rem;margin:0}
 .top{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.7rem}
@@ -58,7 +58,7 @@ body{background:#F2F5F8;color:#10253A}
 
 .scrim{position:fixed;inset:0;background:rgba(16,37,58,.45);opacity:0;pointer-events:none;transition:.25s;z-index:90}
 .scrim.open{opacity:1;pointer-events:auto}
-.drawer{position:fixed;top:0;bottom:0;inset-inline-start:-300px;width:280px;max-width:82vw;background:#fff;z-index:100;transition:.25s;box-shadow:0 6px 18px rgba(16,37,58,.12),0 20px 50px rgba(16,37,58,.10);display:flex;flex-direction:column;padding:16px;font-family:'Cairo',sans-serif}
+.drawer{position:fixed;top:0;bottom:0;inset-inline-start:-300px;width:280px;max-width:82vw;background:#fff;z-index:100;transition:.25s;box-shadow:0 6px 18px rgba(16,37,58,.12),0 20px 50px rgba(16,37,58,.10);display:flex;flex-direction:column;padding:16px;font-family:'Tajawal',sans-serif}
 .drawer.open{inset-inline-start:0}
 .drawer .d-head{display:flex;align-items:center;justify-content:space-between;font-weight:900;font-size:16px;color:#10253A;margin-bottom:8px}
 .drawer .d-head button{border:0;background:#F2F5F8;width:34px;height:34px;border-radius:10px;font-size:15px;cursor:pointer;color:#10253A}
@@ -68,7 +68,7 @@ body{background:#F2F5F8;color:#10253A}
 #menuBtn{position:fixed;top:10px;inset-inline-start:10px;z-index:80;width:42px;height:42px;border-radius:12px;border:0;background:#0E5A40;color:#fff;font-size:19px;cursor:pointer;box-shadow:0 4px 12px rgba(16,37,58,.25)}
 
 /* Clear close controls and a compact, accessible navigation sheet. */
-.form-close{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border:1px solid #D7E0E8;border-radius:14px;background:#fff;color:#10253A;font:700 22px Cairo,sans-serif;cursor:pointer;margin:0 0 12px auto;box-shadow:0 2px 8px #10253a0a;text-decoration:none;flex:none}
+.form-close{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border:1px solid #D7E0E8;border-radius:14px;background:#fff;color:#10253A;font:700 22px Tajawal,sans-serif;cursor:pointer;margin:0 0 12px auto;box-shadow:0 2px 8px #10253a0a;text-decoration:none;flex:none}
 .confirm-screen .panel,.apply-panel{position:relative}.confirm-screen .form-close{float:left;margin:0 0 12px 12px}.confirm-screen h2{min-height:44px;display:flex;align-items:center}
 .drawer{box-sizing:border-box;width:min(340px,90vw);max-width:90vw;padding:22px 18px max(24px,env(safe-area-inset-bottom));inset-inline-start:-370px;visibility:hidden;overflow-y:auto;border-radius:24px 0 0 24px;transition:inset-inline-start .22s ease,visibility .22s;background:#fff}
 .drawer.open{visibility:visible;inset-inline-start:0}.drawer .d-head{padding-bottom:20px;border-bottom:1px solid #E3E9EF;margin-bottom:16px;font-size:17px}.drawer .d-head button{width:44px;height:44px;font-size:20px;border:1px solid #E3E9EF;border-radius:14px;flex:none}.drawer .d-link{min-height:52px;padding:12px 14px;font-size:15px;margin:3px 0;border:1px solid transparent;line-height:1.7}.drawer .d-link:hover,.drawer .d-link:focus-visible{background:#E3F3EC;border-color:#C9E5D8}.scrim.open{backdrop-filter:blur(3px);background:#10253a66}body.menu-open{overflow:hidden}.drawer button:focus-visible,.drawer a:focus-visible,.form-close:focus-visible{outline:3px solid #36A675;outline-offset:3px}

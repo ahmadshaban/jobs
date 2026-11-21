@@ -14,9 +14,9 @@ function text(){return records.map(function(r){return r.text}).join('\n\n──�
 async function canvasFor(r){
  await document.fonts.ready;
  var c=document.createElement('canvas'),ctx=c.getContext('2d');c.width=1080;c.height=2400;
- ctx.font='600 29px Cairo, Tahoma, Arial';ctx.direction='rtl';ctx.textAlign='right';
+ ctx.font='600 29px Tajawal, Tahoma, Arial';ctx.direction='rtl';ctx.textAlign='right';
  var lines=[];String(r.text||'').split('\n').forEach(function(line){var words=line.split(/\s+/),current='';words.forEach(function(w){var next=current?current+' '+w:w;if(ctx.measureText(next).width>930&&current){lines.push(current);current=w}else current=next});lines.push(current)});
- c.height=Math.max(700,200+lines.length*54);ctx.fillStyle='#ffffff';ctx.fillRect(0,0,c.width,c.height);ctx.fillStyle='#0E5A40';ctx.fillRect(0,0,c.width,115);ctx.direction='rtl';ctx.textAlign='right';ctx.font='800 38px Cairo, Tahoma, Arial';ctx.fillStyle='#fff';ctx.fillText('بوابة الوظايف',1008,73);ctx.fillStyle='#172F40';ctx.font='600 29px Cairo, Tahoma, Arial';lines.forEach(function(l,i){ctx.fillText(l,1008,180+i*54)});
+ c.height=Math.max(700,200+lines.length*54);ctx.fillStyle='#ffffff';ctx.fillRect(0,0,c.width,c.height);ctx.fillStyle='#0E5A40';ctx.fillRect(0,0,c.width,115);ctx.direction='rtl';ctx.textAlign='right';ctx.font='800 38px Tajawal, Tahoma, Arial';ctx.fillStyle='#fff';ctx.fillText('بوابة الوظايف',1008,73);ctx.fillStyle='#172F40';ctx.font='600 29px Tajawal, Tahoma, Arial';lines.forEach(function(l,i){ctx.fillText(l,1008,180+i*54)});
  return c;
 }
 async function exportAll(share){

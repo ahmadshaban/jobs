@@ -1,5 +1,5 @@
 /* بوابة الوظائف — التصميم الجديد v2 */
-@font-face{font-family:'Cairo';src:local('Cairo');font-display:swap}
+@font-face{font-family:'Tajawal';src:local('Tajawal');font-display:swap}
 :root{
  --bg:#F2F5F8; --card:#FFFFFF; --ink:#10253A; --ink2:#43576B; --line:#E3E9EF;
  --brand:#0E5A40; --brand-d:#0A4532; --brand-soft:#E3F3EC;
@@ -13,7 +13,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
 body{
- font-family:'Cairo','Segoe UI',Tahoma,sans-serif;
+ font-family:'Tajawal','Segoe UI',Tahoma,sans-serif;
  background:var(--bg);color:var(--ink);
  font-size:14px;line-height:1.65;
  padding-bottom:80px; /* مكان الشريط السفلي */
@@ -225,7 +225,7 @@ dialog.cfov::backdrop{background:rgba(16,37,58,.55)}
 body.confirming .top{display:none}
 
 /* Clear close controls and a compact, accessible navigation sheet. */
-.form-close{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border:1px solid #D7E0E8;border-radius:14px;background:#fff;color:#10253A;font:700 22px Cairo,sans-serif;cursor:pointer;margin:0 0 12px auto;box-shadow:0 2px 8px #10253a0a;text-decoration:none;flex:none}
+.form-close{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border:1px solid #D7E0E8;border-radius:14px;background:#fff;color:#10253A;font:700 22px Tajawal,sans-serif;cursor:pointer;margin:0 0 12px auto;box-shadow:0 2px 8px #10253a0a;text-decoration:none;flex:none}
 .confirm-screen .panel,.apply-panel{position:relative}.confirm-screen .form-close{float:left;margin:0 0 12px 12px}.confirm-screen h2{min-height:44px;display:flex;align-items:center}
 .drawer{box-sizing:border-box;width:min(340px,90vw);max-width:90vw;padding:22px 18px max(24px,env(safe-area-inset-bottom));inset-inline-start:-370px;visibility:hidden;overflow-y:auto;border-radius:24px 0 0 24px;transition:inset-inline-start .22s ease,visibility .22s;background:#fff}
 .drawer.open{visibility:visible;inset-inline-start:0}.drawer .d-head{padding-bottom:20px;border-bottom:1px solid #E3E9EF;margin-bottom:16px;font-size:15.5px}.drawer .d-head button{width:44px;height:44px;font-size:18.5px;border:1px solid #E3E9EF;border-radius:14px;flex:none}.drawer .d-link{min-height:52px;padding:12px 14px;font-size:13.5px;margin:3px 0;border:1px solid transparent;line-height:1.7}.drawer .d-link:hover,.drawer .d-link:focus-visible{background:#E3F3EC;border-color:#C9E5D8}.scrim.open{backdrop-filter:blur(3px);background:#10253a66}body.menu-open{overflow:hidden}.drawer button:focus-visible,.drawer a:focus-visible,.form-close:focus-visible{outline:3px solid #36A675;outline-offset:3px}
