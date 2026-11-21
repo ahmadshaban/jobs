@@ -144,7 +144,7 @@ def header(prefix, variant):
         question = urllib.parse.quote(DASH_CONFIG.get("question_template","السلام عليكم، عندي استفسار بخصوص الوظايف").replace("{company}",DASH_CONFIG.get("company_name","")))
         drawer_links = f"""<a class="d-link d-whatsapp" href="https://wa.me/{PHONE}?text={question}" rel="nofollow">💬 اسأل على الواتساب</a><div class="d-sep"></div>
 <a class="d-link" href="{prefix}admin.html">🔒 الأدمن</a>
-<a class="d-link" href="{prefix}stats.html">📊 الإحصائيات</a>
+
 <a class="d-link" href="{prefix}cc-jobs/">📢 وظايف كول سنتر للبنات</a>
 """
     return f"""<header class="top"><div class="wrap">
@@ -266,7 +266,6 @@ def build_variant(jobs_open, variant):
 {f'<span class="pay">💰 {pay_hint}</span>' if pay_hint else ''}
 </a>"""
     body = header("", variant)
-    if variant=="cc": body += '<div class="wrap">'+sharing_tools(jobs_open,variant,"كل الوظايف","index.html")+'</div>'
     body += steps_strip()
     body += f"""<div class="wrap"><div class="sec"><h2>📍 اختار منطقتك</h2><span class="ln"></span><small>{n_open} وظيفة</small></div></div>
 <div class="wrap"><div class="areas">{areas_html}</div></div>"""

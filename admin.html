@@ -202,6 +202,8 @@ body{background:#F2F5F8;color:#10253A}
 
 .layer-close{float:left;margin:0 0 10px 10px}
 
+
+.dash-mode{padding-inline-start:64px}.dash-mode>div{min-width:0}.dash-mode strong{font-size:20px}.dash-mode>button{flex-shrink:0}@media(max-width:440px){.dash-mode{align-items:flex-start}.dash-mode>button{max-width:142px;font-size:12px;padding:8px}}
 </style>
 <style>
 /* Simple administration shell */
@@ -224,13 +226,16 @@ body{background:#F2F5F8;color:#10253A}
 
 .dash-mode{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:12px;justify-content:space-between;padding:15px 64px 12px 14px;background:white}.dash-mode strong{font-size:18px}.dash-mode p{margin:5px 0 0;color:#526577;font-size:13px;line-height:1.7}.dash-mode button{font:700 14px Tajawal,sans-serif;color:#0e5a40;background:#edf5f1;border:1px solid #c8d8d1;border-radius:10px;padding:10px;min-height:44px;flex:none;cursor:pointer}.admin-tabs{grid-template-columns:repeat(3,minmax(0,1fr));padding:8px 14px;margin:0 auto}.admin-tabs [hidden]{display:none!important}.dash-daily-help{max-width:1000px;margin:12px auto;padding:0 16px;color:#526577;font-size:14px;line-height:1.8}.dash-explain{display:block;color:#526577;font-size:13px;font-weight:400;line-height:1.9;margin-top:7px;white-space:normal;overflow-wrap:anywhere}.dash-control{flex:1;min-width:150px}.dash-control>.btn{width:100%}.dash-control .dash-explain{padding:0 3px}.dash-field .dash-explain{margin:0}.dash-actions{align-items:start}.dash-link-grid .dash-explain{font-size:12px}
 @media(max-width:600px){.dash-mode{padding:15px 54px 12px 12px;align-items:start;flex-wrap:wrap}.dash-mode>div{flex:1;min-width:140px}.dash-mode button{font-size:13px}.admin-tabs{padding:7px;grid-template-columns:repeat(3,minmax(0,1fr))}.dash-daily-help{margin:12px 0}.dash-control{min-width:130px}}
+
+:root{--c-bg:#f3f5f1;--c-text:#203d34;--c-border:#dde5dc}body{background:var(--c-bg);color:var(--c-text)}#app{max-width:1180px}.dash-mode{max-width:1180px;border-bottom:1px solid #e5ebe2;padding-top:22px;padding-bottom:18px;background:#fff}.dash-mode strong{font-size:22px;font-weight:800;letter-spacing:-.3px}.dash-mode button{background:#fff;border-color:#ccd9ce;border-radius:12px}.admin-tabs{max-width:1180px;background:#fff;padding-top:12px;padding-bottom:12px;gap:8px;box-shadow:0 6px 18px #214d3c05}.admin-tabs button{border-radius:12px;font-size:15px;min-height:48px;background:#f2f5ef;color:#4a6255}.admin-tabs button.active{background:#155d46;box-shadow:0 3px 8px #155d4620}.dash-daily-help{background:#e9f0e5;padding:12px 16px;border-radius:12px;margin:18px auto 8px;max-width:1040px;color:#49614d}.dash-page{max-width:1072px;padding-top:24px}.dash-page h1{font-size:29px;letter-spacing:-.4px}.dash-page h2{color:#234b3b;font-size:19px}.dash-page-title{display:flex;align-items:center;justify-content:space-between;gap:12px}.dash-eyebrow{font-size:13px;color:#71816b;display:block;margin-bottom:6px}.dash-live-dot{color:#387958;border:1px solid #d4e4d5;border-radius:30px;background:#edf6e9;font-size:12px;padding:7px 10px;white-space:nowrap}.dash-box{border-color:#e0e7dd;box-shadow:0 3px 12px #234d3104;border-radius:18px;margin-top:20px}.dash-note{background:#faf4df;border:1px solid #f1e5c1;font-size:13px}.dash-today-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:20px 0 8px}.dash-today-card{background:#fff;border:1px solid #dce5d8;border-radius:18px;padding:20px;min-width:0}.dash-today-card:first-child{background:#155d46;border-color:#155d46;color:#fff}.dash-today-card span{display:block;font-size:14px;line-height:1.7}.dash-today-card b{display:block;font-size:34px;line-height:1.7;font-weight:800}.dash-today-card small{display:block;font-size:12px;line-height:1.7;opacity:.8}.dash-period-heading{margin:28px 0 12px!important}.dash-analytics-detail{margin-top:24px}.dash-analytics-detail>summary{cursor:pointer;font-size:17px;font-weight:700;padding:16px;background:#fff;border:1px solid #dbe6d8;border-radius:14px;list-style-position:inside}.dash-analytics-detail>summary span{display:block;font-size:12px;color:#6b806b;margin-top:7px;font-weight:400}.ap-metric{border-color:#e0e7dd}.dash-stats-metrics{grid-template-columns:repeat(4,minmax(0,1fr))}.dash-page table th{background:#f2f6ee;color:#4d674c}.dash-message{background:#e8f1e3}.card{border-radius:17px;box-shadow:0 3px 12px #234d3104}#jobsPanel header,#applicantsPanel header{border:1px solid #e0e7dd;border-bottom:0;border-radius:18px 18px 0 0}#pinbar{border:1px solid #e0e7dd;border-top:0;border-radius:0 0 18px 18px}.ap-card{border-radius:17px;border-color:#e0e7dd}.dash-control .btn{border-radius:12px}.dash-field input,.dash-field select,.dash-field textarea{border-color:#cddbc9}.dash-save-bar{border-color:#dce5d8}
+@media(max-width:600px){.dash-mode{padding-top:18px;padding-bottom:16px}.dash-mode strong{font-size:21px}.admin-tabs button{font-size:14px}.dash-daily-help{margin:14px 14px 5px;padding:12px;font-size:13px}.dash-page{padding-top:22px}.dash-page h1{font-size:27px}.dash-today-metrics{grid-template-columns:1fr 1fr;gap:9px}.dash-today-card{padding:14px}.dash-today-card:first-child{grid-column:1/-1}.dash-today-card b{font-size:31px}.dash-stats-metrics{grid-template-columns:1fr 1fr}.dash-page-title{align-items:start}.dash-live-dot{font-size:11px;padding:6px 8px}}
 </style></head>
 <body>
 <button id="menuBtn" type="button" aria-label="القايمة">☰</button>
 <div class="scrim" id="scrim"></div>
 <nav class="drawer" id="drawer" aria-label="القايمة">
 <div class="d-head"><span>🏭 بوابة الوظائف</span><button type="button" id="drawerClose" aria-label="قفل">✕</button></div>
-<a class="d-link" href="index.html">🏠 الرئيسية</a><a class="d-link" href="cc-jobs/">📢 وظايف كول سنتر للبنات</a><a class="d-link" href="admin.html" style="background:#E3F3EC">🔒 الأدمن</a><a class="d-link" href="stats.html">📊 الإحصائيات</a>
+<a class="d-link" href="index.html">🏠 الرئيسية</a><a class="d-link" href="cc-jobs/">📢 وظايف كول سنتر للبنات</a><a class="d-link" href="admin.html" style="background:#E3F3EC">🔒 الأدمن</a>
 </nav>
 <script>(function(){var mb=document.getElementById("menuBtn"),dr=document.getElementById("drawer"),sc=document.getElementById("scrim"),dc=document.getElementById("drawerClose");
 function s(o){dr.classList.toggle("open",o);sc.classList.toggle("open",o)}
@@ -256,10 +261,10 @@ mb.addEventListener("click",function(){s(true)});dc.addEventListener("click",fun
       <button class="btn" id="bMenu">⋯ المزيد</button>
     </div>
     <div class="more hidden" id="moreMenu">
-      
+
       <button class="btn" id="bCol"></button>
       <button class="btn" id="bMove">↕ ترتيب الكروت</button>
-      <a class="btn" id="bStats" href="stats.html">📊 إحصائيات</a>
+
       <button class="btn danger" id="bDelCol">مسح عمود</button>
       <button class="btn danger" id="bOut"></button>
     </div>
@@ -317,12 +322,12 @@ mb.addEventListener("click",function(){s(true)});dc.addEventListener("click",fun
 <section id="settingsPanel" class="hidden dash-page">
 <h1>إعدادات الموقع</h1><p class="hint">إعدادات الموقع الأساسي ونسخة CC، من غير تغيير بيانات حساب Google أو GitHub.</p>
 <div class="dash-box"><div id="dashSettings" class="dash-grid"></div><p class="dash-note">إيقاف التقديم بيوقف التسجيل في السجل الخاص فور الحفظ. انشر كمان عشان أزرار الموقع تتحدث. الصفحات المفتوحة من قبل النشر ممكن تحتاج تحديث. نسخة CC بتفضل من غير رقمك.</p><button class="btn" id="dashSaveSettings">حفظ كل التعديلات</button></div>
-<div class="dash-box"><h2>تغيير كلمة سر لوحة التحكم</h2><p class="hint">مش كلمة سر حساب Google، ومش كلمة سر صفحة الإحصائيات القديمة. احفظ الجديدة عندك في مكان آمن.</p><form id="dashPasswordForm" class="dash-password"><label>كلمة السر الحالية<input id="dashCurrentPassword" type="password" autocomplete="current-password" required></label><label>كلمة السر الجديدة<input id="dashNewPassword" type="password" autocomplete="new-password" minlength="8" maxlength="128" required></label><label>تأكيد كلمة السر الجديدة<input id="dashNewPassword2" type="password" autocomplete="new-password" minlength="8" maxlength="128" required></label><button class="btn" id="dashPasswordButton">تغيير كلمة السر</button></form></div>
+<div class="dash-box"><h2>تغيير كلمة سر لوحة التحكم</h2><p class="hint">مش كلمة سر حساب Google. احفظ الجديدة عندك في مكان آمن.</p><form id="dashPasswordForm" class="dash-password"><label>كلمة السر الحالية<input id="dashCurrentPassword" type="password" autocomplete="current-password" required></label><label>كلمة السر الجديدة<input id="dashNewPassword" type="password" autocomplete="new-password" minlength="8" maxlength="128" required></label><label>تأكيد كلمة السر الجديدة<input id="dashNewPassword2" type="password" autocomplete="new-password" minlength="8" maxlength="128" required></label><button class="btn" id="dashPasswordButton">تغيير كلمة السر</button></form></div>
 </section>
 <section id="analyticsPanel" class="hidden dash-page">
-<h1>إحصائيات الموقع</h1><p class="dash-note">فتح واتساب وضغط التقديم أحداث على الموقع، مش إثبات إن رسالة اتبعتت أو إن المتقدم استلم الشغل. الحالات الفعلية بتراجعها في المتقدمين.</p>
-<div class="dash-actions"><select id="dashStatsDays" aria-label="فترة الإحصائيات"><option value="1">النهارده</option><option value="7">آخر 7 أيام</option><option value="30" selected>آخر 30 يوم</option><option value="90">آخر 90 يوم</option><option value="365">آخر سنة</option></select><button class="btn" id="dashStatsRefresh">تحديث الإحصائيات</button><button class="btn ghost" id="dashStatsExport">Excel للإحصائيات</button></div><p id="dashStatsMessage" role="status"></p><div id="dashStatsMetrics" class="dash-stats-metrics"></div>
-<div class="dash-box"><h2>المصانع</h2><div id="dashStatsFactories"></div></div><div class="dash-box"><h2>الأيام</h2><div id="dashStatsDaysTable"></div></div><div class="dash-box"><h2>المناطق</h2><div id="dashStatsAreas"></div></div><div class="dash-box"><h2>مصادر الزيارات</h2><div id="dashStatsSources"></div></div><details class="dash-box"><summary>ساعات الزيارة بتوقيت القاهرة</summary><div id="dashHours"></div></details>
+<div class="dash-page-title"><div><span class="dash-eyebrow">نظرة سريعة على شغلك</span><h1>الإحصائيات</h1></div><span class="dash-live-dot">بيانات الموقع</span></div><p class="hint">أرقام النهارده الأول، ولو حبيت تفاصيل أكتر هتلاقيها تحت.</p><div id="dashTodayMetrics" class="dash-today-metrics"></div><p id="dashApplicantsMessage" class="hint" role="status"></p><div class="dash-actions"><select id="dashStatsDays" aria-label="فترة الإحصائيات"><option value="1" selected>النهارده</option><option value="7">آخر 7 أيام</option><option value="30">آخر 30 يوم</option><option value="90">آخر 90 يوم</option><option value="365">آخر سنة</option></select><button class="btn" id="dashStatsRefresh">تحديث الإحصائيات</button><button class="btn ghost" id="dashStatsExport">Excel للإحصائيات</button></div><div class="dash-box"><h2>أكتر وظايف عليها تسجيلات</h2><p class="hint">حسب الناس اللي حفظت بياناتها في الموقع خلال الفترة المختارة. مش تأكيد إنهم بعتوا واتساب أو استلموا الشغل.</p><div id="dashRegisteredJobs"></div></div><p class="dash-note">فتح واتساب وضغط التقديم أحداث على الموقع، مش إثبات إن رسالة اتبعتت أو إن المتقدم استلم الشغل. الحالات الفعلية بتراجعها في المتقدمين.</p>
+<p id="dashStatsMessage" role="status"></p><h2 class="dash-period-heading">ملخص الفترة اللي اخترتها</h2><div id="dashStatsMetrics" class="dash-stats-metrics"></div><details class="dash-analytics-detail"><summary>تفاصيل أكتر عن الزيارات والضغطات<span>المصانع، الأيام، المناطق ومصادر الزيارة</span></summary>
+<div class="dash-box"><h2>المصانع</h2><div id="dashStatsFactories"></div></div><div class="dash-box"><h2>الأيام</h2><div id="dashStatsDaysTable"></div></div><div class="dash-box"><h2>المناطق</h2><div id="dashStatsAreas"></div></div><div class="dash-box"><h2>مصادر الزيارات</h2><div id="dashStatsSources"></div></div><details class="dash-box"><summary>ساعات الزيارة بتوقيت القاهرة</summary><div id="dashHours"></div></details></details>
 </section>
 <section id="helpPanel" class="hidden dash-page">
 <h1>النشر والمساعدة</h1><div class="dash-box"><h2>حالة الموقع</h2><p>النصوص والشكل: احفظ وبعدين انشر. الوظايف ممكن تطلب تحديث الموقع تلقائيًا بعد حفظها. الحالات وكلمة السر بتتغير فورًا من غير نشر. راجع حالة النشر لحد ما تقول نجح.</p><p id="dashPublishStatus" role="status">اضغط مراجعة حالة النشر.</p><div class="dash-actions"><button class="btn" id="dashPublish">نشر التغييرات</button><button class="btn ghost" id="dashCheckPublish">مراجعة حالة النشر</button><a class="btn ghost hidden" id="dashRunLink" target="_blank" rel="noopener">تفاصيل عملية النشر</a></div><p id="dashPublishNeeded" class="dash-note hidden">فيه إعدادات اتحفظت. انشر عشان تظهر على الموقع.</p><p id="dashDirty" class="hint">كل التعديلات محفوظة</p><button class="btn ghost" id="dashReload">إعادة تحميل الإعدادات المحفوظة</button></div>
@@ -332,7 +337,7 @@ mb.addEventListener("click",function(){s(true)});dc.addEventListener("click",fun
 <a href="https://ahmadshaban.github.io/jobs/" target="_blank" rel="noopener">الموقع الأساسي<small>النسخة اللي الناس بتشوفها</small></a><a href="https://ahmadshaban.github.io/jobs/cc/" target="_blank" rel="noopener">نسخة المشاركة CC<small>من غير رقمك، وغير مفهرسة</small></a>
 <a href="https://docs.google.com/spreadsheets/d/1Ri61Py0q36t2EdMCWXa0lgJGDWJfrXjY0gHmqnwS4AM/edit?gid=984725368#gid=984725368" target="_blank" rel="noopener">شيت الوظايف الأصلي<small>تحرير البيانات وسجل الإصدارات</small></a><a href="https://docs.google.com/spreadsheets/d/1TnpHfpad-BbwhSiUu3xL1zMOD-6oeSMcrqkzWCbmHvk/edit?gid=0#gid=0" target="_blank" rel="noopener">سجل المتقدمين الخاص<small>خليه Restricted، ما تشاركهوش</small></a>
 <a href="https://github.com/ahmadshaban/jobs/actions" target="_blank" rel="noopener">GitHub والنشر<small>التشغيل وسجل عمليات النشر</small></a><a href="https://script.google.com/home/projects/1MB1zD9VkG5DVzOcCWx2SzAzInbINhMr4dnvmEDZno-7nK-YQifAEgnNr/edit" target="_blank" rel="noopener">مشروع الإدارة<small>الربط واسترجاع كلمة سر اللوحة</small></a>
-<a href="https://docs.google.com/spreadsheets/d/1xe0p2arTa_jN78H0pgucMr721PZZvxs9TAXVIwIL0T8/edit?pli=1&gid=0#gid=0" target="_blank" rel="noopener">سجل الإحصائيات<small>البيانات الأصلية</small></a><a href="stats.html" target="_blank" rel="noopener">صفحة الإحصائيات القديمة<small>تفضل بكلمة السر المستقلة</small></a>
+<a href="https://docs.google.com/spreadsheets/d/1xe0p2arTa_jN78H0pgucMr721PZZvxs9TAXVIwIL0T8/edit?pli=1&gid=0#gid=0" target="_blank" rel="noopener">سجل الإحصائيات<small>البيانات الأصلية</small></a>
 </div></div><div class="dash-actions"><button class="btn danger" id="dashLogout">تسجيل الخروج</button></div>
 </section>
 
@@ -762,7 +767,7 @@ function cardHTML(r, i, arr){
   const hasNew = val(r, COL.salary30) || val(r, COL.salary26);
   const shl = parseShifts(val(r, COL.shifts));
   const contactsList = parseContacts(val(r, COL.contacts));
-  
+
   const contactsHtml = contactsList.length ? '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:2px">' + contactsList.map(c => '<span style="background:#E3F3EC;color:#0E5A40;border:1px solid #D7E0E8;border-radius:6px;padding:2px 8px;font-size:11.5px">📞 ' + esc(c.name + ': ' + c.phone) + '</span>').join('') + '</div>' : '';
 
   const plain = [COL.area, COL.gender, ...(shl.length ? [] : [COL.shift]), ...(hasNew || shl.length ? [] : [COL.salary])]
@@ -1056,7 +1061,7 @@ function applyDraft(s){
 function openForm(r, asCopy){
   draftKeyNow = 'gp_draft:' + (asCopy ? 'copy' : (r ? 'r' + r.row : 'new'));
   const src = r; if (asCopy) r = null;
-  
+
   shState = src ? parseShifts(String(src.values[headers.indexOf(COL.shifts)] ?? '')) : [];
   if (src && !shState.length){
     const oh = String(src.values[headers.indexOf(COL.shift)] ?? '').trim();
@@ -1074,13 +1079,13 @@ function openForm(r, asCopy){
     if (h === COL.contacts) return '<div class="shed" style="margin-top:6px"><div class="shl">📞 أرقام التواصل عند الوصول (أضف المسؤول والرقم)</div><div id="contactsBox"></div></div>';
     if (headers.includes(COL.shifts) && (h === COL.shift || h === COL.salary30 || h === COL.salary26)) return '';
     if (h === COL.salary) return '';
-    
+
     let v = src ? String(src.values[i] ?? '').trim() : (h === COL.visible ? T.yes : '');
     if (asCopy && h === COL.factory) v = '';
     if (asCopy && h === COL.status) v = '';
     if (!r && h === DATE_COL) v = todayStr();
     if (src && h === COL.salary30 && !v) v = String(src.values[headers.indexOf(COL.salary)] ?? '').trim();
-    
+
     let input;
     if (h === COL.visible){
       input = '<select data-i="' + i + '">' +
@@ -1102,7 +1107,7 @@ function openForm(r, asCopy){
     } else {
       input = '<input data-i="' + i + '" value="' + esc(v) + '">';
     }
-    
+
     let hint = '';
     if (h === COL.salary30 || h === COL.salary26) {
       const was = src ? (String(src.values[i] ?? '').trim() || String(src.values[headers.indexOf(COL.salary)] ?? '').trim()) : '';
@@ -1111,11 +1116,11 @@ function openForm(r, asCopy){
     const clr = (h === COL.factory || h === COL.visible) ? '' : '<button type="button" class="btn danger clr" data-clr="' + i + '">مسح</button>' + (input.indexOf('data-ph=') >= 0 ? '<button type="button" class="btn ghost optb" data-opt="' + i + '">✕ تنضيف الاختيارات</button>' : '');
     return '<label>' + esc(h) + input + hint + clr + '</label>';
   }).join('');
-  
+
   $('sheet').innerHTML = '<h3>' + esc(r ? T.formEdit : T.formNew) + '</h3>' + fields +
     '<div class="row"><button class="btn" id="fSave">' + esc(T.save) + '</button>' +
     '<button class="btn ghost" id="fCancel">' + esc(T.cancel) + '</button></div>';
-  
+
   if ($('modal').classList.contains('hidden')) {
     history.pushState({adminModal: true}, '', location.href);
     modalHistoryOpen = true;
@@ -1123,7 +1128,7 @@ function openForm(r, asCopy){
   $('modal').classList.remove('hidden');
   renderShEditor();
   renderContactsEditor();
-  
+
   $('fCancel').onclick = closeForm;
   $('sheet').querySelectorAll('.clr').forEach(b => b.onclick = async e => {
     e.preventDefault();
@@ -1144,7 +1149,7 @@ function openForm(r, asCopy){
       }
     });
   });
-  
+
   formInitialSnapshot = currentFormSnapshot();
   try{
     const raw = localStorage.getItem(draftKeyNow);
@@ -1154,7 +1159,7 @@ function openForm(r, asCopy){
       else clearDraft();
     }
   }catch(e){}
-  
+
   $('sheet').oninput = $('sheet').onchange = saveDraft;
   $('fSave').onclick = async () => {
     const data = {};
@@ -1163,19 +1168,19 @@ function openForm(r, asCopy){
       const custom = $('sheet').querySelector('[data-custom-i="' + index + '"]');
       data[headers[index]] = (el.value === '__custom__' && custom) ? custom.value.trim() : el.value;
     });
-    
+
     [COL.salary30, COL.salary26].forEach(c => {
       if (!(c in data)) return;
       data[c] = normSalary(data[c], c);
     });
-    
+
     if (headers.includes(COL.shifts)){
       data[COL.shifts] = serializeShifts();
     }
     if (headers.includes(COL.contacts)){
       data[COL.contacts] = serializeContacts();
     }
-    
+
     if (!r && DATE_COL in data && !String(data[DATE_COL]).trim()) data[DATE_COL] = todayStr();
     if (headers.includes(COL.factory) && !String(data[COL.factory] || '').trim()) {
       const fi = headers.indexOf(COL.factory), fel = $('sheet').querySelector('[data-i="' + fi + '"]');
@@ -1190,7 +1195,7 @@ function openForm(r, asCopy){
       toast('اكتب اسم المصنع الأول.', false);
       return;
     }
-    
+
     $('fSave').disabled = true;
     $('fSave').textContent = 'جارٍ الحفظ...';
     const ok = r ? await run('update', {row:r.row, data}) : await run('add', {data});
@@ -1285,5 +1290,5 @@ function init(){
 }
 init();
 </script>
-<script>(function(){function addClose(){var pairs={modal:'fCancel',salDlg:'salCancel',colDlg:'colCancel',optDlg:'optClose',ordDlg:'ordCancel',askDlg:'askNo'};Object.keys(pairs).forEach(function(id){var layer=document.getElementById(id);if(!layer||layer.querySelector('.layer-close'))return;var target=document.getElementById(pairs[id]);if(!target)return;var x=document.createElement('button');x.type='button';x.className='form-close layer-close';x.setAttribute('aria-label','قفل والرجوع');x.textContent='✕';x.onclick=function(){target.click()};(layer.querySelector('.sheet,.box')||layer).prepend(x)})}new MutationObserver(addClose).observe(document.body,{childList:true,subtree:true});addClose()})();</script><script src="applicants-admin.js?v=20261121dashboard"></script><script src="dashboard-admin.js?v=20261121simple"></script></body>
+<script>(function(){function addClose(){var pairs={modal:'fCancel',salDlg:'salCancel',colDlg:'colCancel',optDlg:'optClose',ordDlg:'ordCancel',askDlg:'askNo'};Object.keys(pairs).forEach(function(id){var layer=document.getElementById(id);if(!layer||layer.querySelector('.layer-close'))return;var target=document.getElementById(pairs[id]);if(!target)return;var x=document.createElement('button');x.type='button';x.className='form-close layer-close';x.setAttribute('aria-label','قفل والرجوع');x.textContent='✕';x.onclick=function(){target.click()};(layer.querySelector('.sheet,.box')||layer).prepend(x)})}new MutationObserver(addClose).observe(document.body,{childList:true,subtree:true});addClose()})();</script><script src="applicants-admin.js?v=20261121dashboard"></script><script src="dashboard-admin.js?v=20261121qa"></script></body>
 </html>
