@@ -20,7 +20,7 @@
  var isAdmin=!!document.getElementById('adminInstallButton'),isCC=document.body.dataset.variant==='cc';
  var pending=window.__jgInstallPrompt||null,installed=false;
  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();pending=e});
- window.addEventListener('appinstalled',function(){pending=null;installed=true;document.querySelectorAll('[data-install-app]').forEach(function(b){b.textContent='تثبيت التطبيق على الموبايل'})});
+ window.addEventListener('appinstalled',function(){pending=null;installed=true;document.querySelectorAll('[data-install-app]').forEach(function(b){var s=b.querySelector('span');if(s)s.textContent='تثبيت التطبيق على الموبايل';else b.textContent='تثبيت التطبيق على الموبايل'})});
  function instructions(){
   var old=document.getElementById('installHelp');if(old){old.showModal();return}
   var d=document.createElement('dialog');d.id='installHelp';d.dir='rtl';d.style.cssText='box-sizing:border-box;width:min(440px,calc(100% - 28px));max-height:85dvh;overflow:auto;border:1px solid #b7c7d4;border-radius:18px;padding:20px;color:#20374b;background:#fff;font:14px Tajawal,Arial;line-height:1.9;margin:auto;box-shadow:0 18px 70px #0005';
@@ -48,7 +48,7 @@
 
  document.addEventListener('click',function(e){var b=e.target.closest('[data-install-app]');if(!b)return;e.preventDefault();if(isAdmin)adminChoices();else installCurrent()});
  if(isAdmin&&new URLSearchParams(location.search).get('install')==='1'){var showAfterAuth=function(){if(!document.getElementById('app').classList.contains('hidden')){adminChoices();return true}return false};if(!showAfterAuth()){var watch=new MutationObserver(function(){if(showAfterAuth())watch.disconnect()});watch.observe(document.getElementById('app'),{attributes:true,attributeFilter:['class']})}}
- var target=document.querySelector('.drawer');if(target&&!document.getElementById('adminInstallButton')){var btn=document.createElement('button');btn.type='button';btn.className='d-link';btn.dataset.installApp='';btn.textContent='تثبيت التطبيق على الموبايل';btn.style.cssText='font:inherit;text-align:right;border:1px solid #c5d3dd;background:#edf2f6;cursor:pointer';target.appendChild(btn)}
+ var target=document.querySelector('.drawer');if(target&&!document.getElementById('adminInstallButton')){var btn=document.createElement('button');btn.type='button';btn.className='d-link';btn.dataset.installApp='';btn.innerHTML='<svg class="contact-logo" viewBox="0 0 32 32" aria-hidden="true"><rect x="10" y="3" width="12" height="26" rx="3.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M16 9v8m0 0-3.2-3.2M16 17l3.2-3.2" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="16" cy="24" r="1.4" fill="currentColor"/></svg><span>تثبيت التطبيق على الموبايل</span>';btn.style.cssText='font:inherit;text-align:right;border:1px solid #c5d3dd;background:#edf2f6;cursor:pointer';target.appendChild(btn)}
 })();
 
 /* Browser back closes the current native in-page dialog before leaving its view. */

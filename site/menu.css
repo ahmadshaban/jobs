@@ -1,17 +1,19 @@
-/* Shared compact left drawer. Navigation labels and destinations stay unchanged. */
-html body .drawer{box-sizing:border-box;inset-inline-start:auto!important;right:auto!important;left:-290px!important;width:280px!important;max-width:84vw!important;padding:14px!important;border:0!important;border-radius:0 14px 14px 0!important;background:#173f84!important;color:#fff!important;box-shadow:5px 0 24px #12233d33!important;overflow-y:auto;display:flex;flex-direction:column;visibility:hidden;transition:left 150ms ease,visibility 150ms!important}
-html body .drawer.open{left:0!important;visibility:visible}
+/* Shared compact right drawer. Navigation labels and destinations stay unchanged. */
+html body .drawer{box-sizing:border-box;inset-inline-end:auto!important;left:auto!important;right:-290px!important;width:280px!important;max-width:84vw!important;padding:14px!important;border:0!important;border-radius:14px 0 0 14px!important;background:#173f84!important;color:#fff!important;box-shadow:-5px 0 24px #12233d33!important;overflow-y:auto;display:flex;flex-direction:column;visibility:hidden;transition:right 150ms ease,visibility 150ms!important}
+html body .drawer.open{right:0!important;visibility:visible}
 html body .drawer .d-head{display:flex;align-items:center;gap:8px;color:#fff!important;font-size:17px!important;margin:0 0 12px!important;padding:0 0 12px!important;border-bottom:1px solid #ffffff30!important;flex-shrink:0}
 html body .drawer .d-head button{width:34px!important;height:34px!important;min-width:34px;border:1px solid #ffffff40!important;border-radius:50%!important;background:#ffffff12!important;color:white!important;font-size:17px!important}
 html body .drawer .d-link,html body .drawer .d-link.d-whatsapp{box-sizing:border-box;display:flex;align-items:center;align-self:stretch!important;width:100%!important;min-height:44px!important;margin:3px 0!important;padding:9px 10px!important;border:1px solid #ffffff20!important;border-radius:10px!important;background:#ffffff0e!important;color:#fff!important;font:700 13px/1.65 Tajawal,Arial,sans-serif!important;text-align:right;flex-shrink:0;cursor:pointer}
 html body .drawer>a.d-link:first-of-type{background:white!important;color:#173f84!important;border-color:white!important}
 html body .drawer .d-link:hover,html body .drawer .d-link:focus-visible{background:#ffffff24!important;color:#fff!important;outline:2px solid #b4d0fb;outline-offset:1px}
 html body .drawer>a.d-link:first-of-type:hover{background:#e8f0ff!important;color:#173f84!important}
-html body .drawer .d-sep{display:none}
+html body .drawer .d-sep{display:block;height:1px;background:#ffffff2e;margin:8px 6px;flex-shrink:0}
 html body .drawer .public-admin-links{order:20;margin-top:auto!important;padding-top:12px!important;border-top:1px solid #ffffff30!important}
 html body .drawer .public-admin-links .d-link{border:0!important;background:none!important;min-height:40px!important;margin:0!important;padding:7px 4px!important;font-size:12px!important}
 html body .drawer .menu-heading,html body .drawer .admin-menu-group h2{font-size:11px!important;color:#c5d7f3!important;margin:5px 4px 7px!important}
-html body .drawer button[data-install-app]{order:10;margin:14px 0!important;border:0!important;background:#dceaff!important;color:#173f84!important;min-height:44px!important}
+html body .drawer button[data-install-app]{order:10;margin:14px 0 3px!important;border:0!important;background:#dceaff!important;color:#173f84!important;min-height:44px!important;gap:10px!important}
+html body .drawer button[data-install-app] .contact-logo{color:#173f84}
+html body .drawer button[data-install-app] span{flex:1}
 html body .drawer .install-admin-row{margin-top:auto!important;padding-top:12px;border-top:1px solid #ffffff30;flex-shrink:0}
 html body .drawer .install-admin-row button{margin:0!important}
 html body .scrim.open{background:#12233d66!important;backdrop-filter:none!important}

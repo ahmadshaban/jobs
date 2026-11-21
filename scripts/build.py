@@ -148,18 +148,18 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 <meta name="theme-color" content="#e9eef7">
 <link rel="manifest" href="{prefix}manifest.json">
 {font_link}
-<link rel="stylesheet" href="{prefix}style.css?v=20261121contacts">
-<link rel="stylesheet" href="{prefix}menu.css?v=20261121contacts">
+<link rel="stylesheet" href="{prefix}style.css?v=20261121menuicons">
+<link rel="stylesheet" href="{prefix}menu.css?v=20261121menuicons">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏭</text></svg>">
 {ld}
 </head>
 <body class="{page_cls}" data-variant="{variant}" data-prefix="{prefix}">
 {configured(body)}
 <script>window.JG_CONFIG={json.dumps(({k:v for k,v in DASH_CONFIG.items() if k not in ['whatsapp','followup_template','consent_text','save_failure']} if variant=='cc' else {k:v for k,v in DASH_CONFIG.items() if k not in ['consent_text','save_failure']}),ensure_ascii=False).replace(chr(60),chr(92)+'u003c')};</script>
-<script src="{prefix}app.js?v=20261121contacts" defer></script>
+<script src="{prefix}app.js?v=20261121menuicons" defer></script>
 {share_script}
 {legacy_script}
-<script src="{prefix}pwa.js?v=20261121contacts" defer></script>
+<script src="{prefix}pwa.js?v=20261121menuicons" defer></script>
 </body>
 </html>"""
 
@@ -170,9 +170,9 @@ def header(prefix, variant):
     if variant != "cc":
         import urllib.parse
         question = urllib.parse.quote(DASH_CONFIG.get("question_template","السلام عليكم، عندي استفسار بخصوص الوظايف").replace("{company}",DASH_CONFIG.get("company_name","")))
-        drawer_links = f"""<a class="d-link d-whatsapp contact-button" href="https://wa.me/{PHONE}?text={question}" rel="nofollow"><svg class="contact-logo" viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16 2a14 14 0 0 0-12 21L2 30l7-2A14 14 0 1 0 16 2Z"/><path fill="#173f84" d="m10 8 3 5-2 2c2 3 3 4 6 5l2-2 5 3c-1 4-4 4-7 3-6-2-10-6-11-11 0-3 1-4 4-5Z"/></svg><span>واتساب للتواصل</span></a><div class="d-sep"></div>
-<a class="d-link" href="{prefix}cc-jobs/">📢 كول سنتر تسويق وظائف</a>
-<a class="d-link contact-button" href="https://www.facebook.com/share/1Kba7Asbx9/" target="_blank" rel="noopener"><svg class="contact-logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"/><path fill="#173f84" d="M18 29V18h4l1-5h-5v-2c0-2 1-3 3-3h2V4h-4c-5 0-7 3-7 7v2H9v5h3v11Z"/></svg><span>تابعنا على فيسبوك</span></a>
+        drawer_links = f"""<a class="d-link contact-button" href="{prefix}cc-jobs/"><svg class="contact-logo" viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16 4a10 10 0 0 0-10 10v2h3v-2a7 7 0 0 1 14 0v2h3v-2A10 10 0 0 0 16 4Z"/><path fill="currentColor" d="M4 15h6v9H7a3 3 0 0 1-3-3v-6Z"/><path fill="currentColor" d="M22 15h6v6a3 3 0 0 1-3 3h-3v-9Z"/><path fill="currentColor" d="M26 21v2a4 4 0 0 1-4 4h-3v-2h3a2 2 0 0 0 2-2v-2Z"/><circle fill="currentColor" cx="16.5" cy="26" r="2.2"/></svg><span>كول سنتر تسويق وظائف</span></a><div class="d-sep"></div>
+<a class="d-link d-whatsapp contact-button" href="https://wa.me/{PHONE}?text={question}" rel="nofollow"><svg class="contact-logo" viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16 2a14 14 0 0 0-12 21L2 30l7-2A14 14 0 1 0 16 2Z"/><path fill="#173f84" d="m10 8 3 5-2 2c2 3 3 4 6 5l2-2 5 3c-1 4-4 4-7 3-6-2-10-6-11-11 0-3 1-4 4-5Z"/></svg><span>واتساب للتواصل</span></a>
+<a class="d-link contact-button" href="https://www.facebook.com/share/1Kba7Asbx9/" target="_blank" rel="noopener"><svg class="contact-logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"/><path fill="#173f84" d="M18 29V18h4l1-5h-5v-2c0-2 1-3 3-3h2V4h-4c-5 0-7 3-7 7v2H9v5h3v11Z"/></svg><span>تابعنا على فيسبوك</span></a><div class="d-sep"></div>
 <section class="public-admin-links" aria-label="الإدارة"><div class="menu-heading">الإدارة، دخول بكلمة السر</div>
 <a class="d-link" href="{prefix}stats.html">📊 الإحصائيات 🔒</a>
 <a class="d-link" href="{prefix}admin.html">⚙️ لوحة الإدارة 🔒</a></section>
