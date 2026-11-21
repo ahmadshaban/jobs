@@ -16,7 +16,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow, noarchive">
-<meta name="theme-color" content="#0B2A4A">
+<meta name="theme-color" content="#FFFFFF">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Job Gate Admin">
@@ -29,108 +29,108 @@
 <style>
 /* ===== [1] الألوان والتصميم: كحلي غامق مع كتابة بيضاء وصفراء ===== */
 :root{
-  --c-main:#0B2A4A;
-  --c-main-dark:#08203A;
-  --c-main-soft:#123A63;
-  --c-bg:#0D2F52;
-  --c-card:#0B2A4A;
-  --c-text:#FFFFFF;
-  --c-sub:#FFE45C;
-  --c-border:#3F7AB5;
-  --c-ok:#16803d;
-  --c-bad:#ff7777;
-  --c-warn:#FFE45C;
-  --c-highlight:#FFE45C;
+  --c-main:#FFFFFF;
+  --c-main-dark:#0A4532;
+  --c-main-soft:#E3F3EC;
+  --c-bg:#F2F5F8;
+  --c-card:#FFFFFF;
+  --c-text:#10253A;
+  --c-sub:#0E5A40;
+  --c-border:#D7E0E8;
+  --c-ok:#178A42;
+  --c-bad:#C0392B;
+  --c-warn:#0E5A40;
+  --c-highlight:#0E5A40;
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:'Cairo',sans-serif;background:linear-gradient(145deg,#071C33 0%,#0F3A66 55%,#0A2A4D 100%);color:#fff;font-size:15px;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font-family:'Cairo',sans-serif;background:linear-gradient(145deg,#F2F5F8 0%,#F2F5F8 55%,#F2F5F8 100%);color:#10253A;font-size:15px;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 button,input,select{font-family:inherit;font-size:inherit}
 .hidden{display:none!important}
-.btn{border:1px solid #3F7AB5;border-radius:9px;padding:7px 11px;font-size:13px;font-weight:700;cursor:pointer;background:#0E3560;color:#fff}
-.btn:active{background:#082A4C}
-.btn.ghost{background:#FFE45C;color:#0E3560;border-color:#FFE45C}
-.btn.danger{background:transparent;color:#fff;border:1px solid #FF9B9B}
+.btn{border:1px solid #D7E0E8;border-radius:9px;padding:7px 11px;font-size:13px;font-weight:700;cursor:pointer;background:#0E5A40;color:#10253A}
+.btn:active{background:#0A4532}
+.btn.ghost{background:#0E5A40;color:#0E5A40;border-color:#0E5A40}
+.btn.danger{background:transparent;color:#10253A;border:1px solid #C0392B}
 .btn:disabled{opacity:.65}
-input,select{width:100%;padding:10px 12px;border:1px solid #3F7AB5;border-radius:10px;background:#0B2A4A;color:#fff}
-input::placeholder{color:#E5F4FF;opacity:1}
-select option{background:#0B2A4A;color:#fff}
-input:focus,select:focus,.btn:focus-visible{outline:2px solid #FFE45C;outline-offset:2px}
+input,select{width:100%;padding:10px 12px;border:1px solid #D7E0E8;border-radius:10px;background:#FFFFFF;color:#10253A}
+input::placeholder{color:#43576B;opacity:1}
+select option{background:#FFFFFF;color:#10253A}
+input:focus,select:focus,.btn:focus-visible{outline:2px solid #0E5A40;outline-offset:2px}
 #login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-.login-box{width:100%;max-width:340px;background:#0B2A4A;border:1px solid #3F7AB5;border-radius:16px;padding:22px;display:grid;gap:12px}
-.login-box h1{margin:0;font-size:20px;color:#FFE45C}
-.err{color:#FFE45C;min-height:20px;font-size:14px}
-header{background:#0B2A4A;border-bottom:1px solid #3F7AB5;padding:12px;display:grid;gap:10px}
-#pinbar{position:sticky;top:0;z-index:5;background:#0B2A4A;border-bottom:1px solid #3F7AB5;padding:8px 12px}
+.login-box{width:100%;max-width:340px;background:#FFFFFF;border:1px solid #D7E0E8;border-radius:16px;padding:22px;display:grid;gap:12px}
+.login-box h1{margin:0;font-size:20px;color:#0E5A40}
+.err{color:#0E5A40;min-height:20px;font-size:14px}
+header{background:#FFFFFF;border-bottom:1px solid #D7E0E8;padding:12px;display:grid;gap:10px}
+#pinbar{position:sticky;top:0;z-index:5;background:#FFFFFF;border-bottom:1px solid #D7E0E8;padding:8px 12px}
 #pinbar .selrow{display:flex;gap:8px}
-header h1{margin:0;font-size:18px;color:#fff}
+header h1{margin:0;font-size:18px;color:#10253A}
 .bar{display:flex;gap:8px;flex-wrap:wrap}
 .bar .btn{flex:1 1 auto;padding:6px 8px;font-size:12.5px}
 #list{padding:12px;display:grid;gap:10px;max-width:760px;margin:0 auto}
-.card{background:#0B2A4A;border:1px solid #3F7AB5;border-radius:12px;padding:9px;display:grid;gap:6px;color:#fff}
+.card{background:#FFFFFF;border:1px solid #D7E0E8;border-radius:12px;padding:9px;display:grid;gap:6px;color:#10253A}
 .card.dim{opacity:.65}
-.card h2{margin:0;font-size:15px;color:#FFE45C}
+.card h2{margin:0;font-size:15px;color:#0E5A40}
 .meta{display:flex;flex-wrap:wrap;gap:6px}
-.meta span{background:#1A4A7A;color:#fff;border:1px solid #3F7AB5;border-radius:7px;padding:1px 7px;font-size:11.5px}
+.meta span{background:#DDE8F0;color:#10253A;border:1px solid #D7E0E8;border-radius:7px;padding:1px 7px;font-size:11.5px}
 .badge{border-radius:7px;padding:1px 7px;font-size:11px;font-weight:700;margin-inline-start:5px}
-.badge.done{background:#16803d;color:#fff}
-.stats{font-size:12px;color:#CFE3F7;margin-top:6px}
-.badge.urg{background:#FFE45C;color:#0E3560}.badge.pin{background:#C2410C;color:#fff}
-.badge.hid{background:transparent;color:#FFE45C;border:1px solid #FFE45C}
+.badge.done{background:#178A42;color:#10253A}
+.stats{font-size:12px;color:#43576B;margin-top:6px}
+.badge.urg{background:#0E5A40;color:#0E5A40}.badge.pin{background:#B7791F;color:#10253A}
+.badge.hid{background:transparent;color:#0E5A40;border:1px solid #0E5A40}
 .acts{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
 .acts .btn{padding:6px 2px;font-size:11.5px;line-height:1.3}
 .acts2{grid-template-columns:repeat(3,1fr)}
 #pinbar .selrow{gap:6px}#pinbar .selrow select{flex:1;min-width:0;padding:8px 6px;font-size:13px}
 #optDlg{position:fixed;inset:0;background:rgba(0,20,50,.65);display:flex;align-items:center;justify-content:center;z-index:15;padding:16px}
-#optDlg .box{background:#0B2A4A;border:1px solid #3F7AB5;border-radius:16px;padding:16px;width:100%;max-width:340px;max-height:85vh;display:grid;gap:10px;color:#fff;grid-template-rows:auto auto minmax(0,1fr) auto}
-#optDlg h3{margin:0;color:#FFE45C;font-size:16px}#optDlg small{opacity:.85;font-size:12px}
+#optDlg .box{background:#FFFFFF;border:1px solid #D7E0E8;border-radius:16px;padding:16px;width:100%;max-width:340px;max-height:85vh;display:grid;gap:10px;color:#10253A;grid-template-rows:auto auto minmax(0,1fr) auto}
+#optDlg h3{margin:0;color:#0E5A40;font-size:16px}#optDlg small{opacity:.85;font-size:12px}
 #optDlg .row{display:flex;gap:8px}#optDlg .row .btn{flex:1}
 #optList{display:grid;gap:6px;overflow-y:auto;align-content:start}
-.oi2{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#133B63;border:1px solid #3F7AB5;border-radius:10px;padding:6px 10px;font-size:14px}.oi2 .btn{padding:2px 12px;font-size:15px}
+.oi2{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#E3F3EC;border:1px solid #D7E0E8;border-radius:10px;padding:6px 10px;font-size:14px}.oi2 .btn{padding:2px 12px;font-size:15px}
 .optb{padding:2px 10px;font-size:12px;justify-self:start}
 .more{display:grid;grid-template-columns:1fr 1fr;gap:6px}.more .btn{text-align:center;padding:9px 8px;font-size:13px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
-.empty{text-align:center;color:#fff;padding:30px}
-#title{color:#fff}
+.empty{text-align:center;color:#10253A;padding:30px}
+#title{color:#10253A}
 #modal{position:fixed;inset:0;background:rgba(0,20,50,.65);display:flex;align-items:flex-end;justify-content:center;z-index:10}
-.sheet{background:#0B2A4A;color:#fff;width:100%;max-width:520px;max-height:90vh;overflow:auto;border:1px solid #3F7AB5;border-radius:18px 18px 0 0;padding:16px;display:grid;gap:10px}
-.sheet h3{margin:0;color:#FFE45C}
-.sheet label{font-size:13px;color:#FFE45C;display:grid;gap:4px}
+.sheet{background:#FFFFFF;color:#10253A;width:100%;max-width:520px;max-height:90vh;overflow:auto;border:1px solid #D7E0E8;border-radius:18px 18px 0 0;padding:16px;display:grid;gap:10px}
+.sheet h3{margin:0;color:#0E5A40}
+.sheet label{font-size:13px;color:#0E5A40;display:grid;gap:4px}
 .sheet .row{display:flex;gap:8px}
 .sheet .row .btn{flex:1}
-.fab{position:fixed;bottom:20px;inset-inline-end:16px;z-index:6;width:56px;height:56px;border-radius:50%;border:0;background:#FFE45C;color:#0E3560;font-size:32px;font-weight:700;line-height:1;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+.fab{position:fixed;bottom:20px;inset-inline-end:16px;z-index:6;width:56px;height:56px;border-radius:50%;border:0;background:#0E5A40;color:#0E5A40;font-size:32px;font-weight:700;line-height:1;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.4)}
 .fab:disabled{opacity:.5}
-.sheet .row{position:sticky;bottom:-1px;background:#0B2A4A;padding:10px 0 4px;box-shadow:0 -8px 10px -6px rgba(0,0,0,.45)}
-.meta span.sal{background:#FFE45C;color:#0E3560;font-weight:700;cursor:pointer}
-.meta span.sal.empty{background:transparent;color:#FFE45C;border:1px dashed #FFE45C;font-weight:400}
+.sheet .row{position:sticky;bottom:-1px;background:#FFFFFF;padding:10px 0 4px;box-shadow:0 -8px 10px -6px rgba(0,0,0,.45)}
+.meta span.sal{background:#0E5A40;color:#0E5A40;font-weight:700;cursor:pointer}
+.meta span.sal.empty{background:transparent;color:#0E5A40;border:1px dashed #0E5A40;font-weight:400}
 .hd{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .mv{display:flex;gap:6px;flex:none}.mv .btn{padding:2px 9px;font-size:13px;line-height:1.3}.mv .btn:disabled{opacity:.3}.mv input{width:58px;text-align:center;padding:6px 4px;font-weight:700}
-.oldhint{color:#fff;opacity:.85;font-size:12px;font-weight:400}
+.oldhint{color:#10253A;opacity:.85;font-size:12px;font-weight:400}
 #salDlg,#colDlg{position:fixed;inset:0;background:rgba(0,20,50,.65);display:flex;align-items:center;justify-content:center;z-index:15;padding:16px}
-#salDlg .box,#colDlg .box{background:#0B2A4A;border:1px solid #3F7AB5;border-radius:16px;padding:16px;width:100%;max-width:340px;display:grid;gap:10px}
-#salDlg h3,#colDlg h3{margin:0;color:#FFE45C;font-size:16px}
-#salOld{font-size:13px;color:#fff;background:#1A4A7A;border-radius:8px;padding:6px 10px;cursor:pointer}
+#salDlg .box,#colDlg .box{background:#FFFFFF;border:1px solid #D7E0E8;border-radius:16px;padding:16px;width:100%;max-width:340px;display:grid;gap:10px}
+#salDlg h3,#colDlg h3{margin:0;color:#0E5A40;font-size:16px}
+#salOld{font-size:13px;color:#10253A;background:#DDE8F0;border-radius:8px;padding:6px 10px;cursor:pointer}
 #salDlg .row,#colDlg .row{display:flex;gap:8px}#salDlg .row .btn,#colDlg .row .btn{flex:1}
 .clr{padding:2px 10px;font-size:12px;justify-self:start}
 #ordDlg{position:fixed;inset:0;background:rgba(0,20,50,.65);display:flex;align-items:center;justify-content:center;z-index:15;padding:16px}
-#ordDlg .box{background:#0B2A4A;border:1px solid #3F7AB5;border-radius:16px;padding:16px;width:100%;max-width:420px;max-height:88vh;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto auto;gap:10px;color:#fff}
-#ordDlg h3{margin:0;color:#FFE45C;font-size:16px}
+#ordDlg .box{background:#FFFFFF;border:1px solid #D7E0E8;border-radius:16px;padding:16px;width:100%;max-width:420px;max-height:88vh;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto auto;gap:10px;color:#10253A}
+#ordDlg h3{margin:0;color:#0E5A40;font-size:16px}
 #ordDlg small{opacity:.85}
 #ordList{overflow-y:auto;display:grid;gap:6px;align-content:start}
-.oi{display:flex;align-items:center;gap:10px;background:#133B63;border:1px solid #3F7AB5;border-radius:10px;padding:6px 10px;user-select:none;-webkit-user-select:none}
-.oi.drag{background:#1A4A7A;border-color:#FFE45C;box-shadow:0 4px 14px rgba(0,0,0,.45)}
-.oi .hd2{font-size:24px;line-height:1;padding:8px 10px;cursor:grab;touch-action:none;color:#FFE45C}
-.oi .on{background:#FFE45C;color:#0E3560;border-radius:7px;min-width:28px;text-align:center;font-weight:700;font-size:13px;padding:1px 6px}
+.oi{display:flex;align-items:center;gap:10px;background:#E3F3EC;border:1px solid #D7E0E8;border-radius:10px;padding:6px 10px;user-select:none;-webkit-user-select:none}
+.oi.drag{background:#DDE8F0;border-color:#0E5A40;box-shadow:0 4px 14px rgba(0,0,0,.45)}
+.oi .hd2{font-size:24px;line-height:1;padding:8px 10px;cursor:grab;touch-action:none;color:#0E5A40}
+.oi .on{background:#0E5A40;color:#0E5A40;border-radius:7px;min-width:28px;text-align:center;font-weight:700;font-size:13px;padding:1px 6px}
 .oi .nm{flex:1;font-weight:600;font-size:14px}
-#ordProg{background:#1A4A7A;border-radius:8px;padding:8px 10px;font-size:13px;color:#FFE45C;font-weight:700}
+#ordProg{background:#DDE8F0;border-radius:8px;padding:8px 10px;font-size:13px;color:#0E5A40;font-weight:700}
 #ordDlg .row{display:flex;gap:8px}#ordDlg .row .btn{flex:1}
-#colDlg small{color:#fff;font-size:12px}
-#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);padding:10px 18px;border-radius:12px;color:#fff;font-weight:700;z-index:20;max-width:90%;box-shadow:0 4px 18px rgba(0,0,0,.18)}
-#toast.ok{background:#16803d}
-#toast.bad{background:#B42318}
+#colDlg small{color:#10253A;font-size:12px}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);padding:10px 18px;border-radius:12px;color:#10253A;font-weight:700;z-index:20;max-width:90%;box-shadow:0 4px 18px rgba(0,0,0,.18)}
+#toast.ok{background:#178A42}
+#toast.bad{background:#C0392B}
 /* ===== محرر الورديات وأرقام التواصل ===== */
-.shed{display:grid;gap:8px}.shl{font-size:13px;color:#FFE45C}
-.shp-row{display:flex;flex-wrap:wrap;gap:6px}.shp.on{background:#FFE45C;color:#0E3560;font-weight:700}
-.shb{background:#0B2A4A;border:1px solid #3F7AB5;border-radius:12px;padding:10px;display:grid;gap:8px}
-.shh{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#FFE45C}.shh input{flex:1}
+.shed{display:grid;gap:8px}.shl{font-size:13px;color:#0E5A40}
+.shp-row{display:flex;flex-wrap:wrap;gap:6px}.shp.on{background:#0E5A40;color:#0E5A40;font-weight:700}
+.shb{background:#FFFFFF;border:1px solid #D7E0E8;border-radius:12px;padding:10px;display:grid;gap:8px}
+.shh{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#0E5A40}.shh input{flex:1}
 .shg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 
 /* ===== polish v2: قراءة + لمس + مسافات + ديسكتوب ===== */
@@ -154,15 +154,15 @@ header{padding:14px}
 .empty{padding:36px 16px;font-size:16px;line-height:1.8}
 .card.dim{opacity:.72}
 /* أزرار خطرة بعيدة ومميزة */
-.btn.danger{color:#FFB4B4;border-color:#FF9B9B}
-.acts .btn[data-act="del"]{background:rgba(180,35,24,.28);border-color:#FF9B9B;color:#FFD1D1}
+.btn.danger{color:#C0392B;border-color:#C0392B}
+.acts .btn[data-act="del"]{background:rgba(180,35,24,.28);border-color:#C0392B;color:#C0392B}
 /* خطأ جوه الحقل */
-input.bad,select.bad{border-color:#FF7777;box-shadow:0 0 0 2px rgba(255,119,119,.35)}
-.ferr{color:#FFB4B4;font-size:13px;font-weight:700}
+input.bad,select.bad{border-color:#C0392B;box-shadow:0 0 0 2px rgba(255,119,119,.35)}
+.ferr{color:#C0392B;font-size:13px;font-weight:700}
 /* نافذة التأكيد */
 #askDlg{position:fixed;inset:0;background:rgba(0,20,50,.7);display:flex;align-items:center;justify-content:center;z-index:30;padding:16px}
-#askDlg .box{background:#0B2A4A;border:1px solid #3F7AB5;border-radius:16px;padding:18px;width:100%;max-width:340px;display:grid;gap:14px}
-#askDlg p{margin:0;font-size:16px;line-height:1.7;font-weight:700;color:#fff}
+#askDlg .box{background:#FFFFFF;border:1px solid #D7E0E8;border-radius:16px;padding:18px;width:100%;max-width:340px;display:grid;gap:14px}
+#askDlg p{margin:0;font-size:16px;line-height:1.7;font-weight:700;color:#10253A}
 #askDlg .row{display:flex;gap:10px}#askDlg .row .btn{flex:1}
 /* رسالة الحفظ/الخطأ فوق الزرار العايم */
 #toast{bottom:calc(86px + env(safe-area-inset-bottom,0px));font-size:15px;padding:12px 20px}
@@ -176,9 +176,34 @@ input.bad,select.bad{border-color:#FF7777;box-shadow:0 0 0 2px rgba(255,119,119,
   header,#pinbar{padding-inline:max(14px,calc((100% - 1040px)/2 + 14px))}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+.btn{color:#fff;background:#0E5A40;border-color:#0E5A40}
+.btn:active{background:#0A4532}
+.btn.ghost{background:#E3F3EC;color:#0E5A40;border-color:#E3F3EC}
+.btn.danger{background:transparent;color:#C0392B;border:1px solid #C0392B}
+body{background:#F2F5F8;color:#10253A}
+
+.scrim{position:fixed;inset:0;background:rgba(16,37,58,.45);opacity:0;pointer-events:none;transition:.25s;z-index:90}
+.scrim.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;bottom:0;inset-inline-start:-300px;width:280px;max-width:82vw;background:#fff;z-index:100;transition:.25s;box-shadow:0 6px 18px rgba(16,37,58,.12),0 20px 50px rgba(16,37,58,.10);display:flex;flex-direction:column;padding:16px;font-family:'Cairo',sans-serif}
+.drawer.open{inset-inline-start:0}
+.drawer .d-head{display:flex;align-items:center;justify-content:space-between;font-weight:900;font-size:16px;color:#10253A;margin-bottom:8px}
+.drawer .d-head button{border:0;background:#F2F5F8;width:34px;height:34px;border-radius:10px;font-size:15px;cursor:pointer;color:#10253A}
+.drawer .d-link{display:flex;align-items:center;gap:10px;padding:12px 10px;border-radius:12px;font-weight:800;font-size:15px;color:#10253A;text-decoration:none}
+.drawer .d-link:active{background:#F2F5F8}
+.drawer .d-sep{height:1px;background:#E3E9EF;margin:6px 0}
+#menuBtn{position:fixed;top:10px;inset-inline-start:10px;z-index:80;width:42px;height:42px;border-radius:12px;border:0;background:#0E5A40;color:#fff;font-size:19px;cursor:pointer;box-shadow:0 4px 12px rgba(16,37,58,.25)}
 </style>
 </head>
 <body>
+<button id="menuBtn" type="button" aria-label="القايمة">☰</button>
+<div class="scrim" id="scrim"></div>
+<nav class="drawer" id="drawer" aria-label="القايمة">
+<div class="d-head"><span>🏭 بوابة الوظائف</span><button type="button" id="drawerClose" aria-label="قفل">✕</button></div>
+<a class="d-link" href="index.html">🏠 الرئيسية</a><a class="d-link" href="cc-jobs/">📢 وظايف كول سنتر للبنات</a><a class="d-link" href="cc/">📞 نسخة الكول سنتر</a><a class="d-link" href="admin.html" style="background:#E3F3EC">🔒 الأدمن</a><a class="d-link" href="stats.html">📊 الإحصائيات</a>
+</nav>
+<script>(function(){var mb=document.getElementById("menuBtn"),dr=document.getElementById("drawer"),sc=document.getElementById("scrim"),dc=document.getElementById("drawerClose");
+function s(o){dr.classList.toggle("open",o);sc.classList.toggle("open",o)}
+mb.addEventListener("click",function(){s(true)});dc.addEventListener("click",function(){s(false)});sc.addEventListener("click",function(){s(false)});})();</script>
 
 <!-- ===== [2] هيكل الصفحة ===== -->
 <div id="login">
@@ -591,7 +616,7 @@ function renderContactsEditor(){
   const box = $('contactsBox'); if (!box) return;
   let h = '<div style="display:flex;justify-content:flex-end;margin-bottom:4px"><button type="button" class="btn ghost" id="contactAdd">+ إضافة رقم تواصل</button></div>';
   if(contactsState.length === 0) {
-    h += '<div style="font-size:12px;color:#8FA2C8;padding:4px 0">مفيش أرقام تواصل مسجلة. ادوس إضافة رقم لتسجيل المسؤولين.</div>';
+    h += '<div style="font-size:12px;color:#43576B;padding:4px 0">مفيش أرقام تواصل مسجلة. ادوس إضافة رقم لتسجيل المسؤولين.</div>';
   }
   contactsState.forEach((c, k) => {
     h += '<div class="shb"><div class="shg" style="grid-template-columns:1fr 2fr auto;align-items:end">' +
@@ -655,7 +680,7 @@ function cardHTML(r, i, arr){
   const shl = parseShifts(val(r, COL.shifts));
   const contactsList = parseContacts(val(r, COL.contacts));
   
-  const contactsHtml = contactsList.length ? '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:2px">' + contactsList.map(c => '<span style="background:#133B63;color:#FFE45C;border:1px solid #3F7AB5;border-radius:6px;padding:2px 8px;font-size:11.5px">📞 ' + esc(c.name + ': ' + c.phone) + '</span>').join('') + '</div>' : '';
+  const contactsHtml = contactsList.length ? '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:2px">' + contactsList.map(c => '<span style="background:#E3F3EC;color:#0E5A40;border:1px solid #D7E0E8;border-radius:6px;padding:2px 8px;font-size:11.5px">📞 ' + esc(c.name + ': ' + c.phone) + '</span>').join('') + '</div>' : '';
 
   const plain = [COL.area, COL.gender, ...(shl.length ? [] : [COL.shift]), ...(hasNew || shl.length ? [] : [COL.salary])]
     .map(c => val(r, c)).filter(Boolean).map(v => '<span>' + esc(v) + '</span>').join('');

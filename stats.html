@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#0A1428">
+<meta name="theme-color" content="#F2F5F8">
 <meta name="robots" content="noindex,nofollow">
 <title>إحصائيات الموقع</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,7 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ===== [1] الألوان والستايل ===== */
-:root{--bg:#0A1428;--card:#12203d;--bd:#1f3157;--tx:#eaf1ff;--mut:#8fa3c8;--ac:#4f9cff;--ac2:#ffd76a;--ok:#5fd0ff;--bad:#ff8a8a}
+:root{--bg:#F2F5F8;--card:#FFFFFF;--bd:#E3E9EF;--tx:#10253A;--mut:#43576B;--ac:#0E5A40;--ac2:#B7791F;--ok:#178A42;--bad:#C0392B}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--tx);font-family:Cairo,system-ui,sans-serif}
 body{padding:calc(.8rem + env(safe-area-inset-top)) .8rem calc(2rem + env(safe-area-inset-bottom));max-width:48rem;margin:auto}
@@ -21,7 +21,7 @@ h1{font-size:1.15rem;margin:0}
 .top a,.btn{background:var(--card);border:1px solid var(--bd);color:var(--tx);border-radius:.8rem;padding:.45rem .8rem;font:inherit;font-size:.85rem;text-decoration:none;cursor:pointer}
 .chips{display:flex;gap:.4rem;overflow-x:auto;padding-bottom:.2rem;margin-bottom:.7rem}
 .chip{flex:0 0 auto;background:var(--card);border:1px solid var(--bd);color:var(--mut);border-radius:2rem;padding:.4rem .9rem;font:inherit;font-size:.85rem;cursor:pointer}
-.chip.on{background:var(--ac);border-color:var(--ac);color:#06142e;font-weight:700}
+.chip.on{background:var(--ac);border-color:var(--ac);color:#F2F5F8;font-weight:700}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.55rem}
 @media(min-width:560px){.grid{grid-template-columns:repeat(4,1fr)}}
 .k{background:var(--card);border:1px solid var(--bd);border-radius:1rem;padding:.7rem .8rem}
@@ -33,7 +33,7 @@ h1{font-size:1.15rem;margin:0}
 .box h2{font-size:.95rem;margin:0 0 .55rem;display:flex;justify-content:space-between;align-items:center;gap:.5rem}
 .seg{display:flex;gap:.3rem}
 .seg button{background:transparent;border:1px solid var(--bd);color:var(--mut);border-radius:.6rem;padding:.2rem .55rem;font:inherit;font-size:.72rem;cursor:pointer}
-.seg button.on{background:var(--ac);color:#06142e;border-color:var(--ac);font-weight:700}
+.seg button.on{background:var(--ac);color:#F2F5F8;border-color:var(--ac);font-weight:700}
 .row{display:grid;grid-template-columns:1.6rem 1fr auto;gap:.5rem;align-items:center;padding:.45rem 0;border-top:1px solid var(--bd)}
 .row:first-of-type{border-top:0}
 .rk{color:var(--mut);font-size:.8rem;text-align:center}
@@ -50,12 +50,34 @@ h1{font-size:1.15rem;margin:0}
 .empty{color:var(--mut);text-align:center;padding:1rem;font-size:.85rem}
 #gate{max-width:22rem;margin:20vh auto 0;text-align:center}
 #gate input{width:100%;background:var(--card);border:1px solid var(--bd);color:var(--tx);border-radius:.8rem;padding:.7rem;font:inherit;font-size:1rem;margin:.8rem 0;text-align:center}
-#gate .btn{width:100%;background:var(--ac);color:#06142e;font-weight:800;padding:.7rem}
+#gate .btn{width:100%;background:var(--ac);color:#F2F5F8;font-weight:800;padding:.7rem}
 .err{color:var(--bad);font-size:.85rem;min-height:1.2rem}
 .sk{opacity:.5}
+body{background:#F2F5F8;color:#10253A}
+.btn{background:#0E5A40;color:#fff;border-color:#0E5A40}
+
+.scrim{position:fixed;inset:0;background:rgba(16,37,58,.45);opacity:0;pointer-events:none;transition:.25s;z-index:90}
+.scrim.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;bottom:0;inset-inline-start:-300px;width:280px;max-width:82vw;background:#fff;z-index:100;transition:.25s;box-shadow:0 6px 18px rgba(16,37,58,.12),0 20px 50px rgba(16,37,58,.10);display:flex;flex-direction:column;padding:16px;font-family:'Cairo',sans-serif}
+.drawer.open{inset-inline-start:0}
+.drawer .d-head{display:flex;align-items:center;justify-content:space-between;font-weight:900;font-size:16px;color:#10253A;margin-bottom:8px}
+.drawer .d-head button{border:0;background:#F2F5F8;width:34px;height:34px;border-radius:10px;font-size:15px;cursor:pointer;color:#10253A}
+.drawer .d-link{display:flex;align-items:center;gap:10px;padding:12px 10px;border-radius:12px;font-weight:800;font-size:15px;color:#10253A;text-decoration:none}
+.drawer .d-link:active{background:#F2F5F8}
+.drawer .d-sep{height:1px;background:#E3E9EF;margin:6px 0}
+#menuBtn{position:fixed;top:10px;inset-inline-start:10px;z-index:80;width:42px;height:42px;border-radius:12px;border:0;background:#0E5A40;color:#fff;font-size:19px;cursor:pointer;box-shadow:0 4px 12px rgba(16,37,58,.25)}
 </style>
 </head>
 <body>
+<button id="menuBtn" type="button" aria-label="القايمة">☰</button>
+<div class="scrim" id="scrim"></div>
+<nav class="drawer" id="drawer" aria-label="القايمة">
+<div class="d-head"><span>🏭 بوابة الوظائف</span><button type="button" id="drawerClose" aria-label="قفل">✕</button></div>
+<a class="d-link" href="index.html">🏠 الرئيسية</a><a class="d-link" href="cc-jobs/">📢 وظايف كول سنتر للبنات</a><a class="d-link" href="cc/">📞 نسخة الكول سنتر</a><a class="d-link" href="admin.html">🔒 الأدمن</a><a class="d-link" href="stats.html" style="background:#E3F3EC">📊 الإحصائيات</a>
+</nav>
+<script>(function(){var mb=document.getElementById("menuBtn"),dr=document.getElementById("drawer"),sc=document.getElementById("scrim"),dc=document.getElementById("drawerClose");
+function s(o){dr.classList.toggle("open",o);sc.classList.toggle("open",o)}
+mb.addEventListener("click",function(){s(true)});dc.addEventListener("click",function(){s(false)});sc.addEventListener("click",function(){s(false)});})();</script>
 
 <!-- ===== [2] شاشة الباسورد ===== -->
 <div id="gate" hidden>
@@ -69,13 +91,13 @@ h1{font-size:1.15rem;margin:0}
 <div id="app" hidden>
   <div class="top">
     <h1>📊 إحصائيات الموقع</h1>
-    <div style="display:flex;gap:.4rem"><button class="btn" id="rf" type="button">🔄</button><a href="admin.html">← الأدمن</a></div>
+    <div style="display:flex;gap:.4rem;align-items:center"><button class="btn" id="rf" type="button">🔄</button><a href="admin.html">← الأدمن</a><button class="btn" id="lo" type="button" title="تسجيل خروج">خروج</button></div>
   </div>
   <div class="chips" id="chips"></div>
   <div class="grid" id="kpi"></div>
 
   <div class="box"><h2>الحركة اليومية</h2><svg class="chart" id="ch" viewBox="0 0 320 120" preserveAspectRatio="none"></svg>
-    <div class="leg"><span style="--c:#4f9cff">زيارات</span><span style="--c:#ffd76a">ضغطات قدّم</span><span style="--c:#5fd0ff">تقديمات اتبعتت</span></div></div>
+    <div class="leg"><span style="--c:#0E5A40">زيارات</span><span style="--c:#B7791F">ضغطات قدّم</span><span style="--c:#178A42">تقديمات اتبعتت</span></div></div>
 
   <div class="box"><h2>🏭 أكتر المصانع تقديمًا
     <span class="seg" id="fsort"><button data-k="send" class="on">اتبعت</button><button data-k="apply">ضغطات</button><button data-k="view">مشاهدات</button></span></h2>
@@ -147,7 +169,7 @@ function drawChart(){
   const line = (k, c) => n === 1
     ? `<circle cx="${X(0)}" cy="${Y(L[0][k])}" r="3" fill="${c}"/>`
     : `<polyline fill="none" stroke="${c}" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke" points="${L.map((x,i)=>X(i)+','+Y(x[k])).join(' ')}"/>`;
-  $('ch').innerHTML = `<line x1="0" y1="${H-pad}" x2="${W}" y2="${H-pad}" stroke="#1f3157"/>` + line('visit','#4f9cff') + line('apply','#ffd76a') + line('send','#5fd0ff');
+  $('ch').innerHTML = `<line x1="0" y1="${H-pad}" x2="${W}" y2="${H-pad}" stroke="#E3E9EF"/>` + line('visit','#0E5A40') + line('apply','#B7791F') + line('send','#178A42');
 }
 function nums(o, keys, labels){
   const lb = labels || {view:'مشاهدة',apply:'ضغطة',send:'اتبعت',call:'اتصال'};
@@ -165,9 +187,9 @@ function drawList(id, arr, name, keys, labels){
 }
 function drawHours(){
   const h = DATA.hours, max = Math.max(1, ...h), w = 320 / 24;
-  $('hr').innerHTML = h.map((v,i) => { const bh = v / max * 108; return `<rect x="${i*w+1.5}" y="${118-bh}" width="${w-3}" height="${Math.max(bh,v?2:0)}" rx="2" fill="#4f9cff"/>`; }).join('');
+  $('hr').innerHTML = h.map((v,i) => { const bh = v / max * 108; return `<rect x="${i*w+1.5}" y="${118-bh}" width="${w-3}" height="${Math.max(bh,v?2:0)}" rx="2" fill="#0E5A40"/>`; }).join('');
   const top = h.indexOf(max);
-  $('hrl').innerHTML = max > 1 || h.some(v => v) ? `<span style="--c:#4f9cff">أنشط ساعة: ${top}:00 (${nf(max)} زيارة) · بتوقيت القاهرة</span>` : '';
+  $('hrl').innerHTML = max > 1 || h.some(v => v) ? `<span style="--c:#0E5A40">أنشط ساعة: ${top}:00 (${nf(max)} زيارة) · بتوقيت القاهرة</span>` : '';
 }
 
 // ===== [7] الأحداث =====
@@ -176,6 +198,7 @@ $('fsort').onclick = e => { const b = e.target.closest('button'); if (!b) return
 $('rf').onclick = load;
 $('gbtn').onclick = () => { const v = $('pw').value; if (!v) return; localStorage.setItem(PW_KEY, v); load(); };
 $('pw').addEventListener('keydown', e => { if (e.key === 'Enter') $('gbtn').click(); });
+document.getElementById('lo').onclick=function(){localStorage.removeItem(PW_KEY);location.reload();};
 load();
 </script>
 </body>
