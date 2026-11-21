@@ -29,10 +29,10 @@
  });
 })();
 
-/* Native install prompt when available, honest device steps otherwise. */
+/* Each app has its own manifest identity. Standalone display is not proof this app is installed. */
 (function(){
  var isAdmin=!!document.getElementById('adminInstallButton'),isCC=document.body.dataset.variant==='cc';
- var pending=window.__jgInstallPrompt||null,installed=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+ var pending=window.__jgInstallPrompt||null,installed=false;
  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();pending=e});
  window.addEventListener('appinstalled',function(){pending=null;installed=true;document.querySelectorAll('[data-install-app]').forEach(function(b){b.textContent='تثبيت التطبيق على الموبايل'})});
  function instructions(){
@@ -58,7 +58,7 @@
   var close=document.createElement('button');close.textContent='رجوع';close.style.cssText='font:inherit;min-height:44px;width:100%;background:#4f9cff;color:#07182d;border:0;border-radius:10px';close.onclick=function(){d.close()};d.append(close);document.body.append(d);d.showModal();
  }
  function installStatus(text){var n=document.getElementById('installStatus');if(!n){n=document.createElement('div');n.id='installStatus';n.setAttribute('role','status');n.style.cssText='position:fixed;bottom:88px;left:14px;right:14px;z-index:9999;background:#17365a;color:#fff;border:1px solid #7c97b5;border-radius:12px;padding:14px;text-align:center;font:700 14px Tajawal,Arial;line-height:1.7';document.body.append(n)}n.textContent=text;setTimeout(function(){n.remove()},7000)}
- async function installCurrent(){pending=pending||window.__jgInstallPrompt;if(pending){var event=pending;pending=null;window.__jgInstallPrompt=null;try{await event.prompt();var choice=await event.userChoice;if(choice&&choice.outcome==='dismissed')installStatus('التثبيت اتلغى. مفيش حاجة اتثبتت.')}catch(_){installStatus('المتصفح مش موفّر التثبيت دلوقتي.')}}else if(/iPhone|iPad|iPod/.test(navigator.userAgent)||(/Mac/.test(navigator.userAgent)&&navigator.maxTouchPoints>1))instructions();else installStatus(installed?'التطبيق متثبت بالفعل. افتحه من أيقونته على موبايلك.':'المتصفح مش موفّر تأكيد التثبيت دلوقتي. لو فيه نسخة قديمة متثبتة، شيل أيقونتها وجرب تاني.');}
+ async function installCurrent(){pending=pending||window.__jgInstallPrompt;if(pending){var event=pending;pending=null;window.__jgInstallPrompt=null;try{await event.prompt();var choice=await event.userChoice;if(choice&&choice.outcome==='dismissed')installStatus('التثبيت اتلغى. مفيش حاجة اتثبتت.')}catch(_){installStatus('المتصفح مش موفّر التثبيت دلوقتي.')}}else if(/iPhone|iPad|iPod/.test(navigator.userAgent)||(/Mac/.test(navigator.userAgent)&&navigator.maxTouchPoints>1))instructions();else installStatus(installed?'التطبيق متثبت بالفعل. افتحه من أيقونته على موبايلك.':'افتح لينك التطبيق ده في Chrome نفسه، وبعدها اختار تثبيت التطبيق من التلات نقط ⋮. كل نسخة ليها تثبيت منفصل.');}
 
  document.addEventListener('click',function(e){var b=e.target.closest('[data-install-app]');if(!b)return;e.preventDefault();if(isAdmin)adminChoices();else installCurrent()});
  if(isAdmin&&new URLSearchParams(location.search).get('install')==='1'){var showAfterAuth=function(){if(!document.getElementById('app').classList.contains('hidden')){adminChoices();return true}return false};if(!showAfterAuth()){var watch=new MutationObserver(function(){if(showAfterAuth())watch.disconnect()});watch.observe(document.getElementById('app'),{attributes:true,attributeFilter:['class']})}}

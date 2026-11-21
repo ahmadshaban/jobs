@@ -322,3 +322,32 @@ body.pg-apply .panel,body.pg-apply .apply-panel{margin:7px 0;padding:9px 10px;bo
 @media(max-height:540px){body.pg-apply .field{display:grid;grid-template-columns:82px minmax(0,1fr);align-items:center;column-gap:7px;margin:4px 0!important}body.pg-apply .field label{grid-column:1;grid-row:1;margin:0;font-size:11px}body.pg-apply .field input{grid-column:2;grid-row:1;min-height:38px;height:38px}body.pg-apply .field .err{grid-column:2;grid-row:2}body.pg-apply .panel,body.pg-apply .apply-panel{margin:4px 0;padding:6px 8px}body.pg-apply .hero-plain{min-height:34px}body.pg-apply .shift-opt small{font-size:9px}body.pg-apply .transport-before-submit{padding:5px 7px;margin:5px 0}body.pg-apply .transport-before-submit h2{font-size:10px!important}body.pg-apply #applyBtn{min-height:40px;padding:7px 10px}}
 @media(prefers-reduced-motion:reduce){body .area-card,body .job{transition:none!important;transform:none!important}}
 body.pg-apply .shift-pick{flex-direction:row!important;flex-wrap:nowrap!important}body.pg-apply .shift-opt{width:auto!important;flex:1 1 0!important;min-width:0!important}
+
+/* More comfortable on roomy phones, without measuring screens in JavaScript. */
+@media(min-width:360px) and (min-height:700px){
+body.pg-apply{padding-top:10px;font-size:14px;line-height:1.5}
+body.pg-apply>.wrap{max-width:580px;padding-inline:14px}
+body.pg-apply .hero-plain{min-height:50px;padding-bottom:8px}
+body.pg-apply .hero-plain h1{font-size:18px}
+body.pg-apply .hero-plain .sub2{font-size:12px}
+body.pg-apply .panel,body.pg-apply .apply-panel{padding:12px;margin:10px 0;border-radius:13px}
+body.pg-apply .panel h2,body.pg-apply .apply-panel h2{font-size:14px!important;margin-bottom:6px!important}
+body.pg-apply .shift-opt{min-height:54px;padding:7px 5px;font-size:14px;gap:3px}
+body.pg-apply .shift-opt small{font-size:11px}
+body.pg-apply .field{margin:10px 0!important}
+body.pg-apply .field label{font-size:14px;margin-bottom:5px}
+body.pg-apply .field input{font-size:18px;min-height:48px;height:48px;padding:9px 11px}
+body.pg-apply .transport-before-submit{padding:9px 11px;margin:10px 0}
+body.pg-apply .transport-before-submit h2{font-size:12px!important}
+body.pg-apply .transport-before-submit p{font-size:12px;line-height:1.55}
+body.pg-apply #applyBtn{min-height:50px;padding:11px 13px;font-size:16px}
+body.pg-apply #handoffNote{font-size:11px;margin-top:7px}
+}
+
+/* Every source shift stays visible in the region cards, including completed options. */
+body .card-shifts{display:grid;gap:4px;margin:7px 0}
+body .card-shift{padding:6px 8px;border:1px solid #cfdaea;border-radius:8px;background:#edf3fc;display:grid;gap:2px;line-height:1.5}
+body .card-shift b{font-size:12px;color:#17376a}
+body .card-shift span{font-size:11px;color:#315d9a;overflow-wrap:anywhere}
+body .card-shift.filled{background:#f1f3f6;color:#637185}
+body .card-shift.filled b,body .card-shift.filled span{color:#637185}
