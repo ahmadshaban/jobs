@@ -327,17 +327,6 @@ function dashboardStats_(p) {
 
 // Device-scoped, time-limited gate for protected admin actions.
 function adminAuth_(req){
- const id=String(req.device_id||'');
- if(!/^[A-Za-z0-9_-]{20,80}$/.test(id))return {ok:false,code:'DEVICE_REQUIRED',error:'حدّث الصفحة وجرب تدخل تاني'};
- const store=PropertiesService.getScriptProperties(),key='ADMIN_DEVICE_'+id,now=Date.now();
- const all=store.getProperties();Object.keys(all).filter(k=>k.startsWith('ADMIN_DEVICE_')).forEach(k=>{try{if(Number(JSON.parse(all[k]).expires)<=now)store.deleteProperty(k);}catch(e){store.deleteProperty(k);}});
- let state={};try{state=JSON.parse(store.getProperty(key)||'{}')}catch(e){}
- if(Number(state.until)>now)return {ok:false,code:'ADMIN_LOCKED',error:'الجهاز ده اتقفل مؤقتًا، جرّب تاني بعد ربع ساعة',retry_after_seconds:Math.ceil((state.until-now)/1000)};
- if(state.until)state={};
- if(adminPassword_()&&req.password===adminPassword_()){store.deleteProperty(key);return {ok:true};}
- if(!req.password)return {ok:false,error:'كلمة السر غلط'};
- const count=Number(state.failures||0)+1;
- if(count>=3){store.setProperty(key,JSON.stringify({until:now+900000,expires:now+900000}));return {ok:false,code:'ADMIN_LOCKED',error:'الجهاز ده اتقفل مؤقتًا، جرّب تاني بعد ربع ساعة',retry_after_seconds:900};}
- store.setProperty(key,JSON.stringify({failures:count,expires:now+21600000}));
+ if(adminPassword_()&&req.password===adminPassword_())return {ok:true};
  return {ok:false,error:'كلمة السر غلط'};
 }
