@@ -128,15 +128,6 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
     share_script = f'<script src="{prefix}sharing.js?v=20261121f" defer></script>' if 'data-share-tools' in body else ''
     legacy_script = f'<script src="{prefix}legacy.js" defer></script>' if page_cls=='pg-home' else ''
     robots = '<meta name="robots" content="noindex,nofollow">' if noindex else ""
-    preview_image = ""
-    if variant == "main" and page_cls == "pg-home":
-        image_url = SITE_BASE + "jobs-preview-20261121.jpg"
-        preview_image = f'''<meta property="og:image" content="{esc(image_url)}">
-<meta property="og:image:secure_url" content="{esc(image_url)}">
-<meta property="og:image:type" content="image/jpeg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="840">
-<meta property="og:image:alt" content="صورة توضيحية مولّدة لعمال بيعبّوا كراتين، مش تصوير لمصنع بعينه">'''
     ld = f'<script type="application/ld+json">{json.dumps(json_ld, ensure_ascii=False)}</script>' if json_ld else ""
     return f"""<!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -154,7 +145,6 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 <meta property="og:url" content="{esc(canonical)}">
 <meta property="og:locale" content="ar_EG">
 <meta property="og:site_name" content="{esc(name)}">
-{preview_image}
 <meta name="theme-color" content="#e9eef7">
 <link rel="manifest" href="{prefix}manifest.json">
 {font_link}
@@ -884,7 +874,6 @@ def main():
     print("rows:", len(jobs), "visible:", len(visible_jobs(jobs)), "open:", len(open_jobs))
     os.makedirs(OUT, exist_ok=True)
     write_static_files()
-    shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","site","jobs-preview-20261121.jpg"), os.path.join(OUT,"jobs-preview-20261121.jpg"))
     shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","site","recruitment-ad.webp"),os.path.join(OUT,"recruitment-ad.webp"))
     write_cc_jobs_page()
     for old, target in [("callcenter.html","cc/"),("marketing.html","cc-jobs/")]:
