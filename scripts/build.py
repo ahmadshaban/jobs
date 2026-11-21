@@ -551,9 +551,7 @@ function nameMismatch(n,req,label){var first=normalizedName(n),female="ليلي 
 function reviewScreen(form,rows,transport,url){
  var old=document.getElementById("confirmScreen");if(old)old.remove();
  var screen=document.createElement("section");screen.id="confirmScreen";screen.className="confirm-screen wrap";screen.setAttribute("aria-label","تأكيد بياناتك");document.body.classList.add("confirming");
- var card=document.createElement("div");card.className="panel";var title=document.createElement("h2");title.textContent="دي بياناتك، متأكد قبل الإرسال؟";var eyebrow=document.createElement("small");eyebrow.className="review-eyebrow";eyebrow.textContent="مراجعة أخيرة";card.prepend(eyebrow);card.appendChild(title);
- rows.forEach(function(v){var row=document.createElement("div");row.className="cfrow";var k=document.createElement("span"),b=document.createElement("b");k.textContent=v[0];b.textContent=v[1]||"مش محدد";row.append(k,b);card.appendChild(row)});
- var warning=document.createElement("div");warning.className="review-transport";warning.setAttribute("role","note");var wh=document.createElement("h2");wh.textContent=cfg("transport_title","🚌 مهم قبل التقديم");var detail=document.createElement("div");detail.className="warnbox";detail.textContent=transport;warning.append(wh,detail);card.appendChild(warning);
+ var card=document.createElement("div");card.className="panel";var title=document.createElement("h2");title.textContent="متأكد من بياناتك؟ لو تمام هنحولك على الواتساب";card.appendChild(title);
  var back=document.createElement("button");back.type="button";back.className="btn btn-ghost";back.textContent=cfg("confirm_back","ارجع عدّل");
  var next=document.createElement("a");next.href=url;next.target="_blank";next.rel="noopener";next.className="btn btn-wa";next.textContent=cfg("confirm_continue","كمل على واتساب");
  var hint=document.createElement("p");hint.className="hint";hint.textContent="بعد الضغط على كمل هيحولك على الواتساب ونكمل المتابعة معاك هناك";
@@ -572,7 +570,7 @@ function reviewScreen(form,rows,transport,url){
   finally{clearTimeout(timer);saving=false;next.removeAttribute("aria-disabled")}
  });
 
- var close=document.createElement("button");close.type="button";close.className="form-close";close.setAttribute("aria-label","قفل التأكيد والرجوع للتعديل");close.textContent="✕";card.prepend(close);card.append(back,next,hint);screen.appendChild(card);form.closest(".wrap").after(screen);
+ var close=back;card.append(back,next);screen.appendChild(card);form.closest(".wrap").after(screen);
  document.body.appendChild(screen);var priorFocus=document.activeElement;document.documentElement.classList.add("review-lock");screen.setAttribute("role","dialog");screen.setAttribute("aria-modal","true");close.focus();
  function restore(){document.body.classList.remove("confirming");document.documentElement.classList.remove("review-lock");screen.remove();window.removeEventListener("popstate",onBack);document.removeEventListener("keydown",onKey);if(priorFocus)priorFocus.focus()}function onBack(){restore()}function onKey(e){if(e.key==="Escape"){e.preventDefault();history.back()}if(e.key==="Tab"){var xs=Array.from(screen.querySelectorAll("button,a[href]")).filter(x=>x.offsetParent!==null),first=xs[0],last=xs[xs.length-1];if(e.shiftKey&&document.activeElement===first){last.focus();e.preventDefault()}else if(!e.shiftKey&&document.activeElement===last){first.focus();e.preventDefault()}}}history.pushState(Object.assign({},history.state,{jgConfirm:true}),"",location.href);window.addEventListener("popstate",onBack);document.addEventListener("keydown",onKey);back.onclick=close.onclick=function(){if(history.state&&history.state.jgConfirm)history.back();else restore()};
 

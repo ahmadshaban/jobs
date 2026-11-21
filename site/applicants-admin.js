@@ -2,7 +2,7 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const statuses=['جديد','استلم','هيستلم','ما عجبوش الشغل','مشي','ما كملش','مش بيرد'];
-const colors=[['#eef2f6','#526577'],['#e5f5ec','#157347'],['#e8f0ff','#2455a5'],['#fff2d9','#8c5d0a'],['#fce7e5','#a72d26'],['#f3eafd','#74429e'],['#f0f1f3','#59616b']];
+const colors=[['#253752','#c1d1e6'],['#163d39','#8ee2bc'],['#203958','#9acaff'],['#433a22','#f2d287'],['#421f30','#ffadaf'],['#352543','#d9b4f4'],['#293347','#b6c4da']];
 let applicants=[],loaded=false,loading=false,view='jobs',selected=[];
 const h=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function day(d){return new Intl.DateTimeFormat('en-CA',{timeZone:'Africa/Cairo',year:'numeric',month:'2-digit',day:'2-digit'}).format(d)}
