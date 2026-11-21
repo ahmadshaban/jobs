@@ -680,11 +680,11 @@ document.addEventListener("click",function(e){
     with open(os.path.join(OUT, "app.js"), "w", encoding="utf-8") as f:
         f.write(app_js)
     # Network-first caching replaces the old worker and labels offline copies.
-    sw = r"""const CACHE='jobgate-v2-'+new URL(self.registration.scope).pathname;
+    sw = r"""const CACHE='jobgate-v3-'+new URL(self.registration.scope).pathname;
 self.addEventListener('install',()=>self.skipWaiting());
-self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE&& !k.startsWith('jobgate-v2-'))await caches.delete(k);await self.clients.claim()})()));
+self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE&& !k.startsWith('jobgate-v3-'))await caches.delete(k);await self.clients.claim()})()));
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET'||new URL(e.request.url).origin!==self.location.origin)return;
-e.respondWith((async()=>{const c=await caches.open(CACHE);try{const r=await fetch(e.request);if(r.ok){await c.put(e.request,r.clone())}return r}catch(_){const saved=await c.match(e.request);if(saved)return saved;return new Response('<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>الاتصال بالإنترنت</title><body style="font:20px Tahoma;padding:32px;background:#F2F5F8;color:#0E5A40"><h1>أنت مش متصل بالنت</h1><p>الصفحة دي مش محفوظة. اتصل بالنت وحدّث الصفحة.</p></body></html>',{headers:{'Content-Type':'text/html;charset=utf-8'}})}})())});"""
+e.respondWith((async()=>{const c=await caches.open(CACHE);try{const r=await fetch(e.request,{cache:"no-cache"});if(r.ok){await c.put(e.request,r.clone())}return r}catch(_){const saved=await c.match(e.request);if(saved)return saved;return new Response('<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>الاتصال بالإنترنت</title><body style="font:20px Tahoma;padding:32px;background:#F2F5F8;color:#0E5A40"><h1>أنت مش متصل بالنت</h1><p>الصفحة دي مش محفوظة. اتصل بالنت وحدّث الصفحة.</p></body></html>',{headers:{'Content-Type':'text/html;charset=utf-8'}})}})())});"""
     with open(os.path.join(OUT, "sw.js"), "w", encoding="utf-8") as f:f.write(sw)
 
 
