@@ -121,14 +121,14 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family={esc(DASH_CONFIG.get('font_family','Tajawal'))}:wght@600;700;800;900&display=swap">
-<link rel="stylesheet" href="{prefix}style.css?v=20261121dashboard">
+<link rel="stylesheet" href="{prefix}style.css?v=20261121compact">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏭</text></svg>">
 {ld}
 </head>
 <body class="{page_cls}" data-variant="{variant}" data-prefix="{prefix}">
 {configured(body)}
-<script>window.JG_CONFIG={json.dumps(({k:v for k,v in DASH_CONFIG.items() if k not in ['whatsapp','followup_template']} if variant=='cc' else DASH_CONFIG),ensure_ascii=False).replace(chr(60),chr(92)+'u003c')};</script>
-<script src="{prefix}app.js?v=20261121dashboard" defer></script>
+<script>window.JG_CONFIG={json.dumps(({k:v for k,v in DASH_CONFIG.items() if k not in ['whatsapp','followup_template','consent_text','save_failure']} if variant=='cc' else {k:v for k,v in DASH_CONFIG.items() if k not in ['consent_text','save_failure']}),ensure_ascii=False).replace(chr(60),chr(92)+'u003c')};</script>
+<script src="{prefix}app.js?v=20261121compact" defer></script>
 <script src="{prefix}sharing.js?v=20261121f" defer></script>
 <script src="{prefix}legacy.js" defer></script>
 <script src="{prefix}pwa.js?v=20261121b" defer></script>
@@ -370,7 +370,7 @@ def build_apply_page(j, root, prefix_depth="../../"):
     body = header(prefix, "main")
     body += f'<div class="wrap"><a class="form-close" href="../" aria-label="قفل التقديم والرجوع للوظيفة">✕</a><a class="bc2" href="../">→ رجوع للوظيفة</a></div>'
     body += f'<div class="wrap"><div class="hero-plain"><h1>💬 قدّم على {esc(j.get("المصنع"))}</h1><div class="sub2">{esc(city)} — املى بياناتك وأكّد مرة واحدة</div></div></div>'
-    body += f'<div class="panel transport-panel"><h2>🚌 مهم قبل التقديم</h2><div class="warnbox">{esc(transport_notice(j))}</div></div>'
+    body += f'<details class="panel transport-panel"><summary>🚌 المواصلات، مهم قبل التقديم</summary><div class="warnbox">{esc(transport_notice(j))}</div></details>'
     if multi:
         opts = ""
         for sh in shifts:
@@ -385,7 +385,7 @@ def build_apply_page(j, root, prefix_depth="../../"):
 
 <a class="btn btn-wa" id="applyBtn" href="{esc(wa_direct)}" rel="nofollow"
  data-gender="{esc(j.get("الفئة"))}" data-phone="{PHONE}" data-area="{esc(j.get('المنطقة'))}" data-factory="{esc(j.get('المصنع'))}" data-sal="{esc(salary_line(j))}" data-multi="{1 if multi else 0}"{age_attrs}>
-<span class="waic">💬</span> قدّم دلوقتي</a>
+<span class="waic">✓</span> راجع بياناتك</a>
 <div class="sub" id="handoffNote" role="status">بعد التأكيد دوس إرسال في واتساب عشان طلبك يوصل.</div>
 </div></div>"""
     body += footer()
@@ -522,7 +522,8 @@ var SRC=(function(){var v="";try{v=(new URLSearchParams(location.search).get("sr
 var VID="";try{VID=localStorage.getItem("vid");if(!VID){VID=Date.now().toString(36)+Math.random().toString(36).slice(2,8);localStorage.setItem("vid",VID)}}catch(e){}
 var __tv={};
 function track(t,f,r){try{
- if(t==="visit"){if(sessionStorage.getItem("tv"))return;sessionStorage.setItem("tv","1")}
+ if(t==="visit"&&parent!==window)return;
+
  if(t==="view"&&f){if(__tv[f])return;__tv[f]=1}
  var q=new URLSearchParams({a:"log",t:t,f:f||"",r:r||"",s:SRC,p:(location.pathname.split("/").pop()||"index.html"),v:VID});
  fetch(STATS_URL+"?"+q,{mode:"no-cors",keepalive:true}).catch(function(){})
@@ -550,33 +551,39 @@ function nameMismatch(n,req,label){var first=normalizedName(n),female="ليلي 
 function reviewScreen(form,rows,transport,url){
  var old=document.getElementById("confirmScreen");if(old)old.remove();
  var screen=document.createElement("section");screen.id="confirmScreen";screen.className="confirm-screen wrap";screen.setAttribute("aria-label","تأكيد بياناتك");document.body.classList.add("confirming");
- var card=document.createElement("div");card.className="panel";var title=document.createElement("h2");title.textContent=cfg("confirm_title","بياناتك دي صح؟");card.appendChild(title);
+ var card=document.createElement("div");card.className="panel";var title=document.createElement("h2");title.textContent="دي بياناتك، متأكد قبل الإرسال؟";var eyebrow=document.createElement("small");eyebrow.className="review-eyebrow";eyebrow.textContent="مراجعة أخيرة";card.prepend(eyebrow);card.appendChild(title);
  rows.forEach(function(v){var row=document.createElement("div");row.className="cfrow";var k=document.createElement("span"),b=document.createElement("b");k.textContent=v[0];b.textContent=v[1]||"مش محدد";row.append(k,b);card.appendChild(row)});
  var warning=document.createElement("div");warning.className="review-transport";warning.setAttribute("role","note");var wh=document.createElement("h2");wh.textContent=cfg("transport_title","🚌 مهم قبل التقديم");var detail=document.createElement("div");detail.className="warnbox";detail.textContent=transport;warning.append(wh,detail);card.appendChild(warning);
  var back=document.createElement("button");back.type="button";back.className="btn btn-ghost";back.textContent=cfg("confirm_back","ارجع عدّل");
  var next=document.createElement("a");next.href=url;next.target="_blank";next.rel="noopener";next.className="btn btn-wa";next.textContent=cfg("confirm_continue","كمل على واتساب");
- var hint=document.createElement("p");hint.className="hint";hint.textContent=cfg("handoff_hint","واتساب هيفتح برسالتك جاهزة. دوس إرسال هناك عشان طلبك يوصل.");
- var privacy=document.createElement("p");privacy.className="hint";privacy.textContent=cfg("consent_text","بالضغط على كمل، اسمك وسنك ورقمك والوظيفة ووقت التسجيل هيتحفظوا في سجل خاص لدى Job Gate للمتابعة. إرسال رسالة واتساب بيتم بإيدك.");card.appendChild(privacy);
+ var hint=document.createElement("p");hint.className="hint";hint.textContent="بعد الضغط على كمل هيحولك على الواتساب ونكمل المتابعة معاك هناك";
+
  var result=document.createElement("p");result.className="hint";result.setAttribute("role","status");card.appendChild(result);
- var bypass=document.createElement("a");bypass.href=url;bypass.className="btn btn-ghost";bypass.textContent="افتح واتساب من غير حفظ في السجل";bypass.style.display="none";card.appendChild(bypass);
+ var bypass=document.createElement("a");bypass.href=url;bypass.className="btn btn-ghost";bypass.textContent="افتح واتساب مباشرة";bypass.style.display="none";if(parent!==window)bypass.target="_top";card.appendChild(bypass);
  var values={};rows.forEach(function(r){values[r[0]]=r[1]});var apply=document.getElementById("applyBtn");
  var token="jg_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2);
  var payload={id:token,name:values["الاسم"],age:values["السن"],phone:values["رقم الواتساب"],job:values["المصنع"]||values["الوظيفة"],area:apply?apply.getAttribute("data-area"):"أونلاين",shift:values["الوردية"]||values["نظام الشغل"]||"",salary:values["المرتب"]||values["المقابل"]||"",source:SRC};
- var saving=false,saved=false;next.removeAttribute("target");
+ var saving=false,saved=false;next.removeAttribute("target");if(parent!==window)next.target="_top";
  next.addEventListener("click",async function(e){
-  if(saved)return;e.preventDefault();if(saving)return;saving=true;next.setAttribute("aria-disabled","true");next.textContent="جاري الحفظ...";result.textContent="استنى لحظة، بنحفظ بياناتك في السجل الخاص";bypass.style.display="none";
+  if(saved)return;e.preventDefault();if(saving)return;saving=true;next.setAttribute("aria-disabled","true");next.textContent="جاري التجهيز...";result.textContent="استنى لحظة، بنجهز تحويلك لواتساب";bypass.style.display="none";
   var controller=new AbortController(),timer=setTimeout(function(){controller.abort()},25000);
-  try{var response=await fetch(APPLICANTS_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"registerApplicant",data:payload}),signal:controller.signal});if(!response.ok)throw Error("network");var data=await response.json();if(!data.ok)throw Error("save");saved=true;if(!screen.isConnected)return;result.textContent="اتحفظت بياناتك. واتساب هيفتح دلوقتي، دوس إرسال هناك. تسجيل البيانات مش تأكيد لإرسال الرسالة.";next.textContent="افتح واتساب";location.assign(url)}
-  catch(err){result.textContent=cfg("save_failure","تعذر تأكيد حفظ بياناتك. جرّب الحفظ تاني، أو افتح واتساب من غير حفظ. رسالة واتساب لسه ما اتبعتتش.");next.textContent="جرّب الحفظ تاني";bypass.style.display=""}
+  try{var response=await fetch(APPLICANTS_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"registerApplicant",data:payload}),signal:controller.signal});if(!response.ok)throw Error("network");var data=await response.json();if(!data.ok)throw Error("save");saved=true;if(!screen.isConnected)return;result.textContent="واتساب هيفتح دلوقتي. دوس إرسال هناك عشان نكمل معاك.";next.textContent="افتح واتساب";if(parent!==window)top.location.assign(url);else location.assign(url)}
+  catch(err){result.textContent="الخطوة ماكملتش. جرّب تاني أو افتح واتساب مباشرة. الرسالة لسه ما اتبعتتش.";next.textContent="جرّب تاني";bypass.style.display=""}
   finally{clearTimeout(timer);saving=false;next.removeAttribute("aria-disabled")}
  });
 
  var close=document.createElement("button");close.type="button";close.className="form-close";close.setAttribute("aria-label","قفل التأكيد والرجوع للتعديل");close.textContent="✕";card.prepend(close);card.append(back,next,hint);screen.appendChild(card);form.closest(".wrap").after(screen);
- var hidden=[];Array.from(document.querySelectorAll(".jg>.wrap,body>.wrap,.transport-panel")).forEach(function(e){if(e!==screen){hidden.push([e,e.style.display]);e.style.display="none"}});
- if(!hidden.some(function(x){return x[0]===form.closest(".wrap")})){hidden.push([form.closest(".wrap"),form.closest(".wrap").style.display]);form.closest(".wrap").style.display="none"}
- function restore(){document.body.classList.remove("confirming");hidden.forEach(function(x){x[0].style.display=x[1]});screen.remove();window.removeEventListener("popstate",onBack);form.scrollIntoView({block:"start"})}function onBack(){restore()}history.pushState(Object.assign({},history.state,{jgConfirm:true}),"",location.href);window.addEventListener("popstate",onBack);back.onclick=close.onclick=function(){if(history.state&&history.state.jgConfirm)history.back();else restore()};screen.scrollIntoView({block:"start"});
+ document.body.appendChild(screen);var priorFocus=document.activeElement;document.documentElement.classList.add("review-lock");screen.setAttribute("role","dialog");screen.setAttribute("aria-modal","true");close.focus();
+ function restore(){document.body.classList.remove("confirming");document.documentElement.classList.remove("review-lock");screen.remove();window.removeEventListener("popstate",onBack);document.removeEventListener("keydown",onKey);if(priorFocus)priorFocus.focus()}function onBack(){restore()}function onKey(e){if(e.key==="Escape"){e.preventDefault();history.back()}if(e.key==="Tab"){var xs=Array.from(screen.querySelectorAll("button,a[href]")).filter(x=>x.offsetParent!==null),first=xs[0],last=xs[xs.length-1];if(e.shiftKey&&document.activeElement===first){last.focus();e.preventDefault()}else if(!e.shiftKey&&document.activeElement===last){first.focus();e.preventDefault()}}}history.pushState(Object.assign({},history.state,{jgConfirm:true}),"",location.href);window.addEventListener("popstate",onBack);document.addEventListener("keydown",onKey);back.onclick=close.onclick=function(){if(history.state&&history.state.jgConfirm)history.back();else restore()};
+
 }
 window.jgNameMismatch=nameMismatch;window.jgReviewScreen=reviewScreen;
+var applyLayer=null,applyReturn=null;
+function closeApply(){if(!applyLayer)return;applyLayer.remove();applyLayer=null;document.documentElement.classList.remove("apply-lock");window.removeEventListener("popstate",closeApply);if(applyReturn)applyReturn.focus()}
+document.addEventListener("click",function(e){var link=e.target.closest('a[href]');if(!link)return;var u=new URL(link.href,location.href);if(u.origin===location.origin&&/\/jobs\/[^/]+\/apply\/$/.test(u.pathname)&&!document.body.classList.contains("pg-apply")){e.preventDefault();var jm=document.getElementById("jobMeta");track("apply",jm?jm.getAttribute("data-factory"):"",jm?jm.getAttribute("data-area"):"");applyReturn=link;applyLayer=document.createElement("div");applyLayer.className="apply-layer";applyLayer.setAttribute("role","dialog");applyLayer.setAttribute("aria-modal","true");applyLayer.setAttribute("aria-label","التقديم على الوظيفة");var frame=document.createElement("iframe");frame.title="فورم التقديم";frame.src=u.href;applyLayer.appendChild(frame);document.body.appendChild(applyLayer);document.documentElement.classList.add("apply-lock");history.pushState({jgApply:true},"",location.href);window.addEventListener("popstate",closeApply);frame.focus()}else if(document.body.classList.contains("pg-apply")&&link.matches(".form-close,.bc2")&&parent!==window){e.preventDefault();parent.postMessage({jobgate:"close-apply"},location.origin)}});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&parent!==window&&!document.getElementById("confirmScreen")){parent.postMessage({jobgate:"close-apply"},location.origin)}});
+window.addEventListener("message",function(e){if(e.origin===location.origin&&applyLayer&&e.source===applyLayer.querySelector("iframe").contentWindow&&e.data&&e.data.jobgate==="close-apply")history.back()});
+
 /* اختيار وردية */
 var pickedShift=null;
 var sp=document.getElementById("shiftPick");
@@ -595,7 +602,7 @@ if(sp){
 /* فورم التقديم: نفس شروط ورسايل الموقع القديم بالظبط */
 var btn=document.getElementById("applyBtn");
 if(btn){
- track("apply",btn.getAttribute("data-factory"),btn.getAttribute("data-area"));
+
  var dg=function(s){return String(s||"").replace(/[٠-٩]/g,function(x){return "٠١٢٣٤٥٦٧٨٩".indexOf(x)})};
  var setErr=function(id,m){var e=document.getElementById(id);if(e)e.textContent=m||""};
  var en=document.getElementById("f_n"),ea=document.getElementById("f_a"),et=document.getElementById("f_t");
@@ -680,9 +687,9 @@ document.addEventListener("click",function(e){
     with open(os.path.join(OUT, "app.js"), "w", encoding="utf-8") as f:
         f.write(app_js)
     # Network-first caching replaces the old worker and labels offline copies.
-    sw = r"""const CACHE='jobgate-v3-'+new URL(self.registration.scope).pathname;
+    sw = r"""const CACHE='jobgate-v4-'+new URL(self.registration.scope).pathname;
 self.addEventListener('install',()=>self.skipWaiting());
-self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE&& !k.startsWith('jobgate-v3-'))await caches.delete(k);await self.clients.claim()})()));
+self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE&& !k.startsWith('jobgate-v4-'))await caches.delete(k);await self.clients.claim()})()));
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET'||new URL(e.request.url).origin!==self.location.origin)return;
 e.respondWith((async()=>{const c=await caches.open(CACHE);try{const r=await fetch(e.request,{cache:"no-cache"});if(r.ok){await c.put(e.request,r.clone())}return r}catch(_){const saved=await c.match(e.request);if(saved)return saved;return new Response('<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>الاتصال بالإنترنت</title><body style="font:20px Tahoma;padding:32px;background:#F2F5F8;color:#0E5A40"><h1>أنت مش متصل بالنت</h1><p>الصفحة دي مش محفوظة. اتصل بالنت وحدّث الصفحة.</p></body></html>',{headers:{'Content-Type':'text/html;charset=utf-8'}})}})())});"""
     with open(os.path.join(OUT, "sw.js"), "w", encoding="utf-8") as f:f.write(sw)
