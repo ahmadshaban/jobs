@@ -148,18 +148,18 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 <meta name="theme-color" content="#e9eef7">
 <link rel="manifest" href="{prefix}manifest.json">
 {font_link}
-<link rel="stylesheet" href="{prefix}style.css?v=20261121nav-final">
-<link rel="stylesheet" href="{prefix}menu.css?v=20261121nav-final">
+<link rel="stylesheet" href="{prefix}style.css?v=20261121recruitment">
+<link rel="stylesheet" href="{prefix}menu.css?v=20261121recruitment">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏭</text></svg>">
 {ld}
 </head>
 <body class="{page_cls}" data-variant="{variant}" data-prefix="{prefix}">
 {configured(body)}
 <script>window.JG_CONFIG={json.dumps(({k:v for k,v in DASH_CONFIG.items() if k not in ['whatsapp','followup_template','consent_text','save_failure']} if variant=='cc' else {k:v for k,v in DASH_CONFIG.items() if k not in ['consent_text','save_failure']}),ensure_ascii=False).replace(chr(60),chr(92)+'u003c')};</script>
-<script src="{prefix}app.js?v=20261121nav-final" defer></script>
+<script src="{prefix}app.js?v=20261121recruitment" defer></script>
 {share_script}
 {legacy_script}
-<script src="{prefix}pwa.js?v=20261121nav-final" defer></script>
+<script src="{prefix}pwa.js?v=20261121recruitment" defer></script>
 </body>
 </html>"""
 
@@ -171,7 +171,7 @@ def header(prefix, variant):
         import urllib.parse
         question = urllib.parse.quote(DASH_CONFIG.get("question_template","السلام عليكم، عندي استفسار بخصوص الوظايف").replace("{company}",DASH_CONFIG.get("company_name","")))
         drawer_links = f"""<a class="d-link d-whatsapp" href="https://wa.me/{PHONE}?text={question}" rel="nofollow">💬 اسأل على الواتساب</a><div class="d-sep"></div>
-<a class="d-link" href="{prefix}cc-jobs/">📢 وظايف كول سنتر للبنات</a>
+<a class="d-link" href="{prefix}cc-jobs/">📢 كول سنتر تسويق وظائف</a>
 <a class="d-link" href="https://www.facebook.com/share/1Kba7Asbx9/" target="_blank" rel="noopener">فيسبوك</a>
 <section class="public-admin-links" aria-label="الإدارة"><div class="menu-heading">الإدارة، دخول بكلمة السر</div>
 <a class="d-link" href="{prefix}stats.html">📊 الإحصائيات 🔒</a>
@@ -745,9 +745,9 @@ document.addEventListener("click",function(e){
     legacy_cc={"id":"/jobs/apps/cc","name":"Job Gate CC","short_name":"Job Gate CC","start_url":"./cc/index.html?app=cc","scope":"./cc/","display":"standalone","icons":[{"src":"cc/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"cc/icon-512.png","sizes":"512x512","type":"image/png"}]}
     with open(os.path.join(OUT,"manifest-cc.json"),"w",encoding="utf-8") as f:json.dump(legacy_cc,f,ensure_ascii=False)
     # Network-first caching replaces the old worker and labels offline copies.
-    sw = r"""const CACHE='jobgate-v15-'+new URL(self.registration.scope).pathname;
+    sw = r"""const CACHE='jobgate-v16-'+new URL(self.registration.scope).pathname;
 self.addEventListener('install',()=>self.skipWaiting());
-self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE&& !k.startsWith('jobgate-v15-'))await caches.delete(k);await self.clients.claim()})()));
+self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE&& !k.startsWith('jobgate-v16-'))await caches.delete(k);await self.clients.claim()})()));
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET'||new URL(e.request.url).origin!==self.location.origin)return;
 e.respondWith((async()=>{const c=await caches.open(CACHE);const asset=/\.(?:woff2|png|webp|css|js)$/.test(new URL(e.request.url).pathname);if(asset){const cached=await c.match(e.request);if(cached)return cached}try{const r=await fetch(e.request,{cache:"no-cache"});if(r.ok){await c.put(e.request,r.clone())}return r}catch(_){const saved=await c.match(e.request);if(saved)return saved;return new Response('<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>الاتصال بالإنترنت</title><body style="font:20px Tahoma;padding:32px;background:#F2F5F8;color:#0E5A40"><h1>أنت مش متصل بالنت</h1><p>الصفحة دي مش محفوظة. اتصل بالنت وحدّث الصفحة.</p></body></html>',{headers:{'Content-Type':'text/html;charset=utf-8'}})}})())});"""
     with open(os.path.join(OUT, "sw.js"), "w", encoding="utf-8") as f:f.write(sw)
@@ -755,25 +755,25 @@ e.respondWith((async()=>{const c=await caches.open(CACHE);const asset=/\.(?:woff
 
 
 def write_cc_jobs_page():
-    """صفحة توظيف فريق الكول سنتر (بنات) — نفس رسالة الواتساب بتاعة الصفحة القديمة"""
+    """صفحة توظيف فريق تسويق الوظائف — نفس رسالة الواتساب بتاعة الصفحة القديمة"""
     cdir = os.path.join(OUT, "cc-jobs")
     os.makedirs(cdir, exist_ok=True)
     body = header("../", "main")
     body += r"""<div class="wrap"><a class="bc2" href="../index.html">→ رجوع للرئيسية</a></div>
-<div class="wrap"><div class="hero-plain"><h1>📢 اشتغلي أونلاين بعمولة</h1>
-<div class="sub2">وظيفة مسوّقة بالعمولة في فريق التوظيف أونلاين — شغل من الموبايل</div></div></div>
+<div class="wrap"><div class="hero-plain"><h1>📢 كول سنتر تسويق وظائف</h1>
+<div class="sub2">فرصة كول سنتر تسويق وظائف لشغل مصانع، أونلاين من الموبايل بنظام العمولة</div></div></div>
 <div class="wrap"><section class="panel recruitment-details"><h2>تفاصيل شغل فريق التوظيف</h2><img src="../recruitment-ad.webp" width="800" height="885" alt="مطلوب فريق توظيف أونلاين بالعمولة، نشر الإعلانات والتواصل مع العمال وتقديم الوظيفة المناسبة" style="display:block;width:100%;height:auto;border-radius:14px" loading="lazy"></section></div>
 <div class="wrap"><div class="apply-panel" id="ccApply"><a class="form-close" href="../" aria-label="قفل التقديم والرجوع للرئيسية">✕</a>
-<h2>📲 قدّمي على واتساب</h2>
-<div class="field"><label for="c_n">👤 الاسم<em class="req">*</em></label><input id="c_n" autocomplete="name" placeholder="اكتبي اسمك"><small class="hint">اكتبي اسمك الحقيقي</small></div>
-<div class="field"><label for="c_a">🔢 السن<em class="req">*</em></label><input id="c_a" inputmode="numeric" maxlength="2" placeholder="مثال: 22"><small class="hint">اكتبي سنك بالأرقام</small></div>
-<div class="field"><label for="c_t">📞 رقم الواتساب اللي هتشتغلي بيه<em class="req">*</em></label><input id="c_t" type="tel" inputmode="tel" maxlength="15" placeholder="01XXXXXXXXX"><small class="hint">اكتبي رقم فيه واتساب</small></div>
-<div class="field"><label for="c_x">💼 اشتغلتي الشغل ده قبل كده؟<em class="req">*</em></label>
+<h2>📲 قدّم على واتساب</h2>
+<div class="field"><label for="c_n">👤 الاسم<em class="req">*</em></label><input id="c_n" autocomplete="name" placeholder="اكتب اسمك"><small class="hint">اكتب اسمك الحقيقي</small></div>
+<div class="field"><label for="c_a">🔢 السن<em class="req">*</em></label><input id="c_a" inputmode="numeric" maxlength="2" placeholder="مثال: 22"><small class="hint">اكتب سنك بالأرقام</small></div>
+<div class="field"><label for="c_t">📞 رقم الواتساب اللي هتشتغل بيه<em class="req">*</em></label><input id="c_t" type="tel" inputmode="tel" maxlength="15" placeholder="01XXXXXXXXX"><small class="hint">اكتب رقم فيه واتساب</small></div>
+<div class="field"><label for="c_x">💼 اشتغلت الشغل ده قبل كده؟<em class="req">*</em></label>
 <select id="c_x"><option value="">— اختار —</option><option value="آه">آه</option><option value="لا">لا</option></select></div>
-<div class="field" id="c_cw" hidden><label for="c_c">🏢 اسم الشركة اللي كنتي شغالة فيها</label><input id="c_c" placeholder="اسم الشركة"></div>
+<div class="field" id="c_cw" hidden><label for="c_c">🏢 اسم الشركة اللي كنت شغال فيها</label><input id="c_c" placeholder="اسم الشركة"></div>
 
 <div class="err" id="c_e"></div>
-<button class="btn btn-wa" type="button" id="ccSend"><span class="waic">💬</span> قدّمي دلوقتي</button>
+<button class="btn btn-wa" type="button" id="ccSend"><span class="waic">💬</span> قدّم دلوقتي</button>
 </div></div>
 <script>
 (function(){
@@ -783,7 +783,7 @@ var dg=function(s){return String(s||'').replace(/[٠-٩]/g,function(ch){return '
 
 function fieldError(id,msg){var f=$(id),e=$(id+'_error');if(!e){e=document.createElement('div');e.id=id+'_error';e.className='err';f.before(e)}e.textContent=msg;f.classList.toggle('bad',!!msg);f.setAttribute('aria-invalid',msg?'true':'false')}
 function fail(id,msg){fieldError(id,msg);$(id).focus();$(id).scrollIntoView({block:'center',behavior:'auto'})}
-function ccNameError(){var n=$('c_n').value.trim();return n.split(/\s+/).filter(function(w){return w.length>=2}).length<3?window.jgConfig('name_invalid','لازم تكتب اسمك ثلاثي'):window.jgNameMismatch(n,'بنات','الشغل ده')}
+function ccNameError(){var n=$('c_n').value.trim();return n.split(/\s+/).filter(function(w){return w.length>=2}).length<3?window.jgConfig('name_invalid','لازم تكتب اسمك ثلاثي'):''}
 $('c_n').addEventListener('input',function(){fieldError('c_n',ccNameError())});
 $('c_t').addEventListener('input',function(){fieldError('c_t',/^(?:\+?20|0)1[0125]\d{8}$/.test(dg(this.value).replace(/[\s-]/g,''))?'':window.jgConfig('phone_invalid','الرقم ناقص، اكتب رقم واتساب مصري صحيح'))});
 $('c_x').onchange=function(){$('c_cw').hidden=this.value!=='آه';fieldError('c_x','')};
@@ -793,18 +793,18 @@ $('ccSend').onclick=function(){
  if(ccNameError())return fail('c_n',ccNameError());
  if(!/^\d{1,2}$/.test(a)||+a<1)return fail('c_a',window.jgConfig('age_invalid','اكتب السن بالأرقام'));
  if(!/^(?:\+?20|0)1[0125]\d{8}$/.test(p))return fail('c_t',window.jgConfig('phone_invalid','الرقم ناقص، اكتب رقم واتساب مصري صحيح'));
- if(!x)return fail('c_x','اختاري آه أو لا');if(x==='آه'&&!c)return fail('c_c','اكتبي اسم الشركة');
+ if(!x)return fail('c_x','اختار آه أو لا');if(x==='آه'&&!c)return fail('c_c','اكتب اسم الشركة');
  ['c_n','c_a','c_t','c_x','c_c'].forEach(function(id){fieldError(id,'')});
  var L=['السلام عليكم، محتاج التفاصيل عن وظيفة مسوق بالعمولة (فريق التوظيف أونلاين)','الاسم: '+n,'السن: '+a,'رقم الواتساب: '+p,'اشتغلت الشغل ده قبل كده: '+x];if(x==='آه')L.push('الشركة: '+c);
- window.jgReviewScreen($('ccApply'),[['الاسم',n],['السن',a],['رقم الواتساب',p],['الوظيفة',JG_CONFIG.cc_job_title||'مسوّقة في فريق التوظيف'],['نظام الشغل','أونلاين من الموبايل'],['المقابل','بالعمولة'],['اشتغلتي قبل كده؟',x]],'الشغل ده أونلاين من الموبايل، مفيش انتقال لمصنع ولا مواصلات.', 'https://wa.me/'+(JG_CONFIG.whatsapp||'__PHONE__')+'?text='+encodeURIComponent(window.jgTemplate(JG_CONFIG.cc_application_template||L.join('\n'),{name:n,age:a,phone:p,job:JG_CONFIG.cc_job_title||'مسوّقة في فريق التوظيف',experience:x,previous_company:c,company:JG_CONFIG.company_name||''})));
+ window.jgReviewScreen($('ccApply'),[['الاسم',n],['السن',a],['رقم الواتساب',p],['الوظيفة','كول سنتر تسويق وظائف'],['نظام الشغل','أونلاين من الموبايل'],['المقابل','بالعمولة'],['اشتغلت قبل كده؟',x]],'الشغل ده أونلاين من الموبايل، مفيش انتقال لمصنع ولا مواصلات.', 'https://wa.me/'+(JG_CONFIG.whatsapp||'__PHONE__')+'?text='+encodeURIComponent(window.jgTemplate(JG_CONFIG.cc_application_template||L.join('\n'),{name:n,age:a,phone:p,job:'كول سنتر تسويق وظائف',experience:x,previous_company:c,company:JG_CONFIG.company_name||''})));
 };
 
 })();
 </script>"""
     body = body.replace("__PHONE__", PHONE)
     body += footer()
-    desc = "وظايف كول سنتر للبنات: اشتغلي مسوّقة بالعمولة أونلاين في فريق التوظيف. قدّمي على الواتساب في دقيقة."
-    doc = layout("اشتغلي أونلاين بعمولة - وظايف كول سنتر للبنات | " + SITE_NAME, desc, body, "../", "main",
+    desc = "كول سنتر تسويق وظائف، أونلاين من الموبايل بنظام العمولة لتوظيف عمال المصانع. قدّم على الواتساب."
+    doc = layout("كول سنتر تسويق وظائف | " + SITE_NAME, desc, body, "../", "main",
                  SITE_BASE + "cc-jobs/", page_cls="pg-job")
     with open(os.path.join(cdir, "index.html"), "w", encoding="utf-8") as f:
         f.write(doc)
