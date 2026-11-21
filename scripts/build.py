@@ -202,9 +202,13 @@ def sharing_tools(js, variant, title, sharepath=None):
             t=t.replace(PHONE,"").replace("+"+PHONE,"")
         records.append({"name":j.get("المصنع") or "وظيفة", "text":t})
     payload=esc(json.dumps(records,ensure_ascii=False))
-    sharepath=sharepath or ("jobs/"+(js[0].get("__jid") or job_id(js[0]))+"/") if len(js)==1 else ("regions/"+city_slug(city_of(js[0]))+"/")
+    sharepath=sharepath or (("jobs/"+(js[0].get("__jid") or job_id(js[0]))+"/") if len(js)==1 else ("regions/"+city_slug(city_of(js[0]))+"/"))
     sharelink=SITE_BASE+("cc/" if variant=="cc" else "")+sharepath
-    return f'<details class="share-tools" data-share-tools data-link="{esc(sharelink)}" data-title="{esc(title)}" data-records="{payload}"><summary>↗ مشاركة ونسخ الإعلان</summary><div class="share-grid"><button type="button" data-share="link">نسخ اللينك</button><button type="button" data-share="text">نسخ النص</button><button type="button" data-share="share">مشاركة النص</button><button type="button" data-share="image">حفظ صور الإعلان</button><button type="button" data-share="share-image">مشاركة صورة</button></div><p id="shareStatus" role="status"></p><div id="shareGallery"></div></details>'
+    count=len(js)
+    unit='الوظيفة' if count==1 else 'الإعلانات'
+    scope='الوظيفة' if count==1 else ('المنطقة' if sharepath and sharepath.startswith('regions/') else 'الصفحة')
+    return f'<details class="share-tools share-prominent" data-share-tools data-link="{esc(sharelink)}" data-title="{esc(title)}" data-records="{payload}" aria-label="النسخ والمشاركة"><summary><span class="share-symbol" aria-hidden="true">⧉</span><span>انسخ وشارك من هنا</span><span class="share-chevron" aria-hidden="true">⌄</span></summary><p class="share-intro">{count} إعلان جاهز للنشر. اختار اللي محتاجه:</p><div class="share-grid"><button type="button" data-share="link"><b>نسخ رابط {scope}</b><small>ابعت اللينك لأي حد</small></button><button type="button" data-share="text"><b>نسخ {unit} كنص</b><small>جاهز للواتساب والجروبات</small></button><button type="button" data-share="image"><b>تجهيز {unit} كصور</b><small>صورة مستقلة لكل وظيفة</small></button><button type="button" data-share="share"><b>مشاركة {unit}</b><small>اختار التطبيق بنفسك</small></button></div><p class="share-help">للصور: دوس تجهيز، وبعدها احفظ الصورة اللي محتاجها.</p><p id="shareStatus" role="status"></p><div id="shareGallery"></div></details>'
+
 
 def build_variant(jobs_open, variant):
     """يبني نسخة كاملة (رئيسية أو كول سنتر) داخل OUT أو OUT/cc"""
@@ -240,6 +244,7 @@ def build_variant(jobs_open, variant):
 {f'<span class="pay">💰 {pay_hint}</span>' if pay_hint else ''}
 </a>"""
     body = header("", variant)
+    if variant=="cc": body += '<div class="wrap">'+sharing_tools(jobs_open,variant,"كل الوظايف","index.html")+'</div>'
     body += steps_strip()
     body += f"""<div class="wrap"><div class="sec"><h2>📍 اختار منطقتك</h2><span class="ln"></span><small>{n_open} وظيفة</small></div></div>
 <div class="wrap"><div class="areas">{areas_html}</div></div>"""
@@ -260,11 +265,11 @@ def build_variant(jobs_open, variant):
         body = header("../../", variant)
         body += f"""<div class="wrap"><a class="bc2" href="../../index.html">→ رجوع للرئيسية</a></div>
 <div class="wrap"><div class="sec"><h2>🏭 وظايف {esc(c)}</h2><span class="ln"></span><small>{len(js)} وظيفة</small></div></div>
+<div class="wrap">{sharing_tools(js,variant,c,"regions/"+slug+"/")}</div>
 {seg_filter()}
 <div class="wrap"><div class="jobs" id="jobs">{cards}</div></div>
 <div class="scrollhint"><span>دي كل وظايف {esc(c)} دلوقتي ✅</span></div>
 """
-        body += '<div class="wrap">'+sharing_tools(js,variant,c,"regions/"+slug+"/")+'</div>'
         body += footer()
         body += bottom_bar("../../", variant)
         nums = [best_salary_num(x) for x in js if best_salary_num(x)]
@@ -444,7 +449,8 @@ def build_job_page(j, root, variant, noindex):
         else:
             body += '<div class="wrap"><a class="btn btn-wa" href="#apply" data-reveal="#apply"><span class="waic">💬</span> قدّم دلوقتي</a>' + form_panel + copy_btn + '</div>'
 
-    body += '<div class="wrap">'+sharing_tools([j],variant,j.get("المصنع"))+'</div>'
+    tool='<div class="wrap">'+sharing_tools([j],variant,j.get("المصنع"))+'</div>'
+    body=body.replace('</header>','</header>'+tool,1)
     body += footer()
     body += bottom_bar(prefix, variant, job=j)
 
