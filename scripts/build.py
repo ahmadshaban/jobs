@@ -864,6 +864,27 @@ def assign_ids(jobs):
         seen[base] = n
         j["__jid"] = base if n == 1 else f"{base}-{n}"
 
+def write_compact_preview_trial():
+    """Isolated WhatsApp thumbnail experiment; never changes the real homepage."""
+    trial_url = SITE_BASE + "preview-compact-20261121.html"
+    image_url = SITE_BASE + "jobs-preview-worker-compact-20261121.jpg"
+    with open(os.path.join(OUT, "index.html"), encoding="utf-8") as f:
+        trial = f.read()
+    trial = trial.replace('<link rel="canonical" href="' + SITE_BASE + '">', '<link rel="canonical" href="' + trial_url + '">', 1)
+    trial = trial.replace('<meta property="og:url" content="' + SITE_BASE + '">', '<meta property="og:url" content="' + trial_url + '">', 1)
+    tags = f'''<meta name="robots" content="noindex,nofollow">
+<meta property="og:image" content="{esc(image_url)}">
+<meta property="og:image:secure_url" content="{esc(image_url)}">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="280">
+<meta property="og:image:height" content="280">
+<meta property="og:image:alt" content="عمال على خط تعبئة برطمانات، من صورة الإعلان">
+'''
+    trial = trial.replace('</head>', tags + '</head>', 1)
+    with open(os.path.join(OUT, "preview-compact-20261121.html"), "w", encoding="utf-8") as f:
+        f.write(trial)
+    shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "site", "jobs-preview-worker-compact-20261121.jpg"), os.path.join(OUT, "jobs-preview-worker-compact-20261121.jpg"))
+
 def main():
     load_dashboard_config()
     local_jobs = os.environ.get("JOBS_CSV")
@@ -886,6 +907,7 @@ def main():
             f.write(f'<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><script>location.replace("{target}"+location.search+location.hash)</script><title>بوابة الوظايف</title><a href="{target}">افتح الصفحة</a></html>')
     build_variant(open_jobs, "main")
     build_variant(open_jobs, "cc")
+    write_compact_preview_trial()
     route_data=[{"name":j.get("المصنع"),"id":j["__jid"],"area":j.get("المنطقة"),"region":city_slug(city_of(j)),"legacyIndex":i} for i,j in enumerate(visible_jobs(jobs)) if j in open_jobs]
     route_script="""(function(){var rows=__DATA__,q=new URLSearchParams(location.search),base=document.body.getAttribute('data-prefix')||'',cc=location.pathname.indexOf('/cc/')>=0,raw=location.hash,match=null;function hid(n){var h=5381;for(var c of String(n))h=((h<<5)+h+c.charCodeAt(0))>>>0;return h.toString(36)}if(q.get('j'))match=rows.find(function(j){return hid(j.name)===q.get('j')});if(raw.indexOf('#f=')===0){try{var name=decodeURIComponent(raw.slice(3));match=rows.find(function(j){return j.name===name})}catch(e){}}var m=raw.match(/^#job(\d+)$/);if(m&&!match)match=rows.find(function(j){return j.legacyIndex===+m[1]});if(!match&&q.get('area')){var ar=rows.find(function(j){return j.area===q.get('area')});if(ar){location.replace(base+'regions/'+ar.region+'/');return}}if(match){var src=q.get('src');location.replace(base+'jobs/'+match.id+'/'+(src?'?src='+encodeURIComponent(src):''))}})();""".replace('__DATA__',json.dumps(route_data,ensure_ascii=False))
     for rt in [OUT,os.path.join(OUT,"cc")]:
