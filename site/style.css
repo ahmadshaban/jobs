@@ -241,3 +241,7 @@ body.confirming .top{display:none}
 
 /* Second small typography adjustment; preserve mobile entry size. */
 .field input,.field select{font-size:16px}
+
+/* General questions belong in navigation, application actions stay on job pages. */
+body[data-variant="main"].pg-home,body[data-variant="main"].pg-region{padding-bottom:0}
+.drawer .d-link.d-whatsapp{min-height:44px;padding:8px 12px;font-size:13px;align-self:flex-start;background:#E3F3EC;color:#0E5A40;border-radius:10px;margin-top:8px}

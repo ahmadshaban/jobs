@@ -118,7 +118,9 @@ def header(prefix, variant):
     home = prefix + "index.html"
     drawer_links = ""
     if variant != "cc":
-        drawer_links = f"""<div class="d-sep"></div>
+        import urllib.parse
+        question = urllib.parse.quote("السلام عليكم، عندي استفسار بخصوص الوظايف")
+        drawer_links = f"""<a class="d-link d-whatsapp" href="https://wa.me/{PHONE}?text={question}" rel="nofollow">💬 اسأل على الواتساب</a><div class="d-sep"></div>
 <a class="d-link" href="{prefix}admin.html">🔒 الأدمن</a>
 <a class="d-link" href="{prefix}stats.html">📊 الإحصائيات</a>
 <a class="d-link" href="{prefix}cc-jobs/">📢 وظايف كول سنتر للبنات</a>
@@ -170,9 +172,7 @@ def bottom_bar(prefix, variant, job=None):
         if APPLY_FLOW_PAGE and variant == "main":
             return f"""<nav class="bottombar"><a class="btn wa" href="{prefix}jobs/{job.get("__jid") or job_id(job)}/apply/">💬 قدّم دلوقتي</a></nav>"""
         return f"""<nav class="bottombar"><a class="btn wa" href="#apply">💬 قدّم دلوقتي</a></nav>"""
-    import urllib.parse
-    q = urllib.parse.quote("السلام عليكم، عندي استفسار بخصوص الوظايف")
-    return f"""<nav class="bottombar"><a class="btn wa" href="https://wa.me/{PHONE}?text={q}" rel="nofollow">💬 اسأل على الواتساب</a></nav>"""
+    return ""  # General WhatsApp questions now live in the compact menu item.
 
 def footer():
     d = TODAY.strftime("%Y-%m-%d")
