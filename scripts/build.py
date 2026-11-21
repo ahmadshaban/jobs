@@ -515,7 +515,7 @@ function normalizedName(n){return String(n||"").trim().split(/\s+/)[0].replace(/
 function nameMismatch(n,req,label){var first=normalizedName(n),female="ليلي فاطمة فاطمه عائشة عايشة خديجة خديجه مريم زينب رقية رقيه اميرة اميره هبة هبه نجلاء شيماء اسماء دعاء اسراء منة منه ايمان سارة ساره سمية سميه بسمة بسمه ياسمين نادية ناديه شيرين حنان عبير ولاء صفاء امل دينا هاجر رحاب رانيا شروق",male="احمد محمد محمود مصطفي ابراهيم اسماعيل اسحق يوسف يونس يحيي موسي عيسي ادم عمر عمرو عثمان خالد وليد سعيد سامح سمير شريف اشرف ايمن طارق حسن حسين حسام كريم هيثم معتز مجدي حمدي عادل صبري منصور فؤاد نبيل صلاح رمضان رجب شعبان";var g=/بنات|إناث|اناث/.test(req||""),b=/شباب|ذكور|رجال/.test(req||"");if(b&&!g&&female.split(" ").indexOf(first)>=0)return label+" للشباب بس";if(g&&!b&&male.split(" ").indexOf(first)>=0)return label+" للبنات بس";return ""}
 function reviewScreen(form,rows,transport,url){
  var old=document.getElementById("confirmScreen");if(old)old.remove();
- var screen=document.createElement("section");screen.id="confirmScreen";screen.className="confirm-screen wrap";screen.setAttribute("aria-label","تأكيد بياناتك");
+ var screen=document.createElement("section");screen.id="confirmScreen";screen.className="confirm-screen wrap";screen.setAttribute("aria-label","تأكيد بياناتك");document.body.classList.add("confirming");
  var card=document.createElement("div");card.className="panel";var title=document.createElement("h2");title.textContent="بياناتك دي صح؟";card.appendChild(title);
  rows.forEach(function(v){var row=document.createElement("div");row.className="cfrow";var k=document.createElement("span"),b=document.createElement("b");k.textContent=v[0];b.textContent=v[1]||"مش محدد";row.append(k,b);card.appendChild(row)});
  var warning=document.createElement("div");warning.className="confirm-transport";warning.setAttribute("role","note");var wh=document.createElement("strong");wh.textContent="⚠️ مهم: المواصلات";var detail=document.createElement("p");detail.textContent=transport;warning.append(wh,detail);card.appendChild(warning);
@@ -525,7 +525,7 @@ function reviewScreen(form,rows,transport,url){
  card.append(back,next,hint);screen.appendChild(card);form.closest(".wrap").after(screen);
  var hidden=[];Array.from(document.querySelectorAll(".jg>.wrap,body>.wrap,.form-transport")).forEach(function(e){if(e!==screen){hidden.push([e,e.style.display]);e.style.display="none"}});
  if(!hidden.some(function(x){return x[0]===form.closest(".wrap")})){hidden.push([form.closest(".wrap"),form.closest(".wrap").style.display]);form.closest(".wrap").style.display="none"}
- back.onclick=function(){hidden.forEach(function(x){x[0].style.display=x[1]});screen.remove();form.scrollIntoView({block:"start"})};screen.scrollIntoView({block:"start"});
+ back.onclick=function(){document.body.classList.remove("confirming");hidden.forEach(function(x){x[0].style.display=x[1]});screen.remove();form.scrollIntoView({block:"start"})};screen.scrollIntoView({block:"start"});
 }
 window.jgNameMismatch=nameMismatch;window.jgReviewScreen=reviewScreen;
 /* اختيار وردية */

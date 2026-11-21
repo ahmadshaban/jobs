@@ -220,3 +220,6 @@ dialog.cfov::backdrop{background:rgba(16,37,58,.55)}
 .pg-apply .top{display:none}.field select.bad{border-color:#DC2626;background:#FEF2F2;box-shadow:0 0 0 3px rgba(220,38,38,.12)}.pg-apply .field{margin-top:12px}.pg-apply .err:empty{min-height:0;margin:0}.pg-apply .apply-panel{padding:14px}.pg-apply .field+.err{margin-top:3px}.pg-apply .field input{margin:0}.pg-apply .field label{margin-top:0}.pg-apply .bc2{margin-top:8px}
 
 .confirm-screen{padding-top:16px;padding-bottom:28px}.confirm-screen .panel{padding:18px}.confirm-screen .cfrow{font-size:15px;padding:10px 0}.confirm-screen .btn{margin-top:12px}.confirm-transport{margin:18px 0;padding:18px 14px;background:#FFF0B8;color:#5F3000;border:3px solid #DC6B00;border-radius:16px;font-size:16px;line-height:1.8;animation:transport-attention 1.8s ease-in-out infinite}.confirm-transport strong{display:block;font-size:20px}.confirm-transport p{margin:8px 0 0}.confirm-screen .hint{text-align:center}.field .err{margin-bottom:5px}.field .err:empty{margin:0;min-height:0}@keyframes transport-attention{0%,100%{box-shadow:0 0 0 0 rgba(220,107,0,.35)}50%{box-shadow:0 0 0 6px rgba(220,107,0,.12)}}@media(prefers-reduced-motion:reduce){.confirm-transport{animation:none}}
+
+/* Keep the confirmation title clear of the sticky site header. */
+body.confirming .top{display:none}
