@@ -106,7 +106,7 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 </head>
 <body class="{page_cls}" data-variant="{variant}" data-prefix="{prefix}">
 {body}
-<script src="{prefix}app.js?v=20261121b" defer></script>
+<script src="{prefix}app.js?v=20261121g" defer></script>
 <script src="{prefix}sharing.js?v=20261121f" defer></script>
 <script src="{prefix}legacy.js" defer></script>
 <script src="{prefix}pwa.js?v=20261121b" defer></script>
@@ -569,10 +569,10 @@ if(btn){
   if(/فوق|أكتر|اكتر|أكثر|\+|من/.test(t))return{min:n[0],max:0};
   return null}
  function ageMsg(a){
-  var r=ageRange(btn.getAttribute("data-age-txt"));if(!r||!a)return "";
-  var rt=r.min&&r.max?"من "+r.min+" لـ "+r.max+" سنة":r.min?r.min+" سنة فأكتر":"لحد "+r.max+" سنة";
-  if(r.min&&a<r.min)return "سنك غير مسموح، السن المطلوب "+rt;
-  if(r.max&&a>r.max)return "سنك أكبر من المسموح، السن المطلوب "+rt;
+  var r=ageRange(btn.getAttribute("data-age-txt"))||{min:16,max:60};
+  var min=r.min?Math.max(16,r.min):16,max=r.max?Math.min(60,r.max):60;
+  if(a<min)return "سنك أصغر من المطلوب، أقل سن للتقديم "+min+" سنة";
+  if(a>max)return "سنك أكبر من المطلوب، أكبر سن للتقديم "+max+" سنة";
   return ""}
 
  function nameError(){var n=en.value.trim().replace(/\s+/g," ");if(n.split(" ").filter(function(w){return w.length>=2}).length<3)return "لازم تكتب اسمك ثلاثي";return nameMismatch(n,btn.getAttribute("data-gender"),"المصنع ده")}
@@ -583,7 +583,7 @@ if(btn){
  btn.addEventListener("click",function(ev){
   ev.preventDefault();var n=en.value.trim().replace(/\s+/g," "),a=dg(ea.value),t=dg(et.value).replace(/[\s-]/g,"");
   if(nameError())return fail(en,"e_n",nameError());
-  if(!/^\d{1,2}$/.test(a)||+a<16||+a>60)return fail(ea,"e_a","اكتب السن الصحيح بالأرقام");
+  if(!/^\d{1,2}$/.test(a))return fail(ea,"e_a","اكتب السن الصحيح بالأرقام");
   if(ageMsg(+a))return fail(ea,"e_a",ageMsg(+a));
   if(!EG.test(t))return fail(et,"e_t","الرقم ناقص، اكتب رقم واتساب مصري صحيح");
   if(btn.getAttribute("data-multi")==="1"&&!pickedShift){setErr("e_s","لازم تختار الوردية");sp.classList.add("bad");sp.scrollIntoView({block:"center",behavior:"smooth"});return}
