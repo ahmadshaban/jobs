@@ -155,10 +155,10 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 <body class="{page_cls}" data-variant="{variant}" data-prefix="{prefix}">
 {configured(body)}
 <script>window.JG_CONFIG={json.dumps(({k:v for k,v in DASH_CONFIG.items() if k not in ['whatsapp','followup_template','consent_text','save_failure']} if variant=='cc' else {k:v for k,v in DASH_CONFIG.items() if k not in ['consent_text','save_failure']}),ensure_ascii=False).replace(chr(60),chr(92)+'u003c')};</script>
-<script src="{prefix}app.js?v=20261121glance" defer></script>
+<script src="{prefix}app.js?v=20261121handoff" defer></script>
 {share_script}
 {legacy_script}
-<script src="{prefix}pwa.js?v=20261121direct" defer></script>
+<script src="{prefix}pwa.js?v=20261121handoff" defer></script>
 </body>
 </html>"""
 
@@ -591,14 +591,15 @@ function reviewScreen(form,rows,transport,url){
 
  var result=document.createElement("p");result.className="hint";result.setAttribute("role","status");card.appendChild(result);
  var bypass=document.createElement("a");bypass.href=url;bypass.className="btn btn-ghost";bypass.textContent="افتح واتساب مباشرة";bypass.style.display="none";if(parent!==window)bypass.target="_top";card.appendChild(bypass);
+ bypass.addEventListener("click",function(){window.dispatchEvent(new Event("jobgate:handoff"))});
  var values={};rows.forEach(function(r){values[r[0]]=r[1]});var apply=document.getElementById("applyBtn");
  var token="jg_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2);
  var payload={id:token,name:values["الاسم"],age:values["السن"],phone:values["رقم الواتساب"],job:values["المصنع"]||values["الوظيفة"],area:apply?apply.getAttribute("data-area"):"أونلاين",shift:values["الوردية"]||values["نظام الشغل"]||"",salary:values["المرتب"]||values["المقابل"]||"",source:SRC};
  var saving=false,saved=false;next.removeAttribute("target");if(parent!==window)next.target="_top";
  next.addEventListener("click",async function(e){
-  if(saved)return;e.preventDefault();if(saving)return;saving=true;next.setAttribute("aria-disabled","true");next.textContent="جاري التجهيز...";result.textContent="استنى لحظة، بنجهز تحويلك لواتساب";bypass.style.display="none";
+  if(saved){window.dispatchEvent(new Event("jobgate:handoff"));return}e.preventDefault();if(saving)return;saving=true;next.setAttribute("aria-disabled","true");next.textContent="جاري التجهيز...";result.textContent="استنى لحظة، بنجهز تحويلك لواتساب";bypass.style.display="none";
   var controller=new AbortController(),timer=setTimeout(function(){controller.abort()},25000);
-  try{var response=await fetch(APPLICANTS_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"registerApplicant",data:payload}),signal:controller.signal});if(!response.ok)throw Error("network");var data=await response.json();if(!data.ok)throw Error("save");saved=true;if(!screen.isConnected)return;result.textContent="واتساب هيفتح دلوقتي. دوس إرسال هناك عشان نكمل معاك.";next.textContent="افتح واتساب";if(parent!==window)top.location.assign(url);else location.assign(url)}
+  try{var response=await fetch(APPLICANTS_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"registerApplicant",data:payload}),signal:controller.signal});if(!response.ok)throw Error("network");var data=await response.json();if(!data.ok)throw Error("save");saved=true;if(!screen.isConnected)return;result.textContent="واتساب هيفتح دلوقتي. دوس إرسال هناك عشان نكمل معاك.";next.textContent="افتح واتساب";window.dispatchEvent(new Event("jobgate:handoff"));if(parent!==window)top.location.assign(url);else location.assign(url)}
   catch(err){result.textContent="الخطوة ماكملتش. جرّب تاني أو افتح واتساب مباشرة. الرسالة لسه ما اتبعتتش.";next.textContent="جرّب تاني";bypass.style.display=""}
   finally{clearTimeout(timer);saving=false;next.removeAttribute("aria-disabled")}
  });
@@ -728,9 +729,9 @@ document.addEventListener("click",function(e){
     legacy_cc={"id":"./callcenter.html","name":"Job Gate CC","short_name":"Job Gate CC","start_url":"./cc/index.html","scope":"./cc/","display":"standalone","icons":[{"src":"cc/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"cc/icon-512.png","sizes":"512x512","type":"image/png"}]}
     with open(os.path.join(OUT,"manifest-cc.json"),"w",encoding="utf-8") as f:json.dump(legacy_cc,f,ensure_ascii=False)
     # Network-first caching replaces the old worker and labels offline copies.
-    sw = r"""const CACHE='jobgate-v9-'+new URL(self.registration.scope).pathname;
+    sw = r"""const CACHE='jobgate-v10-'+new URL(self.registration.scope).pathname;
 self.addEventListener('install',()=>self.skipWaiting());
-self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE&& !k.startsWith('jobgate-v9-'))await caches.delete(k);await self.clients.claim()})()));
+self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE&& !k.startsWith('jobgate-v10-'))await caches.delete(k);await self.clients.claim()})()));
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET'||new URL(e.request.url).origin!==self.location.origin)return;
 e.respondWith((async()=>{const c=await caches.open(CACHE);const asset=/\.(?:woff2|png|webp|css|js)$/.test(new URL(e.request.url).pathname);if(asset){const cached=await c.match(e.request);if(cached)return cached}try{const r=await fetch(e.request,{cache:"no-cache"});if(r.ok){await c.put(e.request,r.clone())}return r}catch(_){const saved=await c.match(e.request);if(saved)return saved;return new Response('<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>الاتصال بالإنترنت</title><body style="font:20px Tahoma;padding:32px;background:#F2F5F8;color:#0E5A40"><h1>أنت مش متصل بالنت</h1><p>الصفحة دي مش محفوظة. اتصل بالنت وحدّث الصفحة.</p></body></html>',{headers:{'Content-Type':'text/html;charset=utf-8'}})}})())});"""
     with open(os.path.join(OUT, "sw.js"), "w", encoding="utf-8") as f:f.write(sw)

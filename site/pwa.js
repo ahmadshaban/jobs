@@ -12,7 +12,7 @@
  }
  status();window.addEventListener('offline',status);window.addEventListener('online',status);
  var fields=document.querySelectorAll('#apply input,#ccform input');
- var dirty=false;fields.forEach(function(i){i.addEventListener('input',function(){dirty=true})});
+ var dirty=false;window.addEventListener('jobgate:handoff',function(){dirty=false});fields.forEach(function(i){i.addEventListener('input',function(){dirty=true})});
  window.addEventListener('beforeunload',function(e){if(dirty){e.preventDefault();e.returnValue=''}});
  // Keep the old home-exit confirmation without changing normal back navigation inside the site.
  if(!document.body.classList.contains('pg-home'))return;
