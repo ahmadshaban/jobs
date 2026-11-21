@@ -371,7 +371,7 @@ def build_apply_page(j, root, prefix_depth="../../"):
     body = header(prefix, "main")
     body += f'<div class="wrap"><a class="form-close" href="../" aria-label="قفل التقديم والرجوع للوظيفة">✕</a><a class="bc2" href="../">→ رجوع للوظيفة</a></div>'
     body += f'<div class="wrap"><div class="hero-plain"><h1>💬 قدّم على {esc(j.get("المصنع"))}</h1><div class="sub2">{esc(city)} — املى بياناتك وأكّد مرة واحدة</div></div></div>'
-    body += f'<div class="panel form-transport"><h2>🚌 مهم قبل التقديم</h2><div class="warnbox">{esc(transport_notice(j))}</div></div>'
+    body += f'<div class="panel transport-panel"><h2>🚌 مهم قبل التقديم</h2><div class="warnbox">{esc(transport_notice(j))}</div></div>'
     if multi:
         opts = ""
         for sh in shifts:
@@ -573,7 +573,7 @@ function reviewScreen(form,rows,transport,url){
  });
 
  var close=document.createElement("button");close.type="button";close.className="form-close";close.setAttribute("aria-label","قفل التأكيد والرجوع للتعديل");close.textContent="✕";card.prepend(close);card.append(back,next,hint);screen.appendChild(card);form.closest(".wrap").after(screen);
- var hidden=[];Array.from(document.querySelectorAll(".jg>.wrap,body>.wrap,.form-transport")).forEach(function(e){if(e!==screen){hidden.push([e,e.style.display]);e.style.display="none"}});
+ var hidden=[];Array.from(document.querySelectorAll(".jg>.wrap,body>.wrap,.transport-panel")).forEach(function(e){if(e!==screen){hidden.push([e,e.style.display]);e.style.display="none"}});
  if(!hidden.some(function(x){return x[0]===form.closest(".wrap")})){hidden.push([form.closest(".wrap"),form.closest(".wrap").style.display]);form.closest(".wrap").style.display="none"}
  function restore(){document.body.classList.remove("confirming");hidden.forEach(function(x){x[0].style.display=x[1]});screen.remove();window.removeEventListener("popstate",onBack);form.scrollIntoView({block:"start"})}function onBack(){restore()}history.pushState(Object.assign({},history.state,{jgConfirm:true}),"",location.href);window.addEventListener("popstate",onBack);back.onclick=close.onclick=function(){if(history.state&&history.state.jgConfirm)history.back();else restore()};screen.scrollIntoView({block:"start"});
 }
