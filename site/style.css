@@ -343,11 +343,3 @@ body.pg-apply .transport-before-submit p{font-size:12px;line-height:1.55}
 body.pg-apply #applyBtn{min-height:50px;padding:11px 13px;font-size:16px}
 body.pg-apply #handoffNote{font-size:11px;margin-top:7px}
 }
-
-/* Every source shift stays visible in the region cards, including completed options. */
-body .card-shifts{display:grid;gap:4px;margin:7px 0}
-body .card-shift{padding:6px 8px;border:1px solid #cfdaea;border-radius:8px;background:#edf3fc;display:grid;gap:2px;line-height:1.5}
-body .card-shift b{font-size:12px;color:#17376a}
-body .card-shift span{font-size:11px;color:#315d9a;overflow-wrap:anywhere}
-body .card-shift.filled{background:#f1f3f6;color:#637185}
-body .card-shift.filled b,body .card-shift.filled span{color:#637185}
