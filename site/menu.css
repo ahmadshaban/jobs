@@ -16,3 +16,8 @@ html body .drawer .install-admin-row{margin-top:auto!important;padding-top:12px;
 html body .drawer .install-admin-row button{margin:0!important}
 html body .scrim.open{background:#12233d66!important;backdrop-filter:none!important}
 @media(prefers-reduced-motion:reduce){html body .drawer{transition:none!important}}
+
+/* Branded contact buttons retain clear labels beside each logo. */
+html body .drawer .contact-button{gap:10px!important;min-height:50px!important;padding:10px 12px!important}
+html body .drawer .contact-logo{display:block;width:26px;height:26px;flex:0 0 26px;color:#fff}
+html body .drawer .contact-button span{flex:1}

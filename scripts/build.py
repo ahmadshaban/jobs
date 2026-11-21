@@ -148,18 +148,18 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 <meta name="theme-color" content="#e9eef7">
 <link rel="manifest" href="{prefix}manifest.json">
 {font_link}
-<link rel="stylesheet" href="{prefix}style.css?v=20261121recruitment">
-<link rel="stylesheet" href="{prefix}menu.css?v=20261121recruitment">
+<link rel="stylesheet" href="{prefix}style.css?v=20261121contacts">
+<link rel="stylesheet" href="{prefix}menu.css?v=20261121contacts">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏭</text></svg>">
 {ld}
 </head>
 <body class="{page_cls}" data-variant="{variant}" data-prefix="{prefix}">
 {configured(body)}
 <script>window.JG_CONFIG={json.dumps(({k:v for k,v in DASH_CONFIG.items() if k not in ['whatsapp','followup_template','consent_text','save_failure']} if variant=='cc' else {k:v for k,v in DASH_CONFIG.items() if k not in ['consent_text','save_failure']}),ensure_ascii=False).replace(chr(60),chr(92)+'u003c')};</script>
-<script src="{prefix}app.js?v=20261121recruitment" defer></script>
+<script src="{prefix}app.js?v=20261121contacts" defer></script>
 {share_script}
 {legacy_script}
-<script src="{prefix}pwa.js?v=20261121recruitment" defer></script>
+<script src="{prefix}pwa.js?v=20261121contacts" defer></script>
 </body>
 </html>"""
 
@@ -170,9 +170,9 @@ def header(prefix, variant):
     if variant != "cc":
         import urllib.parse
         question = urllib.parse.quote(DASH_CONFIG.get("question_template","السلام عليكم، عندي استفسار بخصوص الوظايف").replace("{company}",DASH_CONFIG.get("company_name","")))
-        drawer_links = f"""<a class="d-link d-whatsapp" href="https://wa.me/{PHONE}?text={question}" rel="nofollow">💬 اسأل على الواتساب</a><div class="d-sep"></div>
+        drawer_links = f"""<a class="d-link d-whatsapp contact-button" href="https://wa.me/{PHONE}?text={question}" rel="nofollow"><svg class="contact-logo" viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16 2a14 14 0 0 0-12 21L2 30l7-2A14 14 0 1 0 16 2Z"/><path fill="#173f84" d="m10 8 3 5-2 2c2 3 3 4 6 5l2-2 5 3c-1 4-4 4-7 3-6-2-10-6-11-11 0-3 1-4 4-5Z"/></svg><span>واتساب للتواصل</span></a><div class="d-sep"></div>
 <a class="d-link" href="{prefix}cc-jobs/">📢 كول سنتر تسويق وظائف</a>
-<a class="d-link" href="https://www.facebook.com/share/1Kba7Asbx9/" target="_blank" rel="noopener">فيسبوك</a>
+<a class="d-link contact-button" href="https://www.facebook.com/share/1Kba7Asbx9/" target="_blank" rel="noopener"><svg class="contact-logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"/><path fill="#173f84" d="M18 29V18h4l1-5h-5v-2c0-2 1-3 3-3h2V4h-4c-5 0-7 3-7 7v2H9v5h3v11Z"/></svg><span>تابعنا على فيسبوك</span></a>
 <section class="public-admin-links" aria-label="الإدارة"><div class="menu-heading">الإدارة، دخول بكلمة السر</div>
 <a class="d-link" href="{prefix}stats.html">📊 الإحصائيات 🔒</a>
 <a class="d-link" href="{prefix}admin.html">⚙️ لوحة الإدارة 🔒</a></section>
@@ -180,7 +180,6 @@ def header(prefix, variant):
     return f"""<header class="top"><div class="wrap">
 <div class="logo">🏭</div>
 <h1 class="brand"><a href="{home}">{esc(name)}</a></h1>
-<span class="badge-live"><span class="dot"></span> متاحة دلوقتي</span>
 <button class="menu-btn" id="menuBtn" type="button" aria-label="القايمة">☰</button>
 </div></header>
 <div class="scrim" id="scrim"></div>
@@ -745,9 +744,9 @@ document.addEventListener("click",function(e){
     legacy_cc={"id":"/jobs/apps/cc","name":"Job Gate CC","short_name":"Job Gate CC","start_url":"./cc/index.html?app=cc","scope":"./cc/","display":"standalone","icons":[{"src":"cc/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"cc/icon-512.png","sizes":"512x512","type":"image/png"}]}
     with open(os.path.join(OUT,"manifest-cc.json"),"w",encoding="utf-8") as f:json.dump(legacy_cc,f,ensure_ascii=False)
     # Network-first caching replaces the old worker and labels offline copies.
-    sw = r"""const CACHE='jobgate-v16-'+new URL(self.registration.scope).pathname;
+    sw = r"""const CACHE='jobgate-v17-'+new URL(self.registration.scope).pathname;
 self.addEventListener('install',()=>self.skipWaiting());
-self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE&& !k.startsWith('jobgate-v16-'))await caches.delete(k);await self.clients.claim()})()));
+self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE&& !k.startsWith('jobgate-v17-'))await caches.delete(k);await self.clients.claim()})()));
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET'||new URL(e.request.url).origin!==self.location.origin)return;
 e.respondWith((async()=>{const c=await caches.open(CACHE);const asset=/\.(?:woff2|png|webp|css|js)$/.test(new URL(e.request.url).pathname);if(asset){const cached=await c.match(e.request);if(cached)return cached}try{const r=await fetch(e.request,{cache:"no-cache"});if(r.ok){await c.put(e.request,r.clone())}return r}catch(_){const saved=await c.match(e.request);if(saved)return saved;return new Response('<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>الاتصال بالإنترنت</title><body style="font:20px Tahoma;padding:32px;background:#F2F5F8;color:#0E5A40"><h1>أنت مش متصل بالنت</h1><p>الصفحة دي مش محفوظة. اتصل بالنت وحدّث الصفحة.</p></body></html>',{headers:{'Content-Type':'text/html;charset=utf-8'}})}})())});"""
     with open(os.path.join(OUT, "sw.js"), "w", encoding="utf-8") as f:f.write(sw)
