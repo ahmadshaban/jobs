@@ -202,7 +202,18 @@ body{background:#F2F5F8;color:#10253A}
 
 .layer-close{float:left;margin:0 0 10px 10px}
 </style>
-</head>
+<style>
+/* Simple administration shell */
+.admin-tabs{display:flex;gap:8px;max-width:1000px;margin:14px auto 0;padding:0 64px 0 14px}.admin-tabs button{flex:1;min-height:48px;border:1px solid #d7e0e8;background:white;color:#43576b;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer}.admin-tabs button.active{background:#0e5a40;color:white;border-color:#0e5a40}
+#app{max-width:1100px;margin:auto}.ap-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}.ap-heading p{margin:8px 0 0;color:#526577;line-height:1.7}.ap-body{padding:16px 14px}.ap-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}.ap-metric{border:1px solid #d7e0e8;background:white;border-radius:12px;padding:13px}.ap-metric b{display:block;font-size:24px;color:#0e5a40}.ap-metric span{font-size:13px;color:#526577}.ap-filters{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;background:white;padding:15px;border:1px solid #d7e0e8;border-radius:14px}.ap-filters label{display:grid;gap:7px;font-weight:700}.ap-dates{grid-column:1/-1;display:flex;gap:12px}.ap-dates label{flex:1}.ap-tools{display:flex;gap:10px;align-items:center;justify-content:space-between;margin:16px 0}.ap-tools>div{display:flex;gap:8px}.ap-card{background:white;border:1px solid #d7e0e8;border-radius:14px;padding:16px;margin-bottom:12px}.ap-card-head{display:flex;align-items:start;justify-content:space-between;gap:10px}.ap-card h2{font-size:17px;margin:0 0 8px}.ap-card p{margin:7px 0;line-height:1.6}.ap-meta{color:#526577;font-size:13px}.ap-phone{direction:ltr;unicode-bidi:embed;display:inline-block}.ap-badge{border-radius:24px;padding:6px 10px;font-size:12px;font-weight:700;white-space:nowrap}.ap-card-actions{display:flex;gap:8px;border-top:1px solid #edf1f4;padding-top:12px;margin-top:12px}.ap-card-actions .btn{flex:1;text-align:center;text-decoration:none}.ap-empty{text-align:center;padding:45px 20px;background:white;border:1px dashed #cbd5df;border-radius:14px;line-height:1.9;color:#526577}#apDialog{width:min(94vw,470px);max-height:90vh;overflow:auto;border:1px solid #d7e0e8;border-radius:18px;padding:20px;color:#10253a;font-family:inherit}#apDialog::backdrop{background:#10253a80}#apDialog h2{font-size:18px;margin:0}#apDialog label{display:grid;gap:9px;margin-top:18px}#apDialog textarea{font:inherit;width:100%;min-height:150px;line-height:1.8;border:1px solid #d7e0e8;border-radius:10px;padding:12px;margin:10px 0}#apDialog .hint{line-height:1.8;color:#526577}.ap-dialog-actions{display:flex;gap:10px;margin-top:18px}.ap-dialog-actions .btn{flex:1;text-decoration:none;text-align:center}.ap-dialog-error{color:#b42318;margin:10px 0}
+.btn{min-height:42px;color:white;background:#0e5a40;border-color:#0e5a40;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:5px}.btn.ghost{background:white;color:#0e5a40;border-color:#c8d8d1}.btn.danger{color:#b42318;background:#fff;border-color:#edc8c5}.btn:disabled{cursor:wait}.bar{display:flex;gap:8px}header{border-radius:14px 14px 0 0;margin:14px 14px 0;padding:16px}#pinbar{margin:0 14px}.fab{background:#0e5a40;color:white}input,select,textarea{font-size:16px!important}body{font-size:14px}.login-box{box-shadow:0 15px 50px #10253a0a}.login-box .btn{width:100%}.err{color:#b42318}.more{z-index:20}.ap-filters select{min-width:0}
+@media(max-width:640px){.ap-filters{grid-template-columns:1fr 1fr}.ap-search{grid-column:1/-1}.ap-tools{align-items:start;flex-direction:column}.ap-tools>div{width:100%}.ap-tools .btn{flex:1}.ap-summary{gap:6px}.ap-metric{padding:10px}.ap-metric b{font-size:21px}.ap-card{padding:14px}.ap-heading{align-items:start}.ap-heading p{font-size:13px}.ap-dates{flex-direction:column}.ap-card-head{flex-wrap:wrap}}
+</style>
+<script src="vendor/xlsx.full.min.js"></script>
+<style>
+#jobSearch{margin-bottom:10px}#list{max-width:1040px}.card{padding:16px;gap:12px;border-color:#d7e0e8;box-shadow:none}.card h2{font-size:17px;color:#10253a}.meta span{background:#f2f5f8;border:0;border-radius:8px;padding:5px 8px}.meta span.sal{background:#e3f3ec;color:#0e5a40}.badge.done{background:#e8f5ed;color:#157347}.badge.urg{background:#fff2d9;color:#8c5d0a}.badge.pin{background:#e8f0ff;color:#2455a5}.shp.on,.oi .on{color:white}.acts .btn{font-size:13px;min-height:44px}.bar .btn{font-size:14px}.stats{font-size:13px}#toast{color:white}.form-close{margin-bottom:8px}.sheet label{font-size:14px}.sheet{gap:14px}#pinbar{padding:12px;position:static}.bar #bNew{flex:2}#bMenu{background:white;color:#526577;border-color:#d7e0e8}.fab{display:none}
+@media(max-width:640px){#pinbar .selrow{flex-wrap:wrap}#pinbar .selrow #areaFilter{flex:1 0 100%}.acts{grid-template-columns:1fr 1fr}.acts2{grid-template-columns:1fr 1fr}.card h2{font-size:16px}.bar{flex-wrap:nowrap}.bar .btn{padding:8px;font-size:13px}#list{padding-bottom:30px}}
+</style></head>
 <body>
 <button id="menuBtn" type="button" aria-label="القايمة">☰</button>
 <div class="scrim" id="scrim"></div>
@@ -225,14 +236,16 @@ mb.addEventListener("click",function(){s(true)});dc.addEventListener("click",fun
 </div>
 
 <div id="app" class="hidden">
+  <nav class="admin-tabs" aria-label="أقسام الإدارة"><button id="tabJobs" class="active">الوظايف</button><button id="tabApplicants">المتقدمين</button></nav>
+  <section id="jobsPanel">
   <header>
     <h1 id="title"></h1>
-    <div class="bar">
+    <div class="bar"><button class="btn" id="bNew"></button>
       <button class="btn ghost" id="bRef"></button>
       <button class="btn" id="bMenu">⋯ المزيد</button>
     </div>
     <div class="more hidden" id="moreMenu">
-      <button class="btn" id="bNew"></button>
+      
       <button class="btn" id="bCol"></button>
       <button class="btn" id="bMove">↕ ترتيب الكروت</button>
       <a class="btn" id="bStats" href="stats.html">📊 إحصائيات</a>
@@ -241,7 +254,7 @@ mb.addEventListener("click",function(){s(true)});dc.addEventListener("click",fun
     </div>
     <div id="stats" class="stats"></div>
   </header>
-  <div id="pinbar"><div class="selrow">
+  <div id="pinbar"><input id="jobSearch" type="search" placeholder="ابحث باسم المصنع أو المكان" aria-label="بحث في الوظايف"><div class="selrow">
       <select id="areaFilter" aria-label="اختيار المكان">
         <option value="">كل الأماكن</option>
       </select>
@@ -263,7 +276,23 @@ mb.addEventListener("click",function(){s(true)});dc.addEventListener("click",fun
   </div></div>
   <div id="list"></div>
   <button class="fab" id="fab" aria-label="وظيفة جديدة">+</button>
+  </section>
+  <section id="applicantsPanel" class="hidden">
+    <header><div class="ap-heading"><div><h1>المتقدمين</h1><p>سجل خاص من الموقع. فتح واتساب مش معناه إن الرسالة اتبعتت.</p></div><button class="btn ghost" id="apRefresh">تحديث</button></div></header>
+    <div class="ap-body">
+      <div class="ap-summary" id="apSummary"></div>
+      <div class="ap-filters">
+        <label class="ap-search">ابحث<input id="apSearch" type="search" placeholder="اسم، رقم، وظيفة أو مكان" autocomplete="off"></label>
+        <label>الفترة<select id="apPeriod"><option value="all">كل الوقت</option><option value="today">النهارده</option><option value="yesterday">امبارح</option><option value="week">الأسبوع ده</option><option value="lastweek">الأسبوع اللي فات</option><option value="month">الشهر ده</option><option value="custom">فترة محددة</option></select></label>
+        <label>الحالة<select id="apStatus"><option value="">كل الحالات</option></select></label>
+        <div id="apDates" class="ap-dates hidden"><label>من<input id="apFrom" type="date"></label><label>لحد<input id="apTo" type="date"></label></div>
+      </div>
+      <div class="ap-tools"><span id="apCount" role="status"></span><div><button class="btn ghost" id="apExport">Excel للنتيجة</button><button class="btn ghost" id="apExportAll">Excel للكل</button></div></div>
+      <p id="apMessage" role="status"></p><div id="apList"></div>
+    </div>
+  </section>
 </div>
+<dialog id="apDialog"><form method="dialog"><div class="ap-heading"><h2 id="apDialogTitle"></h2><button class="btn ghost" value="cancel" aria-label="قفل">✕</button></div><div id="apDialogBody"></div><div class="ap-dialog-actions" id="apDialogActions"></div></form></dialog>
 
 <div id="modal" class="hidden"><div class="sheet" id="sheet"></div></div>
 <div id="salDlg" class="hidden"><div class="box">
@@ -738,7 +767,8 @@ function render(){
   const area = $('areaFilter').value, g = $('genderFilter').value, st = $('statusFilter').value;
   const kindOf = r => { const t = val(r, COL.gender); const m = /شباب/.test(t), f = /بنات/.test(t); return (m && f) ? 'b' : m ? 'm' : f ? 'f' : ''; };
   const stOk = r => !st || (st === 'open' ? (!isDoneRow(r) && !isHidRow(r)) : st === 'done' ? isDoneRow(r) : st === 'part' ? partShDone(r) : st === 'hid' ? isHidRow(r) : st === 'urg' ? isUrgVal(val(r, COL.status)) : st === 'pin' ? isPinned(r) : true);
-  const list = rows.filter(r => (!area || val(r, COL.area).trim() === area) && (!g || kindOf(r) === g) && stOk(r));
+  const q = $('jobSearch').value.trim().replace(/[أإآ]/g,'ا');
+  const list = rows.filter(r => (!q || (val(r,COL.factory)+' '+val(r,COL.area)).replace(/[أإآ]/g,'ا').includes(q)) && (!area || val(r, COL.area).trim() === area) && (!g || kindOf(r) === g) && stOk(r));
   list.sort(siteOrder);
   shownList = list;
   $('title').textContent = T.title + ' (' + list.length + ')';
@@ -1172,6 +1202,7 @@ function init(){
 
   $('loginBtn').onclick = () => { $('loginErr').textContent = ''; login($('pw').value); };
   $('pw').addEventListener('keydown', e => { if (e.key === 'Enter') $('loginBtn').click(); });
+  $('jobSearch').addEventListener('input', render);
   $('areaFilter').addEventListener('change', render);
   $('genderFilter').addEventListener('change', render);
   $('statusFilter').addEventListener('change', render);
@@ -1209,5 +1240,5 @@ function init(){
 }
 init();
 </script>
-<script>(function(){function addClose(){var pairs={modal:'fCancel',salDlg:'salCancel',colDlg:'colCancel',optDlg:'optClose',ordDlg:'ordCancel',askDlg:'askNo'};Object.keys(pairs).forEach(function(id){var layer=document.getElementById(id);if(!layer||layer.querySelector('.layer-close'))return;var target=document.getElementById(pairs[id]);if(!target)return;var x=document.createElement('button');x.type='button';x.className='form-close layer-close';x.setAttribute('aria-label','قفل والرجوع');x.textContent='✕';x.onclick=function(){target.click()};(layer.querySelector('.sheet,.box')||layer).prepend(x)})}new MutationObserver(addClose).observe(document.body,{childList:true,subtree:true});addClose()})();</script></body>
+<script>(function(){function addClose(){var pairs={modal:'fCancel',salDlg:'salCancel',colDlg:'colCancel',optDlg:'optClose',ordDlg:'ordCancel',askDlg:'askNo'};Object.keys(pairs).forEach(function(id){var layer=document.getElementById(id);if(!layer||layer.querySelector('.layer-close'))return;var target=document.getElementById(pairs[id]);if(!target)return;var x=document.createElement('button');x.type='button';x.className='form-close layer-close';x.setAttribute('aria-label','قفل والرجوع');x.textContent='✕';x.onclick=function(){target.click()};(layer.querySelector('.sheet,.box')||layer).prepend(x)})}new MutationObserver(addClose).observe(document.body,{childList:true,subtree:true});addClose()})();</script><script src="applicants-admin.js"></script></body>
 </html>

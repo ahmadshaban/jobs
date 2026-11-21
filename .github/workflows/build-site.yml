@@ -29,7 +29,8 @@ jobs:
       - name: Generate static pages from the sheet
         run: |
           OUT_DIR="$GITHUB_WORKSPACE/_site" python3 scripts/build.py
-          cp admin.html stats.html _site/
+          cp admin.html stats.html site/applicants-admin.js _site/
+          cp -r site/vendor _site/
           if [ -f CNAME ]; then cp CNAME _site/; fi
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

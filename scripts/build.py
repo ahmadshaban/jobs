@@ -489,6 +489,7 @@ def write_static_files():
 (function(){
 "use strict";
 var STATS_URL="__STATS_URL__";
+var APPLICANTS_API="https://script.google.com/macros/s/AKfycbzwMRST469OBo-ym0Ccn-Ot84jGrL0KEM9SZcnfe-tip2U6-1gyryjnYxdNNsiwbLEyng/exec";
 var SRC=(function(){var v="";try{v=(new URLSearchParams(location.search).get("src")||"").replace(/[\r\n]/g," ").trim().slice(0,30)}catch(e){}
  try{if(v)sessionStorage.setItem("jobsrc",v);else v=sessionStorage.getItem("jobsrc")||""}catch(e){}return v})();
 var VID="";try{VID=localStorage.getItem("vid");if(!VID){VID=Date.now().toString(36)+Math.random().toString(36).slice(2,8);localStorage.setItem("vid",VID)}}catch(e){}
@@ -528,6 +529,21 @@ function reviewScreen(form,rows,transport,url){
  var back=document.createElement("button");back.type="button";back.className="btn btn-ghost";back.textContent="ارجع عدّل";
  var next=document.createElement("a");next.href=url;next.target="_blank";next.rel="noopener";next.className="btn btn-wa";next.textContent="كمل على واتساب";
  var hint=document.createElement("p");hint.className="hint";hint.textContent="واتساب هيفتح برسالتك جاهزة. دوس إرسال هناك عشان طلبك يوصل.";
+ var privacy=document.createElement("p");privacy.className="hint";privacy.textContent="بالضغط على كمل، اسمك وسنك ورقمك والوظيفة ووقت التسجيل هيتحفظوا في سجل خاص لدى Job Gate للمتابعة. إرسال رسالة واتساب بيتم بإيدك.";card.appendChild(privacy);
+ var result=document.createElement("p");result.className="hint";result.setAttribute("role","status");card.appendChild(result);
+ var bypass=document.createElement("a");bypass.href=url;bypass.className="btn btn-ghost";bypass.textContent="افتح واتساب من غير حفظ في السجل";bypass.style.display="none";card.appendChild(bypass);
+ var values={};rows.forEach(function(r){values[r[0]]=r[1]});var apply=document.getElementById("applyBtn");
+ var token="jg_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2);
+ var payload={id:token,name:values["الاسم"],age:values["السن"],phone:values["رقم الواتساب"],job:values["المصنع"]||values["الوظيفة"],area:apply?apply.getAttribute("data-area"):"أونلاين",shift:values["الوردية"]||values["نظام الشغل"]||"",salary:values["المرتب"]||values["المقابل"]||"",source:SRC};
+ var saving=false,saved=false;next.removeAttribute("target");
+ next.addEventListener("click",async function(e){
+  if(saved)return;e.preventDefault();if(saving)return;saving=true;next.setAttribute("aria-disabled","true");next.textContent="جاري الحفظ...";result.textContent="استنى لحظة، بنحفظ بياناتك في السجل الخاص";bypass.style.display="none";
+  var controller=new AbortController(),timer=setTimeout(function(){controller.abort()},25000);
+  try{var response=await fetch(APPLICANTS_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"registerApplicant",data:payload}),signal:controller.signal});if(!response.ok)throw Error("network");var data=await response.json();if(!data.ok)throw Error("save");saved=true;result.textContent="اتحفظت بياناتك. واتساب هيفتح دلوقتي، دوس إرسال هناك. تسجيل البيانات مش تأكيد لإرسال الرسالة.";next.textContent="افتح واتساب";location.assign(url)}
+  catch(err){result.textContent="تعذر تأكيد حفظ بياناتك. جرّب الحفظ تاني، أو افتح واتساب من غير حفظ. رسالة واتساب لسه ما اتبعتتش.";next.textContent="جرّب الحفظ تاني";bypass.style.display=""}
+  finally{clearTimeout(timer);saving=false;next.removeAttribute("aria-disabled")}
+ });
+
  var close=document.createElement("button");close.type="button";close.className="form-close";close.setAttribute("aria-label","قفل التأكيد والرجوع للتعديل");close.textContent="✕";card.prepend(close);card.append(back,next,hint);screen.appendChild(card);form.closest(".wrap").after(screen);
  var hidden=[];Array.from(document.querySelectorAll(".jg>.wrap,body>.wrap,.form-transport")).forEach(function(e){if(e!==screen){hidden.push([e,e.style.display]);e.style.display="none"}});
  if(!hidden.some(function(x){return x[0]===form.closest(".wrap")})){hidden.push([form.closest(".wrap"),form.closest(".wrap").style.display]);form.closest(".wrap").style.display="none"}

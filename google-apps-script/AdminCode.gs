@@ -18,6 +18,7 @@ function doPost(e) {
     lock.waitLock(20000);
     const req = JSON.parse((e && e.postData && e.postData.contents) || '{}');
     const ss = SpreadsheetApp.getActive();
+    if(req.action === 'registerApplicant') return out(registerApplicant_(req.data));
 
     if (req.action === 'getSettings') {
       return out(cmdGetSettings(ss));
@@ -29,6 +30,8 @@ function doPost(e) {
       return out(cmdSaveSettings(ss, req.settings));
     }
 
+    if(req.action === 'listApplicants') return out(listApplicants_());
+    if(req.action === 'applicantStatus') return out(statusApplicant_(req));
     const sh = ss.getSheetByName(SHEET_NAME);
     if (!sh) return out({ ok: false, error: 'التبويب مش موجود: ' + SHEET_NAME });
     
@@ -206,3 +209,34 @@ function onSheetEdit(e) {
 }
 
 function installJobGateTrigger(){var ss=SpreadsheetApp.openById('1UXAwDfIn3oxU68byv1I6dIrdQaKm2OXhhj7NoHlwRBU');if(!ScriptApp.getProjectTriggers().some(function(t){return t.getHandlerFunction()==='onSheetEdit'}))ScriptApp.newTrigger('onSheetEdit').forSpreadsheet(ss).onEdit().create();}
+
+// Private forward-only website leads. A WhatsApp handoff is not a verified send.
+const AP_HEADERS=['id','created_at','created_cairo','name','age','phone','job','area','shift','salary','source','status','start_date','updated_at','whatsapp'];
+const AP_STATUSES=['جديد','استلم','هيستلم','ما عجبوش الشغل','مشي','ما كملش','مش بيرد'];
+function initApplicantRegister(){
+ const p=PropertiesService.getScriptProperties();let id=p.getProperty('APPLICANTS_SHEET_ID');
+ if(!id){const ss=SpreadsheetApp.create('Job Gate - سجل المتقدمين الخاص');ss.setSpreadsheetTimeZone('Africa/Cairo');const sh=ss.getSheets()[0];sh.setName('المتقدمين');sh.appendRow(AP_HEADERS);sh.setFrozenRows(1);sh.getRange('A:O').setNumberFormat('@');id=ss.getId();p.setProperty('APPLICANTS_SHEET_ID',id);}
+ console.log(SpreadsheetApp.openById(id).getUrl());return id;
+}
+function applicantSheet_(){const id=PropertiesService.getScriptProperties().getProperty('APPLICANTS_SHEET_ID');if(!id)throw new Error('سجل المتقدمين لسه مش جاهز');return SpreadsheetApp.openById(id).getSheetByName('المتقدمين');}
+function apText_(x,n){return String(x==null?'':x).replace(/[\u0000-\u001f]/g,' ').trim().slice(0,n||160);}
+function apSafe_(x){x=String(x==null?'':x);return /^[=+@\-]/.test(x)?"'"+x:x;}
+function apPhone_(p){p=String(p||'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/\D/g,'');if(p.startsWith('0020'))p=p.slice(2);if(p.startsWith('20'))p='0'+p.slice(2);if(!/^01[0125]\d{8}$/.test(p))return '';return '2'+p;}
+function apRows_(){const s=applicantSheet_();return s.getLastRow()<2?[]:s.getRange(2,1,s.getLastRow()-1,AP_HEADERS.length).getDisplayValues();}
+function registerApplicant_(d){
+ d=d||{};const cache=CacheService.getScriptCache(),minute='ap:'+Math.floor(Date.now()/60000),count=Number(cache.get(minute)||0);if(count>=90)return {ok:false,error:'طلبات كتير دلوقتي، جرّب بعد دقيقة'};cache.put(minute,String(count+1),70);if(d.website)return {ok:false,error:'تعذر التسجيل'};
+ const id=apText_(d.id,80),name=apText_(d.name,100),phone=apPhone_(d.phone),age=Number(d.age),job=apText_(d.job,160);
+ if(!/^[A-Za-z0-9_-]{16,80}$/.test(id)||name.length<3||!phone||!Number.isInteger(age)||age<16||age>60||!job)return {ok:false,error:'راجع الاسم والسن ورقم الواتساب'};
+ const now=new Date(),all=apRows_();
+ const prior=all.find(r=>r[0]===id||(r[5]===phone&&r[6]===job&&(now.getTime()-new Date(r[1]).getTime())<86400000));
+ if(prior)return {ok:true,id:prior[0],duplicate:true,unconfirmed:true};
+ const row=[id,now.toISOString(),Utilities.formatDate(now,'Africa/Cairo','yyyy-MM-dd HH:mm:ss'),name,String(age),phone,job,apText_(d.area),apText_(d.shift),apText_(d.salary),apText_(d.source,80),'جديد','',now.toISOString(),'غير مؤكد'];
+ applicantSheet_().appendRow(row.map(apSafe_));return {ok:true,id:id,unconfirmed:true};
+}
+function listApplicants_(){const rows=apRows_().map(r=>Object.fromEntries(AP_HEADERS.map((k,i)=>[k,r[i]])));return {ok:true,rows:rows,timezone:'Africa/Cairo'};}
+function statusApplicant_(req){
+ const status=apText_(req.status,40),day=apText_(req.start_date,10);if(!AP_STATUSES.includes(status))return {ok:false,error:'الحالة مش صحيحة'};
+ if(status==='هيستلم'&&(!/^\d{4}-\d{2}-\d{2}$/.test(day)||isNaN(new Date(day+'T12:00:00Z').getTime())||new Date(day+'T12:00:00Z').toISOString().slice(0,10)!==day))return {ok:false,error:'اختار تاريخ الاستلام'};
+ const all=apRows_(),i=all.findIndex(r=>r[0]===req.id);if(i<0)return {ok:false,error:'المتقدم مش موجود'};
+ applicantSheet_().getRange(i+2,12,1,3).setValues([[status,status==='هيستلم'?day:'',new Date().toISOString()]]);return {ok:true};
+}
