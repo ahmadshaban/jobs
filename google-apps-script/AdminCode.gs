@@ -6,6 +6,7 @@ const PROTECTED_COLS = ['المصنع', 'المنطقة', 'الفئة', 'ظاه�
 
 function doGet(e) {
   const ss = SpreadsheetApp.getActive();
+  if(e && e.parameter && e.parameter.action==='getConfig') return out(dashConfig_());
   if (e && e.parameter && e.parameter.action === 'getSettings') {
     return out(cmdGetSettings(ss));
   }
@@ -18,6 +19,7 @@ function doPost(e) {
     lock.waitLock(20000);
     const req = JSON.parse((e && e.postData && e.postData.contents) || '{}');
     const ss = SpreadsheetApp.getActive();
+    if(req.action==='getConfig') return out(dashConfig_());
     if(req.action === 'registerApplicant') return out(registerApplicant_(req.data));
 
     if (req.action === 'getSettings') {
@@ -30,6 +32,11 @@ function doPost(e) {
       return out(cmdSaveSettings(ss, req.settings));
     }
 
+    if(req.action==='saveConfig') return out(dashSaveConfig_(req.config));
+    if(req.action==='changePassword') return out(dashPassword_(req));
+    if(req.action==='dashboardStats') return out(dashboardStats_(req));
+    if(req.action==='publishSite') return out(dashPublish_());
+    if(req.action==='publishStatus') return out(dashPublishStatus_());
     if(req.action === 'listApplicants') return out(listApplicants_());
     if(req.action === 'applicantStatus') return out(statusApplicant_(req));
     const sh = ss.getSheetByName(SHEET_NAME);
@@ -227,6 +234,7 @@ function registerApplicant_(d){
  d=d||{};const cache=CacheService.getScriptCache(),minute='ap:'+Math.floor(Date.now()/60000),count=Number(cache.get(minute)||0);if(count>=90)return {ok:false,error:'طلبات كتير دلوقتي، جرّب بعد دقيقة'};cache.put(minute,String(count+1),70);if(d.website)return {ok:false,error:'تعذر التسجيل'};
  const id=apText_(d.id,80),name=apText_(d.name,100),phone=apPhone_(d.phone),age=Number(d.age),job=apText_(d.job,160);
  if(!/^[A-Za-z0-9_-]{16,80}$/.test(id)||name.length<3||!phone||!Number.isInteger(age)||age<16||age>60||!job)return {ok:false,error:'راجع الاسم والسن ورقم الواتساب'};
+ if(dashConfig_().config.maintenance==='true')return {ok:false,error:'التقديم متوقف مؤقتًا'};
  const now=new Date(),all=apRows_();
  const prior=all.find(r=>r[0]===id||(r[5]===phone&&r[6]===job&&(now.getTime()-new Date(r[1]).getTime())<86400000));
  if(prior)return {ok:true,id:prior[0],duplicate:true,unconfirmed:true};
@@ -239,4 +247,79 @@ function statusApplicant_(req){
  if(status==='هيستلم'&&(!/^\d{4}-\d{2}-\d{2}$/.test(day)||isNaN(new Date(day+'T12:00:00Z').getTime())||new Date(day+'T12:00:00Z').toISOString().slice(0,10)!==day))return {ok:false,error:'اختار تاريخ الاستلام'};
  const all=apRows_(),i=all.findIndex(r=>r[0]===req.id);if(i<0)return {ok:false,error:'المتقدم مش موجود'};
  applicantSheet_().getRange(i+2,12,1,3).setValues([[status,status==='هيستلم'?day:'',new Date().toISOString()]]);return {ok:true};
+}
+
+const DASH_DEFAULTS={"company_name": "First Service للتوظيف", "site_name": "بوابة الوظائف", "cc_site_name": "Job Gate CC", "whatsapp": "201095237207", "brand_color": "#0E5A40", "font_family": "Tajawal", "font_size": "14", "followup_template": "السلام عليكم أستاذ {name}،\nمعاك أحمد من شركة {company}. انت كنت قدمت على وظيفة {job} عندنا، وبتابع معاك: استلمت ولا في أي مشاكل؟", "application_template": "الاسم: {name}\nالسن: {age}\nرقم الواتساب: {phone}\nالمكان: {area}\nالمصنع: {job}\nالوردية: {shift}\nالمرتب: {salary}", "cc_application_template": "السلام عليكم، محتاج التفاصيل عن وظيفة مسوق بالعمولة (فريق التوظيف أونلاين)\nالاسم: {name}\nالسن: {age}\nرقم الواتساب: {phone}\nاشتغلت الشغل ده قبل كده: {experience}\nالشركة: {previous_company}", "question_template": "السلام عليكم، عندي استفسار بخصوص الوظايف", "age_below": "سنك أصغر من المطلوب، أقل سن للتقديم {min} سنة", "age_above": "سنك أكبر من المطلوب، أكبر سن للتقديم {max} سنة", "age_invalid": "اكتب السن بالأرقام", "name_invalid": "لازم تكتب اسمك ثلاثي", "phone_invalid": "الرقم ناقص، اكتب رقم واتساب مصري صحيح", "shift_required": "لازم تختار الوردية", "handoff_hint": "واتساب هيفتح برسالتك جاهزة. دوس إرسال هناك عشان طلبك يوصل.", "consent_text": "بالضغط على كمل، اسمك وسنك ورقمك والوظيفة ووقت التسجيل هيتحفظوا في سجل خاص لدى Job Gate للمتابعة. إرسال رسالة واتساب بيتم بإيدك.", "save_failure": "تعذر تأكيد حفظ بياناتك. جرّب الحفظ تاني، أو افتح واتساب من غير حفظ. رسالة واتساب لسه ما اتبعتتش.", "home_heading": "📍 اختار منطقتك", "question_label": "💬 اسأل على الواتساب", "apply_label": "قدّم دلوقتي", "confirm_title": "بياناتك دي صح؟", "confirm_continue": "كمل على واتساب", "confirm_back": "ارجع عدّل", "transport_title": "🚌 مهم قبل التقديم", "cc_heading": "اشتغلي أونلاين من موبايلك", "cc_job_title": "مسوّقة في فريق التوظيف", "maintenance": "false", "maintenance_text": "التقديم متوقف مؤقتًا، جرّب تاني بعد شوية.", "transport_notice": "▸ لو مكانك خارج {area}، المواصلات لحد نقطة التجمع جوه {area} على حسابك الشخصي، ومن نقطة التجمع عربيات المصنع بتاخدك."};
+
+function dashConfig_(){let stored={};try{stored=JSON.parse(PropertiesService.getScriptProperties().getProperty('DASH_CONFIG')||'{}')}catch(e){}const config={};Object.keys(DASH_DEFAULTS).forEach(k=>config[k]=typeof stored[k]==='string'?stored[k]:DASH_DEFAULTS[k]);return {ok:true,config:config,updated_at:PropertiesService.getScriptProperties().getProperty('DASH_CONFIG_AT')||''};}
+function dashSaveConfig_(data){
+ if(!data||typeof data!=='object')return {ok:false,error:'الإعدادات ناقصة'};
+ const config=dashConfig_().config;
+ for(const k of Object.keys(data)){if(!(k in DASH_DEFAULTS))return {ok:false,error:'إعداد غير معروف'};if(typeof data[k]!=='string'||data[k].length>4000)return {ok:false,error:'قيمة الإعداد طويلة أو غير صحيحة'};config[k]=data[k].trim();}
+ const phone=apPhone_(config.whatsapp);if(!phone)return {ok:false,error:'رقم واتساب مصري صحيح مطلوب'};config.whatsapp=phone;
+ if(!config.site_name||!config.company_name||!config.cc_site_name)return {ok:false,error:'اكتب اسم الموقع والشركة'};
+ if(!/^#[0-9a-fA-F]{6}$/.test(config.brand_color)||!['Tajawal','Cairo','Arial','Tahoma'].includes(config.font_family)||!['13','14','15','16','17','18'].includes(config.font_size))return {ok:false,error:'راجع اللون والخط والحجم'};
+ for(const k of ['followup_template','application_template','cc_application_template','age_below','age_above','handoff_hint','consent_text','maintenance_text'])if(!config[k])return {ok:false,error:'نص أساسي فاضي: '+k};
+ if(!config.application_template.includes('{name}')||!config.application_template.includes('{phone}')||!config.application_template.includes('{job}'))return {ok:false,error:'رسالة التقديم لازم تشمل {name} و{phone} و{job}'};
+ if(!config.followup_template.includes('{job}'))return {ok:false,error:'رسالة المتابعة لازم تشمل {job}'};
+ const raw=JSON.stringify(config);if(Utilities.newBlob(raw).getBytes().length>8500)return {ok:false,error:'إجمالي النصوص كبير، قصّر النصوص'};
+ const p=PropertiesService.getScriptProperties(),old=p.getProperty('DASH_CONFIG');if(old)p.setProperty('DASH_CONFIG_PREVIOUS',old);p.setProperty('DASH_CONFIG',raw);p.setProperty('DASH_CONFIG_AT',new Date().toISOString());return {ok:true,config:config,needs_publish:true};
+}
+function dashPassword_(req){const current=String(req.current_password||''),next=String(req.new_password||'');if(current!==adminPassword_())return {ok:false,error:'كلمة السر الحالية غلط'};if(next.length<8||next.length>128)return {ok:false,error:'كلمة السر من 8 إلى 128 حرف'};PropertiesService.getScriptProperties().setProperty('ADMIN_PASSWORD',next);return {ok:true};}
+function dashPublish_(){const token=jobGateToken_();if(!token)return {ok:false,error:'نشر الموقع غير متاح، افتح GitHub من المساعدة'};const r=UrlFetchApp.fetch('https://api.github.com/repos/'+GH_REPO+'/dispatches',{method:'post',contentType:'application/json',headers:{Authorization:'Bearer '+token,Accept:'application/vnd.github+json'},payload:JSON.stringify({event_type:'sheet-edit'}),muteHttpExceptions:true});return r.getResponseCode()===204?{ok:true,queued:true}:{ok:false,error:'تعذر طلب النشر، راجع GitHub'};}
+function dashPublishStatus_(){const token=jobGateToken_(),r=UrlFetchApp.fetch('https://api.github.com/repos/'+GH_REPO+'/actions/workflows/build-site.yml/runs?per_page=1',{headers:{Authorization:'Bearer '+token,Accept:'application/vnd.github+json'},muteHttpExceptions:true});if(r.getResponseCode()!==200)return {ok:false,error:'تعذر قراءة حالة النشر'};const run=JSON.parse(r.getContentText()).workflow_runs[0];return {ok:true,run:run?{status:run.status,conclusion:run.conclusion,url:run.html_url,updated_at:run.updated_at}:null};}
+
+function dashboardAnalyticsSheet_(){return SpreadsheetApp.openById('1xe0p2arTa_jN78H0pgucMr721PZZvxs9TAXVIwIL0T8').getSheetByName('log');}
+const DASH_TZ='Africa/Cairo';
+function dashboardStats_(p) {
+  var days = Math.min(Math.max(parseInt(p.days, 10) || 30, 1), 365);
+  var cache = CacheService.getScriptCache(), key = 'dashboard-st' + days;
+  var hit = cache.get(key);
+  if (hit) return JSON.parse(hit);
+
+  var sh = dashboardAnalyticsSheet_(), last = sh.getLastRow();
+  var rows = last > 1 ? sh.getRange(2, 1, last - 1, 9).getValues() : [];
+  var now = new Date();
+  var list = [], idx = {};
+  for (var i = days - 1; i >= 0; i--) {
+    var d = Utilities.formatDate(new Date(now.getTime() - i * 86400000), DASH_TZ, 'yyyy-MM-dd');
+    idx[d] = list.length;
+    list.push({ d: d, visit: 0, view: 0, apply: 0, send: 0, call: 0, share: 0, u: 0 });
+  }
+  var tot = { visit: 0, view: 0, apply: 0, send: 0, call: 0, share: 0 };
+  var uniq = {}, dayU = {}, fac = {}, area = {}, src = {}, hours = [], k;
+  for (k = 0; k < 24; k++) hours.push(0);
+
+  rows.forEach(function (r) {
+    var d = r[1] instanceof Date ? Utilities.formatDate(r[1], DASH_TZ, 'yyyy-MM-dd') : String(r[1]);
+    if (!(d in idx)) return;
+    var t = r[3], f = r[4], a = r[5], s = r[6], v = r[8];
+    list[idx[d]][t]++; tot[t]++;
+    if (v) { uniq[v] = 1; (dayU[d] = dayU[d] || {})[v] = 1; }
+    if (t === 'visit') { hours[+r[2] || 0]++; var sk = s || 'مباشر'; (src[sk] = src[sk] || { s: sk, visit: 0, apply: 0, send: 0 }).visit++; }
+    if (f) {
+      var o = fac[f] = fac[f] || { f: f, r: a, view: 0, apply: 0, send: 0, call: 0 };
+      if (o[t] !== undefined) o[t]++;
+      if (a && !o.r) o.r = a;
+    }
+    if (a) {
+      var ar = area[a] = area[a] || { a: a, view: 0, apply: 0, send: 0 };
+      if (ar[t] !== undefined) ar[t]++;
+    }
+    if ((t === 'apply' || t === 'send') && s) {
+      var sx = src[s] = src[s] || { s: s, visit: 0, apply: 0, send: 0 };
+      sx[t]++;
+    }
+  });
+  list.forEach(function (x) { x.u = dayU[x.d] ? Object.keys(dayU[x.d]).length : 0; });
+  var vals = function (o) { return Object.keys(o).map(function (z) { return o[z]; }); };
+  var res = {
+    ok: true, days: days, list: list, tot: tot, uniq: Object.keys(uniq).length,
+    factories: vals(fac).sort(function (x, y) { return (y.send - x.send) || (y.apply - x.apply) || (y.view - x.view); }).slice(0, 30),
+    areas: vals(area).sort(function (x, y) { return (y.send - x.send) || (y.apply - x.apply) || (y.view - x.view); }),
+    srcs: vals(src).sort(function (x, y) { return (y.send - x.send) || (y.apply - x.apply) || (y.visit - x.visit); }).slice(0, 15),
+    hours: hours, at: Utilities.formatDate(now, DASH_TZ, 'yyyy-MM-dd HH:mm')
+  };
+  try { cache.put(key, JSON.stringify(res), 60); } catch (e) {}
+  return res;
 }

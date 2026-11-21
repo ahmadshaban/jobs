@@ -15,6 +15,27 @@ SHOW_APPLY_FORM = False  # لو عايز الزرار يفتح الفورم بد
 APPLY_FLOW_PAGE = True  # "قدّم دلوقتي" يفتح صفحة فورم مستقلة
 STATS_URL = "https://script.google.com/macros/s/AKfycbwr_pFD5PMl-cSyBS6vFf-Pa_Mr8pc_zxHUxPfHHjAWtkwME0iIEBPwvvm0cOjn_f4f/exec"
 
+
+# Dashboard settings are public website copy only, never passwords or applicant data.
+DASH_API="https://script.google.com/macros/s/AKfycbzwMRST469OBo-ym0Ccn-Ot84jGrL0KEM9SZcnfe-tip2U6-1gyryjnYxdNNsiwbLEyng/exec"
+DASH_CONFIG={}
+def load_dashboard_config():
+    global DASH_CONFIG, PHONE, SITE_NAME, SITE_NAME_CC
+    import urllib.request
+    with urllib.request.urlopen(DASH_API+"?action=getConfig",timeout=40) as response:
+        result=json.load(response)
+    if not result.get('ok') or not isinstance(result.get('config'),dict):
+        raise RuntimeError('Dashboard configuration unavailable; refusing to publish stale settings')
+    DASH_CONFIG=result['config'];PHONE=DASH_CONFIG['whatsapp'];SITE_NAME=DASH_CONFIG['site_name'];SITE_NAME_CC=DASH_CONFIG['cc_site_name']
+
+def transport_notice(j):
+    return DASH_CONFIG.get('transport_notice','▸ لو مكانك خارج {area}، المواصلات لحد نقطة التجمع جوه {area} على حسابك الشخصي، ومن نقطة التجمع عربيات المصنع بتاخدك.').replace('{area}',city_of(j))
+
+def configured(text):
+    pairs={"📍 اختار منطقتك":"home_heading","💬 اسأل على الواتساب":"question_label","قدّم دلوقتي":"apply_label","اشتغلي أونلاين من موبايلك":"cc_heading","مسوّقة في فريق التوظيف":"cc_job_title","🚌 مهم قبل التقديم":"transport_title"}
+    for old,key in pairs.items():text=text.replace(old,esc(DASH_CONFIG.get(key,old)))
+    return text
+
 def esc(s): return html.escape(str(s or ""), quote=True)
 
 def city_base(j):
@@ -99,14 +120,15 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 <link rel="manifest" href="{prefix}manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@600;700;800;900&display=swap">
-<link rel="stylesheet" href="{prefix}style.css?v=20261121h">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family={esc(DASH_CONFIG.get('font_family','Tajawal'))}:wght@600;700;800;900&display=swap">
+<link rel="stylesheet" href="{prefix}style.css?v=20261121dashboard">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏭</text></svg>">
 {ld}
 </head>
 <body class="{page_cls}" data-variant="{variant}" data-prefix="{prefix}">
-{body}
-<script src="{prefix}app.js?v=20261121i" defer></script>
+{configured(body)}
+<script>window.JG_CONFIG={json.dumps(({k:v for k,v in DASH_CONFIG.items() if k not in ['whatsapp','followup_template']} if variant=='cc' else DASH_CONFIG),ensure_ascii=False).replace(chr(60),chr(92)+'u003c')};</script>
+<script src="{prefix}app.js?v=20261121dashboard" defer></script>
 <script src="{prefix}sharing.js?v=20261121f" defer></script>
 <script src="{prefix}legacy.js" defer></script>
 <script src="{prefix}pwa.js?v=20261121b" defer></script>
@@ -119,7 +141,7 @@ def header(prefix, variant):
     drawer_links = ""
     if variant != "cc":
         import urllib.parse
-        question = urllib.parse.quote("السلام عليكم، عندي استفسار بخصوص الوظايف")
+        question = urllib.parse.quote(DASH_CONFIG.get("question_template","السلام عليكم، عندي استفسار بخصوص الوظايف"))
         drawer_links = f"""<a class="d-link d-whatsapp" href="https://wa.me/{PHONE}?text={question}" rel="nofollow">💬 اسأل على الواتساب</a><div class="d-sep"></div>
 <a class="d-link" href="{prefix}admin.html">🔒 الأدمن</a>
 <a class="d-link" href="{prefix}stats.html">📊 الإحصائيات</a>
@@ -216,7 +238,7 @@ def build_variant(jobs_open, variant):
     noindex = (variant == "cc")
     os.makedirs(root, exist_ok=True)
     src_css = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "site", "style.css")
-    shutil.copy(src_css, os.path.join(root, "style.css"))
+    if os.path.abspath(root)!=os.path.abspath(OUT):shutil.copy(os.path.join(OUT,"style.css"),os.path.join(root,"style.css"))
     if root != OUT: shutil.copy(os.path.join(OUT, "app.js"), os.path.join(root, "app.js"))
     shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","site","sharing.js"),os.path.join(root,"sharing.js"))
     for asset in ["pwa.js","sw.js","icon-192.png","icon-512.png"]:
@@ -342,14 +364,14 @@ def build_apply_page(j, root, prefix_depth="../../"):
     multi = bool(shifts)
     wa_direct = wa_apply_link(j)
     age_attrs = (f' data-age-txt="{esc(j.get("السن"))}" data-shift="{esc(hours_only(j.get("الشفت") or ""))}"'
-                 f' data-housing="{esc(j.get("السكن"))}" data-transport="{esc(j.get("المواصلات"))}"'
+                 f' data-housing="{esc(j.get("السكن"))}" data-transport="{esc(j.get("المواصلات"))}" data-notice="{esc(transport_notice(j))}"'
                  f' data-notes="{esc(j.get("ملاحظات"))}"')
     ar3 = age_range(j)
     age_hint2 = f"السن المطلوب في الوظيفة دي: من {ar3[0]} لـ {ar3[1]} سنة" if ar3 else "اكتب سنك بالأرقام"
     body = header(prefix, "main")
     body += f'<div class="wrap"><a class="form-close" href="../" aria-label="قفل التقديم والرجوع للوظيفة">✕</a><a class="bc2" href="../">→ رجوع للوظيفة</a></div>'
     body += f'<div class="wrap"><div class="hero-plain"><h1>💬 قدّم على {esc(j.get("المصنع"))}</h1><div class="sub2">{esc(city)} — املى بياناتك وأكّد مرة واحدة</div></div></div>'
-    body += f'<div class="form-transport"><b>المواصلات قبل ما تقدم</b><span>لو جاي من خارج {esc(city)}، الطريق لحد نقطة التجمع على حسابك.</span><span>{esc(j.get("المواصلات") or "راجع مسؤول التواصل عن مواصلات المصنع")}</span></div>'
+    body += f'<div class="panel form-transport"><h2>🚌 مهم قبل التقديم</h2><div class="warnbox">{esc(transport_notice(j))}</div></div>'
     if multi:
         opts = ""
         for sh in shifts:
@@ -409,7 +431,7 @@ def build_job_page(j, root, variant, noindex):
         body += f'<div class="panel"><h2>🕒 اختار الوردية اللي تناسبك</h2><div class="shift-pick" id="shiftPick">{opts}</div><div class="err" id="e_s"></div></div>'
     body += f'<div id="jobMeta" hidden data-factory="{esc(j.get("المصنع"))}" data-area="{esc(j.get("المنطقة"))}"></div>'
     body += detail_rows(j)
-    body += '<div class="panel"><h2>🚌 مهم قبل التقديم</h2><div class="warnbox">▸ لو مكانك خارج ' + esc(city) + '، المواصلات لحد نقطة التجمع جوه ' + esc(city) + ' على حسابك الشخصي، ومن نقطة التجمع عربيات المصنع بتاخدك.</div></div>'
+    body += '<div class="panel"><h2>🚌 مهم قبل التقديم</h2><div class="warnbox">' + esc(transport_notice(j)) + '</div></div>'
 
     cts = parse_contacts(j)
     if cts and variant == "main":
@@ -422,7 +444,7 @@ def build_job_page(j, root, variant, noindex):
     else:
         wa_direct = wa_apply_link(j)
         age_attrs = (f' data-age-txt="{esc(j.get("السن"))}" data-shift="{esc(hours_only(j.get("الشفت") or ""))}"'
-                     f' data-housing="{esc(j.get("السكن"))}" data-transport="{esc(j.get("المواصلات"))}"'
+                     f' data-housing="{esc(j.get("السكن"))}" data-transport="{esc(j.get("المواصلات"))}" data-notice="{esc(transport_notice(j))}"'
                      f' data-notes="{esc(j.get("ملاحظات"))}"')
         ar2 = age_range(j)
         age_hint = f"السن المطلوب في الوظيفة دي: من {ar2[0]} لـ {ar2[1]} سنة" if ar2 else "اكتب سنك بالأرقام"
@@ -484,11 +506,17 @@ def build_job_page(j, root, variant, noindex):
 def write_static_files():
     src_css = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "site", "style.css")
     shutil.copy(src_css, os.path.join(OUT, "style.css"))
+    with open(os.path.join(OUT,"style.css"),"a",encoding="utf-8") as f:
+        f.write("\n:root{--brand:"+DASH_CONFIG.get('brand_color','#0E5A40')+"}body{font-family:'"+DASH_CONFIG.get('font_family','Tajawal')+"',sans-serif;font-size:"+DASH_CONFIG.get('font_size','14')+"px}\n")
     app_js = r"""
 /* بوابة الوظائف — تفاعلات بسيطة (مفيش جلب بيانات، كل المحتوى موجود في الصفحة) */
 (function(){
 "use strict";
 var STATS_URL="__STATS_URL__";
+var CFG=window.JG_CONFIG||{};
+function tpl(s,v){return String(s||"").replace(/\{([a-z_]+)\}/g,function(_,k){return v[k]==null?"":v[k]})}
+function cfg(k,f){return CFG[k]||f}
+window.jgTemplate=tpl;window.jgConfig=cfg;
 var APPLICANTS_API="https://script.google.com/macros/s/AKfycbzwMRST469OBo-ym0Ccn-Ot84jGrL0KEM9SZcnfe-tip2U6-1gyryjnYxdNNsiwbLEyng/exec";
 var SRC=(function(){var v="";try{v=(new URLSearchParams(location.search).get("src")||"").replace(/[\r\n]/g," ").trim().slice(0,30)}catch(e){}
  try{if(v)sessionStorage.setItem("jobsrc",v);else v=sessionStorage.getItem("jobsrc")||""}catch(e){}return v})();
@@ -523,13 +551,13 @@ function nameMismatch(n,req,label){var first=normalizedName(n),female="ليلي 
 function reviewScreen(form,rows,transport,url){
  var old=document.getElementById("confirmScreen");if(old)old.remove();
  var screen=document.createElement("section");screen.id="confirmScreen";screen.className="confirm-screen wrap";screen.setAttribute("aria-label","تأكيد بياناتك");document.body.classList.add("confirming");
- var card=document.createElement("div");card.className="panel";var title=document.createElement("h2");title.textContent="بياناتك دي صح؟";card.appendChild(title);
+ var card=document.createElement("div");card.className="panel";var title=document.createElement("h2");title.textContent=cfg("confirm_title","بياناتك دي صح؟");card.appendChild(title);
  rows.forEach(function(v){var row=document.createElement("div");row.className="cfrow";var k=document.createElement("span"),b=document.createElement("b");k.textContent=v[0];b.textContent=v[1]||"مش محدد";row.append(k,b);card.appendChild(row)});
- var warning=document.createElement("div");warning.className="confirm-transport";warning.setAttribute("role","note");var wh=document.createElement("strong");wh.textContent="⚠️ مهم: المواصلات";var detail=document.createElement("p");detail.textContent=transport;warning.append(wh,detail);card.appendChild(warning);
- var back=document.createElement("button");back.type="button";back.className="btn btn-ghost";back.textContent="ارجع عدّل";
- var next=document.createElement("a");next.href=url;next.target="_blank";next.rel="noopener";next.className="btn btn-wa";next.textContent="كمل على واتساب";
- var hint=document.createElement("p");hint.className="hint";hint.textContent="واتساب هيفتح برسالتك جاهزة. دوس إرسال هناك عشان طلبك يوصل.";
- var privacy=document.createElement("p");privacy.className="hint";privacy.textContent="بالضغط على كمل، اسمك وسنك ورقمك والوظيفة ووقت التسجيل هيتحفظوا في سجل خاص لدى Job Gate للمتابعة. إرسال رسالة واتساب بيتم بإيدك.";card.appendChild(privacy);
+ var warning=document.createElement("div");warning.className="review-transport";warning.setAttribute("role","note");var wh=document.createElement("h2");wh.textContent=cfg("transport_title","🚌 مهم قبل التقديم");var detail=document.createElement("div");detail.className="warnbox";detail.textContent=transport;warning.append(wh,detail);card.appendChild(warning);
+ var back=document.createElement("button");back.type="button";back.className="btn btn-ghost";back.textContent=cfg("confirm_back","ارجع عدّل");
+ var next=document.createElement("a");next.href=url;next.target="_blank";next.rel="noopener";next.className="btn btn-wa";next.textContent=cfg("confirm_continue","كمل على واتساب");
+ var hint=document.createElement("p");hint.className="hint";hint.textContent=cfg("handoff_hint","واتساب هيفتح برسالتك جاهزة. دوس إرسال هناك عشان طلبك يوصل.");
+ var privacy=document.createElement("p");privacy.className="hint";privacy.textContent=cfg("consent_text","بالضغط على كمل، اسمك وسنك ورقمك والوظيفة ووقت التسجيل هيتحفظوا في سجل خاص لدى Job Gate للمتابعة. إرسال رسالة واتساب بيتم بإيدك.");card.appendChild(privacy);
  var result=document.createElement("p");result.className="hint";result.setAttribute("role","status");card.appendChild(result);
  var bypass=document.createElement("a");bypass.href=url;bypass.className="btn btn-ghost";bypass.textContent="افتح واتساب من غير حفظ في السجل";bypass.style.display="none";card.appendChild(bypass);
  var values={};rows.forEach(function(r){values[r[0]]=r[1]});var apply=document.getElementById("applyBtn");
@@ -540,7 +568,7 @@ function reviewScreen(form,rows,transport,url){
   if(saved)return;e.preventDefault();if(saving)return;saving=true;next.setAttribute("aria-disabled","true");next.textContent="جاري الحفظ...";result.textContent="استنى لحظة، بنحفظ بياناتك في السجل الخاص";bypass.style.display="none";
   var controller=new AbortController(),timer=setTimeout(function(){controller.abort()},25000);
   try{var response=await fetch(APPLICANTS_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"registerApplicant",data:payload}),signal:controller.signal});if(!response.ok)throw Error("network");var data=await response.json();if(!data.ok)throw Error("save");saved=true;if(!screen.isConnected)return;result.textContent="اتحفظت بياناتك. واتساب هيفتح دلوقتي، دوس إرسال هناك. تسجيل البيانات مش تأكيد لإرسال الرسالة.";next.textContent="افتح واتساب";location.assign(url)}
-  catch(err){result.textContent="تعذر تأكيد حفظ بياناتك. جرّب الحفظ تاني، أو افتح واتساب من غير حفظ. رسالة واتساب لسه ما اتبعتتش.";next.textContent="جرّب الحفظ تاني";bypass.style.display=""}
+  catch(err){result.textContent=cfg("save_failure","تعذر تأكيد حفظ بياناتك. جرّب الحفظ تاني، أو افتح واتساب من غير حفظ. رسالة واتساب لسه ما اتبعتتش.");next.textContent="جرّب الحفظ تاني";bypass.style.display=""}
   finally{clearTimeout(timer);saving=false;next.removeAttribute("aria-disabled")}
  });
 
@@ -587,29 +615,28 @@ if(btn){
  function ageMsg(a){
   var r=ageRange(btn.getAttribute("data-age-txt"))||{min:16,max:60};
   var min=r.min?Math.max(16,r.min):16,max=r.max?Math.min(60,r.max):60;
-  if(a<min)return "سنك أصغر من المطلوب، أقل سن للتقديم "+min+" سنة";
-  if(a>max)return "سنك أكبر من المطلوب، أكبر سن للتقديم "+max+" سنة";
+  if(a<min)return tpl(cfg("age_below","سنك أصغر من المطلوب، أقل سن للتقديم {min} سنة"),{min:min,max:max});
+  if(a>max)return tpl(cfg("age_above","سنك أكبر من المطلوب، أكبر سن للتقديم {max} سنة"),{min:min,max:max});
   return ""}
 
- function nameError(){var n=en.value.trim().replace(/\s+/g," ");if(n.split(" ").filter(function(w){return w.length>=2}).length<3)return "لازم تكتب اسمك ثلاثي";return nameMismatch(n,btn.getAttribute("data-gender"),"المصنع ده")}
+ function nameError(){var n=en.value.trim().replace(/\s+/g," ");if(n.split(" ").filter(function(w){return w.length>=2}).length<3)return cfg("name_invalid","لازم تكتب اسمك ثلاثي");return nameMismatch(n,btn.getAttribute("data-gender"),"المصنع ده")}
  function showField(i,id,m){setErr(id,m);i.classList.toggle("bad",!!m);i.setAttribute("aria-invalid",m?"true":"false")}
  en.addEventListener("input",function(){showField(en,"e_n",nameError())});en.addEventListener("blur",function(){showField(en,"e_n",nameError())});
- et.addEventListener("input",function(){var t=dg(et.value).replace(/[\s-]/g,"");showField(et,"e_t",EG.test(t)?"":"الرقم ناقص، اكتب رقم واتساب مصري صحيح")});
- ea.addEventListener("input",function(){var a=dg(ea.value);showField(ea,"e_a",/^\d{1,2}$/.test(a)?ageMsg(+a):"اكتب السن بالأرقام")});
+ et.addEventListener("input",function(){var t=dg(et.value).replace(/[\s-]/g,"");showField(et,"e_t",EG.test(t)?"":cfg("phone_invalid","الرقم ناقص، اكتب رقم واتساب مصري صحيح"))});
+ ea.addEventListener("input",function(){var a=dg(ea.value);showField(ea,"e_a",/^\d{1,2}$/.test(a)?ageMsg(+a):cfg("age_invalid","اكتب السن بالأرقام"))});
  btn.addEventListener("click",function(ev){
-  ev.preventDefault();var n=en.value.trim().replace(/\s+/g," "),a=dg(ea.value),t=dg(et.value).replace(/[\s-]/g,"");
+  ev.preventDefault();if(CFG.maintenance==="true"){setErr("e_n",CFG.maintenance_text);return}var n=en.value.trim().replace(/\s+/g," "),a=dg(ea.value),t=dg(et.value).replace(/[\s-]/g,"");
   if(nameError())return fail(en,"e_n",nameError());
-  if(!/^\d{1,2}$/.test(a))return fail(ea,"e_a","اكتب السن الصحيح بالأرقام");
+  if(!/^\d{1,2}$/.test(a))return fail(ea,"e_a",cfg("age_invalid","اكتب السن بالأرقام"));
   if(ageMsg(+a))return fail(ea,"e_a",ageMsg(+a));
-  if(!EG.test(t))return fail(et,"e_t","الرقم ناقص، اكتب رقم واتساب مصري صحيح");
-  if(btn.getAttribute("data-multi")==="1"&&!pickedShift){setErr("e_s","لازم تختار الوردية");sp.classList.add("bad");sp.scrollIntoView({block:"center",behavior:"smooth"});return}
+  if(!EG.test(t))return fail(et,"e_t",cfg("phone_invalid","الرقم ناقص، اكتب رقم واتساب مصري صحيح"));
+  if(btn.getAttribute("data-multi")==="1"&&!pickedShift){setErr("e_s",cfg("shift_required","لازم تختار الوردية"));sp.classList.add("bad");sp.scrollIntoView({block:"center",behavior:"smooth"});return}
   var shift=pickedShift?pickedShift.h:btn.getAttribute("data-shift"),pay=pickedShift?pickedShift.pay:btn.getAttribute("data-sal");
   var L=["الاسم: "+n,"السن: "+a,"رقم الواتساب: "+t,"المكان: "+btn.getAttribute("data-area"),"المصنع: "+btn.getAttribute("data-factory"),"الوردية: "+shift,"المرتب: "+pay];if(SRC)L.push("المصدر: "+SRC);
-  var u="https://wa.me/"+btn.getAttribute("data-phone")+"?text="+encodeURIComponent(L.join("\n"));
-  var transport=btn.getAttribute("data-transport")||"معلومات المواصلات مش محددة، اسأل مسؤول التواصل قبل التحرك";
-  if(/لا يوجد|لايوجد|غير متوفر|بدون|مفيش|لا تتوفر/.test(transport))transport="الشغل ده مفيهوش مواصلات. "+transport;
-  else if(/داخلي|السكن/.test(transport))transport="مفيش مواصلات من بلدك للمصنع. المواصلات الداخلية بس: "+transport;
-  reviewScreen(document.getElementById("apply"),[["الاسم",n],["السن",a],["رقم الواتساب",t],["المصنع",btn.getAttribute("data-factory")],["الوردية",shift],["المرتب",pay]],transport+". لو جاي من خارج "+btn.getAttribute("data-area")+"، الطريق لنقطة التجمع على حسابك.",u);
+  var text=tpl(cfg('application_template',L.join("\n")),{name:n,age:a,phone:t,area:btn.getAttribute('data-area'),job:btn.getAttribute('data-factory'),shift:shift,salary:pay,company:CFG.company_name||'',source:SRC});if(SRC&&!text.includes(SRC))text+='\nالمصدر: '+SRC;
+  var u="https://wa.me/"+(CFG.whatsapp||btn.getAttribute("data-phone"))+"?text="+encodeURIComponent(text);
+  var transport=btn.getAttribute("data-notice");
+  reviewScreen(document.getElementById("apply"),[["الاسم",n],["السن",a],["رقم الواتساب",t],["المصنع",btn.getAttribute("data-factory")],["الوردية",shift],["المرتب",pay]],transport,u);
  });
 }
 
@@ -697,6 +724,7 @@ $('c_n').addEventListener('input',function(){fieldError('c_n',ccNameError())});
 $('c_t').addEventListener('input',function(){fieldError('c_t',/^(?:\+?20|0)1[0125]\d{8}$/.test(dg(this.value).replace(/[\s-]/g,''))?'':'الرقم ناقص، اكتبي رقم واتساب مصري صحيح')});
 $('c_x').onchange=function(){$('c_cw').hidden=this.value!=='آه';fieldError('c_x','')};
 $('ccSend').onclick=function(){
+ if(window.JG_CONFIG&&JG_CONFIG.maintenance==='true'){fieldError('c_n',JG_CONFIG.maintenance_text);return}
  var n=$('c_n').value.trim().replace(/\s+/g,' '),a=dg($('c_a').value.trim()),p=dg($('c_t').value.replace(/[\s-]/g,'')),x=$('c_x').value,c=$('c_c').value.trim();
  if(ccNameError())return fail('c_n',ccNameError());
  if(!/^\d{1,2}$/.test(a)||+a<1)return fail('c_a','اكتبي السن بالأرقام');
@@ -704,7 +732,7 @@ $('ccSend').onclick=function(){
  if(!x)return fail('c_x','اختاري آه أو لا');if(x==='آه'&&!c)return fail('c_c','اكتبي اسم الشركة');
  ['c_n','c_a','c_t','c_x','c_c'].forEach(function(id){fieldError(id,'')});
  var L=['السلام عليكم، محتاج التفاصيل عن وظيفة مسوق بالعمولة (فريق التوظيف أونلاين)','الاسم: '+n,'السن: '+a,'رقم الواتساب: '+p,'اشتغلت الشغل ده قبل كده: '+x];if(x==='آه')L.push('الشركة: '+c);
- window.jgReviewScreen($('ccApply'),[['الاسم',n],['السن',a],['رقم الواتساب',p],['الوظيفة','مسوّقة في فريق التوظيف'],['نظام الشغل','أونلاين من الموبايل'],['المقابل','بالعمولة'],['اشتغلتي قبل كده؟',x]],'الشغل ده أونلاين من الموبايل، مفيش انتقال لمصنع ولا مواصلات.', 'https://wa.me/__PHONE__?text='+encodeURIComponent(L.join('\n')));
+ window.jgReviewScreen($('ccApply'),[['الاسم',n],['السن',a],['رقم الواتساب',p],['الوظيفة',JG_CONFIG.cc_job_title||'مسوّقة في فريق التوظيف'],['نظام الشغل','أونلاين من الموبايل'],['المقابل','بالعمولة'],['اشتغلتي قبل كده؟',x]],'الشغل ده أونلاين من الموبايل، مفيش انتقال لمصنع ولا مواصلات.', 'https://wa.me/'+(JG_CONFIG.whatsapp||'__PHONE__')+'?text='+encodeURIComponent(window.jgTemplate(JG_CONFIG.cc_application_template||L.join('\n'),{name:n,age:a,phone:p,job:JG_CONFIG.cc_job_title||'مسوّقة في فريق التوظيف',experience:x,previous_company:c})));
 };
 
 })();
@@ -743,6 +771,7 @@ def assign_ids(jobs):
         j["__jid"] = base if n == 1 else f"{base}-{n}"
 
 def main():
+    load_dashboard_config()
     local_jobs = os.environ.get("JOBS_CSV")
     if local_jobs:
         with open(local_jobs, encoding="utf-8") as f:
