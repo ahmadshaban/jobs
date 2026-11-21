@@ -143,7 +143,7 @@ def header(prefix, variant):
         import urllib.parse
         question = urllib.parse.quote(DASH_CONFIG.get("question_template","السلام عليكم، عندي استفسار بخصوص الوظايف").replace("{company}",DASH_CONFIG.get("company_name","")))
         drawer_links = f"""<a class="d-link d-whatsapp" href="https://wa.me/{PHONE}?text={question}" rel="nofollow">💬 اسأل على الواتساب</a><div class="d-sep"></div>
-<a class="d-link" href="{prefix}admin.html">🔒 الأدمن</a>
+
 
 <a class="d-link" href="{prefix}cc-jobs/">📢 وظايف كول سنتر للبنات</a>
 """
@@ -684,7 +684,7 @@ document.addEventListener("click",function(e){
     app_js = app_js.replace("__STATS_URL__", STATS_URL)
     with open(os.path.join(OUT, "app.js"), "w", encoding="utf-8") as f:
         f.write(app_js)
-    admin_manifest={"id":"./admin.html","name":"Job Gate Admin","short_name":"الإدارة","start_url":"./admin.html","scope":"./","display":"standalone","lang":"ar","dir":"rtl","background_color":"#f3f5f1","theme_color":"#0a1428","icons":[{"src":"admin-icon-192.png","sizes":"192x192","type":"image/png"},{"src":"admin-icon-512.png","sizes":"512x512","type":"image/png"}]}
+    admin_manifest={"id":"./admin.html","name":"Job Gate Admin","short_name":"الإدارة","start_url":"./admin.html","scope":"./","display":"standalone","lang":"ar","dir":"rtl","background_color":"#0a1428","theme_color":"#0a1428","icons":[{"src":"admin-icon-192.png","sizes":"192x192","type":"image/png"},{"src":"admin-icon-512.png","sizes":"512x512","type":"image/png"}]}
     with open(os.path.join(OUT,"admin-manifest.json"),"w",encoding="utf-8") as f:json.dump(admin_manifest,f,ensure_ascii=False)
     for size in [192,512]:shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","site",f"admin-icon-{size}.png"),os.path.join(OUT,f"admin-icon-{size}.png"))
     with open(os.path.join(OUT,"callcenter.html"),"w",encoding="utf-8") as f:f.write('<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0;url=cc/"><title>Job Gate CC</title><script>location.replace("cc/")</script><a href="cc/">افتح نسخة CC</a></html>')
