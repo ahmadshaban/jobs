@@ -131,7 +131,7 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 <script src="{prefix}app.js?v=20261121compact" defer></script>
 <script src="{prefix}sharing.js?v=20261121f" defer></script>
 <script src="{prefix}legacy.js" defer></script>
-<script src="{prefix}pwa.js?v=20261121b" defer></script>
+<script src="{prefix}pwa.js?v=20261121install" defer></script>
 </body>
 </html>"""
 
@@ -245,7 +245,7 @@ def build_variant(jobs_open, variant):
         origin=os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","site",asset) if asset!="sw.js" else os.path.join(OUT,"sw.js")
         dest=os.path.join(root,asset)
         if os.path.abspath(origin)!=os.path.abspath(dest):shutil.copy(origin,dest)
-    manifest={"name":SITE_NAME_CC if variant=="cc" else SITE_NAME,"short_name":"Job Gate CC" if variant=="cc" else "Job Gate","start_url":"./","scope":"./","display":"standalone","background_color":"#F2F5F8","theme_color":"#0E5A40","icons":[{"src":"icon-192.png","sizes":"192x192","type":"image/png"},{"src":"icon-512.png","sizes":"512x512","type":"image/png"}]}
+    manifest={"id":"../callcenter.html" if variant=="cc" else "./index.html","lang":"ar","dir":"rtl","name":SITE_NAME_CC if variant=="cc" else SITE_NAME,"short_name":"Job Gate CC" if variant=="cc" else "Job Gate","start_url":"./index.html","scope":"./","display":"standalone","background_color":"#F2F5F8","theme_color":"#0E5A40","icons":[{"src":"icon-192.png","sizes":"192x192","type":"image/png"},{"src":"icon-512.png","sizes":"512x512","type":"image/png"}]}
     with open(os.path.join(root,"manifest.json"),"w",encoding="utf-8") as mf:json.dump(manifest,mf,ensure_ascii=False)
     order, groups = group_by_city(jobs_open)
     n_open = len(jobs_open)
@@ -686,10 +686,16 @@ document.addEventListener("click",function(e){
     app_js = app_js.replace("__STATS_URL__", STATS_URL)
     with open(os.path.join(OUT, "app.js"), "w", encoding="utf-8") as f:
         f.write(app_js)
+    admin_manifest={"id":"./admin.html","name":"Job Gate Admin","short_name":"الإدارة","start_url":"./admin.html","scope":"./","display":"standalone","lang":"ar","dir":"rtl","background_color":"#f3f5f1","theme_color":"#0a1428","icons":[{"src":"admin-icon-192.png","sizes":"192x192","type":"image/png"},{"src":"admin-icon-512.png","sizes":"512x512","type":"image/png"}]}
+    with open(os.path.join(OUT,"admin-manifest.json"),"w",encoding="utf-8") as f:json.dump(admin_manifest,f,ensure_ascii=False)
+    for size in [192,512]:shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","site",f"admin-icon-{size}.png"),os.path.join(OUT,f"admin-icon-{size}.png"))
+    with open(os.path.join(OUT,"callcenter.html"),"w",encoding="utf-8") as f:f.write('<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0;url=cc/"><title>Job Gate CC</title><script>location.replace("cc/")</script><a href="cc/">افتح نسخة CC</a></html>')
+    legacy_cc={"id":"./callcenter.html","name":"Job Gate CC","short_name":"Job Gate CC","start_url":"./cc/index.html","scope":"./cc/","display":"standalone","icons":[{"src":"cc/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"cc/icon-512.png","sizes":"512x512","type":"image/png"}]}
+    with open(os.path.join(OUT,"manifest-cc.json"),"w",encoding="utf-8") as f:json.dump(legacy_cc,f,ensure_ascii=False)
     # Network-first caching replaces the old worker and labels offline copies.
-    sw = r"""const CACHE='jobgate-v4-'+new URL(self.registration.scope).pathname;
+    sw = r"""const CACHE='jobgate-v5-'+new URL(self.registration.scope).pathname;
 self.addEventListener('install',()=>self.skipWaiting());
-self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE&& !k.startsWith('jobgate-v4-'))await caches.delete(k);await self.clients.claim()})()));
+self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE&& !k.startsWith('jobgate-v5-'))await caches.delete(k);await self.clients.claim()})()));
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET'||new URL(e.request.url).origin!==self.location.origin)return;
 e.respondWith((async()=>{const c=await caches.open(CACHE);try{const r=await fetch(e.request,{cache:"no-cache"});if(r.ok){await c.put(e.request,r.clone())}return r}catch(_){const saved=await c.match(e.request);if(saved)return saved;return new Response('<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>الاتصال بالإنترنت</title><body style="font:20px Tahoma;padding:32px;background:#F2F5F8;color:#0E5A40"><h1>أنت مش متصل بالنت</h1><p>الصفحة دي مش محفوظة. اتصل بالنت وحدّث الصفحة.</p></body></html>',{headers:{'Content-Type':'text/html;charset=utf-8'}})}})())});"""
     with open(os.path.join(OUT, "sw.js"), "w", encoding="utf-8") as f:f.write(sw)
