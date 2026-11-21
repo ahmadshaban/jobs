@@ -31,6 +31,31 @@ def load_dashboard_config():
 def transport_notice(j):
     return DASH_CONFIG.get('transport_notice','▸ لو مكانك خارج {area}، المواصلات لحد نقطة التجمع جوه {area} على حسابك الشخصي، ومن نقطة التجمع عربيات المصنع بتاخدك.').replace('{area}',city_of(j))
 
+def transport_kind(j):
+    """Only a positive external-transport statement suppresses the warning."""
+    def norm(v):
+        return re.sub(r"[\u064B-\u065F\u0670ـ]", "", str(v or "")).replace("أ", "ا").replace("إ", "ا").replace("آ", "ا").replace("ة", "ه")
+    def absent(t):
+        return bool(re.search(r"(?:غير|مش|موش)\s*(?:متوفر|متاح|موجود)|لا\s*(?:يوجد|توجد|يتوفر|تتوفر)|بدون|مفيش|لا يوجد|علي حسابك|على حسابك", t)) or t.strip() in ["لا", "غير متوفر", "غير متاح", "لا يوجد"]
+    internal=False
+    for key in ["المواصلات", "ملاحظات", "العنوان", "تفاصيل المرتب"]:
+        for clause in re.split(r"[\n،؛.!]", norm(j.get(key))):
+            if not clause or absent(clause):
+                continue
+            transport=(key=="المواصلات" or "مواصلات" in clause)
+            if transport and "خارجي" in clause:
+                return "external"
+            if transport and re.search(r"داخلي|من السكن|داخل مدينه|الحي 12",clause):
+                internal=True
+    return "internal" if internal else "none"
+
+def transport_form_notice(j):
+    kind=transport_kind(j)
+    if kind=="external":
+        return ""
+    internal='المواصلات المتاحة داخلية فقط. ' if kind=="internal" else ''
+    return '<aside class="transport-before-submit" role="note"><h2>مهم قبل التقديم: المواصلات</h2><p>'+esc(internal+transport_notice(j))+'</p></aside>'
+
 def configured(text):
     pairs={"📍 اختار منطقتك":"home_heading","💬 اسأل على الواتساب":"question_label","قدّم دلوقتي":"apply_label","اشتغلي أونلاين من موبايلك":"cc_heading","مسوّقة في فريق التوظيف":"cc_job_title","🚌 مهم قبل التقديم":"transport_title"}
     for old,key in pairs.items():text=text.replace(old,esc(DASH_CONFIG.get(key,old)))
@@ -123,14 +148,14 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 <meta name="theme-color" content="#e9eef7">
 <link rel="manifest" href="{prefix}manifest.json">
 {font_link}
-<link rel="stylesheet" href="{prefix}style.css?v=20261121cobalt">
+<link rel="stylesheet" href="{prefix}style.css?v=20261121cobalt2">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏭</text></svg>">
 {ld}
 </head>
 <body class="{page_cls}" data-variant="{variant}" data-prefix="{prefix}">
 {configured(body)}
 <script>window.JG_CONFIG={json.dumps(({k:v for k,v in DASH_CONFIG.items() if k not in ['whatsapp','followup_template','consent_text','save_failure']} if variant=='cc' else {k:v for k,v in DASH_CONFIG.items() if k not in ['consent_text','save_failure']}),ensure_ascii=False).replace(chr(60),chr(92)+'u003c')};</script>
-<script src="{prefix}app.js?v=20261121cobalt" defer></script>
+<script src="{prefix}app.js?v=20261121cobalt2" defer></script>
 {share_script}
 {legacy_script}
 <script src="{prefix}pwa.js?v=20261121direct" defer></script>
@@ -147,9 +172,10 @@ def header(prefix, variant):
         drawer_links = f"""<a class="d-link d-whatsapp" href="https://wa.me/{PHONE}?text={question}" rel="nofollow">💬 اسأل على الواتساب</a><div class="d-sep"></div>
 <a class="d-link" href="{prefix}marketing.html">📣 اشتغل أونلاين بعمولة</a>
 <a class="d-link" href="{prefix}cc-jobs/">📢 وظايف كول سنتر للبنات</a>
-<div class="menu-heading">الإدارة</div>
-<a class="d-link" href="{prefix}stats.html">📊 الإحصائيات 🔒</a>
 <a class="d-link" href="https://www.facebook.com/share/1Kba7Asbx9/" target="_blank" rel="noopener">فيسبوك</a>
+<section class="public-admin-links" aria-label="الإدارة"><div class="menu-heading">الإدارة، دخول بكلمة السر</div>
+<a class="d-link" href="{prefix}stats.html">📊 الإحصائيات 🔒</a>
+<a class="d-link" href="{prefix}admin.html">⚙️ لوحة الإدارة 🔒</a></section>
 """
     return f"""<header class="top"><div class="wrap">
 <div class="logo">🏭</div>
@@ -378,7 +404,6 @@ def build_apply_page(j, root, prefix_depth="../../"):
     body = header(prefix, "main")
     body += f'<div class="wrap"><a class="form-close" href="../" aria-label="قفل التقديم والرجوع للوظيفة">✕</a><a class="bc2" href="../">→ رجوع للوظيفة</a></div>'
     body += f'<div class="wrap"><div class="hero-plain"><h1>💬 قدّم على {esc(j.get("المصنع"))}</h1><div class="sub2">{esc(city)} — املى بياناتك وأكّد مرة واحدة</div></div></div>'
-    body += f'<details class="panel transport-panel"><summary>🚌 المواصلات، مهم قبل التقديم</summary><div class="warnbox">{esc(transport_notice(j))}</div></details>'
     if multi:
         opts = ""
         for sh in shifts:
@@ -391,6 +416,7 @@ def build_apply_page(j, root, prefix_depth="../../"):
 <div class="field"><label for="f_a">🔢 سنك<em class="req">*</em></label><div class="err" id="e_a"></div><input id="f_a" inputmode="numeric" maxlength="2" placeholder="مثال: 25"><small class="hint">{age_hint2}</small></div>
 <div class="field"><label for="f_t">📲 رقم الواتساب بتاعك<em class="req">*</em></label><div class="err" id="e_t"></div><input id="f_t" type="tel" inputmode="tel" maxlength="15" placeholder="01XXXXXXXXX"><small class="hint">اكتب رقم فيه واتساب</small></div>
 
+{transport_form_notice(j)}
 <a class="btn btn-wa" id="applyBtn" href="{esc(wa_direct)}" rel="nofollow"
  data-gender="{esc(j.get("الفئة"))}" data-phone="{PHONE}" data-area="{esc(j.get('المنطقة'))}" data-factory="{esc(j.get('المصنع'))}" data-sal="{esc(salary_line(j))}" data-multi="{1 if multi else 0}"{age_attrs}>
 <span class="waic">✓</span> راجع بياناتك</a>
@@ -438,7 +464,6 @@ def build_job_page(j, root, variant, noindex):
         body += f'<div class="panel"><h2>🕒 اختار الوردية اللي تناسبك</h2><div class="shift-pick" id="shiftPick">{opts}</div><div class="err" id="e_s"></div></div>'
     body += f'<div id="jobMeta" hidden data-factory="{esc(j.get("المصنع"))}" data-area="{esc(j.get("المنطقة"))}"></div>'
     body += detail_rows(j)
-    body += '<div class="panel"><h2>🚌 مهم قبل التقديم</h2><div class="warnbox">' + esc(transport_notice(j)) + '</div></div>'
 
     cts = parse_contacts(j)
     if cts and variant == "main":
@@ -465,6 +490,7 @@ def build_job_page(j, root, variant, noindex):
 <div class="err" id="e_a"></div>
 <div class="field"><label for="f_t">📲 رقم الواتساب بتاعك<em class="req">*</em></label><input id="f_t" type="tel" inputmode="tel" maxlength="15" placeholder="01XXXXXXXXX"><small class="hint">اكتب رقم فيه واتساب</small></div>
 <div class="err" id="e_t"></div>
+{transport_form_notice(j)}
 <a class="btn btn-wa" id="applyBtn" href="{esc(wa_direct)}" rel="nofollow"
  data-phone="{PHONE}" data-area="{esc(j.get('المنطقة'))}" data-factory="{esc(j.get('المصنع'))}" data-sal="{esc(salary_line(j))}" data-multi="{1 if multi else 0}"{age_attrs}>
 <span class="waic">💬</span> دوس هنا وكمّل على الواتساب</a>
@@ -703,9 +729,9 @@ document.addEventListener("click",function(e){
     legacy_cc={"id":"./callcenter.html","name":"Job Gate CC","short_name":"Job Gate CC","start_url":"./cc/index.html","scope":"./cc/","display":"standalone","icons":[{"src":"cc/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"cc/icon-512.png","sizes":"512x512","type":"image/png"}]}
     with open(os.path.join(OUT,"manifest-cc.json"),"w",encoding="utf-8") as f:json.dump(legacy_cc,f,ensure_ascii=False)
     # Network-first caching replaces the old worker and labels offline copies.
-    sw = r"""const CACHE='jobgate-v7-'+new URL(self.registration.scope).pathname;
+    sw = r"""const CACHE='jobgate-v8-'+new URL(self.registration.scope).pathname;
 self.addEventListener('install',()=>self.skipWaiting());
-self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE&& !k.startsWith('jobgate-v7-'))await caches.delete(k);await self.clients.claim()})()));
+self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE&& !k.startsWith('jobgate-v8-'))await caches.delete(k);await self.clients.claim()})()));
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET'||new URL(e.request.url).origin!==self.location.origin)return;
 e.respondWith((async()=>{const c=await caches.open(CACHE);const asset=/\.(?:woff2|png|webp|css|js)$/.test(new URL(e.request.url).pathname);if(asset){const cached=await c.match(e.request);if(cached)return cached}try{const r=await fetch(e.request,{cache:"no-cache"});if(r.ok){await c.put(e.request,r.clone())}return r}catch(_){const saved=await c.match(e.request);if(saved)return saved;return new Response('<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>الاتصال بالإنترنت</title><body style="font:20px Tahoma;padding:32px;background:#F2F5F8;color:#0E5A40"><h1>أنت مش متصل بالنت</h1><p>الصفحة دي مش محفوظة. اتصل بالنت وحدّث الصفحة.</p></body></html>',{headers:{'Content-Type':'text/html;charset=utf-8'}})}})())});"""
     with open(os.path.join(OUT, "sw.js"), "w", encoding="utf-8") as f:f.write(sw)
