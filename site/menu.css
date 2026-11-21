@@ -23,3 +23,9 @@ html body .scrim.open{background:#12233d66!important;backdrop-filter:none!import
 html body .drawer .contact-button{gap:10px!important;min-height:50px!important;padding:10px 12px!important}
 html body .drawer .contact-logo{display:block;width:26px;height:26px;flex:0 0 26px;color:#fff}
 html body .drawer .contact-button span{flex:1}
+
+/* Keep the header trigger on the same right edge as its drawer. */
+body .top .menu-btn{order:-3;margin-inline:0}
+body .top .brand{order:-2;margin:0}
+body .top .logo{order:-1}
+html body .drawer .menu-apply-hint{display:table;margin-top:3px;padding:1px 7px;border-radius:5px;background:#dceaff;color:#173f84;font-size:11px;line-height:1.5;white-space:nowrap}
