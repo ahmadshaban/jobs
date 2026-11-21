@@ -99,12 +99,16 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
     if variant == "cc":
         for ph in ["+"+PHONE,PHONE,"0"+PHONE[2:]]:
             body=body.replace(ph,"")
+    font_link = f'<link rel="preload" href="{prefix}fonts/tajawal-700.woff2" as="font" type="font/woff2" crossorigin>' if DASH_CONFIG.get('font_family','Tajawal')=='Tajawal' else f'<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family={esc(DASH_CONFIG.get("font_family","Tajawal"))}:wght@600;700;800;900&display=swap">'
+    share_script = f'<script src="{prefix}sharing.js?v=20261121f" defer></script>' if 'data-share-tools' in body else ''
+    legacy_script = f'<script src="{prefix}legacy.js" defer></script>' if page_cls=='pg-home' else ''
     robots = '<meta name="robots" content="noindex,nofollow">' if noindex else ""
     ld = f'<script type="application/ld+json">{json.dumps(json_ld, ensure_ascii=False)}</script>' if json_ld else ""
     return f"""<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
+<script>window.addEventListener("beforeinstallprompt",function(e){{e.preventDefault();window.__jgInstallPrompt=e}});</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{esc(title)}</title>
 <meta name="description" content="{esc(desc)}">
@@ -116,22 +120,20 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 <meta property="og:url" content="{esc(canonical)}">
 <meta property="og:locale" content="ar_EG">
 <meta property="og:site_name" content="{esc(name)}">
-<meta name="theme-color" content="#0E5A40">
+<meta name="theme-color" content="#07152c">
 <link rel="manifest" href="{prefix}manifest.json">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family={esc(DASH_CONFIG.get('font_family','Tajawal'))}:wght@600;700;800;900&display=swap">
-<link rel="stylesheet" href="{prefix}style.css?v=20261121compact">
+{font_link}
+<link rel="stylesheet" href="{prefix}style.css?v=20261121gold">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏭</text></svg>">
 {ld}
 </head>
 <body class="{page_cls}" data-variant="{variant}" data-prefix="{prefix}">
 {configured(body)}
 <script>window.JG_CONFIG={json.dumps(({k:v for k,v in DASH_CONFIG.items() if k not in ['whatsapp','followup_template','consent_text','save_failure']} if variant=='cc' else {k:v for k,v in DASH_CONFIG.items() if k not in ['consent_text','save_failure']}),ensure_ascii=False).replace(chr(60),chr(92)+'u003c')};</script>
-<script src="{prefix}app.js?v=20261121compact" defer></script>
-<script src="{prefix}sharing.js?v=20261121f" defer></script>
-<script src="{prefix}legacy.js" defer></script>
-<script src="{prefix}pwa.js?v=20261121install-choices" defer></script>
+<script src="{prefix}app.js?v=20261121gold" defer></script>
+{share_script}
+{legacy_script}
+<script src="{prefix}pwa.js?v=20261121direct" defer></script>
 </body>
 </html>"""
 
@@ -156,8 +158,11 @@ def header(prefix, variant):
 <div class="scrim" id="scrim"></div>
 <nav class="drawer" id="drawer" aria-label="القايمة">
 <div class="d-head"><span>🏭 {esc(name)}</span><button type="button" id="drawerClose" aria-label="قفل">✕</button></div>
-<a class="d-link" href="{home}">🏠 الرئيسية</a>{drawer_links}
+{f'<a class="d-link" href="{home}">🏠 الرئيسية</a>' if prefix else ''}{drawer_links}
 </nav>"""
+
+def intro_strip():
+    return '<section class="intro-strip" aria-label="عن الوظايف"><strong>عمال تعبئة وتغليف وفرز</strong><span>قدّم من الموبايل في دقايق</span><small>✅ التقديم من غير أي رسوم مقدما</small></section>'
 
 def steps_strip():
     return """<div class="wrap"><div class="steps">
@@ -189,7 +194,7 @@ def job_card(j, prefix):
 
 def bottom_bar(prefix, variant, job=None):
     if variant == "cc":
-        return f"""<nav class="bottombar"><a class="btn nav" href="{prefix}index.html">🏠 الرئيسية</a></nav>"""
+        return ""  # Header and breadcrumbs already provide home navigation.
     if job is not None:
         if APPLY_FLOW_PAGE and variant == "main":
             return f"""<nav class="bottombar"><a class="btn wa" href="{prefix}jobs/{job.get("__jid") or job_id(job)}/apply/">💬 قدّم دلوقتي</a></nav>"""
@@ -241,11 +246,12 @@ def build_variant(jobs_open, variant):
     if os.path.abspath(root)!=os.path.abspath(OUT):shutil.copy(os.path.join(OUT,"style.css"),os.path.join(root,"style.css"))
     if root != OUT: shutil.copy(os.path.join(OUT, "app.js"), os.path.join(root, "app.js"))
     shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","site","sharing.js"),os.path.join(root,"sharing.js"))
+    shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","site","fonts"),os.path.join(root,"fonts"),dirs_exist_ok=True)
     for asset in ["pwa.js","sw.js","icon-192.png","icon-512.png"]:
         origin=os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","site",asset) if asset!="sw.js" else os.path.join(OUT,"sw.js")
         dest=os.path.join(root,asset)
         if os.path.abspath(origin)!=os.path.abspath(dest):shutil.copy(origin,dest)
-    manifest={"id":"../callcenter.html" if variant=="cc" else "./index.html","lang":"ar","dir":"rtl","name":SITE_NAME_CC if variant=="cc" else SITE_NAME,"short_name":"Job Gate CC" if variant=="cc" else "Job Gate","start_url":"./index.html","scope":"./","display":"standalone","background_color":"#F2F5F8","theme_color":"#0E5A40","icons":[{"src":"icon-192.png","sizes":"192x192","type":"image/png"},{"src":"icon-512.png","sizes":"512x512","type":"image/png"}]}
+    manifest={"id":"../callcenter.html" if variant=="cc" else "./index.html","lang":"ar","dir":"rtl","name":SITE_NAME_CC if variant=="cc" else SITE_NAME,"short_name":"Job Gate CC" if variant=="cc" else "Job Gate","start_url":"./index.html","scope":"./","display":"standalone","background_color":"#07152c","theme_color":"#07152c","icons":[{"src":"icon-192.png","sizes":"192x192","type":"image/png"},{"src":"icon-512.png","sizes":"512x512","type":"image/png"}]}
     with open(os.path.join(root,"manifest.json"),"w",encoding="utf-8") as mf:json.dump(manifest,mf,ensure_ascii=False)
     order, groups = group_by_city(jobs_open)
     n_open = len(jobs_open)
@@ -266,7 +272,7 @@ def build_variant(jobs_open, variant):
 {f'<span class="pay">💰 {pay_hint}</span>' if pay_hint else ''}
 </a>"""
     body = header("", variant)
-    body += steps_strip()
+    body += intro_strip() + steps_strip()
     body += f"""<div class="wrap"><div class="sec"><h2>📍 اختار منطقتك</h2><span class="ln"></span><small>{n_open} وظيفة</small></div></div>
 <div class="wrap"><div class="areas">{areas_html}</div></div>"""
     body += footer()
@@ -607,7 +613,7 @@ if(btn){
  try{var sv=JSON.parse(localStorage.getItem("jobform")||"{}");if(sv.n&&en)en.value=sv.n;if(sv.a&&ea)ea.value=sv.a;if(sv.t&&et)et.value=sv.t}catch(e){}
 
  var EG=/^(?:\+?20|0)1[0125]\d{8}$/;
- var fail=function(inp,id,m){setErr(id,m);if(inp){inp.classList.add("bad");inp.setAttribute("aria-invalid","true");inp.focus();inp.scrollIntoView({block:"center",behavior:"smooth"})}};
+ var fail=function(inp,id,m){setErr(id,m);if(inp){inp.classList.add("bad");inp.setAttribute("aria-invalid","true");inp.focus();inp.scrollIntoView({block:"center",behavior:"auto"})}};
  function ageRange(txt){
   var t=String(txt||"").replace(/[٠-٩]/g,function(d){return "٠١٢٣٤٥٦٧٨٩".indexOf(d)});
   var n=(t.match(/\d{1,2}/g)||[]).map(Number);
@@ -634,7 +640,7 @@ if(btn){
   if(!/^\d{1,2}$/.test(a))return fail(ea,"e_a",cfg("age_invalid","اكتب السن بالأرقام"));
   if(ageMsg(+a))return fail(ea,"e_a",ageMsg(+a));
   if(!EG.test(t))return fail(et,"e_t",cfg("phone_invalid","الرقم ناقص، اكتب رقم واتساب مصري صحيح"));
-  if(btn.getAttribute("data-multi")==="1"&&!pickedShift){setErr("e_s",cfg("shift_required","لازم تختار الوردية"));sp.classList.add("bad");sp.scrollIntoView({block:"center",behavior:"smooth"});return}
+  if(btn.getAttribute("data-multi")==="1"&&!pickedShift){setErr("e_s",cfg("shift_required","لازم تختار الوردية"));sp.classList.add("bad");sp.scrollIntoView({block:"center",behavior:"auto"});return}
   var shift=pickedShift?pickedShift.h:btn.getAttribute("data-shift"),pay=pickedShift?pickedShift.pay:btn.getAttribute("data-sal");
   var L=["الاسم: "+n,"السن: "+a,"رقم الواتساب: "+t,"المكان: "+btn.getAttribute("data-area"),"المصنع: "+btn.getAttribute("data-factory"),"الوردية: "+shift,"المرتب: "+pay];if(SRC)L.push("المصدر: "+SRC);
   var text=tpl(cfg('application_template',L.join("\n")),{name:n,age:a,phone:t,area:btn.getAttribute('data-area'),job:btn.getAttribute('data-factory'),shift:shift,salary:pay,company:CFG.company_name||'',source:SRC});if(SRC&&!text.includes(SRC))text+='\nالمصدر: '+SRC;
@@ -677,7 +683,7 @@ document.addEventListener("click",function(e){
  var p=document.querySelector(sel); if(!p)return;
  e.preventDefault();
  p.classList.remove("hidden");
- p.scrollIntoView({behavior:"smooth",block:"start"});
+ p.scrollIntoView({behavior:"auto",block:"start"});
  if(b.hasAttribute("data-reveal"))b.style.display="none";
 });
 """
@@ -695,11 +701,11 @@ document.addEventListener("click",function(e){
     legacy_cc={"id":"./callcenter.html","name":"Job Gate CC","short_name":"Job Gate CC","start_url":"./cc/index.html","scope":"./cc/","display":"standalone","icons":[{"src":"cc/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"cc/icon-512.png","sizes":"512x512","type":"image/png"}]}
     with open(os.path.join(OUT,"manifest-cc.json"),"w",encoding="utf-8") as f:json.dump(legacy_cc,f,ensure_ascii=False)
     # Network-first caching replaces the old worker and labels offline copies.
-    sw = r"""const CACHE='jobgate-v5-'+new URL(self.registration.scope).pathname;
+    sw = r"""const CACHE='jobgate-v6-'+new URL(self.registration.scope).pathname;
 self.addEventListener('install',()=>self.skipWaiting());
-self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE&& !k.startsWith('jobgate-v5-'))await caches.delete(k);await self.clients.claim()})()));
+self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE&& !k.startsWith('jobgate-v6-'))await caches.delete(k);await self.clients.claim()})()));
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET'||new URL(e.request.url).origin!==self.location.origin)return;
-e.respondWith((async()=>{const c=await caches.open(CACHE);try{const r=await fetch(e.request,{cache:"no-cache"});if(r.ok){await c.put(e.request,r.clone())}return r}catch(_){const saved=await c.match(e.request);if(saved)return saved;return new Response('<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>الاتصال بالإنترنت</title><body style="font:20px Tahoma;padding:32px;background:#F2F5F8;color:#0E5A40"><h1>أنت مش متصل بالنت</h1><p>الصفحة دي مش محفوظة. اتصل بالنت وحدّث الصفحة.</p></body></html>',{headers:{'Content-Type':'text/html;charset=utf-8'}})}})())});"""
+e.respondWith((async()=>{const c=await caches.open(CACHE);const asset=/\.(?:woff2|png|webp|css|js)$/.test(new URL(e.request.url).pathname);if(asset){const cached=await c.match(e.request);if(cached)return cached}try{const r=await fetch(e.request,{cache:"no-cache"});if(r.ok){await c.put(e.request,r.clone())}return r}catch(_){const saved=await c.match(e.request);if(saved)return saved;return new Response('<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>الاتصال بالإنترنت</title><body style="font:20px Tahoma;padding:32px;background:#F2F5F8;color:#0E5A40"><h1>أنت مش متصل بالنت</h1><p>الصفحة دي مش محفوظة. اتصل بالنت وحدّث الصفحة.</p></body></html>',{headers:{'Content-Type':'text/html;charset=utf-8'}})}})())});"""
     with open(os.path.join(OUT, "sw.js"), "w", encoding="utf-8") as f:f.write(sw)
 
 
@@ -732,7 +738,7 @@ if(!$('ccSend'))return;
 var dg=function(s){return String(s||'').replace(/[٠-٩]/g,function(ch){return '٠١٢٣٤٥٦٧٨٩'.indexOf(ch)})};
 
 function fieldError(id,msg){var f=$(id),e=$(id+'_error');if(!e){e=document.createElement('div');e.id=id+'_error';e.className='err';f.before(e)}e.textContent=msg;f.classList.toggle('bad',!!msg);f.setAttribute('aria-invalid',msg?'true':'false')}
-function fail(id,msg){fieldError(id,msg);$(id).focus();$(id).scrollIntoView({block:'center',behavior:'smooth'})}
+function fail(id,msg){fieldError(id,msg);$(id).focus();$(id).scrollIntoView({block:'center',behavior:'auto'})}
 function ccNameError(){var n=$('c_n').value.trim();return n.split(/\s+/).filter(function(w){return w.length>=2}).length<3?window.jgConfig('name_invalid','لازم تكتب اسمك ثلاثي'):window.jgNameMismatch(n,'بنات','الشغل ده')}
 $('c_n').addEventListener('input',function(){fieldError('c_n',ccNameError())});
 $('c_t').addEventListener('input',function(){fieldError('c_t',/^(?:\+?20|0)1[0125]\d{8}$/.test(dg(this.value).replace(/[\s-]/g,''))?'':window.jgConfig('phone_invalid','الرقم ناقص، اكتب رقم واتساب مصري صحيح'))});
