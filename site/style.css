@@ -271,7 +271,7 @@ body[data-variant].pg-job[data-variant="main"]{padding-bottom:88px}
 body .top .menu-btn{width:44px;height:44px;min-height:44px}body .top .dot{background:#245a9f;box-shadow:none}body .top .badge-live{color:#ffffff;background:#245a9f14;border-color:#4b7cc4}
 body .area-card .go{background:#e5edf8;color:#245a9f!important}body .job .sal b{color:#245a9f}body .sec .ln{background:#c7d3e3}
 body .hero-card{background:#e2e9f3;border-bottom:1px solid #98722b;border-radius:0 0 16px 16px}body .hero-card h1{color:#17376a}body .hero-card .bc{color:#495e78}body .chip{background:#e5edf8;border-color:#cad4e1;color:#294361}
-body .panel,body .sal-hero{background:#ffffff;border:1px solid #cad4e1;border-radius:12px;box-shadow:none}body .panel h2{color:#17376a}body .row{border-color:#cad4e1}body .row small{color:#5b6c80}body .row b{color:#17376a}body .notebox{background:#0b1e36;color:#495e78;border:1px solid #cad4e1}body .sal-hero .big{color:#245a9f}body .sal-hero small,body .sal-hero .alt{color:#5b6c80}
+body .panel,body .sal-hero{background:#ffffff;border:1px solid #cad4e1;border-radius:12px;box-shadow:none}body .panel h2{color:#17376a}body .row{border-color:#cad4e1}body .row small{color:#5b6c80}body .row b{color:#17376a}body .notebox{background:#0b1e36;color:#dbe7f3;border:1px solid #2c4a6e}body .sal-hero .big{color:#245a9f}body .sal-hero small,body .sal-hero .alt{color:#5b6c80}
 body .hero-plain h1{color:#17376a}body .hero-plain .sub2,body .hint{color:#5b6c80}body .field input,body .field select,body textarea{background:#f6f8fc;color:#17376a;border:1px solid #b8c9df;font-size:16px}body .field input:focus,body .field select:focus,body textarea:focus{background:#0b203b;border-color:#245a9f;outline:2px solid #245a9f55;outline-offset:2px}body input::placeholder,body textarea::placeholder{color:#6c7d94}
 body .field input.bad,body .field select.bad{background:#341e2c;border-color:#f28e99;color:#fff}body .req,body .err{color:#ffadb4}body .shift-opt{background:#0b203b;color:#294361;border-color:#b8c9df}body .shift-opt.on{background:#245a9f;border-color:#245a9f;color:#ffffff}
 body .btn-wa,body .bottombar .btn.wa,body.pg-apply #applyBtn,body .confirm-screen .btn-wa{background:#245a9f;color:#ffffff;box-shadow:none}body .btn-ghost,body .btn-call{background:#e5edf8;border:1px solid #c0cfe3;color:#245a9f}body .btn-ghost2{color:#495e78;border-color:#b4c5dd;background:#ffffff}body .btn-ghost2:active{background:#e5edf8}body .bottombar{background:#e9eef7f5;border-color:#cad4e1}body .bottombar .btn.nav{background:#ffffff;color:#294361}
@@ -351,3 +351,16 @@ body .job .card-hours{display:table;margin:5px 0;padding:3px 9px;border:1px soli
 body .job .sal{flex-wrap:wrap;row-gap:2px!important}
 body .job .sal small{line-height:1.6}
 body .job:focus-visible{outline:3px solid #245a9f;outline-offset:3px}
+
+/* payout choice: two big distinct tappable buttons (10th of Ramadan region) */
+.segpay-h{font-weight:800;font-size:14.5px;color:#17376a;margin:16px 2px 8px;text-align:center}
+.seg.segpay{background:none!important;border-radius:0!important;padding:0!important;margin:0 0 8px!important;gap:12px!important}
+.seg.segpay button{background:#ffffff!important;border:2px solid #245a9f!important;border-radius:16px!important;min-height:72px!important;box-shadow:0 4px 12px #17376a1f!important;color:#17376a!important;font-size:14.5px!important;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 6px!important}
+.seg.segpay button .paysub{display:block;font-size:11.5px;font-weight:700;color:#5b6c80}
+.seg.segpay button.on{background:#245a9f!important;color:#ffffff!important;border-color:#245a9f!important}
+.seg.segpay button.on .paysub{color:#dbe7f3}
+
+.seg.segpay button .tap-hint{display:block;font-size:11px;font-weight:800;color:#245a9f;margin-top:3px}
+.seg.segpay button.on .tap-hint{color:#dbe7f3}
+
+.segpay-list-h{font-weight:800;font-size:15px;color:#17376a;margin:12px 2px 6px}

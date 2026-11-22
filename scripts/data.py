@@ -42,7 +42,7 @@ def is_done(j):
 def is_urgent(j):
     return bool(re.search(r"عاجل|الأكثر تقديم", j.get("الحالة") or ""))
 
-NEW_DAYS = 3
+NEW_DAYS = 7
 def is_new(j, today):
     t = j.get("تاريخ الإضافة") or ""
     m = re.search(r"(\d{1,4})[/\-.](\d{1,2})[/\-.](\d{1,4})", t)
@@ -154,10 +154,13 @@ def rank(j):
 def visible_jobs(jobs):
     return [j for j in jobs if (j.get("ظاهر؟") or "نعم").strip() != "لا" and j.get("المصنع")]
 
-def sort_jobs(jobs):
+def sort_jobs(jobs, today=None):
+    import datetime
+    t = today or datetime.date.today()
     def key(j):
         mo = manual_order(j)
-        return (rank(j), mo if mo is not None else 0, -pay_score(j) if rank(j) == 1 else 0)
+        new_first = 0 if is_new(j, t) else 1
+        return (new_first, rank(j), mo if mo is not None else 0, -pay_score(j) if rank(j) == 1 else 0)
     return sorted(jobs, key=key)
 
 CITY_SLUGS = [
@@ -182,12 +185,10 @@ def group_by_city(jobs):
             if re.search(pat, c):
                 c = canon
                 break
-        # مناطق القبض اليومي ليها قسم لوحدها زي الموقع الحالي
-        if "قبض يومي" in str(j.get("المنطقة") or ""):
-            c = c + " - قبض يومي"
         if c not in groups:
             groups[c] = []
             order.append(c)
         groups[c].append(j)
-    order.sort(key=lambda c: -len(groups[c]))
+    REGION_PRIORITY = {"العاشر من رمضان": 0, "6 أكتوبر": 1, "السادات": 2}
+    order.sort(key=lambda c: (REGION_PRIORITY.get(c, 3), -len(groups[c])))
     return order, groups

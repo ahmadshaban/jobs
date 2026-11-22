@@ -256,7 +256,8 @@ def job_card(j, prefix):
     hours = card_hours_label(j)
     url = f"{prefix}jobs/{j.get('__jid') or job_id(j)}/"
     cat = "b" if ("بنات" in j.get("الفئة","") and "شباب" in j.get("الفئة","")) else ("g" if "بنات" in j.get("الفئة","") else "m")
-    return f"""<a class="job" data-cat="{cat}" href="{url}">
+    pay = "d" if is_daily(j) else "m"
+    return f"""<a class="job" data-cat="{cat}" data-pay="{pay}" href="{url}">
 <div class="ttl"><h3>{esc(j.get('المصنع'))}</h3></div>
 <div class="meta"><span>📍 {esc(city_base(j))}</span><span>👥 {esc(j.get('الفئة'))}</span></div>
 {f'<div class="card-hours">الوردية: {esc(hours)}</div>' if hours else ''}
@@ -278,6 +279,12 @@ def footer():
     d = TODAY.strftime("%Y-%m-%d")
     return f"""<footer class="foot"><div>🏭 {esc(SITE_NAME)}</div>
 <div class="livenote">بنضيف وظايف جديدة باستمرار</div></footer>"""
+
+def segpay_filter():
+    return """<div class="wrap"><div class="segpay-h">💳 اختار نظام القبض عشان تشوف الوظائف</div><div class="seg segpay" id="segpay">
+<button type="button" data-pay="m">🗓️ قبض شهري<span class="tap-hint">دوس هنا ⬇</span></button>
+<button type="button" data-pay="d">💵 قبض يومي<small class="paysub">(بدون سكن)</small><span class="tap-hint">دوس هنا ⬇</span></button>
+</div><div class="segpay-list-h" id="segpayListH" hidden></div></div>"""
 
 def seg_filter():
     return """<div class="wrap"><div class="seg" id="seg">
@@ -368,6 +375,7 @@ def build_variant(jobs_open, variant):
 <div class="wrap"><div class="sec"><h2>🏭 وظايف {esc(c)}</h2><span class="ln"></span><small>{len(js)} وظيفة</small></div></div>
 <div class="wrap">{sharing_tools(js,variant,c,"regions/"+slug+"/")}</div>
 {seg_filter()}
+{segpay_filter() if slug == "10th-ramadan" else ""}
 <div class="wrap"><div class="jobs" id="jobs">{cards}</div></div>
 <div class="scrollhint"><span>دي كل وظايف {esc(c)} دلوقتي ✅</span></div>
 """
@@ -454,7 +462,12 @@ def build_apply_page(j, root, prefix_depth="../../"):
         opts = ""
         for sh in shifts:
             pay_bits = " | ".join(x for x in [(("30 يوم: " + sh["p30"]) if sh["p30"] else ""), (("26 يوم: " + sh["p26"]) if sh["p26"] else "")] if x)
-            opts += f'<button type="button" class="shift-opt{" done" if sh["done"] else ""}" data-h="{esc(hours_only(sh["h"]))}" data-pay="{esc(pay_bits)}"{" disabled" if sh["done"] else ""}>{esc(hours_only(sh["h"]))}{" (مكتملة)" if sh["done"] else ""}<small>{esc(pay_bits)}</small></button>'
+            if not pay_bits:
+                pm = re.search(r"(\d[\d.,]*)\s*ج[^()،]*", sh["h"])
+                pay_bits = pm.group(0).strip() if pm else ""
+            am = re.search(r"سن\s*(\d{2})\s*ل\s*(\d{2})", sh["h"])
+            age_b = f' data-alo="{am.group(1)}" data-ahi="{am.group(2)}"' if am else ""
+            opts += f'<button type="button" class="shift-opt{" done" if sh["done"] else ""}" data-h="{esc(hours_only(sh["h"]))}" data-pay="{esc(pay_bits)}"{age_b}{" disabled" if sh["done"] else ""}>{esc(hours_only(sh["h"]))}{" (مكتملة)" if sh["done"] else ""}<small>{esc(pay_bits)}</small></button>'
         body += f'<div class="wrap"><div class="panel"><h2>🕒 1) اختار الوردية</h2><div class="shift-pick" id="shiftPick">{opts}</div><div class="err" id="e_s"></div></div></div>'
     body += f"""<div class="wrap"><div class="apply-panel" id="apply">
 <h2>📝 بياناتك</h2>
@@ -507,7 +520,12 @@ def build_job_page(j, root, variant, noindex):
         opts = ""
         for i, s in enumerate(shifts):
             pay_bits = " | ".join(x for x in [(("30 يوم: " + s["p30"]) if s["p30"] else ""), (("26 يوم: " + s["p26"]) if s["p26"] else "")] if x)
-            opts += f'<button type="button" class="shift-opt{" done" if s["done"] else ""}" data-h="{esc(hours_only(s["h"]))}" data-pay="{esc(pay_bits)}"{" disabled" if s["done"] else ""}>{esc(hours_only(s["h"]))}{" (مكتملة)" if s["done"] else ""}<small>{esc(pay_bits)}</small></button>'
+            if not pay_bits:
+                pm = re.search(r"(\d[\d.,]*)\s*ج[^()،]*", s["h"])
+                pay_bits = pm.group(0).strip() if pm else ""
+            am = re.search(r"سن\s*(\d{2})\s*ل\s*(\d{2})", s["h"])
+            age_b = f' data-alo="{am.group(1)}" data-ahi="{am.group(2)}"' if am else ""
+            opts += f'<button type="button" class="shift-opt{" done" if s["done"] else ""}" data-h="{esc(hours_only(s["h"]))}" data-pay="{esc(pay_bits)}"{age_b}{" disabled" if s["done"] else ""}>{esc(hours_only(s["h"]))}{" (مكتملة)" if s["done"] else ""}<small>{esc(pay_bits)}</small></button>'
         body += f'<div class="panel"><h2>🕒 اختار الوردية اللي تناسبك</h2><div class="shift-pick" id="shiftPick">{opts}</div><div class="err" id="e_s"></div></div>'
     body += f'<div id="jobMeta" hidden data-factory="{esc(j.get("المصنع"))}" data-area="{esc(j.get("المنطقة"))}"></div>'
     body += detail_rows(j)
@@ -613,17 +631,40 @@ function track(t,f,r){try{
 track("visit");
 var jm=document.getElementById("jobMeta");if(jm)track("view",jm.getAttribute("data-factory"),jm.getAttribute("data-area"));
 /* فلتر شباب / بنات */
+var segF={cat:"all",pay:"all"};
+function segApply(){document.querySelectorAll("#jobs .job").forEach(function(card){
+ var c=card.getAttribute("data-cat"),p=card.getAttribute("data-pay");
+ var okc=(segF.cat==="all"||c===segF.cat||c==="b");
+ var okp=(segF.pay==="all"||p===segF.pay);
+ card.style.display=(okc&&okp)?"":"none";});}
 var seg=document.getElementById("seg");
 if(seg){
  seg.querySelectorAll("button").forEach(function(b){
   b.addEventListener("click",function(){
    seg.querySelectorAll("button").forEach(function(x){x.classList.remove("on")});
    b.classList.add("on");
-   var cat=b.getAttribute("data-cat");
-   document.querySelectorAll("#jobs .job").forEach(function(card){
-    var c=card.getAttribute("data-cat");
-    card.style.display=(cat==="all"||c===cat||c==="b")?"":"none";
-   });
+   segF.cat=b.getAttribute("data-cat");
+   segApply();
+  });
+ });
+}
+var segpay=document.getElementById("segpay");
+if(segpay){
+ var jobsBox=document.getElementById("jobs");
+ if(jobsBox)jobsBox.style.display="none";
+ if(seg)seg.parentElement.style.display="none";
+ var hint=document.querySelector(".scrollhint");if(hint)hint.style.display="none";
+ segpay.querySelectorAll("button").forEach(function(b){
+  b.addEventListener("click",function(){
+   segpay.querySelectorAll("button").forEach(function(x){x.classList.remove("on")});
+   b.classList.add("on");
+   segF.pay=b.getAttribute("data-pay");
+   if(jobsBox){jobsBox.style.display="";jobsBox.scrollIntoView({behavior:"smooth",block:"start"});}
+   if(seg)seg.parentElement.style.display="";
+   var hint2=document.querySelector(".scrollhint");if(hint2)hint2.style.display="";
+   var lh=document.getElementById("segpayListH");
+   if(lh){lh.textContent=b.getAttribute("data-pay")==="d"?"🏭 وظائف القبض اليومي (بدون سكن)":"🏭 وظائف القبض الشهري";lh.hidden=false}
+   segApply();
   });
  });
 }
@@ -676,7 +717,7 @@ if(sp){
    b.classList.add("on");
    var es=document.getElementById("e_s");if(es)es.textContent="";
    sp.classList.remove("bad");
-   pickedShift={h:b.getAttribute("data-h"),pay:b.getAttribute("data-pay")};
+   pickedShift={h:b.getAttribute("data-h"),pay:b.getAttribute("data-pay"),alo:b.getAttribute("data-alo"),ahi:b.getAttribute("data-ahi")};
   });
  });
  // Only preselect a currently available option from this job, never a stale or completed shift.
@@ -703,7 +744,7 @@ if(btn){
   if(/فوق|أكتر|اكتر|أكثر|\+|من/.test(t))return{min:n[0],max:0};
   return null}
  function ageMsg(a){
-  var r=ageRange(btn.getAttribute("data-age-txt"))||{min:16,max:60};
+  var r=(pickedShift&&pickedShift.ahi)?{min:+pickedShift.alo,max:+pickedShift.ahi}:(ageRange(btn.getAttribute("data-age-txt"))||{min:16,max:60});
   var min=r.min?Math.max(16,r.min):16,max=r.max?Math.min(60,r.max):60;
   if(a<min)return tpl(cfg("age_below","سنك أصغر من المطلوب، أقل سن للتقديم {min} سنة"),{min:min,max:max});
   if(a>max)return tpl(cfg("age_above","سنك أكبر من المطلوب، أكبر سن للتقديم {max} سنة"),{min:min,max:max});
