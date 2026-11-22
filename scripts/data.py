@@ -59,7 +59,7 @@ def is_new(j, today):
         days = (today - datetime.date(y, mo, d)).days
     except ValueError:
         return False
-    return -1 <= days <= NEW_DAYS
+    return -1 <= days < NEW_DAYS
 
 def is_daily(j):
     return (j.get("قبض يومي") or "").strip() == "نعم"
