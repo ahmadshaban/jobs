@@ -161,18 +161,18 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 <meta name="theme-color" content="#e9eef7">
 <link rel="manifest" href="{prefix}manifest.json">
 {font_link}
-<link rel="stylesheet" href="{prefix}style.css?v=20261123a">
-<link rel="stylesheet" href="{prefix}menu.css?v=20261123a">
+<link rel="stylesheet" href="{prefix}style.css?v=20261123b">
+<link rel="stylesheet" href="{prefix}menu.css?v=20261123b">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏭</text></svg>">
 {ld}
 </head>
 <body class="{page_cls}" data-variant="{variant}" data-prefix="{prefix}">
 {configured(body)}
 <script>window.JG_CONFIG={json.dumps(({k:v for k,v in DASH_CONFIG.items() if k not in ['whatsapp','followup_template','consent_text','save_failure']} if variant=='cc' else {k:v for k,v in DASH_CONFIG.items() if k not in ['consent_text','save_failure']}),ensure_ascii=False).replace(chr(60),chr(92)+'u003c')};</script>
-<script src="{prefix}app.js?v=20261123a" defer></script>
+<script src="{prefix}app.js?v=20261123b" defer></script>
 {share_script}
 {legacy_script}
-<script src="{prefix}pwa.js?v=20261123a" defer></script>
+<script src="{prefix}pwa.js?v=20261123b" defer></script>
 </body>
 </html>"""
 
@@ -659,11 +659,18 @@ if(segpay){
    segpay.querySelectorAll("button").forEach(function(x){x.classList.remove("on")});
    b.classList.add("on");
    segF.pay=b.getAttribute("data-pay");
-   if(jobsBox){jobsBox.style.display="";jobsBox.scrollIntoView({behavior:"smooth",block:"start"});}
+   if(jobsBox)jobsBox.style.display="";
    if(seg)seg.parentElement.style.display="";
    var hint2=document.querySelector(".scrollhint");if(hint2)hint2.style.display="";
    var lh=document.getElementById("segpayListH");
    if(lh){lh.textContent=b.getAttribute("data-pay")==="d"?"🏭 وظائف القبض اليومي (بدون سكن)":"🏭 وظائف القبض الشهري";lh.hidden=false}
+   if(jobsBox){
+    var topBar=document.querySelector(".top");
+    var off=(topBar?topBar.offsetHeight:0)+10;
+    var sy0=window.pageYOffset||document.documentElement.scrollTop||0;
+    var yy=jobsBox.getBoundingClientRect().top+sy0-off;
+    window.scrollTo({top:yy>0?yy:0,behavior:"smooth"});
+   }
    segApply();
   });
  });
