@@ -161,18 +161,18 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 <meta name="theme-color" content="#e9eef7">
 <link rel="manifest" href="{prefix}manifest.json">
 {font_link}
-<link rel="stylesheet" href="{prefix}style.css?v=20261121hours">
-<link rel="stylesheet" href="{prefix}menu.css?v=20261121hours">
+<link rel="stylesheet" href="{prefix}style.css?v=20261123a">
+<link rel="stylesheet" href="{prefix}menu.css?v=20261123a">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏭</text></svg>">
 {ld}
 </head>
 <body class="{page_cls}" data-variant="{variant}" data-prefix="{prefix}">
 {configured(body)}
 <script>window.JG_CONFIG={json.dumps(({k:v for k,v in DASH_CONFIG.items() if k not in ['whatsapp','followup_template','consent_text','save_failure']} if variant=='cc' else {k:v for k,v in DASH_CONFIG.items() if k not in ['consent_text','save_failure']}),ensure_ascii=False).replace(chr(60),chr(92)+'u003c')};</script>
-<script src="{prefix}app.js?v=20261121hours" defer></script>
+<script src="{prefix}app.js?v=20261123a" defer></script>
 {share_script}
 {legacy_script}
-<script src="{prefix}pwa.js?v=20261121hours" defer></script>
+<script src="{prefix}pwa.js?v=20261123a" defer></script>
 </body>
 </html>"""
 
