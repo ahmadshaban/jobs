@@ -392,7 +392,7 @@ body.pg-apply .hero-plain{padding:3px 48px 6px 0}
 body.pg-apply .handoff-progress p:empty{display:none}body .confirm-screen .form-close{float:right;margin:0 0 4px 6px;left:auto;right:0}
 
 /* Pending handoff is temporary, never retained on app return. */
-body.pg-apply .handoff-loading::before{content:'';display:inline-block;width:16px;height:16px;margin-inline-end:8px;border:2px solid #ffffff66;border-top-color:#fff;border-radius:50%;vertical-align:middle;animation:handoffSpin .8s linear infinite}
+body.pg-apply .handoff-loading::before{content:'';display:inline-block;width:20px;height:20px;margin-inline-end:9px;border:3px solid #ffffff55;border-top-color:#fff;border-right-color:#fff;border-radius:50%;vertical-align:middle;animation:handoffSpin .8s linear infinite}
 @keyframes handoffSpin{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){body.pg-apply .handoff-loading::before{animation:none}}
 body.pg-apply .transport-before-submit{padding:7px 9px}
