@@ -169,7 +169,7 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 <body class="{page_cls}" data-variant="{variant}" data-prefix="{prefix}">
 {configured(body)}
 <script>window.JG_CONFIG={json.dumps(({k:v for k,v in DASH_CONFIG.items() if k not in ['whatsapp','followup_template','consent_text','save_failure']} if variant=='cc' else {k:v for k,v in DASH_CONFIG.items() if k not in ['consent_text','save_failure']}),ensure_ascii=False).replace(chr(60),chr(92)+'u003c')};</script>
-<script src="{prefix}app.js?v=20261124shift" defer></script>
+<script src="{prefix}app.js?v=20261124grace" defer></script>
 {share_script}
 {legacy_script}
 <script src="{prefix}pwa.js?v=20261124copy" defer></script>
@@ -697,8 +697,8 @@ function reviewScreen(form,rows,transport,url){
  var saving=false,saved=false;next.removeAttribute("target");if(parent!==window)next.target="_top";
  next.addEventListener("click",async function(e){
   if(saving){e.preventDefault();return}if(saved)return;e.preventDefault();saving=true;next.setAttribute("aria-disabled","true");next.textContent="جاري التجهيز...";result.textContent="استنى لحظة، بنجهز تحويلك لواتساب";bypass.style.display="none";
-  var controller=new AbortController(),timer=setTimeout(function(){controller.abort()},25000);
-  try{var response=await fetch(APPLICANTS_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"registerApplicant",data:payload}),signal:controller.signal});if(!response.ok)throw Error("network");var data=await response.json();if(!data.ok)throw Error("save");saved=true;track("send",payload.job,payload.area);if(!screen.isConnected)return;result.textContent="واتساب هيفتح تلقائيًا. دوس إرسال هناك عشان نكمل معاك.";next.textContent="جاري تحويلك للواتساب";await new Promise(function(resolve){setTimeout(resolve,2000)});if(!screen.isConnected)return;if(parent!==window)top.location.assign(url);else location.assign(url)}
+  var controller,timer;
+  try{await new Promise(function(resolve){setTimeout(resolve,2000)});if(!screen.isConnected)return;controller=new AbortController();timer=setTimeout(function(){controller.abort()},25000);var response=await fetch(APPLICANTS_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"registerApplicant",data:payload}),signal:controller.signal});if(!response.ok)throw Error("network");var data=await response.json();if(!data.ok)throw Error("save");saved=true;track("send",payload.job,payload.area);if(!screen.isConnected)return;result.textContent="واتساب هيفتح تلقائيًا. دوس إرسال هناك عشان نكمل معاك.";next.textContent="جاري تحويلك للواتساب";if(parent!==window)top.location.assign(url);else location.assign(url)}
   catch(err){result.textContent="الخطوة ماكملتش. جرّب تاني أو افتح واتساب مباشرة. الرسالة لسه ما اتبعتتش.";next.textContent="جرّب تاني";bypass.style.display=""}
   finally{clearTimeout(timer);saving=false;next.removeAttribute("aria-disabled")}
  });
@@ -838,9 +838,9 @@ document.addEventListener("click",function(e){
     legacy_cc={"id":"/jobs/apps/cc","name":"Job Gate CC","short_name":"Job Gate CC","start_url":"./cc/index.html?app=cc","scope":"./cc/","display":"standalone","icons":[{"src":"cc/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"cc/icon-512.png","sizes":"512x512","type":"image/png"}]}
     with open(os.path.join(OUT,"manifest-cc.json"),"w",encoding="utf-8") as f:json.dump(legacy_cc,f,ensure_ascii=False)
     # Network-first caching replaces the old worker and labels offline copies.
-    sw = r"""const CACHE='jobgate-v23-'+new URL(self.registration.scope).pathname;
+    sw = r"""const CACHE='jobgate-v24-'+new URL(self.registration.scope).pathname;
 self.addEventListener('install',()=>self.skipWaiting());
-self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE&& !k.startsWith('jobgate-v23-'))await caches.delete(k);await self.clients.claim()})()));
+self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE&& !k.startsWith('jobgate-v24-'))await caches.delete(k);await self.clients.claim()})()));
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET'||new URL(e.request.url).origin!==self.location.origin)return;
 e.respondWith((async()=>{const c=await caches.open(CACHE);const asset=/\.(?:woff2|png|webp|css|js)$/.test(new URL(e.request.url).pathname);if(asset){const cached=await c.match(e.request);if(cached)return cached}try{const r=await fetch(e.request,{cache:"no-cache"});if(r.ok){await c.put(e.request,r.clone())}return r}catch(_){const saved=await c.match(e.request);if(saved)return saved;return new Response('<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>الاتصال بالإنترنت</title><body style="font:20px Tahoma;padding:32px;background:#F2F5F8;color:#0E5A40"><h1>أنت مش متصل بالنت</h1><p>الصفحة دي مش محفوظة. اتصل بالنت وحدّث الصفحة.</p></body></html>',{headers:{'Content-Type':'text/html;charset=utf-8'}})}})())});"""
     with open(os.path.join(OUT, "sw.js"), "w", encoding="utf-8") as f:f.write(sw)
