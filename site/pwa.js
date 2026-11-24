@@ -64,3 +64,19 @@
  };
  window.addEventListener('popstate',function(e){var wanted=e.state&&e.state.jgDialog;document.querySelectorAll('dialog[open][data-history-ready]').forEach(function(d){if(d.id!==wanted){skip.add(d);d.close()}});var d=wanted&&document.getElementById(wanted);if(d&&d instanceof HTMLDialogElement&&!d.open)show.call(d)});
 })();
+
+/* One final-home Back boundary. Inner pages and existing modal history stay native. */
+(function(){
+ if(!document.body.classList.contains('pg-home')||parent!==window)return;
+ var token=(history.state&&history.state.jgHomeExit)||('home_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2)),armed=!!(history.state&&history.state.jgHomeExit),screen=null,priorFocus=null;
+ function state(kind){var s=Object.assign({},history.state);delete s.jgMenu;delete s.jgDialog;delete s.jgApply;s.jgHomeExit=token;s.jgHomeBoundary=kind;return s}
+ function arm(){if(armed)return;armed=true;history.replaceState(state('base'),'',location.href);history.pushState(state('guard'),'',location.href)}
+ document.addEventListener('pointerdown',arm,{once:true,capture:true});document.addEventListener('keydown',arm,{once:true,capture:true});
+ function remove(){if(!screen)return;screen.remove();screen=null;document.documentElement.classList.remove('home-exit-lock');document.removeEventListener('keydown',keys,true);if(priorFocus&&priorFocus.isConnected)priorFocus.focus()}
+ function stay(){remove();history.pushState(state('guard'),'',location.href)}
+ function leave(){remove();history.back()}
+ function keys(e){if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();stay()}if(e.key==='Tab'&&screen){var xs=screen.querySelectorAll('button'),first=xs[0],last=xs[xs.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}}
+ function show(){if(screen)return;priorFocus=document.activeElement;screen=document.createElement('section');screen.className='home-exit-overlay';screen.id='homeExitConfirm';screen.setAttribute('role','dialog');screen.setAttribute('aria-modal','true');screen.setAttribute('aria-labelledby','homeExitNote');var card=document.createElement('div');card.className='home-exit-card';var close=document.createElement('button');close.type='button';close.className='home-exit-close';close.textContent='×';close.setAttribute('aria-label','قفل');close.onclick=stay;var note=document.createElement('p');note.id='homeExitNote';note.textContent='لو ملقيتش حاجة مناسبة حاليًا، تابع الموقع، بنضيف وظائف جديدة باستمرار.';var yes=document.createElement('button');yes.type='button';yes.className='btn btn-wa';yes.textContent='خروج';yes.onclick=leave;card.append(close,note,yes);screen.append(card);document.body.append(screen);document.documentElement.classList.add('home-exit-lock');document.addEventListener('keydown',keys,true);close.focus()}
+
+ window.addEventListener('popstate',function(e){var s=e.state;if(s&&s.jgHomeExit===token&&s.jgHomeBoundary==='base'&&!s.jgMenu&&!s.jgDialog&&!s.jgApply){show()}else remove()});
+})();
