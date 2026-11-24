@@ -169,10 +169,10 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 <body class="{page_cls}" data-variant="{variant}" data-prefix="{prefix}">
 {configured(body)}
 <script>window.JG_CONFIG={json.dumps(({k:v for k,v in DASH_CONFIG.items() if k not in ['whatsapp','followup_template','consent_text','save_failure']} if variant=='cc' else {k:v for k,v in DASH_CONFIG.items() if k not in ['consent_text','save_failure']}),ensure_ascii=False).replace(chr(60),chr(92)+'u003c')};</script>
-<script src="{prefix}app.js?v=20261124a" defer></script>
+<script src="{prefix}app.js?v=20261124copy" defer></script>
 {share_script}
 {legacy_script}
-<script src="{prefix}pwa.js?v=20261123b" defer></script>
+<script src="{prefix}pwa.js?v=20261124copy" defer></script>
 </body>
 </html>"""
 
@@ -682,10 +682,10 @@ function nameMismatch(n,req,label){var first=normalizedName(n),female="ليلي 
 function reviewScreen(form,rows,transport,url){
  var old=document.getElementById("confirmScreen");if(old)old.remove();
  var screen=document.createElement("section");screen.id="confirmScreen";screen.className="confirm-screen wrap";screen.setAttribute("aria-label","تأكيد بياناتك");document.body.classList.add("confirming");
- var card=document.createElement("div");card.className="panel";var title=document.createElement("h2");title.textContent="متأكد من بياناتك؟ لو تمام هنحولك على الواتساب";card.appendChild(title);
- var back=document.createElement("button");back.type="button";back.className="btn btn-ghost";back.textContent=cfg("confirm_back","ارجع عدّل");
- var next=document.createElement("a");next.href=url;next.target="_blank";next.rel="noopener";next.className="btn btn-wa";next.textContent=cfg("confirm_continue","كمل على واتساب");
- var hint=document.createElement("p");hint.className="hint";hint.textContent="بعد الضغط على كمل هيحولك على الواتساب ونكمل المتابعة معاك هناك";
+ var card=document.createElement("div");card.className="panel";var title=document.createElement("h2");title.textContent="بياناتك دي صح؟ لو تمام هيفتح واتساب";card.appendChild(title);
+ var back=document.createElement("button");back.type="button";back.className="btn btn-ghost";back.textContent=cfg("confirm_back","محتاج أغيّر حاجة");
+ var next=document.createElement("a");next.href=url;next.target="_blank";next.rel="noopener";next.className="btn btn-wa";next.textContent=cfg("confirm_continue","افتح واتساب عشان أبعت بياناتي");
+ var hint=document.createElement("p");hint.className="hint";hint.textContent="بعد ما تدوس زرار فتح واتساب، هيفتحلك واتساب ونكمل معاك هناك";
 
  var result=document.createElement("p");result.className="hint";result.setAttribute("role","status");card.appendChild(result);
  var bypass=document.createElement("a");bypass.href=url;bypass.className="btn btn-ghost";bypass.textContent="افتح واتساب مباشرة";bypass.style.display="none";if(parent!==window)bypass.target="_top";bypass.addEventListener("click",function(){track("send",payload.job,payload.area)});card.appendChild(bypass);

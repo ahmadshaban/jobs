@@ -333,7 +333,7 @@ mb.addEventListener("click",function(){if(dr.classList.contains("open"))return;h
         <label>الحالة<select id="apStatus"><option value="">كل الحالات</option></select></label>
         <div id="apDates" class="ap-dates hidden"><label>من<input id="apFrom" type="date"></label><label>لحد<input id="apTo" type="date"></label></div>
       </div>
-      <div class="ap-tools"><span id="apCount" role="status"></span><div><button class="btn ghost" id="apExport">Excel للنتيجة</button><button class="btn ghost" id="apExportAll">Excel للكل</button></div></div>
+      <div class="ap-tools"><span id="apCount" role="status"></span><div><button class="btn ghost" id="apExport">نزّل Excel (النتيجة دي)</button><button class="btn ghost" id="apExportAll">نزّل Excel (كل المسجلين)</button></div></div>
       <p id="apMessage" role="status"></p><div id="apList"></div>
     </div>
   </section>
@@ -358,18 +358,18 @@ mb.addEventListener("click",function(){if(dr.classList.contains("open"))return;h
 <div class="dash-page-title"><h1>الإحصائيات</h1><span class="dash-live-dot">بتوقيت القاهرة</span></div>
 <div class="dash-actions compact-stats-actions"><select id="dashStatsDays" aria-label="فترة الإحصائيات"><option value="1" selected>النهارده</option><option value="7">آخر 7 أيام</option><option value="30">آخر 30 يوم</option><option value="90">آخر 90 يوم</option><option value="365">آخر سنة</option></select><button class="btn" id="dashStatsRefresh">تحديث</button></div>
 <div id="dashTodayMetrics" class="dash-today-metrics"></div>
-<p id="dashStatsMessage" role="status"></p><p class="stats-footnote">الزائر مختلف حسب المتصفح، مش هوية مؤكدة. فتح واتساب مش تأكيد إرسال.</p>
+<p id="dashStatsMessage" role="status"></p><p class="stats-footnote">الأرقام تقريبية: الزائر بيتحسب حسب المتصفح مش بشخص مؤكد، وفتح واتساب مش معناه إن الرسالة اتبعتت.</p>
 <details class="dash-analytics-detail"><summary>أكتر الوظايف والتفاصيل</summary>
 <p id="dashApplicantsMessage" class="hint" role="status"></p><div class="dash-box"><h2>أكتر وظايف عليها تقديم مكتمل</h2><div id="dashRegisteredJobs"></div></div><div id="dashStatsMetrics" class="dash-stats-metrics"></div><button class="btn ghost" id="dashStatsExport">Excel للإحصائيات</button>
 <div class="dash-box"><h2>المصانع</h2><div id="dashStatsFactories"></div></div><div class="dash-box"><h2>الأيام</h2><div id="dashStatsDaysTable"></div></div><div class="dash-box"><h2>المناطق</h2><div id="dashStatsAreas"></div></div><div class="dash-box"><h2>مصادر الزيارات</h2><div id="dashStatsSources"></div></div><details class="dash-box"><summary>ساعات الزيارة بتوقيت القاهرة</summary><div id="dashHours"></div></details></details>
 </section>
 <section id="helpPanel" class="hidden dash-page">
-<h1>النشر والمساعدة</h1><div class="dash-box"><h2>حالة الموقع</h2><p>النصوص والشكل: احفظ وبعدين انشر. الوظايف ممكن تطلب تحديث الموقع تلقائيًا بعد حفظها. الحالات وكلمة السر بتتغير فورًا من غير نشر. راجع حالة النشر لحد ما تقول نجح.</p><p id="dashPublishStatus" role="status">اضغط مراجعة حالة النشر.</p><p id="dashDispatchStatus" class="hint" role="status"></p><div class="dash-actions"><button class="btn" id="dashPublish">نشر التغييرات</button><button class="btn ghost" id="dashCheckPublish">مراجعة حالة النشر</button><a class="btn ghost hidden" id="dashRunLink" target="_blank" rel="noopener">تفاصيل عملية النشر</a></div><p id="dashPublishNeeded" class="dash-note hidden">فيه إعدادات اتحفظت. انشر عشان تظهر على الموقع.</p><p id="dashDirty" class="hint">كل التعديلات محفوظة</p><button class="btn ghost" id="dashReload">إعادة تحميل الإعدادات المحفوظة</button></div>
-<div class="dash-box"><h2>نسخ احتياطية على جهازك</h2><p class="hint">نسخة الإعدادات من غير كلمات سر. نسخة المتقدمين فيها بيانات خاصة، ما تشاركهاش.</p><div class="dash-actions"><button class="btn ghost" id="dashBackupConfig">تنزيل إعدادات JSON</button><button class="btn ghost" id="dashBackupJobs">تنزيل بيانات الوظايف JSON</button><label class="btn ghost">تحميل إعدادات من نسخة<input id="dashImportConfig" type="file" accept="application/json,.json" hidden></label></div><p>لتنزيل المتقدمين، افتح قسم المتقدمين واضغط Excel للكل. استيراد الإعدادات للمعاينة فقط، راجع الإعدادات واحفظ كل التعديلات وبعدها انشر. استعادة الوظايف من JSON مش تلقائية، استخدمه كمرجع أو ارجع لسجل تعديلات الشيت.</p></div>
+<h1>النشر والمساعدة</h1><div class="dash-box"><h2>حالة الموقع</h2><p>النصوص والشكل: احفظ وبعدين انشر. الوظايف ممكن تطلب تحديث الموقع تلقائيًا بعد حفظها. الحالات وكلمة السر بتتغير فورًا من غير نشر. راجع حالة النشر لحد ما تقول نجح.</p><p id="dashPublishStatus" role="status">اضغط مراجعة حالة النشر.</p><p id="dashDispatchStatus" class="hint" role="status"></p><div class="dash-actions"><button class="btn" id="dashPublish">نشر التغييرات</button><button class="btn ghost" id="dashCheckPublish">مراجعة حالة النشر</button><a class="btn ghost hidden" id="dashRunLink" target="_blank" rel="noopener">تفاصيل عملية النشر</a></div><p id="dashPublishNeeded" class="dash-note hidden">فيه إعدادات اتحفظت. انشر عشان تظهر على الموقع.</p><p id="dashDirty" class="hint">كل التعديلات محفوظة</p><button class="btn ghost" id="dashReload">إلغاء التعديلات اللي ما اتحفظتش</button></div>
+<div class="dash-box"><h2>نسخ احتياطية على جهازك</h2><p class="hint">نسخة الإعدادات من غير كلمات سر. نسخة المتقدمين فيها بيانات خاصة، ما تشاركهاش.</p><div class="dash-actions"><button class="btn ghost" id="dashBackupConfig">نزّل نسخة من الإعدادات على جهازك</button><button class="btn ghost" id="dashBackupJobs">نزّل نسخة من بيانات الوظايف على جهازك</button><label class="btn ghost">افتح نسخة إعدادات قديمة للمراجعة<input id="dashImportConfig" type="file" accept="application/json,.json" hidden></label></div><p>لتنزيل المتقدمين، افتح قسم المتقدمين واضغط نزّل Excel (كل المسجلين). استيراد الإعدادات للمعاينة فقط، راجع الإعدادات واحفظ كل التعديلات وبعدها انشر. استرجاع الوظايف من الملف مش تلقائي، استخدمه كمرجع أو ارجع لسجل تعديلات الشيت.</p></div>
 <div class="dash-box"><h2>لو حاجة وقفت</h2><ol><li>حدّث الصفحة وجرب تدخل تاني.</li><li>لو تغيير مش ظاهر، احفظه وانشر وراجع إن النشر نجح.</li><li>لو نسيت كلمة سر اللوحة، افتح مشروع الإدارة من حساب Google المالك. من Project Settings، عدّل ADMIN_PASSWORD في Script Properties. ده ما بيغيرش كلمة سر Google.</li><li>لو تعديل وظيفة غلط، افتح الشيت وراجع سجل الإصدارات من «ملف» ثم «سجل الإصدارات».</li><li>لو حساب Google أو GitHub مش بيفتح، استخدم استرجاع الحساب من الخدمة نفسها.</li></ol></div>
 <div class="dash-box"><h2>روابط الإدارة الأصلية</h2><div class="dash-link-grid">
 <a href="https://ahmadshaban.github.io/jobs/" target="_blank" rel="noopener">الموقع الأساسي<small>النسخة اللي الناس بتشوفها</small></a><a href="https://ahmadshaban.github.io/jobs/cc/" target="_blank" rel="noopener">نسخة المشاركة CC<small>من غير رقمك، وغير مفهرسة</small></a>
-<a href="https://docs.google.com/spreadsheets/d/1Ri61Py0q36t2EdMCWXa0lgJGDWJfrXjY0gHmqnwS4AM/edit?gid=984725368#gid=984725368" target="_blank" rel="noopener">شيت الوظايف الأصلي<small>تحرير البيانات وسجل الإصدارات</small></a><a href="https://docs.google.com/spreadsheets/d/1TnpHfpad-BbwhSiUu3xL1zMOD-6oeSMcrqkzWCbmHvk/edit?gid=0#gid=0" target="_blank" rel="noopener">سجل المتقدمين الخاص<small>خليه Restricted، ما تشاركهوش</small></a>
+<a href="https://docs.google.com/spreadsheets/d/1Ri61Py0q36t2EdMCWXa0lgJGDWJfrXjY0gHmqnwS4AM/edit?gid=984725368#gid=984725368" target="_blank" rel="noopener">شيت الوظايف الأصلي<small>تحرير البيانات وسجل الإصدارات</small></a><a href="https://docs.google.com/spreadsheets/d/1TnpHfpad-BbwhSiUu3xL1zMOD-6oeSMcrqkzWCbmHvk/edit?gid=0#gid=0" target="_blank" rel="noopener">سجل المتقدمين الخاص<small>خليه خاص ومقيّد، ما تشاركهوش</small></a>
 <a href="https://github.com/ahmadshaban/jobs/actions" target="_blank" rel="noopener">GitHub والنشر<small>التشغيل وسجل عمليات النشر</small></a><a href="https://script.google.com/home/projects/1MB1zD9VkG5DVzOcCWx2SzAzInbINhMr4dnvmEDZno-7nK-YQifAEgnNr/edit" target="_blank" rel="noopener">مشروع الإدارة<small>الربط واسترجاع كلمة سر اللوحة</small></a>
 <a href="https://docs.google.com/spreadsheets/d/1xe0p2arTa_jN78H0pgucMr721PZZvxs9TAXVIwIL0T8/edit?pli=1&gid=0#gid=0" target="_blank" rel="noopener">سجل الإحصائيات<small>البيانات الأصلية</small></a>
 </div></div><div class="dash-actions"><button class="btn danger" id="dashLogout">تسجيل الخروج</button></div>
@@ -445,7 +445,7 @@ const T = {
   pwHint: 'كلمة السر',
   login: 'دخول',
   wrongPw: 'كلمة السر غلط',
-  noApi: 'حط رابط الـ Web app في ثابت API الأول',
+  noApi: 'حط الرابط الجديد في الخانة الأولى (API) في الكود',
   title: 'الوظايف',
   newJob: 'وظيفة جديدة',
   newCol: 'خانة جديدة',
@@ -455,7 +455,7 @@ const T = {
   edit: 'تعديل',
   hide: 'إخفاء',
   show: 'إظهار',
-  complete: 'اكتمل',
+  complete: 'اقفل التقديم عليها',
   reopen: 'إعادة فتح',
   del: 'مسح',
   doneBadge: 'مكتمل',
@@ -476,7 +476,7 @@ const T = {
   empty: 'مفيش وظايف',
   okMsg: 'تمت العملية بنجاح',
   errMsg: 'حصل خطأ: ',
-  netErr: 'مفيش اتصال بالسيرفر'
+  netErr: 'مفيش اتصال بالموقع، اتأكد من النت'
 };
 
 let headers = [], rows = [];
@@ -584,11 +584,11 @@ async function api(action, extra){
       body:JSON.stringify(Object.assign({password:savedPassword(), action}, extra||{})),
       signal:controller.signal
     });
-    if (!r.ok) return {ok:false, error:'السيرفر رجّع خطأ (' + r.status + ')'};
+    if (!r.ok) return {ok:false, error:'الموقع رجّع خطأ (' + r.status + ')'};
     try {
       return await r.json();
     } catch(parseError) {
-      return {ok:false, error:'وصل رد غير مفهوم من السيرفر. جرّب التحديث بعد التأكد من الاتصال.'};
+      return {ok:false, error:'وصل رد مش مفهوم من الموقع. اتأكد من النت ودوس تحديث.'};
     }
   }catch(e){
     if (e && e.name === 'AbortError') {
@@ -1160,7 +1160,7 @@ function openForm(r, asCopy){
       const was = src ? (String(src.values[i] ?? '').trim() || String(src.values[headers.indexOf(COL.salary)] ?? '').trim()) : '';
       if (was) hint = '<small class="oldhint">المرتب القديم: ' + esc(was) + '</small>';
     }
-    const clr = (h === COL.factory || h === COL.visible) ? '' : '<button type="button" class="btn danger clr" data-clr="' + i + '">مسح</button>' + (input.indexOf('data-ph=') >= 0 ? '<button type="button" class="btn ghost optb" data-opt="' + i + '">✕ تنضيف الاختيارات</button>' : '');
+    const clr = (h === COL.factory || h === COL.visible) ? '' : '<button type="button" class="btn danger clr" data-clr="' + i + '">مسح</button>' + (input.indexOf('data-ph=') >= 0 ? '<button type="button" class="btn ghost optb" data-opt="' + i + '">شيل الاختيارات الزيادة</button>' : '');
     return '<label>' + esc(h) + input + hint + clr + '</label>';
   }).join('');
 
@@ -1339,6 +1339,6 @@ function init(){
 }
 init();
 </script>
-<script>(function(){function addClose(){var pairs={modal:'fCancel',salDlg:'salCancel',colDlg:'colCancel',optDlg:'optClose',ordDlg:'ordCancel',askDlg:'askNo'};Object.keys(pairs).forEach(function(id){var layer=document.getElementById(id);if(!layer||layer.querySelector('.layer-close'))return;var target=document.getElementById(pairs[id]);if(!target)return;var x=document.createElement('button');x.type='button';x.className='form-close layer-close';x.setAttribute('aria-label','قفل والرجوع');x.textContent='✕';x.onclick=function(){target.click()};(layer.querySelector('.sheet,.box')||layer).prepend(x)})}new MutationObserver(addClose).observe(document.body,{childList:true,subtree:true});addClose()})();</script><script src="applicants-admin.js?v=20261121dashboard"></script><script src="dashboard-admin.js?v=20261121recruitment"></script><script src="pwa.js?v=20261121recruitment" defer></script>
+<script>(function(){function addClose(){var pairs={modal:'fCancel',salDlg:'salCancel',colDlg:'colCancel',optDlg:'optClose',ordDlg:'ordCancel',askDlg:'askNo'};Object.keys(pairs).forEach(function(id){var layer=document.getElementById(id);if(!layer||layer.querySelector('.layer-close'))return;var target=document.getElementById(pairs[id]);if(!target)return;var x=document.createElement('button');x.type='button';x.className='form-close layer-close';x.setAttribute('aria-label','قفل والرجوع');x.textContent='✕';x.onclick=function(){target.click()};(layer.querySelector('.sheet,.box')||layer).prepend(x)})}new MutationObserver(addClose).observe(document.body,{childList:true,subtree:true});addClose()})();</script><script src="applicants-admin.js?v=20261124copy"></script><script src="dashboard-admin.js?v=20261124copy"></script><script src="pwa.js?v=20261124copy" defer></script>
 </body>
 </html>
