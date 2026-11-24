@@ -119,7 +119,7 @@ def wa_apply_link(j, shifts_line=None):
     import urllib.parse
     return "https://wa.me/" + PHONE + "?text=" + urllib.parse.quote("\n".join(lines))
 
-def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=False, og_title=None, page_cls=""):
+def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=False, og_title=None, page_cls="", share_main=False):
     name = SITE_NAME_CC if variant == "cc" else SITE_NAME
     if variant == "cc":
         for ph in ["+"+PHONE,PHONE,"0"+PHONE[2:]]:
@@ -130,7 +130,7 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
     robots = '<meta name="robots" content="noindex,nofollow">' if noindex else ""
     preview_image = ""
     share_title, share_desc = og_title or title, desc
-    if page_cls == "pg-home":
+    if page_cls == "pg-home" or share_main:
         share_title = "بوابة الوظائف"
         share_desc = "شوف الوظايف المتاحة وقدّم من الموقع"
         image_url = SITE_BASE + "jobs-preview-worker-compact-20261121.jpg"
@@ -893,7 +893,7 @@ $('ccSend').onclick=function(){
     body += footer()
     desc = "كول سنتر تسويق وظائف، أونلاين من الموبايل بنظام العمولة لتوظيف عمال المصانع. قدّم على الواتساب."
     doc = layout("كول سنتر تسويق وظائف | " + SITE_NAME, desc, body, "../", "main",
-                 SITE_BASE + "cc-jobs/", page_cls="pg-job")
+                 SITE_BASE + "cc-jobs/", page_cls="pg-job", share_main=True)
     with open(os.path.join(cdir, "index.html"), "w", encoding="utf-8") as f:
         f.write(doc)
 
