@@ -130,7 +130,7 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
     robots = '<meta name="robots" content="noindex,nofollow">' if noindex else ""
     preview_image = ""
     share_title, share_desc = og_title or title, desc
-    if variant == "main" and page_cls == "pg-home":
+    if page_cls == "pg-home":
         share_title = "بوابة الوظائف"
         share_desc = "شوف الوظايف المتاحة وقدّم من الموقع"
         image_url = SITE_BASE + "jobs-preview-worker-compact-20261121.jpg"
