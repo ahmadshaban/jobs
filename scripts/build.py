@@ -161,7 +161,7 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 <meta name="theme-color" content="#e9eef7">
 <link rel="manifest" href="{prefix}manifest.json">
 {font_link}
-<link rel="stylesheet" href="{prefix}style.css?v=20261123b">
+<link rel="stylesheet" href="{prefix}style.css?v=20261124review">
 <link rel="stylesheet" href="{prefix}menu.css?v=20261123b">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏭</text></svg>">
 {ld}
@@ -169,7 +169,7 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 <body class="{page_cls}" data-variant="{variant}" data-prefix="{prefix}">
 {configured(body)}
 <script>window.JG_CONFIG={json.dumps(({k:v for k,v in DASH_CONFIG.items() if k not in ['whatsapp','followup_template','consent_text','save_failure']} if variant=='cc' else {k:v for k,v in DASH_CONFIG.items() if k not in ['consent_text','save_failure']}),ensure_ascii=False).replace(chr(60),chr(92)+'u003c')};</script>
-<script src="{prefix}app.js?v=20261124copy" defer></script>
+<script src="{prefix}app.js?v=20261124review" defer></script>
 {share_script}
 {legacy_script}
 <script src="{prefix}pwa.js?v=20261124copy" defer></script>
@@ -682,11 +682,13 @@ function nameMismatch(n,req,label){var first=normalizedName(n),female="ليلي 
 function reviewScreen(form,rows,transport,url){
  var old=document.getElementById("confirmScreen");if(old)old.remove();
  var screen=document.createElement("section");screen.id="confirmScreen";screen.className="confirm-screen wrap";screen.setAttribute("aria-label","تأكيد بياناتك");document.body.classList.add("confirming");
- var card=document.createElement("div");card.className="panel";var title=document.createElement("h2");title.textContent="بياناتك دي صح؟ لو تمام هيفتح واتساب";card.appendChild(title);
- var back=document.createElement("button");back.type="button";back.className="btn btn-ghost";back.textContent=cfg("confirm_back","محتاج أغيّر حاجة");
- var next=document.createElement("a");next.href=url;next.target="_blank";next.rel="noopener";next.className="btn btn-wa";next.textContent=cfg("confirm_continue","افتح واتساب عشان أبعت بياناتي");
- var hint=document.createElement("p");hint.className="hint";hint.textContent="بعد ما تدوس زرار فتح واتساب، هيفتحلك واتساب ونكمل معاك هناك";
+ var card=document.createElement("div");card.className="panel";var title=document.createElement("h2");title.textContent=cfg("confirm_title","متأكد من البيانات اللي أنت دخلتها؟");card.appendChild(title);
+ var back=document.createElement("button");back.type="button";back.className="btn btn-ghost";back.textContent=cfg("confirm_back","لا، ثواني هرجع أتأكد تاني");
+ var next=document.createElement("a");next.href=url;next.target="_blank";next.rel="noopener";next.className="btn btn-wa";next.textContent=cfg("confirm_continue","آه متأكد، كمل على الواتساب");
+ var hint=document.createElement("p");hint.className="hint";hint.textContent=cfg("handoff_hint","واتساب هيفتح برسالتك جاهزة. دوس إرسال هناك عشان طلبك يوصل.");
 
+ var summary=document.createElement("div");summary.className="review-details";
+ rows.forEach(function(r){if(r[0]==="المرتب"||r[1]==null||String(r[1]).trim()==="")return;var line=document.createElement("div");line.className="cfrow";var label=document.createElement("span"),value=document.createElement("b");label.textContent=r[0]==="المصنع"?"الوظيفة":r[0];value.textContent=r[1];if(r[0]==="رقم الواتساب"||r[0]==="رقم واتساب")value.dir="ltr";line.append(label,value);summary.appendChild(line)});card.append(summary,hint);
  var result=document.createElement("p");result.className="hint";result.setAttribute("role","status");card.appendChild(result);
  var bypass=document.createElement("a");bypass.href=url;bypass.className="btn btn-ghost";bypass.textContent="افتح واتساب مباشرة";bypass.style.display="none";if(parent!==window)bypass.target="_top";bypass.addEventListener("click",function(){track("send",payload.job,payload.area)});card.appendChild(bypass);
  var values={};rows.forEach(function(r){values[r[0]]=r[1]});var apply=document.getElementById("applyBtn");
@@ -701,7 +703,7 @@ function reviewScreen(form,rows,transport,url){
   finally{clearTimeout(timer);saving=false;next.removeAttribute("aria-disabled")}
  });
 
- var close=back;card.append(back,next);screen.appendChild(card);form.closest(".wrap").after(screen);
+ var close=back;card.append(next,back);screen.appendChild(card);form.closest(".wrap").after(screen);
  document.body.appendChild(screen);var priorFocus=document.activeElement;document.documentElement.classList.add("review-lock");screen.setAttribute("role","dialog");screen.setAttribute("aria-modal","true");close.focus();
  function restore(){document.body.classList.remove("confirming");document.documentElement.classList.remove("review-lock");screen.remove();window.removeEventListener("popstate",onBack);document.removeEventListener("keydown",onKey);if(priorFocus)priorFocus.focus()}function onBack(){restore()}function onKey(e){if(e.key==="Escape"){e.preventDefault();history.back()}if(e.key==="Tab"){var xs=Array.from(screen.querySelectorAll("button,a[href]")).filter(x=>x.offsetParent!==null),first=xs[0],last=xs[xs.length-1];if(e.shiftKey&&document.activeElement===first){last.focus();e.preventDefault()}else if(!e.shiftKey&&document.activeElement===last){first.focus();e.preventDefault()}}}history.pushState(Object.assign({},history.state,{jgConfirm:true}),"",location.href);window.addEventListener("popstate",onBack);document.addEventListener("keydown",onKey);back.onclick=close.onclick=function(){if(history.state&&history.state.jgConfirm)history.back();else restore()};
 
@@ -775,7 +777,7 @@ if(btn){
   var text=tpl(cfg('application_template',L.join("\n")),{name:n,age:a,phone:t,area:btn.getAttribute('data-area'),job:btn.getAttribute('data-factory'),shift:shift,salary:pay,company:CFG.company_name||'',source:SRC});if(SRC&&!text.includes(SRC))text+='\nالمصدر: '+SRC;
   var u="https://wa.me/"+(CFG.whatsapp||btn.getAttribute("data-phone"))+"?text="+encodeURIComponent(text);
   var transport=btn.getAttribute("data-notice");
-  reviewScreen(document.getElementById("apply"),[["الاسم",n],["السن",a],["رقم الواتساب",t],["المصنع",btn.getAttribute("data-factory")],["الوردية",shift],["المرتب",pay]],transport,u);
+  reviewScreen(document.getElementById("apply"),[["المصنع",btn.getAttribute("data-factory")],["المكان",btn.getAttribute("data-area")],["الوردية",shift],["الاسم",n],["السن",a],["رقم الواتساب",t],["المرتب",pay]],transport,u);
  });
 }
 
@@ -884,7 +886,7 @@ $('ccSend').onclick=function(){
  if(!x)return fail('c_x','اختار آه أو لا');if(x==='آه'&&!c)return fail('c_c','اكتب اسم الشركة');
  ['c_n','c_a','c_t','c_x','c_c'].forEach(function(id){fieldError(id,'')});
  var L=['السلام عليكم، محتاج التفاصيل عن وظيفة مسوق بالعمولة (فريق التوظيف أونلاين)','الاسم: '+n,'السن: '+a,'رقم الواتساب: '+p,'اشتغلت الشغل ده قبل كده: '+x];if(x==='آه')L.push('الشركة: '+c);
- window.jgReviewScreen($('ccApply'),[['الاسم',n],['السن',a],['رقم الواتساب',p],['الوظيفة','كول سنتر تسويق وظائف'],['نظام الشغل','أونلاين من الموبايل'],['المقابل','بالعمولة'],['اشتغلت قبل كده؟',x]],'الشغل ده أونلاين من الموبايل، مفيش انتقال لمصنع ولا مواصلات.', 'https://wa.me/'+(JG_CONFIG.whatsapp||'__PHONE__')+'?text='+encodeURIComponent(window.jgTemplate(JG_CONFIG.cc_application_template||L.join('\n'),{name:n,age:a,phone:p,job:'كول سنتر تسويق وظائف',experience:x,previous_company:c,company:JG_CONFIG.company_name||''})));
+ window.jgReviewScreen($('ccApply'),[['الاسم',n],['السن',a],['رقم الواتساب',p],['الوظيفة','كول سنتر تسويق وظائف'],['نظام الشغل','أونلاين من الموبايل'],['المقابل','بالعمولة'],['اشتغلت قبل كده؟',x],['الشركة',c]],'الشغل ده أونلاين من الموبايل، مفيش انتقال لمصنع ولا مواصلات.', 'https://wa.me/'+(JG_CONFIG.whatsapp||'__PHONE__')+'?text='+encodeURIComponent(window.jgTemplate(JG_CONFIG.cc_application_template||L.join('\n'),{name:n,age:a,phone:p,job:'كول سنتر تسويق وظائف',experience:x,previous_company:c,company:JG_CONFIG.company_name||''})));
 };
 
 })();
