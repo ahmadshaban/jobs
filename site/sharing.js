@@ -10,6 +10,7 @@ function copy(txt){
 }
 function manual(txt){var d=document.createElement('dialog');d.className='cfov';var b=document.createElement('div');b.className='cfsheet';var p=document.createElement('p');p.textContent='اضغط مطوّل على النص وحدد الكل وانسخ';var ta=document.createElement('textarea');ta.value=txt;ta.style.cssText='width:100%;min-height:220px;font:inherit';var x=document.createElement('button');x.className='btn btn-ghost2';x.textContent='✕ قفل';x.setAttribute('aria-label','قفل');function shut(){d.remove();window.removeEventListener('popstate',shut)}x.onclick=function(){history.back()};history.pushState({jgShare:true},'',location.href);window.addEventListener('popstate',shut);b.append(p,ta,x);d.appendChild(b);document.body.appendChild(d);d.showModal()}
 function pageLink(){return controls.getAttribute("data-link")||location.origin+location.pathname+location.search}
+function logShare(){try{if(window.jgTrack){var jm=document.getElementById('jobMeta');window.jgTrack('share',jm?jm.getAttribute('data-factory')||'':'',jm?jm.getAttribute('data-area')||'':'')}}catch(e){}}
 function text(){return records.map(function(r){return r.text}).join('\n\n────────────────\n\n')}
 async function canvasFor(r){
  await document.fonts.ready;
@@ -30,10 +31,10 @@ async function exportAll(share){
  message(records.length>1?'الصور جاهزة، احفظ كل صورة من الزرار اللي تحتها':'الصورة جاهزة');
 }
 controls.addEventListener('click',async function(e){var b=e.target.closest('[data-share]');if(!b)return;var op=b.getAttribute('data-share');try{
- if(op==='link')copy(pageLink());
- if(op==='text')copy(text());
- if(op==='image')await exportAll(false);
- if(op==='share-image')await exportAll(true);
- if(op==='share'){if(navigator.share){try{await navigator.share({title:title,text:text(),url:pageLink()});message('اتفتحت اختيارات المشاركة')}catch(err){if(err.name==='AbortError')message('المشاركة اتلغت');else manual(text())}}else manual(text())}
+ if(op==='link'){copy(pageLink());logShare()}
+ if(op==='text'){copy(text());logShare()}
+ if(op==='image')await exportAll(false)
+ if(op==='share-image')await exportAll(true)
+ if(op==='share'){var shared=false;if(navigator.share){try{await navigator.share({title:title,text:text(),url:pageLink()});message('اتفتحت اختيارات المشاركة');shared=true}catch(err){if(err.name==='AbortError')message('المشاركة اتلغت');else{manual(text());shared=true}}}else{manual(text());shared=true}if(shared)logShare()}
 }catch(err){message('التجهيز ماكملش، جرب تاني أو انسخ النص')}});
 })();

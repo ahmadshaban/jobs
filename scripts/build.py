@@ -125,7 +125,7 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
         for ph in ["+"+PHONE,PHONE,"0"+PHONE[2:]]:
             body=body.replace(ph,"")
     font_link = f'<link rel="preload" href="{prefix}fonts/tajawal-700.woff2" as="font" type="font/woff2" crossorigin>' if DASH_CONFIG.get('font_family','Tajawal')=='Tajawal' else f'<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family={esc(DASH_CONFIG.get("font_family","Tajawal"))}:wght@600;700;800;900&display=swap">'
-    share_script = f'<script src="{prefix}sharing.js?v=20261121f" defer></script>' if 'data-share-tools' in body else ''
+    share_script = f'<script src="{prefix}sharing.js?v=20261124a" defer></script>' if 'data-share-tools' in body else ''
     legacy_script = f'<script src="{prefix}legacy.js" defer></script>' if page_cls=='pg-home' else ''
     robots = '<meta name="robots" content="noindex,nofollow">' if noindex else ""
     preview_image = ""
@@ -169,7 +169,7 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 <body class="{page_cls}" data-variant="{variant}" data-prefix="{prefix}">
 {configured(body)}
 <script>window.JG_CONFIG={json.dumps(({k:v for k,v in DASH_CONFIG.items() if k not in ['whatsapp','followup_template','consent_text','save_failure']} if variant=='cc' else {k:v for k,v in DASH_CONFIG.items() if k not in ['consent_text','save_failure']}),ensure_ascii=False).replace(chr(60),chr(92)+'u003c')};</script>
-<script src="{prefix}app.js?v=20261123b" defer></script>
+<script src="{prefix}app.js?v=20261124a" defer></script>
 {share_script}
 {legacy_script}
 <script src="{prefix}pwa.js?v=20261123b" defer></script>
@@ -615,7 +615,7 @@ var STATS_URL="__STATS_URL__";
 var CFG=window.JG_CONFIG||{};
 function tpl(s,v){return String(s||"").replace(/\{([a-z_]+)\}/g,function(_,k){return v[k]==null?"":v[k]})}
 function cfg(k,f){return CFG[k]||f}
-window.jgTemplate=tpl;window.jgConfig=cfg;
+window.jgTemplate=tpl;window.jgConfig=cfg;window.jgTrack=track;
 var APPLICANTS_API="https://script.google.com/macros/s/AKfycbzwMRST469OBo-ym0Ccn-Ot84jGrL0KEM9SZcnfe-tip2U6-1gyryjnYxdNNsiwbLEyng/exec";
 var SRC=(function(){var v="";try{v=(new URLSearchParams(location.search).get("src")||"").replace(/[\r\n]/g," ").trim().slice(0,30)}catch(e){}
  try{if(v)sessionStorage.setItem("jobsrc",v);else v=sessionStorage.getItem("jobsrc")||""}catch(e){}return v})();
@@ -630,6 +630,7 @@ function track(t,f,r){try{
 }catch(e){}}
 track("visit");
 var jm=document.getElementById("jobMeta");if(jm)track("view",jm.getAttribute("data-factory"),jm.getAttribute("data-area"));
+document.addEventListener("click",function(e){var a=e.target.closest('a[href^="tel:"]');if(!a)return;var jm2=document.getElementById("jobMeta");track("call",jm2?jm2.getAttribute("data-factory"):"",jm2?jm2.getAttribute("data-area"):"")});
 /* فلتر شباب / بنات */
 var segF={cat:"all",pay:"all"};
 function segApply(){document.querySelectorAll("#jobs .job").forEach(function(card){
@@ -687,7 +688,7 @@ function reviewScreen(form,rows,transport,url){
  var hint=document.createElement("p");hint.className="hint";hint.textContent="بعد الضغط على كمل هيحولك على الواتساب ونكمل المتابعة معاك هناك";
 
  var result=document.createElement("p");result.className="hint";result.setAttribute("role","status");card.appendChild(result);
- var bypass=document.createElement("a");bypass.href=url;bypass.className="btn btn-ghost";bypass.textContent="افتح واتساب مباشرة";bypass.style.display="none";if(parent!==window)bypass.target="_top";card.appendChild(bypass);
+ var bypass=document.createElement("a");bypass.href=url;bypass.className="btn btn-ghost";bypass.textContent="افتح واتساب مباشرة";bypass.style.display="none";if(parent!==window)bypass.target="_top";bypass.addEventListener("click",function(){track("send",payload.job,payload.area)});card.appendChild(bypass);
  var values={};rows.forEach(function(r){values[r[0]]=r[1]});var apply=document.getElementById("applyBtn");
  var token="jg_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2);
  var payload={id:token,name:values["الاسم"],age:values["السن"],phone:values["رقم الواتساب"],job:values["المصنع"]||values["الوظيفة"],area:apply?apply.getAttribute("data-area"):"أونلاين",shift:values["الوردية"]||values["نظام الشغل"]||"",salary:values["المرتب"]||values["المقابل"]||"",source:SRC};
@@ -695,7 +696,7 @@ function reviewScreen(form,rows,transport,url){
  next.addEventListener("click",async function(e){
   if(saving){e.preventDefault();return}if(saved)return;e.preventDefault();saving=true;next.setAttribute("aria-disabled","true");next.textContent="جاري التجهيز...";result.textContent="استنى لحظة، بنجهز تحويلك لواتساب";bypass.style.display="none";
   var controller=new AbortController(),timer=setTimeout(function(){controller.abort()},25000);
-  try{var response=await fetch(APPLICANTS_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"registerApplicant",data:payload}),signal:controller.signal});if(!response.ok)throw Error("network");var data=await response.json();if(!data.ok)throw Error("save");saved=true;if(!screen.isConnected)return;result.textContent="واتساب هيفتح تلقائيًا. دوس إرسال هناك عشان نكمل معاك.";next.textContent="جاري تحويلك للواتساب";await new Promise(function(resolve){setTimeout(resolve,2000)});if(!screen.isConnected)return;if(parent!==window)top.location.assign(url);else location.assign(url)}
+  try{var response=await fetch(APPLICANTS_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"registerApplicant",data:payload}),signal:controller.signal});if(!response.ok)throw Error("network");var data=await response.json();if(!data.ok)throw Error("save");saved=true;track("send",payload.job,payload.area);if(!screen.isConnected)return;result.textContent="واتساب هيفتح تلقائيًا. دوس إرسال هناك عشان نكمل معاك.";next.textContent="جاري تحويلك للواتساب";await new Promise(function(resolve){setTimeout(resolve,2000)});if(!screen.isConnected)return;if(parent!==window)top.location.assign(url);else location.assign(url)}
   catch(err){result.textContent="الخطوة ماكملتش. جرّب تاني أو افتح واتساب مباشرة. الرسالة لسه ما اتبعتتش.";next.textContent="جرّب تاني";bypass.style.display=""}
   finally{clearTimeout(timer);saving=false;next.removeAttribute("aria-disabled")}
  });

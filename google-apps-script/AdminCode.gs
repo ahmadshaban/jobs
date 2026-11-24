@@ -8,6 +8,7 @@ function doGet(e) {
   const ss = SpreadsheetApp.getActive();
   if(e && e.parameter && e.parameter.action==='getConfig') return out(dashConfig_());
   if (e && e.parameter && e.parameter.action === 'getSettings') {
+    if (!adminPassword_() || String(e.parameter.key || '') !== adminPassword_()) return out({ ok: false, error: 'غير مصرح' });
     return out(cmdGetSettings(ss));
   }
   return out({ ok: true, message: 'الوسيط شغال' });
@@ -22,12 +23,12 @@ function doPost(e) {
     if(req.action==='getConfig') return out(dashConfig_());
     if(req.action === 'registerApplicant') return out(registerApplicant_(req.data));
 
+    const auth=adminAuth_(req);if(!auth.ok)return out(auth);
+    
     if (req.action === 'getSettings') {
       return out(cmdGetSettings(ss));
     }
 
-    const auth=adminAuth_(req);if(!auth.ok)return out(auth);
-    
     if (req.action === 'saveSettings') {
       return out(cmdSaveSettings(ss, req.settings));
     }
@@ -187,8 +188,9 @@ function out(obj) {
  *    - Event type: On edit
  * 5) سيب باقي الإعدادات زي ما هي واضغط Save
  *
- * ملحوظة: لو معملتش الخطوة دي خالص، الموقع بيتحدث لوحده كل 3 ساعات
- * من غير أي حاجة منك. السكريبت ده بيطلب تحديث إضافي بعد التعديل.
+ * ملحوظة: نتيجة كل طلب تحديث بتتسجل في Script Properties تحت LAST_DISPATCH،
+ * و«مراجعة حالة النشر» في لوحة الأدمن بتعرضها. لو طلب التحديث ما وصلش،
+ * اللوحة هتنبّهك وتقدر تعيد الطلب من زرار «نشر التغييرات».
  ****************************************************/
 
 // التوكن محفوظ في Script Properties، مش في الكود
@@ -197,11 +199,18 @@ function jobGateToken_(){return PropertiesService.getScriptProperties().getPrope
 // الريبو بتاع الموقع
 const GH_REPO = 'ahmadshaban/jobs';
 
-function onSheetEdit(e) {
-  const GH_TOKEN=jobGateToken_();
-  if (!GH_TOKEN) return;
+function recordDispatch_(ok, error) {
   try {
-    UrlFetchApp.fetch('https://api.github.com/repos/' + GH_REPO + '/dispatches', {
+    const stamp = Utilities.formatDate(new Date(), 'Africa/Cairo', 'yyyy-MM-dd HH:mm');
+    PropertiesService.getScriptProperties().setProperty('LAST_DISPATCH', JSON.stringify({ at: stamp, ok: !!ok, error: String(error || '').slice(0, 180) }));
+  } catch (x) {}
+}
+
+function dispatchPublish_() {
+  const GH_TOKEN=jobGateToken_();
+  if (!GH_TOKEN) return { ok: false, error: 'مفتاح الربط مع جيت هاب مش محفوظ' };
+  try {
+    const resp = UrlFetchApp.fetch('https://api.github.com/repos/' + GH_REPO + '/dispatches', {
       method: 'post',
       contentType: 'application/json',
       headers: {
@@ -212,7 +221,16 @@ function onSheetEdit(e) {
       payload: JSON.stringify({ event_type: 'sheet-edit' }),
       muteHttpExceptions: true
     });
-  } catch (err) { /* لو فشل، الجدولة كل 3 ساعات هتلم التعديل */ }
+    const code = resp.getResponseCode();
+    return code === 204 ? { ok: true } : { ok: false, error: 'جيت هاب رد بكود ' + code };
+  } catch (err) {
+    return { ok: false, error: String(err) };
+  }
+}
+
+function onSheetEdit(e) {
+  const r = dispatchPublish_();
+  recordDispatch_(r.ok, r.error);
 }
 
 function installJobGateTrigger(){var ss=SpreadsheetApp.openById('1UXAwDfIn3oxU68byv1I6dIrdQaKm2OXhhj7NoHlwRBU');if(!ScriptApp.getProjectTriggers().some(function(t){return t.getHandlerFunction()==='onSheetEdit'}))ScriptApp.newTrigger('onSheetEdit').forSpreadsheet(ss).onEdit().create();}
@@ -266,8 +284,8 @@ function dashSaveConfig_(data){
  const p=PropertiesService.getScriptProperties(),old=p.getProperty('DASH_CONFIG');if(old)p.setProperty('DASH_CONFIG_PREVIOUS',old);p.setProperty('DASH_CONFIG',raw);p.setProperty('DASH_CONFIG_AT',new Date().toISOString());return {ok:true,config:config,needs_publish:true};
 }
 function dashPassword_(req){const current=String(req.current_password||''),next=String(req.new_password||'');if(current!==adminPassword_())return {ok:false,error:'كلمة السر الحالية غلط'};if(next.length<8||next.length>128)return {ok:false,error:'كلمة السر من 8 إلى 128 حرف'};PropertiesService.getScriptProperties().setProperty('ADMIN_PASSWORD',next);return {ok:true};}
-function dashPublish_(){const token=jobGateToken_();if(!token)return {ok:false,error:'نشر الموقع غير متاح، افتح GitHub من المساعدة'};const r=UrlFetchApp.fetch('https://api.github.com/repos/'+GH_REPO+'/dispatches',{method:'post',contentType:'application/json',headers:{Authorization:'Bearer '+token,Accept:'application/vnd.github+json'},payload:JSON.stringify({event_type:'sheet-edit'}),muteHttpExceptions:true});return r.getResponseCode()===204?{ok:true,queued:true}:{ok:false,error:'تعذر طلب النشر، راجع GitHub'};}
-function dashPublishStatus_(){const token=jobGateToken_(),r=UrlFetchApp.fetch('https://api.github.com/repos/'+GH_REPO+'/actions/workflows/build-site.yml/runs?per_page=1',{headers:{Authorization:'Bearer '+token,Accept:'application/vnd.github+json'},muteHttpExceptions:true});if(r.getResponseCode()!==200)return {ok:false,error:'تعذر قراءة حالة النشر'};const run=JSON.parse(r.getContentText()).workflow_runs[0];return {ok:true,run:run?{status:run.status,conclusion:run.conclusion,url:run.html_url,updated_at:run.updated_at}:null};}
+function dashPublish_(){const token=jobGateToken_();if(!token)return {ok:false,error:'نشر الموقع غير متاح، افتح GitHub من المساعدة'};const r=dispatchPublish_();recordDispatch_(r.ok,r.error);return r.ok?{ok:true,queued:true}:{ok:false,error:'تعذر طلب النشر، راجع GitHub'+(r.error?' ('+r.error+')':'')};}
+function dashPublishStatus_(){const token=jobGateToken_(),r=UrlFetchApp.fetch('https://api.github.com/repos/'+GH_REPO+'/actions/workflows/build-site.yml/runs?per_page=1',{headers:{Authorization:'Bearer '+token,Accept:'application/vnd.github+json'},muteHttpExceptions:true});if(r.getResponseCode()!==200)return {ok:false,error:'تعذر قراءة حالة النشر'};const run=JSON.parse(r.getContentText()).workflow_runs[0];let dispatch=null;try{dispatch=JSON.parse(PropertiesService.getScriptProperties().getProperty('LAST_DISPATCH')||'null')}catch(e){}return {ok:true,run:run?{status:run.status,conclusion:run.conclusion,url:run.html_url,updated_at:run.updated_at}:null,dispatch:dispatch};}
 
 function dashboardAnalyticsSheet_(){return SpreadsheetApp.openById('1xe0p2arTa_jN78H0pgucMr721PZZvxs9TAXVIwIL0T8').getSheetByName('log');}
 const DASH_TZ='Africa/Cairo';
