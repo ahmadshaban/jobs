@@ -161,15 +161,15 @@ def layout(title, desc, body, prefix, variant, canonical, json_ld=None, noindex=
 <meta name="theme-color" content="#e9eef7">
 <link rel="manifest" href="{prefix}manifest.json">
 {font_link}
-<link rel="stylesheet" href="{prefix}style.css?v=20261124review">
-<link rel="stylesheet" href="{prefix}menu.css?v=20261123b">
+<link rel="stylesheet" href="{prefix}style.css?v=20261124single">
+<link rel="stylesheet" href="{prefix}menu.css?v=20261124right">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏭</text></svg>">
 {ld}
 </head>
 <body class="{page_cls}" data-variant="{variant}" data-prefix="{prefix}">
 {configured(body)}
 <script>window.JG_CONFIG={json.dumps(({k:v for k,v in DASH_CONFIG.items() if k not in ['whatsapp','followup_template','consent_text','save_failure']} if variant=='cc' else {k:v for k,v in DASH_CONFIG.items() if k not in ['consent_text','save_failure']}),ensure_ascii=False).replace(chr(60),chr(92)+'u003c')};</script>
-<script src="{prefix}app.js?v=20261124grace" defer></script>
+<script src="{prefix}app.js?v=20261124single" defer></script>
 {share_script}
 {legacy_script}
 <script src="{prefix}pwa.js?v=20261124copy" defer></script>
@@ -473,14 +473,15 @@ def build_apply_page(j, root, prefix_depth="../../"):
 <h2>📝 بياناتك</h2>
 <div class="field"><label for="f_n">👤 اسمك ثلاثي<em class="req">*</em></label><div class="err" id="e_n"></div><input id="f_n" autocomplete="name" placeholder="مثال: محمد أحمد علي"><small class="hint">اكتب اسمك ثلاثي زي البطاقة</small></div>
 <div class="field"><label for="f_a">🔢 سنك<em class="req">*</em></label><div class="err" id="e_a"></div><input id="f_a" inputmode="numeric" maxlength="2" placeholder="مثال: 25"><small class="hint">{age_hint2}</small></div>
-<div class="field"><label for="f_t">📲 رقم الواتساب بتاعك<em class="req">*</em></label><div class="err" id="e_t"></div><input id="f_t" type="tel" inputmode="tel" maxlength="15" placeholder="01XXXXXXXXX"><small class="hint">اكتب رقم فيه واتساب</small></div>
+<div class="field"><label for="f_t">📲 رقم الواتساب<em class="req">*</em></label><div class="err" id="e_t"></div><input id="f_t" type="tel" inputmode="tel" maxlength="15" placeholder="01XXXXXXXXX"><small class="hint">اكتب رقم فيه واتساب</small></div>
 
 <p class="same-day-note">ملاحظة: المقابلة واستلام الشغل في نفس اليوم، مش مضطر تروح وترجع تاني.</p>
 {transport_form_notice(j)}
+<div class="sub" id="handoffNote">راجع بياناتك قبل التقديم. واتساب هيفتح برسالتك جاهزة، ابعتها عشان نتابع معاك.</div>
 <a class="btn btn-wa" id="applyBtn" href="{esc(wa_direct)}" rel="nofollow"
  data-gender="{esc(j.get("الفئة"))}" data-phone="{PHONE}" data-area="{esc(j.get('المنطقة'))}" data-factory="{esc(j.get('المصنع'))}" data-sal="{esc(salary_line(j))}" data-multi="{1 if multi else 0}"{age_attrs}>
-<span class="waic">✓</span> راجع بياناتك</a>
-<div class="sub" id="handoffNote" role="status">بعد التأكيد دوس إرسال في واتساب عشان طلبك يوصل.</div>
+<span class="waic">✓</span> قدّم دلوقتي وكمل على واتساب</a>
+
 </div></div>"""
     body += footer()
     doc = layout(f"قدّم على وظيفة {j.get('المصنع')} - {city} | {SITE_NAME}",
@@ -553,7 +554,7 @@ def build_job_page(j, root, variant, noindex):
 <div class="err" id="e_n"></div>
 <div class="field"><label for="f_a">🔢 سنك<em class="req">*</em></label><input id="f_a" inputmode="numeric" maxlength="2" placeholder="مثال: 25"><small class="hint">{age_hint}</small></div>
 <div class="err" id="e_a"></div>
-<div class="field"><label for="f_t">📲 رقم الواتساب بتاعك<em class="req">*</em></label><input id="f_t" type="tel" inputmode="tel" maxlength="15" placeholder="01XXXXXXXXX"><small class="hint">اكتب رقم فيه واتساب</small></div>
+<div class="field"><label for="f_t">📲 رقم الواتساب<em class="req">*</em></label><input id="f_t" type="tel" inputmode="tel" maxlength="15" placeholder="01XXXXXXXXX"><small class="hint">اكتب رقم فيه واتساب</small></div>
 <div class="err" id="e_t"></div>
 {transport_form_notice(j)}
 <a class="btn btn-wa" id="applyBtn" href="{esc(wa_direct)}" rel="nofollow"
@@ -679,6 +680,37 @@ if(segpay){
 
 function normalizedName(n){return String(n||"").trim().split(/\s+/)[0].replace(/[أإآ]/g,"ا").replace(/ى/g,"ي").replace(/[\u064B-\u065F\u0670ـ]/g,"")}
 function nameMismatch(n,req,label){var first=normalizedName(n),female="ليلي فاطمة فاطمه عائشة عايشة خديجة خديجه مريم زينب رقية رقيه اميرة اميره هبة هبه نجلاء شيماء اسماء دعاء اسراء منة منه ايمان سارة ساره سمية سميه بسمة بسمه ياسمين نادية ناديه شيرين حنان عبير ولاء صفاء امل دينا هاجر رحاب رانيا شروق",male="احمد محمد محمود مصطفي ابراهيم اسماعيل اسحق يوسف يونس يحيي موسي عيسي ادم عمر عمرو عثمان خالد وليد سعيد سامح سمير شريف اشرف ايمن طارق حسن حسين حسام كريم هيثم معتز مجدي حمدي عادل صبري منصور فؤاد نبيل صلاح رمضان رجب شعبان";var g=/بنات|إناث|اناث/.test(req||""),b=/شباب|ذكور|رجال/.test(req||"");if(b&&!g&&female.split(" ").indexOf(first)>=0)return label+" للشباب بس";if(g&&!b&&male.split(" ").indexOf(first)>=0)return label+" للبنات بس";return ""}
+function singleFormHandoff(form,rows,transport,url,existingPayload){
+ if(form.dataset.handoffBusy)return;
+ var next=document.getElementById('applyBtn'),original=next.innerHTML;
+ var values={};rows.forEach(function(r){values[r[0]]=r[1]});
+ var payload=existingPayload||{id:'jg_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2),name:values['الاسم'],age:values['السن'],phone:values['رقم الواتساب'],job:values['المصنع'],area:next.getAttribute('data-area'),shift:values['الوردية']||'',salary:values['المرتب']||'',source:SRC};
+ var box=document.createElement('div');box.className='handoff-progress';box.setAttribute('role','status');
+ var status=document.createElement('p');status.textContent='';
+ var cancel=document.createElement('button');cancel.type='button';cancel.className='btn btn-ghost';cancel.textContent='إلغاء والرجوع للبيانات';box.append(status,cancel);next.after(box);
+ var active=true,controller=null,timer=null,controls=Array.from(form.querySelectorAll('input'));
+ form.dataset.handoffBusy='1';controls.forEach(function(x){x.disabled=true});next.setAttribute('aria-disabled','true');next.textContent='جاري التحويل لواتساب...';
+ var shiftControls=Array.from(document.querySelectorAll('#shiftPick button:not([disabled])'));shiftControls.forEach(function(x){x.disabled=true});
+ function cleanup(){active=false;clearTimeout(timer);if(controller)controller.abort();delete form.dataset.handoffBusy;controls.concat(shiftControls).forEach(function(x){x.disabled=false});next.removeAttribute('aria-disabled');next.innerHTML=original;box.remove();window.removeEventListener('popstate',onBack);window.removeEventListener('pagehide',onLeave);document.removeEventListener('click',onClose,true);document.removeEventListener('keydown',onKey,true)}
+ function onBack(){cleanup();next.focus()}
+ function onLeave(){cleanup()}
+ function stop(){var back=history.state&&history.state.jgHandoff;cleanup();next.focus();if(back)history.back()}
+ function onClose(e){if(e.target.closest('.form-close,.bc2'))cleanup()}
+ function onKey(e){if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();stop()}}
+ if(!(history.state&&history.state.jgHandoff))history.pushState(Object.assign({},history.state,{jgHandoff:true}),'',location.href);window.addEventListener('popstate',onBack);window.addEventListener('pagehide',onLeave);document.addEventListener('click',onClose,true);document.addEventListener('keydown',onKey,true);cancel.onclick=stop;cancel.focus();
+ (async function(){try{
+  await new Promise(function(r){setTimeout(r,2000)});if(!active||!form.isConnected)return;
+  controller=new AbortController();timer=setTimeout(function(){controller.abort()},25000);
+  var response=await fetch(APPLICANTS_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'registerApplicant',data:payload}),signal:controller.signal});
+  if(!response.ok)throw Error('network');var data=await response.json();if(!data.ok)throw Error('save');
+  if(!active||!form.isConnected)return;track('send',payload.job,payload.area);status.textContent='واتساب هيفتح برسالتك جاهزة. دوس إرسال هناك عشان نكمل معاك.';
+  if(parent!==window)top.location.assign(url);else location.assign(url);
+ }catch(err){if(!active)return;status.textContent='الخطوة ماكملتش. جرّب تاني أو افتح واتساب مباشرة. الرسالة لسه ما اتبعتتش.';
+  var retry=document.createElement('button');retry.type='button';retry.className='btn btn-wa';retry.textContent='جرّب تاني';retry.onclick=function(){cleanup();singleFormHandoff(form,rows,transport,url,payload)};
+  var bypass=document.createElement('a');bypass.href=url;bypass.className='btn btn-ghost';bypass.textContent='افتح واتساب مباشرة';if(parent!==window)bypass.target='_top';bypass.onclick=function(){track('send',payload.job,payload.area)};box.insertBefore(retry,cancel);box.insertBefore(bypass,cancel);
+ }finally{clearTimeout(timer)}})();
+}
+
 function reviewScreen(form,rows,transport,url){
  var old=document.getElementById("confirmScreen");if(old)old.remove();
  var screen=document.createElement("section");screen.id="confirmScreen";screen.className="confirm-screen wrap";screen.setAttribute("aria-label","تأكيد بياناتك");document.body.classList.add("confirming");
@@ -780,7 +812,7 @@ if(btn){
   var text=tpl(cfg('application_template',L.join("\n")),{name:n,age:a,phone:t,area:btn.getAttribute('data-area'),job:btn.getAttribute('data-factory'),shift:shift,salary:pay,company:CFG.company_name||'',source:SRC});if(SRC&&!text.includes(SRC))text+='\nالمصدر: '+SRC;
   var u="https://wa.me/"+(CFG.whatsapp||btn.getAttribute("data-phone"))+"?text="+encodeURIComponent(text);
   var transport=btn.getAttribute("data-notice");
-  reviewScreen(document.getElementById("apply"),[["المصنع",btn.getAttribute("data-factory")],["المكان",btn.getAttribute("data-area")],["الوردية",shift],["الاسم",n],["السن",a],["رقم الواتساب",t],["المرتب",pay]],transport,u);
+  singleFormHandoff(document.getElementById("apply"),[["المصنع",btn.getAttribute("data-factory")],["المكان",btn.getAttribute("data-area")],["الوردية",shift],["الاسم",n],["السن",a],["رقم الواتساب",t],["المرتب",pay]],transport,u);
  });
 }
 
@@ -838,9 +870,9 @@ document.addEventListener("click",function(e){
     legacy_cc={"id":"/jobs/apps/cc","name":"Job Gate CC","short_name":"Job Gate CC","start_url":"./cc/index.html?app=cc","scope":"./cc/","display":"standalone","icons":[{"src":"cc/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"cc/icon-512.png","sizes":"512x512","type":"image/png"}]}
     with open(os.path.join(OUT,"manifest-cc.json"),"w",encoding="utf-8") as f:json.dump(legacy_cc,f,ensure_ascii=False)
     # Network-first caching replaces the old worker and labels offline copies.
-    sw = r"""const CACHE='jobgate-v24-'+new URL(self.registration.scope).pathname;
+    sw = r"""const CACHE='jobgate-v25-'+new URL(self.registration.scope).pathname;
 self.addEventListener('install',()=>self.skipWaiting());
-self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE&& !k.startsWith('jobgate-v24-'))await caches.delete(k);await self.clients.claim()})()));
+self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE&& !k.startsWith('jobgate-v25-'))await caches.delete(k);await self.clients.claim()})()));
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET'||new URL(e.request.url).origin!==self.location.origin)return;
 e.respondWith((async()=>{const c=await caches.open(CACHE);const asset=/\.(?:woff2|png|webp|css|js)$/.test(new URL(e.request.url).pathname);if(asset){const cached=await c.match(e.request);if(cached)return cached}try{const r=await fetch(e.request,{cache:"no-cache"});if(r.ok){await c.put(e.request,r.clone())}return r}catch(_){const saved=await c.match(e.request);if(saved)return saved;return new Response('<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>الاتصال بالإنترنت</title><body style="font:20px Tahoma;padding:32px;background:#F2F5F8;color:#0E5A40"><h1>أنت مش متصل بالنت</h1><p>الصفحة دي مش محفوظة. اتصل بالنت وحدّث الصفحة.</p></body></html>',{headers:{'Content-Type':'text/html;charset=utf-8'}})}})())});"""
     with open(os.path.join(OUT, "sw.js"), "w", encoding="utf-8") as f:f.write(sw)

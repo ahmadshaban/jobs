@@ -29,3 +29,6 @@ body .top .menu-btn{order:-3;margin-inline:0}
 body .top .brand{order:-2;margin:0}
 body .top .logo{order:-1}
 html body .drawer .menu-apply-hint{display:table;margin-top:3px;padding:1px 7px;border-radius:5px;background:#dceaff;color:#173f84;font-size:11px;line-height:1.5;white-space:nowrap}
+
+/* Existing dismiss X follows the right edge. */
+html body .drawer .d-head button{order:-1;width:44px!important;height:44px!important;min-width:44px!important}

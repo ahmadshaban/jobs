@@ -367,3 +367,26 @@ body .job:focus-visible{outline:3px solid #245a9f;outline-offset:3px}
 
 /* Compact entered-data review, matching the approved popup. */
 body .confirm-screen .cfrow{display:grid;grid-template-columns:90px minmax(0,1fr);gap:8px;font-size:14px;line-height:1.55;padding:6px 0;border-bottom:1px solid #dae3ef}body .confirm-screen .cfrow span{color:#5b6c80}body .confirm-screen .cfrow b{color:#17376a;overflow-wrap:anywhere}body .confirm-screen h2{font-size:18px;line-height:1.5}body .confirm-screen .hint{font-size:13px;line-height:1.6;color:#5b6c80;text-align:center;margin:10px 0}body .confirm-screen .btn{font-size:14px;line-height:1.5;width:100%;padding:10px 7px;min-height:48px}
+
+/* Approved compact factory form, existing controls and field requirements retained. */
+body.pg-apply{padding-top:6px;padding-bottom:8px;font-size:14px;line-height:1.45}
+body.pg-apply>.wrap{max-width:560px;padding-inline:12px}
+body.pg-apply .hero-plain{min-height:44px;padding-bottom:5px}
+body.pg-apply .hero-plain h1{font-size:16px}
+body.pg-apply .panel,body.pg-apply .apply-panel{margin:7px 0;padding:10px;border-radius:12px}
+body.pg-apply .field{margin:7px 0!important}
+body.pg-apply .field label{font-size:13px;margin-bottom:3px}
+body.pg-apply .field input{font-size:16px;height:44px;min-height:44px;padding:7px 10px}
+body.pg-apply .shift-opt{min-height:48px;padding:6px 5px;font-size:13px}
+body.pg-apply .shift-opt small{font-size:11px}
+body.pg-apply .same-day-note{margin:8px 0;padding:7px 9px;line-height:1.5}
+body.pg-apply .transport-before-submit{margin:8px 0;padding:8px 10px}
+body.pg-apply .transport-before-submit p{font-size:12px;line-height:1.55}
+body.pg-apply #applyBtn{min-height:46px;padding:10px;font-size:15px}
+body.pg-apply #handoffNote{font-size:11px;margin-top:4px;text-align:center}
+@keyframes jgFormOpen{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:no-preference){body .apply-layer{animation:jgFormOpen 180ms ease-out!important}body.pg-apply{animation:jgFormOpen 180ms ease-out!important}body.pg-apply #applyBtn:active{transform:scale(.985);transition:transform 90ms ease!important}}
+body.pg-apply .form-close{left:auto;right:12px;width:44px;height:44px}
+body.pg-apply .hero-plain{padding:3px 48px 6px 0}
+
+body.pg-apply .handoff-progress p:empty{display:none}body .confirm-screen .form-close{float:right;margin:0 0 4px 6px;left:auto;right:0}
