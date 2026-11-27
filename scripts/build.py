@@ -113,7 +113,7 @@ def wa_apply_link(j, shifts_line=None):
     """لينك واتساب جاهز برسالة فيها بيانات الوظيفة (الفورم يكمّل الاسم والسن والرقم)."""
     lines = ["السلام عليكم، عايز أقدم على الوظيفة دي:",
              "📍 *المكان:* " + j.get("المنطقة", ""),
-             "🏭 *المصنع:* " + j.get("المصنع", "")]
+             "🏭 *المصنع:* " + jtitle(j)]
     sal = salary_line(j).replace(" في الشهر", "")
     if sal: lines.append("💰 *المرتب:* " + sal)
     import urllib.parse
@@ -251,6 +251,48 @@ def card_salary_html(j):
         result += '<small>أو '+esc(alt.replace(" في الشهر", ""))+' (26 يوم + 4 إجازة)</small>'
     return result+'</div>'
 
+def jtitle(j):
+    """اسم الوظيفة اللي بيتعرض للعامل — بيتزوّد عليه فرق لو الاسم متكرر في نفس المنطقة."""
+    return j.get("__title") or j.get("المصنع") or ""
+
+def dup_qualifier(j, same):
+    """أول حاجة بتفرّق الوظيفة عن اللي شبهها: الفئة، بعدها نظام القبض، بعدها السكن، بعدها الوردية."""
+    others = [o for o in same if o is not j]
+    cat = (j.get("الفئة") or "").strip()
+    if cat and all(cat != (o.get("الفئة") or "").strip() for o in others):
+        return cat
+    pay = "قبض يومي" if is_daily(j) else "قبض شهري"
+    if all(pay != ("قبض يومي" if is_daily(o) else "قبض شهري") for o in others):
+        return pay
+    house = (j.get("السكن") or "").strip()
+    if house and all(house != (o.get("السكن") or "").strip() for o in others):
+        if house.startswith("متوفر"):
+            return "سكن متوفر"
+        if house.startswith("غير"):
+            return "بدون سكن"
+        return house
+    hours = card_hours_label(j)
+    if hours and all(hours != card_hours_label(o) for o in others):
+        return hours
+    return ""
+
+def mark_duplicate_titles(js):
+    """لو نفس اسم المصنع متكرر في نفس المنطقة، زوّد فرق بسيط في العنوان عشان العامل يفرّق الكروت."""
+    by_name = {}
+    for j in js:
+        by_name.setdefault((j.get("المصنع") or "").strip(), []).append(j)
+    for name, same in by_name.items():
+        for j in same:
+            j.pop("__title", None)
+        if len(same) < 2 or not name:
+            continue
+        for j in same:
+            q = dup_qualifier(j, same)
+            if q:
+                j["__title"] = f"{name} - {q}"
+            else:
+                print("تحذير: وظيفتين بنفس الاسم ونفس البيانات:", name)
+
 def job_card(j, prefix):
     sal_html = card_salary_html(j)
     hours = card_hours_label(j)
@@ -258,7 +300,7 @@ def job_card(j, prefix):
     cat = "b" if ("بنات" in j.get("الفئة","") and "شباب" in j.get("الفئة","")) else ("g" if "بنات" in j.get("الفئة","") else "m")
     pay = "d" if is_daily(j) else "m"
     return f"""<a class="job" data-cat="{cat}" data-pay="{pay}" href="{url}">
-<div class="ttl"><h3>{esc(j.get('المصنع'))}</h3></div>
+<div class="ttl"><h3>{esc(jtitle(j))}</h3></div>
 <div class="meta"><span>📍 {esc(city_base(j))}</span><span>👥 {esc(j.get('الفئة'))}</span></div>
 {f'<div class="card-hours">الوردية: {esc(hours)}</div>' if hours else ''}
 {sal_html}
@@ -307,7 +349,7 @@ def sharing_tools(js, variant, title, sharepath=None):
         if variant=="cc":
             t=t.replace(SITE_BASE+"jobs/",SITE_BASE+"cc/jobs/")
             t=t.replace(PHONE,"").replace("+"+PHONE,"")
-        records.append({"name":j.get("المصنع") or "وظيفة", "text":t})
+        records.append({"name":jtitle(j) or "وظيفة", "text":t})
     payload=esc(json.dumps(records,ensure_ascii=False))
     sharepath=sharepath or (("jobs/"+(js[0].get("__jid") or job_id(js[0]))+"/") if len(js)==1 else ("regions/"+city_slug(city_of(js[0]))+"/"))
     sharelink=SITE_BASE+("cc/" if variant=="cc" else "")+sharepath
@@ -335,6 +377,8 @@ def build_variant(jobs_open, variant):
     manifest={"id":"/jobs/apps/cc" if variant=="cc" else "/jobs/apps/main","lang":"ar","dir":"rtl","name":SITE_NAME_CC if variant=="cc" else SITE_NAME,"short_name":"Job Gate CC" if variant=="cc" else "Job Gate","start_url":"./index.html?app="+("cc" if variant=="cc" else "main"),"scope":"./","display":"standalone","background_color":"#e9eef7","theme_color":"#e9eef7","icons":[{"src":"icon-192.png","sizes":"192x192","type":"image/png"},{"src":"icon-512.png","sizes":"512x512","type":"image/png"}]}
     with open(os.path.join(root,"manifest.json"),"w",encoding="utf-8") as mf:json.dump(manifest,mf,ensure_ascii=False)
     order, groups = group_by_city(jobs_open)
+    for c in order:
+        mark_duplicate_titles(groups[c])
     n_open = len(jobs_open)
 
     # ---------- index ----------
@@ -423,7 +467,7 @@ def detail_rows(j):
     return out
 
 def ad_text(j, jid):
-    L=[f"📍 المصنع: {j.get('المصنع') or 'غير محدد'}",f"📌 المنطقة: {j.get('المنطقة') or 'غير محددة'}"]
+    L=[f"📍 المصنع: {jtitle(j) or 'غير محدد'}",f"📌 المنطقة: {j.get('المنطقة') or 'غير محددة'}"]
     shifts=parse_shifts(j.get("الورديات") or "")
     if shifts:
         for sh in shifts:
@@ -457,7 +501,7 @@ def build_apply_page(j, root, prefix_depth="../../"):
     age_hint2 = f"السن المطلوب في الوظيفة دي: من {ar3[0]} لـ {ar3[1]} سنة" if ar3 else "اكتب سنك بالأرقام"
     body = header(prefix, "main")
     body += f'<div class="wrap"><a class="form-close" href="../" aria-label="قفل التقديم والرجوع للوظيفة">✕</a><a class="bc2" href="../">→ رجوع للوظيفة</a></div>'
-    body += f'<div class="wrap"><div class="hero-plain"><h1>💬 قدّم على {esc(j.get("المصنع"))}</h1><div class="sub2">{esc(city)} — املى بياناتك وأكّد مرة واحدة</div></div></div>'
+    body += f'<div class="wrap"><div class="hero-plain"><h1>💬 قدّم على {esc(jtitle(j))}</h1><div class="sub2">{esc(city)} — املى بياناتك وأكّد مرة واحدة</div></div></div>'
     if multi:
         opts = ""
         for sh in shifts:
@@ -479,13 +523,13 @@ def build_apply_page(j, root, prefix_depth="../../"):
 {transport_form_notice(j)}
 <div class="sub" id="handoffNote">راجع بياناتك قبل التقديم. واتساب هيفتح برسالتك جاهزة، ابعتها عشان نتابع معاك.</div>
 <a class="btn btn-wa" id="applyBtn" href="{esc(wa_direct)}" rel="nofollow"
- data-gender="{esc(j.get("الفئة"))}" data-phone="{PHONE}" data-area="{esc(j.get('المنطقة'))}" data-factory="{esc(j.get('المصنع'))}" data-sal="{esc(salary_line(j))}" data-multi="{1 if multi else 0}"{age_attrs}>
+ data-gender="{esc(j.get("الفئة"))}" data-phone="{PHONE}" data-area="{esc(j.get('المنطقة'))}" data-factory="{esc(jtitle(j))}" data-sal="{esc(salary_line(j))}" data-multi="{1 if multi else 0}"{age_attrs}>
 <span class="waic">✓</span> قدّم دلوقتي وكمل على واتساب</a>
 
 </div></div>"""
     body += footer()
-    doc = layout(f"قدّم على وظيفة {j.get('المصنع')} - {city} | {SITE_NAME}",
-                 f"التقديم على وظيفة {j.get('المصنع')} في {city} عن طريق الواتساب.",
+    doc = layout(f"قدّم على وظيفة {jtitle(j)} - {city} | {SITE_NAME}",
+                 f"التقديم على وظيفة {jtitle(j)} في {city} عن طريق الواتساب.",
                  body, prefix, "main", SITE_BASE + f"jobs/{jid}/apply/", noindex=True, page_cls="pg-apply")
     with open(os.path.join(adir, "index.html"), "w", encoding="utf-8") as f:
         f.write(doc)
@@ -508,7 +552,7 @@ def build_job_page(j, root, variant, noindex):
         chips += f'<span class="chip">⏰ {esc(hours_only(j.get("الشفت")))}</span>'
     body = f"""<header class="hero-card"><div class="wrap">
 <a class="bc" href="{prefix}index.html">→ رجوع للرئيسية</a>
-<h1>{esc(j.get('المصنع'))}</h1>
+<h1>{esc(jtitle(j))}</h1>
 <div class="chips">{chips}</div>
 {tags_html(j)}
 </div></header>"""
@@ -528,7 +572,7 @@ def build_job_page(j, root, variant, noindex):
             age_b = f' data-alo="{am.group(1)}" data-ahi="{am.group(2)}"' if am else ""
             opts += f'<button type="button" class="shift-opt{" done" if s["done"] else ""}" data-h="{esc(hours_only(s["h"]))}" data-pay="{esc(pay_bits)}"{age_b}{" disabled" if s["done"] else ""}>{esc(hours_only(s["h"]))}{" (مكتملة)" if s["done"] else ""}<small>{esc(pay_bits)}</small></button>'
         body += f'<div class="panel"><h2>🕒 اختار الوردية اللي تناسبك</h2><div class="shift-pick" id="shiftPick">{opts}</div><div class="err" id="e_s"></div></div>'
-    body += f'<div id="jobMeta" hidden data-factory="{esc(j.get("المصنع"))}" data-area="{esc(j.get("المنطقة"))}"></div>'
+    body += f'<div id="jobMeta" hidden data-factory="{esc(jtitle(j))}" data-area="{esc(j.get("المنطقة"))}"></div>'
     body += detail_rows(j)
 
     cts = parse_contacts(j)
@@ -558,7 +602,7 @@ def build_job_page(j, root, variant, noindex):
 <div class="err" id="e_t"></div>
 {transport_form_notice(j)}
 <a class="btn btn-wa" id="applyBtn" href="{esc(wa_direct)}" rel="nofollow"
- data-phone="{PHONE}" data-area="{esc(j.get('المنطقة'))}" data-factory="{esc(j.get('المصنع'))}" data-sal="{esc(salary_line(j))}" data-multi="{1 if multi else 0}"{age_attrs}>
+ data-phone="{PHONE}" data-area="{esc(j.get('المنطقة'))}" data-factory="{esc(jtitle(j))}" data-sal="{esc(salary_line(j))}" data-multi="{1 if multi else 0}"{age_attrs}>
 <span class="waic">💬</span> دوس هنا وكمّل على الواتساب</a>
 <div class="sub" style="margin-top:10px">هيفتح الواتساب برسالة جاهزة فيها بياناتك والوظيفة — بس دوس ابعت ✅</div>
 </div>"""
@@ -570,7 +614,7 @@ def build_job_page(j, root, variant, noindex):
         else:
             body += '<div class="wrap"><a class="btn btn-wa" href="#apply" data-reveal="#apply"><span class="waic">💬</span> قدّم دلوقتي</a>' + form_panel + copy_btn + '</div>'
 
-    tool='<div class="wrap">'+sharing_tools([j],variant,j.get("المصنع"))+'</div>'
+    tool='<div class="wrap">'+sharing_tools([j],variant,jtitle(j))+'</div>'
     body=body.replace('</header>','</header>'+tool,1)
     body += footer()
     body += bottom_bar(prefix, variant, job=j)
@@ -598,7 +642,7 @@ def build_job_page(j, root, variant, noindex):
     sal = salary_line(j).replace(" في الشهر", "")
     desc = f"وظيفة {j.get('المصنع')} في {city} - {j.get('الفئة')}. {('المرتب ' + sal + '. ') if sal else ''}التقديم واتساب واستلام الشغل في نفس اليوم."
     role_word = "عاملات" if ("بنات" in (j.get("الفئة") or "") and "شباب" not in (j.get("الفئة") or "")) else "عمال"
-    doc = layout(f"وظائف {city} - مطلوب {role_word} في {j.get('المصنع')}", desc, body, prefix, variant,
+    doc = layout(f"وظائف {city} - مطلوب {role_word} في {jtitle(j)}", desc, body, prefix, variant,
                  SITE_BASE + f"jobs/{jid}/", json_ld=ld, noindex=noindex, page_cls="pg-job")
     with open(os.path.join(jdir, "index.html"), "w", encoding="utf-8") as f:
         f.write(doc)
