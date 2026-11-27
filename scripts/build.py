@@ -606,6 +606,7 @@ def write_static_files():
     src_css = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "site", "style.css")
     shutil.copy(src_css, os.path.join(OUT, "style.css"))
     shutil.copy(os.path.join(os.path.dirname(src_css),"menu.css"),os.path.join(OUT,"menu.css"))
+    shutil.copy(os.path.join(os.path.dirname(src_css),"google3dba52bcd6a98ef7.html"),os.path.join(OUT,"google3dba52bcd6a98ef7.html"))
     with open(os.path.join(OUT,"style.css"),"a",encoding="utf-8") as f:
         f.write("\n:root{--brand:"+DASH_CONFIG.get('brand_color','#0E5A40')+"}body{font-family:'"+DASH_CONFIG.get('font_family','Tajawal')+"',sans-serif;font-size:"+DASH_CONFIG.get('font_size','14')+"px}\n")
     app_js = r"""
