@@ -1,1 +1,45 @@
-<!DOCTYPE html><html><head><title>Google Drive - Virus scan warning</title><meta http-equiv="content-type" content="text/html; charset=utf-8"/><style nonce="kS1_MwNfNHacbAtzi1L8XQ">.goog-link-button{position:relative;color:#15c;text-decoration:underline;cursor:pointer}.goog-link-button-disabled{color:#ccc;text-decoration:none;cursor:default}body{color:#222;font:normal 13px/1.4 arial,sans-serif;margin:0}.grecaptcha-badge{visibility:hidden}.uc-main{padding-top:50px;text-align:center}#uc-dl-icon{display:inline-block;margin-top:16px;padding-right:1em;vertical-align:top}#uc-text{display:inline-block;max-width:68ex;text-align:left}.uc-error-caption,.uc-warning-caption{color:#222;font-size:16px}#uc-download-link{text-decoration:none}.uc-name-size a{color:#15c;text-decoration:none}.uc-name-size a:visited{color:#61c;text-decoration:none}.uc-name-size a:active{color:#d14836;text-decoration:none}.uc-footer{color:#777;font-size:11px;padding-bottom:5ex;padding-top:5ex;text-align:center}.uc-footer a{color:#15c}.uc-footer a:visited{color:#61c}.uc-footer a:active{color:#d14836}.uc-footer-divider{color:var(--ws-sys-color-divider,#c4c7c5);width:100%}.goog-inline-block{position:relative;display:-moz-inline-box;display:inline-block}* html .goog-inline-block{display:inline}:first-child+html .goog-inline-block{display:inline}sentinel{}</style><link rel="icon" href="//ssl.gstatic.com/docs/doclist/images/drive_favicon_2026_32dp.png"/></head><body><div class="uc-main"><div id="uc-dl-icon" class="image-container"><div class="drive-sprite-aux-download-file"></div></div><div id="uc-text"><p class="uc-warning-caption">Google Drive can't scan this file for viruses.</p><p class="uc-warning-subcaption">This file is executable and may harm your computer. <p class="uc-warning-subcaption"><span class="uc-name-size"><a href="/open?id=1Z3S3n0qiuBdM8QDwgVMx2m-6enxFdeEW">jobgate-test-card-titles.py</a> (2.6k)</span></p></p><form id="download-form" action="https://drive.usercontent.google.com/download" method="get"><input type="submit" id="uc-download-link" class="goog-inline-block jfk-button jfk-button-action" value="Download anyway"/><input type="hidden" name="id" value="1Z3S3n0qiuBdM8QDwgVMx2m-6enxFdeEW"><input type="hidden" name="export" value="download"><input type="hidden" name="confirm" value="t"><input type="hidden" name="uuid" value="47c34018-cb8b-4fc4-9ea2-1b7c1dab6c2d"></form></div></div><div class="uc-footer"><hr class="uc-footer-divider"></div></body></html>
+"""Repeated factory names on one region page must be tellable apart on the card."""
+import sys, unittest
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
+from build import mark_duplicate_titles, jtitle, job_id
+
+
+class DuplicateTitleTests(unittest.TestCase):
+    def test_unique_names_untouched(self):
+        js = [{'المصنع': 'مصنع سكر', 'الفئة': 'شباب'}, {'المصنع': 'مصنع عصير', 'الفئة': 'شباب'}]
+        mark_duplicate_titles(js)
+        self.assertEqual([jtitle(j) for j in js], ['مصنع سكر', 'مصنع عصير'])
+
+    def test_same_name_split_by_gender(self):
+        js = [{'المصنع': 'مصنع شيبسي', 'الفئة': 'شباب', 'قبض يومي': ''},
+              {'المصنع': 'مصنع شيبسي', 'الفئة': 'بنات', 'قبض يومي': ''}]
+        mark_duplicate_titles(js)
+        self.assertEqual([jtitle(j) for j in js], ['مصنع شيبسي - شباب', 'مصنع شيبسي - بنات'])
+
+    def test_same_gender_split_by_pay_type(self):
+        js = [{'المصنع': 'مصنع كرتون', 'الفئة': 'شباب', 'قبض يومي': 'نعم'},
+              {'المصنع': 'مصنع كرتون', 'الفئة': 'شباب', 'قبض يومي': ''}]
+        mark_duplicate_titles(js)
+        self.assertEqual(sorted(jtitle(j) for j in js), ['مصنع كرتون - قبض شهري', 'مصنع كرتون - قبض يومي'])
+
+    def test_same_gender_split_by_housing(self):
+        js = [{'المصنع': 'مصنع أ', 'الفئة': 'شباب', 'السكن': 'متوفر ومجهز بالكامل'},
+              {'المصنع': 'مصنع أ', 'الفئة': 'شباب', 'السكن': 'غير متوفر'}]
+        mark_duplicate_titles(js)
+        self.assertEqual(sorted(jtitle(j) for j in js), ['مصنع أ - بدون سكن', 'مصنع أ - سكن متوفر'])
+
+    def test_urls_do_not_change(self):
+        j = {'المصنع': 'مصنع شيبسي', 'الفئة': 'بنات'}
+        before = job_id(j)
+        mark_duplicate_titles([j, {'المصنع': 'مصنع شيبسي', 'الفئة': 'شباب'}])
+        self.assertEqual(job_id(j), before)
+
+    def test_marking_twice_is_safe(self):
+        js = [{'المصنع': 'مصنع شيبسي', 'الفئة': 'شباب'}, {'المصنع': 'مصنع شيبسي', 'الفئة': 'بنات'}]
+        mark_duplicate_titles(js); mark_duplicate_titles(js)
+        self.assertEqual([jtitle(j) for j in js], ['مصنع شيبسي - شباب', 'مصنع شيبسي - بنات'])
+
+
+if __name__ == '__main__':
+    unittest.main()
