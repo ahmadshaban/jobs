@@ -358,8 +358,8 @@ def build_variant(jobs_open, variant):
 <div class="wrap"><div class="areas">{areas_html}</div></div>"""
     body += footer()
     body += bottom_bar("", variant)
-    desc = f"وظايف مصانع تعبئة وتغليف للشباب والبنات في {' و'.join(order)}. تفاصيل المرتب والورديات جوه كل وظيفة. قدّم واتساب واستلم الشغل في نفس اليوم."
-    html_doc = layout(f"وظايف مصانع تعبئة وتغليف - شباب وبنات | {SITE_NAME}", desc, body, "", variant, SITE_BASE, noindex=noindex, page_cls="pg-home")
+    desc = f"وظائف مصانع تعبئة وتغليف للشباب والبنات في {' و'.join(order[:4])}. مرتبات وورديات واضحة، والتقديم واتساب واستلام الشغل نفس اليوم."
+    html_doc = layout(f"وظائف مصانع تعبئة وتغليف في {' و'.join(order[:3])}", desc, body, "", variant, SITE_BASE, noindex=noindex, page_cls="pg-home")
     with open(os.path.join(root, "index.html"), "w", encoding="utf-8") as f:
         f.write(html_doc)
 
@@ -372,7 +372,7 @@ def build_variant(jobs_open, variant):
         cards = "".join(job_card(j, "../../") for j in js)
         body = header("../../", variant)
         body += f"""<div class="wrap"><a class="bc2" href="../../index.html">→ رجوع للرئيسية</a></div>
-<div class="wrap"><div class="sec"><h2>🏭 وظايف {esc(c)}</h2><span class="ln"></span><small>{len(js)} وظيفة</small></div></div>
+<div class="wrap"><div class="sec"><h1>🏭 وظائف مصانع في {esc(c)}</h1><span class="ln"></span><small>{len(js)} وظيفة</small></div></div>
 <div class="wrap">{sharing_tools(js,variant,c,"regions/"+slug+"/")}</div>
 {seg_filter()}
 {segpay_filter() if slug == "10th-ramadan" else ""}
@@ -384,7 +384,7 @@ def build_variant(jobs_open, variant):
         nums = [best_salary_num(x) for x in js if best_salary_num(x)]
         paybit = f"مرتبات لحد {max(nums):,} جنيه. " if nums else ""
         desc = f"{len(js)} وظيفة مصنع مفتوحة في {c} للشباب والبنات. {paybit}قدّم على الواتساب واستلم الشغل في نفس اليوم."
-        doc = layout(f"وظايف مصانع في {c} - {len(js)} وظيفة مفتوحة | {SITE_NAME}", desc, body, "../../", variant, SITE_BASE + f"regions/{slug}/", noindex=noindex, page_cls="pg-region")
+        doc = layout(f"وظائف مصانع في {c} - {len(js)} وظيفة مفتوحة", desc, body, "../../", variant, SITE_BASE + f"regions/{slug}/", noindex=noindex, page_cls="pg-region")
         with open(os.path.join(rdir, "index.html"), "w", encoding="utf-8") as f:
             f.write(doc)
 
@@ -597,7 +597,8 @@ def build_job_page(j, root, variant, noindex):
                             "value": {"@type": "QuantitativeValue", "value": n, "unitText": "DAY" if is_daily(j) else "MONTH"}}
     sal = salary_line(j).replace(" في الشهر", "")
     desc = f"وظيفة {j.get('المصنع')} في {city} - {j.get('الفئة')}. {('المرتب ' + sal + '. ') if sal else ''}التقديم واتساب واستلام الشغل في نفس اليوم."
-    doc = layout(f"{j.get('المصنع')} - وظيفة في {city} | {SITE_NAME}", desc, body, prefix, variant,
+    role_word = "عاملات" if ("بنات" in (j.get("الفئة") or "") and "شباب" not in (j.get("الفئة") or "")) else "عمال"
+    doc = layout(f"وظائف {city} - مطلوب {role_word} في {j.get('المصنع')}", desc, body, prefix, variant,
                  SITE_BASE + f"jobs/{jid}/", json_ld=ld, noindex=noindex, page_cls="pg-job")
     with open(os.path.join(jdir, "index.html"), "w", encoding="utf-8") as f:
         f.write(doc)
